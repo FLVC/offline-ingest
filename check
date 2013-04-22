@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
+
+require 'offin/ingestor'
+require 'datyl/config'
+require 'offin/utils'
+require 'offin/manifest'
+require 'offin/mods'
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"  ; exit }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"  ; exit }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
+
+config = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", 'default')
+
+package_directory = ARGV[0]
+
+Utils.ingest_usage if package_directory.nil?
+Utils.ingest_usage unless File.exists? package_directory and File.directory? package_directory
+
+puts '', package_directory, package_directory.gsub(/./, '=');
+
+package_listing = Utils.package_directory_as_expected? package_directory
+
+puts '',  "Package Errors",  "--------------",  package_listing.errors  unless  package_listing.errors.empty?
+
+if package_listing.manifest
+  manifest = Manifest.new(package_listing.manifest)
+
+  puts '', "Manifest Errors",   "---------------",   manifest.errors    unless  manifest.errors.empty?
+  puts '', "Manifest Warnings", "-----------------", manifest.warnings  unless  manifest.warnings.empty?
+else
+  puts '', "Missing Manifest",  "----------------"
+end
+
+if package_listing.mods
+  mods = Mods.new(config, package_listing.mods)
+
+  puts '', "MODS Errors",   "-----------",    mods.errors    unless mods.errors.empty?
+  puts '', "MODS Warnings", "-------------",  mods.warnings  unless mods.warnings.empty?
+else
+  puts '', "Missing MODS",  "------------"
+end

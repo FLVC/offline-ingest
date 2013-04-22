@@ -1,0 +1,7 @@
+require 'offin/document-parsers'
+require 'offin/exceptions'
+require 'offin/ingestor'
+require 'offin/manifest'
+require 'offin/mods'
+require 'offin/resource-index'
+require 'offin/utils'

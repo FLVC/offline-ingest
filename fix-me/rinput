@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), './lib/'))
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib/'))
+
+# Take STDIN, assuming that it's from a log file - grab the risearch lines, decode them, send it off to risearch and present the output.
+# Won't repeat two concurrent requests, so this is safe to use from live tailed log.
+#
+
+require 'cgi'
+require 'resource-index'
+require 'fedora-config'
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"  ; exit }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"  ; exit }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
+
+@previous_command = nil
+
+CONFIG_FILE = "/home/fischer/WorkProjects/offline-ingest/include/config7d.yml"
+
+@ri = ResourceIndex.new Fedora::Config.new(CONFIG_FILE)
+
+def it_might_be_a_mulgara_command line
+  return line =~ /fedora\/risearch/
+end
+
+
+def rerun_mulgara_command line
+  text = CGI.unescape(line)
+  if text =~ /&query=(.*)\s+GET/m
+    query = $1.gsub('\n', '')
+    return if query == @previous_command   # otherwise we'll loop forever if we're examining from a live log file
+    @previous_command = query
+    puts "=" * 80
+    puts "Query", '', query, ''
+    if text =~ /lang=sparql/im
+      puts "Response", '', @ri.sparql(query)
+    else
+      puts "Response", '', @ri.itql(query)
+    end
+  else
+    STDERR.puts "Can't figure out '#{text}'"
+  end
+end
+
+
+
+
+
+lines = []
+
+while line = STDIN.gets
+  if it_might_be_a_mulgara_command(line)
+    rerun_mulgara_command(line)
+  else
+    # puts $line
+  end
+end
+
+#  puts "Searched via " + ri.url
+
+
