@@ -16,3 +16,12 @@ tmp
 .yardoc
 _yardoc
 doc/
+basic-image-ingest-alpo
+basic-image-ingest-romeo
+config.yml
+docs/
+ingest.org
+junk/
+sample-data/
+sample-metadata/
+src/
