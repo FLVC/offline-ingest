@@ -122,6 +122,16 @@ class Package
     ingestor.owner = @config.owner
     ingestor.dc  = @mods.to_dc.to_s
     ingestor.mods = @mods.to_s
+
+    if @marc
+      ingestor.datastream('MARCXML') do |ds|
+        ds.dsLabel  = "Archived Digitool MarcXML"
+        ds.content  = @marc
+        ds.mimeType = 'text/xml'
+      end
+    end
+
+
   end
 
   # TODO: remove these if really unused
@@ -180,7 +190,7 @@ class BasicImagePackage < Package
     when GIF, JPEG, PNG
       @image = Magick::Image.read(path).first
 
-    # TODO: add special support for TIFFs (not needed for digitool migration)
+      # TODO: add special support for TIFFs (not needed for digitool migration)
 
     when TIFF
       raise PackageError, "The Basic Image package #{@name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
@@ -229,8 +239,58 @@ class LargeImagePackage < Package
   def initialize config, directory, manifest
     super(config, directory, manifest)
     @content_model = LARGE_IMAGE_CONTENT_MODEL
+
+    if @datafiles.length > 1
+      raise PackageError, "The Large Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+    end
+
+    if @datafiles.length == 0
+      raise PackageError, "The Larg Image package #{@name} contains no data files."
+    end
+
+    @image_filename = @datafiles[0]
+    path = File.join(@directory, @image_filename)
+    type = Utils.mime_type(path)
+
+    case type
+    when JP2
+      @image = Magick::Image.read(path).first
+
+      # TODO: add basic support for TIFFs (not needed for digitool migration)
+
+    when TIFF
+      raise PackageError, "The Large Image package #{@name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
+    else
+      raise PackageError, "The Large Image package #{@name} contains an unexpected or unsupported file #{@datafiles[0]} with mime type #{type}."
+    end
+
   end
 
+
+  def process
+    return  #############
+
+
+    Ingestor.new(@config, @namespace) do |ingestor|
+
+      boilerplate(ingestor)
+
+      ingestor.datastream('JP2') do |ds|
+        ds.dsLabel  = @image_filename
+        ds.content  = @image
+        ds.mimeType = @image.mime_type
+      end
+
+      # JP2 gets original
+      # OBJ gets 1024x1024 tiff
+      # JPG gets 600x800 jpeg
+      # TN gets 200x200 jpeg
+
+
+
+      ingestor.ingest
+    end
+  end
 end
 
 class PdfPackage < Package

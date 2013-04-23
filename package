@@ -12,20 +12,16 @@ require 'offin/packages'
 
 directory = ARGV[0] || Utils.ingest_usage
 
-config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "alpo")
+config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "i7d")
 
 if config.http_proxy
   ENV['HTTP_PROXY'] = config.http_proxy
   ENV['http_proxy'] = config.http_proxy
 end
 
-
 factory = PackageFactory.new(config)
 
 package = factory.new_package(directory)
 
 puts package.name
-# puts package.mods.to_s
-# puts package.mods.to_dc.to_s
-
 package.process
