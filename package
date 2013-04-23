@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit }
-Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit }
-Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
 $LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
 
@@ -10,9 +10,22 @@ require 'offin/packages'
 
 # Errno::ECONNREFUSED Connection Refused - processing exception
 
-
 directory = ARGV[0] || Utils.ingest_usage
 
-config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "i7d")
+config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "alpo")
+
+if config.http_proxy
+  ENV['HTTP_PROXY'] = config.http_proxy
+  ENV['http_proxy'] = config.http_proxy
+end
+
+
 factory = PackageFactory.new(config)
+
 package = factory.new_package(directory)
+
+puts package.name
+# puts package.mods.to_s
+# puts package.mods.to_dc.to_s
+
+package.process

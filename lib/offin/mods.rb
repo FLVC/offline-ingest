@@ -1,12 +1,13 @@
 require 'nokogiri'
 require 'offin/document-parsers'
+
+
 class Mods
 
 # TODO: forget about our own caching; use fetch from net, check for squid proxy, yada yada
 
 
 INCLUDE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '../include'))
-
 
   # This class encapsulates what we at FLVC want to do a MODS
   # document:
@@ -42,15 +43,19 @@ INCLUDE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '../include'))
 
     #  ENV['http_proxy'] = 'http://localhost:3128/'
 
-    text = File.read(@filename)
+    @text = File.read(@filename)
 
     @mods_to_dc   = File.read(config.mods_to_dc_transform_filename)
-    @xml_document = Nokogiri::XML(text)
+    @xml_document = Nokogiri::XML(@text)
     @sax_document = SaxDocumentExamineMods.new
-    Nokogiri::XML::SAX::Parser.new(@sax_document).parse(text)
+    Nokogiri::XML::SAX::Parser.new(@sax_document).parse(@text)
 
     warning *@sax_document.errors               # any sax processing errors are mere warnings for us.
     warning *@sax_document.warnings
+  end
+
+  def to_s
+    @text
   end
 
   def warning *stuff
@@ -115,6 +120,8 @@ INCLUDE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '../include'))
     error "When attempting to transform the MODS document '#{@filename}' to DC with stylesheet '#{MODS_TO_DC_XSL}', this exception occurred: '#{e.message}'"
     return nil
   end
+
+
 
   private
 

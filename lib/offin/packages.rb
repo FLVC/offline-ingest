@@ -2,8 +2,16 @@ require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
 require 'offin/mods'
+require 'offin/ingestor'
 require 'datyl/config'
 require 'RMagick'
+
+
+# TODO: do we need to scope this?
+
+BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
+LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
+PDF_CONTENT_MODEL         = "islandora:sp_pdf"
 
 # We need a object-level read for rubydora to use;  TODO: this will be a problem with large data
 
@@ -19,10 +27,6 @@ end
 # requested, and returns the appr
 
 class PackageFactory
-
-  BASIC_IMAGE_MODEL = "islandora:sp_basic_image"
-  LARGE_IMAGE_MODEL = "islandora:sp_large_image_cmodel"
-  PDF_MODEL         = "islandora:sp_pdf"
 
   attr_reader :config
 
@@ -43,7 +47,6 @@ class PackageFactory
     raise "" if false
   end
 
-
   def new_package directory
     raise PackageError, "Package directory '#{directory}' doesn't exist."     unless File.exists? directory
     raise PackageError, "Package directory '#{directory}' isn't a driectory." unless File.directory? directory
@@ -52,30 +55,36 @@ class PackageFactory
     manifest = Utils.get_manifest @config, directory
 
     return case manifest.content_model
-           when BASIC_IMAGE_MODEL;  BasicImagePackage.new(@config, directory, manifest)
-           when LARGE_IMAGE_MODEL;  LargeImagePackage.new(@config, directory, manifest)
-           when PDF_MODEL:          PdfPackage.new(@config, directory, manifest)
+           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest)
+           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest)
+           when PDF_CONTENT_MODEL:          PdfPackage.new(@config, directory, manifest)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
   end
+
 end
 
 
-# Package serves as a base class, but it could be used to do a basic
+# Package serves as a base class, but it could serve to do a basic
 # check on a directory's well-formedness as a package.
 
 class Package
 
+  # supported MIME types go here, as returned by the file command.
+
   GIF  = 'image/gif'
   JP2  = 'image/jp2'
-  JPEG = 'image/jpeg'
   PNG  = 'image/png'
+  JPEG = 'image/jpeg'
   TIFF = 'image/tiff'
+  PDF  = 'application/pdf'
 
-  attr_reader :errors, :warnings, :manifest, :mods, :name, :marc, :config
+  attr_reader :errors, :warnings, :manifest, :mods, :name, :marc, :config, :content_model, :namespace, :collections
 
   def initialize config, directory, manifest = nil
+
+    @content_model = nil
     @errors = []
     @warnings = []
     @name = File.basename directory
@@ -86,10 +95,13 @@ class Package
     if manifest.is_a? Manifest
       @manifest = manifest
     else
-      @manifest = Utils.get_manifest @config, directory
+      @manifest = Utils.get_manifest @config, directory    # will raise PackageError on any issues - TODO: change this and check @manifest.errors
     end
 
-    @mods = Utils.get_mods @config, directory
+    @mods = Utils.get_mods @config, directory              # will raise PackageError on any issues - TODO: change this and check @mods.errors
+
+    @namespace = @manifest.owning_institution.downcase
+    @collections = @manifest.collections
 
     marc_file = File.join(@directory, 'marc.xml')
 
@@ -100,6 +112,19 @@ class Package
     end
 
   end
+
+  # Used by subclassess:
+
+  def boilerplate ingestor
+    ingestor.collections = @collections.map { |pid| pid.downcase }   # Liang doesn't read my specs...
+    ingestor.content_model = @content_model
+    ingestor.label = @name   # TODO: get label from complex checks of mods, manifest, etc...
+    ingestor.owner = @config.owner
+    ingestor.dc  = @mods.to_dc.to_s
+    ingestor.mods = @mods.to_s
+  end
+
+  # TODO: remove these if really unused
 
   def errors?
     @errors.empty?
@@ -114,6 +139,8 @@ class Package
 
   def list_other_files
 
+    # TODO: throw PackageError if a directory is found.
+
     list = []
     Dir["#{@directory}/*"].each do |entry|
       filename = File.basename entry
@@ -125,14 +152,17 @@ class Package
   end
 end # of Package base class
 
+
+
+
 class BasicImagePackage < Package
 
   # At this point we know we have a manifest, mods and maybe a marc file.
 
-  attr_reader :image
-
   def initialize config, directory, manifest
     super(config, directory, manifest)
+
+    @content_model = BASIC_IMAGE_CONTENT_MODEL
 
     if @datafiles.length > 1
       raise PackageError, "The Basic Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
@@ -142,12 +172,13 @@ class BasicImagePackage < Package
       raise PackageError, "The Basic Image package #{@name} contains no data files."
     end
 
-    image_filename = File.join(@directory, @datafiles[0])
-    type = Utils.mime_type(image_filename)
+    @image_filename = @datafiles[0]
+    path = File.join(@directory, @image_filename)
+    type = Utils.mime_type(path)
 
     case type
     when GIF, JPEG, PNG
-      @image = Magick::Image.read(image_filename).first
+      @image = Magick::Image.read(path).first
 
     # TODO: add special support for TIFFs (not needed for digitool migration)
 
@@ -159,6 +190,33 @@ class BasicImagePackage < Package
 
   end
 
+
+  def process
+    Ingestor.new(@config, @namespace) do |ingestor|
+
+      boilerplate(ingestor)
+
+      ingestor.datastream('OBJ') do |ds|
+        ds.dsLabel  = @image_filename
+        ds.content  = @image
+        ds.mimeType = @image.mime_type
+      end
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = "Thumbnail Image"
+        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.mimeType = @image.mime_type
+      end
+
+      ingestor.datastream('MEDIUM_SIZE') do |ds|
+        ds.dsLabel  = "Medium Size Image"
+        ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.mimeType = @image.mime_type
+      end
+
+      ingestor.ingest
+    end
+  end
 end
 
 
@@ -166,18 +224,22 @@ class LargeImagePackage < Package
 
   # At this point we know we have a manifest, mods and maybe a marc file.
 
+  attr_reader :image
+
   def initialize config, directory, manifest
     super(config, directory, manifest)
+    @content_model = LARGE_IMAGE_CONTENT_MODEL
   end
 
 end
 
 class PdfPackage < Package
 
+
   # At this point we know we have a manifest, mods and maybe a marc file.
 
   def initialize config, directory, manifest
     super(directory, manifest)
+    @content_model = PDF_CONTENT_MODEL
   end
-
 end

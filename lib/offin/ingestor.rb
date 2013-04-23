@@ -1,6 +1,7 @@
 require 'rubydora'
 require 'offin/document-parsers'
 require 'offin/mods'
+require 'offin/collection'
 
 class Ingestor
 
@@ -9,23 +10,56 @@ class Ingestor
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
   # TODO: stash error and warning messages
 
-  attr_reader :repository, :pid, :namespace, :object, :collection
+  attr_reader :repository, :pid, :namespace, :fedora_object, :errors, :warnings
 
-  def initialize  config
+  def initialize  config, namespace
     @config = config
 
     @repository = Rubydora.connect :url => @config.url, :user => @config.user, :password => @config.password
-    @namespace = @config.namespace
+    @namespace = namespace
+
+    @errors = []
+    @warnings = []
+
     @pid = getpid
-    @object = @repository.create(@pid)
+    @fedora_object = @repository.create(@pid)
 
-    # we set these later...
+    yield self
 
-    @image  = nil
-    @mods   = nil
-    @label  = nil
-    @dc     = nil
+  rescue => e
+    STDERR.puts "Yikes! A #{e.class}! Pssst... #{e.message}"
+    attempt_delete(@pid)
+    # figure out whether we should throw a SystemError or PackageError here.... or just load @errors
+    raise SystemError, "Ingestor Error: #{e.class} - #{e.message}"
   end
+
+  # TODO: run down if possible
+
+  def attempt_delete pid
+    return unless pid
+    # return if nil, otherwise attempt to connect to repository and delete the PID
+    #
+  rescue => e
+    @warnings.push "When handling an error and trying to delete partial object #{pid}, got an additinal error #{e.class}: #{e.message}"
+  end
+
+  def error string
+    @errors.push string
+  end
+
+  def errors?
+    not @errors.empty?
+  end
+
+  def warning string
+    @warnings.push string
+  end
+
+  def warnings?
+    not @warnings.empty?
+  end
+
+  # TODO: check pid, repository are properly returned here...
 
   def getpid
     sax_document = SaxDocumentGetNextPID.new
@@ -33,85 +67,45 @@ class Ingestor
     return sax_document.pids.shift
   end
 
-  def add_basic_image filename
-    @image = Magick::Image.read(filename).first
+  def collections= value
+    value.each do |pid|
+      collection = Collection.new(@config, @namespace, pid)  # TODO: move Collection back into here....
+      @fedora_object.memberOfCollection << collection.pid
+    end
   end
 
-  def add_mods filename
-    @mods = File.read(filename)
-  end
-
-  def add_dc content
-    @dc = content
-  end
-
-  # def add_mods filename_or_data
-  #   if File.exist? filename_or_data
-  #     @mods = File.read(filename_or_data)
-  #   else
-  #     @mods = filename_or_data
-  #   end
-  # end
-
-  ### TODO: check where used and xml-ify it if necessary.  Need to make sure it's UTF-8 as well.
-
-  def add_label text
-    @label = text
-  end
-
-
-  # def dc_text
-  #   return <<-EOF.gsub(/^    /, '')
-  #   <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-  #     <dc:title>#{@label}</dc:title>
-  #     <dc:identifier>#{@pid.sub('info:fedora/','')}</dc:identifier>
-  #   </oai_dc:dc>
-  # EOF
-  # end
-
-  # ingest the object into the collection indicated by the collection object
-
-  def ingest collection
-    raise "You haven't set the DC yet - use add_dc(data)" unless @dc
-    raise "You haven't set the MODS file yet - use add_mods(filename)" unless @mods
-    raise "You haven't set the image file yet - use add_basic_image(filename)" unless @image
-    raise "You haven't set the label yet - use add_label(filename)" unless @label
-
-    object.memberOfCollection << collection.pid
-    object.models << 'info:fedora/islandora:sp_basic_image'
-    object.label = @label
-    object.ownerId = @config.object_owner
-
-    ds = object.datastreams['DC']
+  def dc= value
+    ds = @fedora_object.datastreams['DC']
     ds.dsLabel  = "Dublin Core Record"
-    ds.content  = @dc
+    ds.content  = value
     ds.mimeType = 'text/xml'
+  end
 
-    ds = object.datastreams['MODS']
+  def mods= value
+    ds = @fedora_object.datastreams['MODS']
     ds.dsLabel  = "MODS Record"
-    ds.content  = @mods
+    ds.content  = value
     ds.mimeType = 'text/xml'
+  end
 
-    ds = object.datastreams['OBJ']
-    ds.dsLabel  = @label
-    ds.content  = @image
-    ds.mimeType = @image.mime_type
+  def content_model= value
+    @fedora_object.models << ( value =~ /^info:fedora/ ?  value : "info:fedora/#{value}" )
+  end
 
-    # TODO: check to make sure we're not expanding image sizes here
+  def label= value
+    @fedora_object.label = value
+  end
 
-    ds = object.datastreams['TN']
-    ds.dsLabel  = "Thumbnail Image"
-    ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }
-    ds.mimeType = @image.mime_type
+  def owner= value
+    @fedora_object.ownerId = value
+  end
 
-    ds = object.datastreams['MEDIUM_SIZE']
-    ds.dsLabel  = "Medium Size Image"
-    ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }
-    ds.mimeType = @image.mime_type
+  def datastream name
+    yield @fedora_object.datastreams[name]
+  end
 
-    # TODO: DC transform
-    object.save
-
+  def ingest
+    @fedora_object.save
   end
 
 end # of class Ingestor

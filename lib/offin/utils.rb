@@ -37,7 +37,7 @@ class Utils
     mods_filename = File.join(directory, "#{name}.xml")
 
     if not File.exists? mods_filename
-      raise PackageError, "Package directory #{directory} does not contain the MODS file #{name}.xml."
+      raise PackageError, "Package directory #{directory} does not contain a MODS file named #{name}.xml."
     end
 
     mods = Mods.new(config, mods_filename)
@@ -98,7 +98,7 @@ class Utils
 
         file.rewind if file.methods.include? 'rewind'
 
-        stdin.write file.read(1024 ** 2)
+        stdin.write file.read(1024 ** 2)  # don't need too much of this...
         stdin.close
 
         type   = stdout.read
@@ -106,7 +106,7 @@ class Utils
       end
       file.rewind if file.methods.include? 'rewind'
 
-    when file.is_a?(String)
+    when file.is_a?(String)  # presumed a filename
 
       raise "file '#{file}' not found"    unless File.exists? file
       raise "file '#{file}' not readable" unless File.readable? file
@@ -114,6 +114,10 @@ class Utils
 
         type   = stdout.read
         error  = stderr.read
+      end
+
+      if file =~ /\.jp2/i and type.strip == 'application/octet-stream'
+        type = 'image/jp2'
       end
 
     else

@@ -1,3 +1,6 @@
+# MOVE THIS BACK INTO INGESTOR...
+
+
 require 'rubydora'
 require 'offin/document-parsers'
 require 'offin/mods'
@@ -25,15 +28,14 @@ class Collection
   # escaped when inserted into some XML content.  Have to know the
   # rules for this...
 
-  def initialize config, collection_pid, collection_label = nil
+  def initialize config, namespace, collection_pid, collection_label = nil
 
     @config     = config
-    @repository = Rubydora.connect :url => @config.url, :user => @config.user, :password => @config.password
-    @namespace  = config.namespace
-
+    @repository = Rubydora.connect :url => @config.url, :user => @config.user, :password => @config.password  # sigh. don't we have one of these already?
+    @namespace  = namespace
 
     @pid   = collection_pid =~ /^info:fedora/ ? collection_pid : 'info:fedora/' + collection_pid
-    @label = collection_label || "Collection #{@pid.sub(/^info:fedora\//, '')}."
+    @label = collection_label || "Collection #{@pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')}"
 
     create_new_collection unless collections.include? @pid
   end
@@ -79,14 +81,12 @@ class Collection
     object.memberOfCollection << @config.root_collection
     object.models << 'info:fedora/islandora:collectionCModel'
     object.label   = @label
-    object.ownerId = @config.object_owner    # TODO: eventually, we'll want a sanity check here that it exists in drupal. Not necessary for digitool migration
+    object.ownerId = @config.owner    # TODO: eventually, we'll want a sanity check here that it exists in drupal. Not necessary for digitool migration
 
     ds = object.datastreams['TN']
     ds.dsLabel  = "Thumbnail"
     ds.content  = File.read(@config.collection_thumbnail_filename)
     ds.mimeType = 'image/png'
-
-    # TODO: check that we're getting versionable correct
 
     ds = object.datastreams['COLLECTION_POLICY']
     ds.dsLabel      = "Collection Policy"
