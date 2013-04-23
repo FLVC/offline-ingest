@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), './lib/'))
-$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib/'))
+# $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), './lib/'))
+# $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib/'))
 
 # Take STDIN, assuming that it's from a log file - grab the risearch lines, decode them, send it off to risearch and present the output.
 # Won't repeat two concurrent requests, so this is safe to use from live tailed log.
@@ -16,7 +16,9 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
 
 @previous_command = nil
 
-CONFIG_FILE = "/home/fischer/WorkProjects/offline-ingest/include/config7d.yml"
+# CONFIG_FILE = "/home/fischer/WorkProjects/offline-ingest/include/config7d.yml"
+
+CONFIG_FILE = "config.yml"
 
 @ri = ResourceIndex.new Fedora::Config.new(CONFIG_FILE)
 
@@ -39,7 +41,7 @@ def rerun_mulgara_command line
       puts "Response", '', @ri.itql(query)
     end
   else
-    STDERR.puts "Can't figure out '#{text}'"
+    STDERR.puts "Can't figure out '#{text}'" unless text =~ /POST/
   end
 end
 
@@ -58,5 +60,3 @@ while line = STDIN.gets
 end
 
 #  puts "Searched via " + ri.url
-
-

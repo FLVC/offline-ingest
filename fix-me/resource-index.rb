@@ -1,4 +1,6 @@
 require 'rest-client'
+require 'nokogiri'
+require 'document-parsers'
 
 # TODO: exception handling. Connection errors should be treated transiently, i.e. give up on processing this particular package.
 
@@ -83,6 +85,7 @@ class ResourceIndex
   # parse the Sparql XML returned by the query, and return a list of OpenStructs with that data
 
   def parse_sparql text
+
     sax_document = SaxDocumentExtractSparql.new
     Nokogiri::XML::SAX::Parser.new(sax_document).parse(text)
     return sax_document.results
