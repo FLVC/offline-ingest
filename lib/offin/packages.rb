@@ -24,7 +24,7 @@ end
 
 # PackageFactory takes a directory path and checks the manifest.xml
 # file within in it.  It determines what content model is being
-# requested, and returns the appr
+# requested, and returns the appropriate type of package.
 
 class PackageFactory
 
@@ -347,8 +347,12 @@ class PdfPackage < Package
       raise PackageError, "The PDF package #{@name} doesn't contain a PDF file."
     end
 
+    text = Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename))
+
+    # TODO: check to make sure text isn't empty
+
     if @ocr.nil?
-      @ocr = Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename))
+      @ocr = text
     end
 
   end
@@ -370,15 +374,23 @@ class PdfPackage < Package
         ds.mimeType = TEXT
       end
 
+      img = Utils.pdf_to_preview @config, File.join(@directory, @pdf_filename)
+
+      # TODO: check to make sure img isn't empty
+
       ingestor.datastream('PREVIEW') do |ds|
         ds.dsLabel  = 'Preview'
-        ds.content  = Utils.pdf_to_preview @config, File.join(@directory, @pdf_filename)
+        ds.content  = img
         ds.mimeType = JPEG
       end
 
+      img = Utils.pdf_to_thumbnail @config, File.join(@directory, @pdf_filename)
+
+      # TODO: check to make sure img isn't empty
+
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
-        ds.content  = Utils.pdf_to_thumbnail @config, File.join(@directory, @pdf_filename)
+        ds.content  = img
         ds.mimeType = JPEG
       end
     end
