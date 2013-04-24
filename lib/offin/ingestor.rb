@@ -19,7 +19,6 @@ end
 class Ingestor
 
   # TODO: sanity check on config object, throw error that should stop all processing
-  # TODO: this should get an already vetted repo and config, and be focused on one object
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
   # TODO: stash error and warning messages
 
