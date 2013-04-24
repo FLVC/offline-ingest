@@ -79,6 +79,7 @@ class Package
   JPEG = 'image/jpeg'
   TIFF = 'image/tiff'
   PDF  = 'application/pdf'
+  TEXT = 'text/plain'
 
   attr_reader :errors, :warnings, :manifest, :mods, :name, :marc, :config, :content_model, :namespace, :collections
 
@@ -90,15 +91,15 @@ class Package
     @name = File.basename directory
     @directory = directory
     @config = config
-    @datafiles = list_other_files
+    @datafiles = list_other_files()
 
     if manifest.is_a? Manifest
       @manifest = manifest
     else
-      @manifest = Utils.get_manifest @config, directory    # will raise PackageError on any issues - TODO: change this and check @manifest.errors
+      @manifest = Utils.get_manifest @config, directory    # will raise PackageError on any issues - TODO: change this, check @manifest.errors, copy to our @errors and exit
     end
 
-    @mods = Utils.get_mods @config, directory              # will raise PackageError on any issues - TODO: change this and check @mods.errors
+    @mods = Utils.get_mods @config, directory              # will raise PackageError on any issues - TODO: change this and check @mods.errors, copy to our @errors and exit
 
     @namespace = @manifest.owning_institution.downcase
     @collections = @manifest.collections
@@ -224,7 +225,6 @@ class BasicImagePackage < Package
         ds.mimeType = @image.mime_type
       end
 
-      ingestor.ingest
     end
   end
 end
@@ -268,38 +268,119 @@ class LargeImagePackage < Package
 
 
   def process
-    return  #############
-
-
     Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
       ingestor.datastream('JP2') do |ds|
-        ds.dsLabel  = @image_filename
+        ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
         ds.content  = @image
         ds.mimeType = @image.mime_type
       end
 
-      # JP2 gets original
-      # OBJ gets 1024x1024 tiff
-      # JPG gets 600x800 jpeg
-      # TN gets 200x200 jpeg
+      @image.format = 'TIFF'
+      @image.compression = Magick::LZWCompression
 
+      ingestor.datastream('OBJ') do |ds|
+        ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
+        ds.content  = @image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.mimeType = @image.mime_type
+      end
 
+      @image.format = 'JPG'
 
-      ingestor.ingest
+      ingestor.datastream('JPG') do |ds|
+        ds.dsLabel  = 'Medium sized JPEG'
+        ds.content  = @image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.mimeType = @image.mime_type
+      end
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = 'Thumbnail'
+        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.mimeType = @image.mime_type
+      end
     end
   end
 end
 
-class PdfPackage < Package
 
+class PdfPackage < Package
 
   # At this point we know we have a manifest, mods and maybe a marc file.
 
   def initialize config, directory, manifest
-    super(directory, manifest)
+    super(config, directory, manifest)
     @content_model = PDF_CONTENT_MODEL
+
+
+    if @datafiles.length > 2
+      raise PackageError, "The PDF package #{@name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
+    end
+
+    if @datafiles.length == 0
+      raise PackageError, "The PDF package #{@name} contains no data files."
+    end
+
+    @pdf_filename = nil
+    @ocr_filename = nil
+    @pdf = nil
+    @ocr = nil
+
+
+    @datafiles.each do |filename|
+      path = File.join(@directory, filename)
+      type = Utils.mime_type(path)
+      case type
+      when PDF
+        @pdf_filename = filename
+        @pdf = File.read(path)
+      when TEXT
+        @ocr_filename = filename
+        @ocr = File.read(path)
+      else
+        raise PackageError, "The PDF package #{@name} contains an unexpected file #{filename} of type #{type}."
+      end
+    end
+
+    if @pdf.nil?
+      raise PackageError, "The PDF package #{@name} doesn't contain a PDF file."
+    end
+
+    if @ocr.nil?
+      @ocr = Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename))
+    end
+
+  end
+
+  def process
+    Ingestor.new(@config, @namespace) do |ingestor|
+
+      boilerplate(ingestor)
+
+      ingestor.datastream('OBJ') do |ds|
+        ds.dsLabel  = @pdf_filename.sub(/\.pdf$/i, '')
+        ds.content  = @pdf
+        ds.mimeType = PDF
+      end
+
+      ingestor.datastream('FULL_TEXT') do |ds|
+        ds.dsLabel  = 'Full Text'
+        ds.content  = @ocr
+        ds.mimeType = TEXT
+      end
+
+      ingestor.datastream('PREVIEW') do |ds|
+        ds.dsLabel  = 'Preview'
+        ds.content  = Utils.pdf_to_preview @config, File.join(@directory, @pdf_filename)
+        ds.mimeType = JPEG
+      end
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = 'Thumbnail'
+        ds.content  = Utils.pdf_to_thumbnail @config, File.join(@directory, @pdf_filename)
+        ds.mimeType = JPEG
+      end
+    end
   end
 end

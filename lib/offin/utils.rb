@@ -52,6 +52,43 @@ class Utils
   end
 
 
+  # TODO: get path to pdftext from config file...
+
+  def Utils.pdf_to_text config, pdf_filepath
+
+    text = nil
+    Open3.popen3("#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -") do |stdin, stdout, stderr|
+      stdin.close
+      text  = stdout.read
+      error = stderr.read
+    end
+    return text
+  end
+
+
+
+  def Utils.pdf_to_thumbnail config, pdf_filepath
+
+    image = nil
+    Open3.popen3("#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
+      stdin.close
+      image = stdout.read
+      error = stderr.read
+    end
+    return image
+  end
+
+  def Utils.pdf_to_preview config, pdf_filepath
+
+    image = nil
+    Open3.popen3("#{config.pdf_convert_command} -resize #{config.pdf_preview_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
+      stdin.close
+      image = stdout.read
+      error = stderr.read
+    end
+    return image
+  end
+
 
 
   # from shellwords.rb:
