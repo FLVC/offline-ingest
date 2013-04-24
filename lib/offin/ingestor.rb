@@ -18,6 +18,8 @@ end
 
 class Ingestor
 
+  DEBUG = true
+
   # TODO: sanity check on config object, throw error that should stop all processing
   # TODO: this should get an already vetted repo and config, and be focused on one object
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
@@ -39,6 +41,8 @@ class Ingestor
 
     yield self
 
+    @fedora_object.save
+
   rescue => e
     STDERR.puts "Yikes! A #{e.class}! Pssst... #{e.message}"
     attempt_delete(@pid)
@@ -58,6 +62,7 @@ class Ingestor
 
   def error string
     @errors.push string
+    STDERR.puts "Error: #{string}" if DEBUG
   end
 
   def errors?
@@ -66,6 +71,7 @@ class Ingestor
 
   def warning string
     @warnings.push string
+    STDERR.puts "Warning: #{string}" if DEBUG
   end
 
   def warnings?
@@ -116,35 +122,41 @@ class Ingestor
 
   def datastream name
     yield @fedora_object.datastreams[name]
+    @fedora_object.datastreams[name].save
   end
 
-  def ingest
-    @fedora_object.save
-  end
 
   # dealing with collections for this object to be ingested into
 
   def existing_collections
-    query = "select $object $title from <#ri> where ($object <fedora-model:label> $title and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>)"
+    query = "select $object $title from <#ri> " +
+             "where $object <fedora-model:label> $title " +
+               "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
+
     @repository.itql(query).map{ |row| row[0] }
   end
 
   def collection_policy_text label
     str = ''
     @config.content_models.each do |pid, name|
-      str += "         <content_model name=\"#{name}\" dsid=\"ISLANDORACM\" namespace=\"#{@namespace}\" pid=\"#{pid}\"/>\n"
+      str += "          <content_model name=\"#{name}\" dsid=\"ISLANDORACM\" namespace=\"#{@namespace}\" pid=\"#{pid}\"/>\n"
     end
 
-    # TODO: is name supposed to get the collection label - what's the convention here?
+    # TODO: is name supposed to get the collection label? what's the convention here?
 
     return <<-XML.gsub(/^     /, '')
-     <collection_policy xmlns="http://www.islandora.ca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="#{label}" xsi:schemaLocation="http://www.islandora.ca http://syn.lib.umanitoba.ca/collection_policy.xsd">
+     <collection_policy xmlns="http://www.islandora.ca"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        name="#{label}"
+                        xsi:schemaLocation="http://www.islandora.ca http://syn.lib.umanitoba.ca/collection_policy.xsd">
        <content_models>
-         #{str.strip}
+          #{str.strip}
        </content_models>
+       <relationship>
+          isMemberOfCollection
+       </relationship>
        <search_terms/>
        <staging_area/>
-       <relationship>isMemberOfCollection</relationship>
      </collection_policy>
     XML
   end
@@ -154,12 +166,14 @@ class Ingestor
     label = 'digitool collection: ' + pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
     return if existing_collections.include? pid
 
+    warning "Creating new digitool collection #{pid} for object #{@pid}."
+
     collection_object = @repository.create(pid)
 
     collection_object.memberOfCollection << @config.root_collection
     collection_object.models << 'info:fedora/islandora:collectionCModel'
     collection_object.label   = label
-    collection_object.ownerId = @config.owner    # TODO: eventually, we'll want a sanity check here that it exists in drupal. Not necessary for digitool migration
+    collection_object.ownerId = @config.owner  # TODO: eventually, we'll want a sanity check here that it exists in drupal. Not necessary for digitool migration
 
     ds = collection_object.datastreams['TN']
     ds.dsLabel  = "Thumbnail"
@@ -173,6 +187,8 @@ class Ingestor
     ds.controlGroup = 'X'
 
     collection_object.save
+
+    # we'll wait up to 10 seconds for the collection to be created
 
     20.times do
       sleep 0.5
