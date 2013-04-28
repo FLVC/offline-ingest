@@ -14,26 +14,39 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
 
 config = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", 'default')
 
+
+mods = Mods.new(config, ARGV[0])
+
+puts "Valid? #{mods.valid?}"
+
+if mods.errors?
+  puts "Errors: ", mods.errors
+end
+
+if mods.warnings?
+  puts "Warnings: ", mods.warnings
+end
+
+exit unless mods.valid?
+
+text = mods.to_dc
+
+if text.nil?
+  puts "Errors after DC transform: ", mods.errors
+  puts "Warnings after DC transform: ", mods.warnings
+else
+  puts "DC: ", text
+end
+
+
+exit
+
+
+
+
 package_directory = ARGV[0]
-
-
-
-
-
-
+mods = Mods.new(config, File.join(package_directory, "#{File.basename(package_directory)}.xml"))
 manifest = Manifest.new(config, File.join(package_directory, 'manifest.xml'))
 
 puts '', "Manifest Errors",   "---------------",   manifest.errors
 puts '', "Manifest Warnings", "-----------------", manifest.warnings
-
-
-puts '', ''
-
-mods = Mods.new(config, File.join(package_directory, "#{File.basename(package_directory)}.xml"))
-
-puts "mods well-formed?  #{mods.mods_wellformed?}"
-puts "mods document? #{mods.mods_document?}"
-puts "mods validates? #{mods.mods_validates?}"
-
-puts '', "MODS Errors",   "-----------",    mods.errors
-puts '', "MODS Warnings", "-------------",  mods.warnings
