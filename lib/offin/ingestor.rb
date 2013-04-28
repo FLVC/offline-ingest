@@ -81,7 +81,8 @@ class Ingestor
 
   def getpid
     sax_document = SaxDocumentGetNextPID.new
-    Nokogiri::XML::SAX::Parser.new(sax_document).parse(@repository.next_pid(:namespace => @namespace))
+    pid_doc = @repository.next_pid(:namespace => @namespace)
+    Nokogiri::XML::SAX::Parser.new(sax_document).parse(pid_doc)
     return sax_document.pids.shift
   end
 
@@ -187,9 +188,9 @@ class Ingestor
 
     collection_object.save
 
-    # we'll wait up to 10 seconds for the collection to be created
+    # we'll wait up to 15 seconds for the collection to be created
 
-    20.times do
+    30.times do
       sleep 0.5
       return if existing_collections.include? pid
     end
