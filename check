@@ -14,31 +14,39 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
 
 config = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", 'default')
 
+
+mods = Mods.new(config, ARGV[0])
+
+puts "Valid? #{mods.valid?}"
+
+if mods.errors?
+  puts "Errors: ", mods.errors
+end
+
+if mods.warnings?
+  puts "Warnings: ", mods.warnings
+end
+
+exit unless mods.valid?
+
+text = mods.to_dc
+
+if text.nil?
+  puts "Errors after DC transform: ", mods.errors
+  puts "Warnings after DC transform: ", mods.warnings
+else
+  puts "DC: ", text
+end
+
+
+exit
+
+
+
+
 package_directory = ARGV[0]
+mods = Mods.new(config, File.join(package_directory, "#{File.basename(package_directory)}.xml"))
+manifest = Manifest.new(config, File.join(package_directory, 'manifest.xml'))
 
-Utils.ingest_usage if package_directory.nil?
-Utils.ingest_usage unless File.exists? package_directory and File.directory? package_directory
-
-puts '', package_directory, package_directory.gsub(/./, '=');
-
-package_listing = Utils.package_directory_as_expected? package_directory
-
-puts '',  "Package Errors",  "--------------",  package_listing.errors  unless  package_listing.errors.empty?
-
-if package_listing.manifest
-  manifest = Manifest.new(package_listing.manifest)
-
-  puts '', "Manifest Errors",   "---------------",   manifest.errors    unless  manifest.errors.empty?
-  puts '', "Manifest Warnings", "-----------------", manifest.warnings  unless  manifest.warnings.empty?
-else
-  puts '', "Missing Manifest",  "----------------"
-end
-
-if package_listing.mods
-  mods = Mods.new(config, package_listing.mods)
-
-  puts '', "MODS Errors",   "-----------",    mods.errors    unless mods.errors.empty?
-  puts '', "MODS Warnings", "-------------",  mods.warnings  unless mods.warnings.empty?
-else
-  puts '', "Missing MODS",  "------------"
-end
+puts '', "Manifest Errors",   "---------------",   manifest.errors
+puts '', "Manifest Warnings", "-----------------", manifest.warnings

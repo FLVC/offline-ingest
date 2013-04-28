@@ -44,6 +44,7 @@ class Ingestor
 
   rescue => e
     STDERR.puts "Yikes! A #{e.class}! Pssst... #{e.message}"
+    STDERR.puts e.backtrace
     attempt_delete(@pid)
     # figure out whether we should throw a SystemError or PackageError here.... or just load @errors
     raise SystemError, "Ingestor Error: #{e.class} - #{e.message}"
@@ -59,18 +60,18 @@ class Ingestor
     @warnings.push "When handling an error and trying to delete partial object #{pid}, got an additinal error #{e.class}: #{e.message}"
   end
 
-  def error string
-    @errors.push string
-    STDERR.puts "Error: #{string}" if DEBUG
+  def error *strings
+    @errors.push *strings
+    strings.each { |s| STDERR.puts "Error: #{s}" } if DEBUG
   end
 
   def errors?
     not @errors.empty?
   end
 
-  def warning string
-    @warnings.push string
-    STDERR.puts "Warning: #{string}" if DEBUG
+  def warning *strings
+    @warnings.push *strings
+    strings.each { |s| STDERR.puts "Warning: #{s}" } if DEBUG
   end
 
   def warnings?
