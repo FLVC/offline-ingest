@@ -16,29 +16,24 @@ config = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.ym
 
 package_directory = ARGV[0]
 
-Utils.ingest_usage if package_directory.nil?
-Utils.ingest_usage unless File.exists? package_directory and File.directory? package_directory
 
-puts '', package_directory, package_directory.gsub(/./, '=');
 
-package_listing = Utils.package_directory_as_expected? package_directory
 
-puts '',  "Package Errors",  "--------------",  package_listing.errors  unless  package_listing.errors.empty?
 
-if package_listing.manifest
-  manifest = Manifest.new(package_listing.manifest)
 
-  puts '', "Manifest Errors",   "---------------",   manifest.errors    unless  manifest.errors.empty?
-  puts '', "Manifest Warnings", "-----------------", manifest.warnings  unless  manifest.warnings.empty?
-else
-  puts '', "Missing Manifest",  "----------------"
-end
+manifest = Manifest.new(config, File.join(package_directory, 'manifest.xml'))
 
-if package_listing.mods
-  mods = Mods.new(config, package_listing.mods)
+puts '', "Manifest Errors",   "---------------",   manifest.errors
+puts '', "Manifest Warnings", "-----------------", manifest.warnings
 
-  puts '', "MODS Errors",   "-----------",    mods.errors    unless mods.errors.empty?
-  puts '', "MODS Warnings", "-------------",  mods.warnings  unless mods.warnings.empty?
-else
-  puts '', "Missing MODS",  "------------"
-end
+
+puts '', ''
+
+mods = Mods.new(config, File.join(package_directory, "#{File.basename(package_directory)}.xml"))
+
+puts "mods well-formed?  #{mods.mods_wellformed?}"
+puts "mods document? #{mods.mods_document?}"
+puts "mods validates? #{mods.mods_validates?}"
+
+puts '', "MODS Errors",   "-----------",    mods.errors
+puts '', "MODS Warnings", "-------------",  mods.warnings

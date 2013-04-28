@@ -8,9 +8,8 @@ $LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
 
 require 'offin/packages'
 
-# Errno::ECONNREFUSED Connection Refused - processing exception
 
-directory = ARGV[0] || Utils.ingest_usage
+Utils.ingest_usage if ARGV.empty?
 
 config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "i7d")
 
@@ -21,7 +20,23 @@ end
 
 factory = PackageFactory.new(config)
 
-package = factory.new_package(directory)
+$stdout.sync = true
 
-puts package.name
-package.process
+ARGV.each do |directory|
+
+  begin
+    puts File.basename(directory)
+
+    t1 = Time.now
+    package = factory.new_package(directory)
+    package.process
+    t2 = Time.now
+
+    puts sprintf("%5.2f %s::%s in %s", t2 - t1, package.class, package.name, package.collections.join(', '))
+
+  rescue => e
+    puts e
+    puts e.backtrace
+  end
+
+end

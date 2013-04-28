@@ -1,4 +1,5 @@
 require 'open3'
+require 'stringio'
 
 class Utils
 
@@ -19,11 +20,10 @@ class Utils
 
     manifest = Manifest.new(config, manifest_filename)
 
-    # TODO: log
 
-    if manifest.errors?
-      raise PackageError, "Package manifest in #{directory} has errors: " + manifest.errors.join(';   ')
-    end
+    # if manifest.errors?
+    #   raise PackageError, "Package manifest in #{directory} has errors: " + manifest.errors.join(';   ')
+    # end
 
     # TODO: add warnings
 
@@ -44,8 +44,14 @@ class Utils
 
     # TODO: log
 
+    # if mods.errors?
+    #   raise PackageError, "Package MODS file in #{directory} has errors: " + mods.errors.join(';   ')
+    # end
+
+
     if mods.errors?
-      raise PackageError, "Package MODS file in #{directory} has errors: " + mods.errors.join(';   ')
+      STDERR.puts mods.errors
+      exit
     end
 
     return mods
@@ -87,6 +93,16 @@ class Utils
       error = stderr.read
     end
     return image
+  end
+
+  # from molf@http://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby
+
+  def Utils.capture_stderr
+    previous_stderr, $stderr = $stderr, StringIO.new
+    yield
+    $stderr.string
+  ensure
+    $stderr = previous_stderr
   end
 
 

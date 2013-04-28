@@ -13,15 +13,6 @@ BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
 LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
 PDF_CONTENT_MODEL         = "islandora:sp_pdf"
 
-# We need a object-level read for rubydora to use;  TODO: this will be a problem with large data
-
-class Magick::Image
-  def read
-    # STDERR.puts "Reading #{self}"
-    self.to_blob
-  end
-end
-
 # PackageFactory takes a directory path and checks the manifest.xml
 # file within in it.  It determines what content model is being
 # requested, and returns the appropriate type of package.
@@ -62,7 +53,6 @@ class PackageFactory
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
   end
-
 end
 
 
@@ -209,23 +199,25 @@ class BasicImagePackage < Package
 
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @image_filename
-        ds.content  = @image
+        ds.content  = @image.to_blob
         ds.mimeType = @image.mime_type
       end
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"
-        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
 
       ingestor.datastream('MEDIUM_SIZE') do |ds|
         ds.dsLabel  = "Medium Size Image"
-        ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
 
     end
+  ensure
+    @image.destroy! if @image and @image.class == Magick::Image
   end
 end
 
@@ -248,12 +240,15 @@ class LargeImagePackage < Package
       raise PackageError, "The Larg Image package #{@name} contains no data files."
     end
 
+    @image = nil
     @image_filename = @datafiles[0]
     path = File.join(@directory, @image_filename)
     type = Utils.mime_type(path)
 
+
     case type
     when JP2
+
       @image = Magick::Image.read(path).first
 
       # TODO: add basic support for TIFFs (not needed for digitool migration)
@@ -274,7 +269,7 @@ class LargeImagePackage < Package
 
       ingestor.datastream('JP2') do |ds|
         ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
-        ds.content  = @image
+        ds.content  = @image.to_blob
         ds.mimeType = @image.mime_type
       end
 
@@ -283,7 +278,7 @@ class LargeImagePackage < Package
 
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
-        ds.content  = @image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.content  = @image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
 
@@ -291,16 +286,19 @@ class LargeImagePackage < Package
 
       ingestor.datastream('JPG') do |ds|
         ds.dsLabel  = 'Medium sized JPEG'
-        ds.content  = @image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.content  = @image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
-        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }
+        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
     end
+
+  ensure
+    @image.destroy! if @image and @image.class == Magick::Image
   end
 end
 

@@ -6,7 +6,6 @@ class Mods
 
 # TODO: forget about our own caching; use fetch from net, check for squid proxy, yada yada
 
-
 INCLUDE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '../include'))
 
   # This class encapsulates what we at FLVC want to do a MODS
@@ -52,6 +51,7 @@ INCLUDE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '../include'))
 
     warning *@sax_document.errors               # any sax processing errors are mere warnings for us.
     warning *@sax_document.warnings
+
   end
 
   def to_s
@@ -83,6 +83,14 @@ INCLUDE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '../include'))
     error "When examining '#{@filename}' as a MODS document, this exception occurred: '#{e.message}'"
     return false
   end
+
+
+  def mods_wellformed?
+    doc =  Nokogiri::XML(@text)
+    doc.errors.empty?
+  end
+
+
 
   # Validate this MODS document
 
@@ -120,7 +128,6 @@ INCLUDE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '../include'))
     error "When attempting to transform the MODS document '#{@filename}' to DC with stylesheet '#{MODS_TO_DC_XSL}', this exception occurred: '#{e.message}'"
     return nil
   end
-
 
 
   private
