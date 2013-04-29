@@ -1,3 +1,5 @@
+# TODO: make sure PDF text is UTF8 (no illegal control characters)
+
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
@@ -5,9 +7,6 @@ require 'offin/mods'
 require 'offin/ingestor'
 require 'datyl/config'
 require 'RMagick'
-
-
-# TODO: do we need to scope this?
 
 BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
 LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
@@ -24,8 +23,8 @@ class PackageFactory
   def initialize config, *additional_sections
     if config.is_a? Datyl::Config
       @config = config
-    else
-      @config = Datyl::Config.new(config_filename, 'default', *additional_sections)
+    else # a string naming a file:
+      @config = Datyl::Config.new(config, 'default', *additional_sections)
     end
     sanity_check
   rescue => e
@@ -109,9 +108,9 @@ class Package
   def boilerplate ingestor
     ingestor.collections = @collections.map { |pid| pid.downcase }   # Liang doesn't read my specs...
     ingestor.content_model = @content_model
-    ingestor.label = @name   # TODO: get label from complex checks of mods, manifest, etc...
-    ingestor.owner = @config.owner
-    ingestor.dc  = @mods.to_dc.to_s
+    ingestor.label = @name           # TODO: get label from complex checks of mods, manifest, etc...
+    ingestor.owner = @config.owner   # TODO: same with owner
+    ingestor.dc  = @mods.to_dc
     ingestor.mods = @mods.to_s
 
     if @marc
@@ -121,8 +120,6 @@ class Package
         ds.mimeType = 'text/xml'
       end
     end
-
-
   end
 
   # TODO: remove these if really unused

@@ -408,14 +408,27 @@ class ManifestSaxDocument < FedoraSaxDocument
     @@debug = value
   end
 
+  # These need to get set by a configuration file.
 
-  INSTITUTIONS   = [ 'FAMU', 'FAU', 'FIU', 'FIU', 'FLVC', 'FSU', 'NCF', 'UCF', 'UF', 'UNF', 'UWF' ]
-  CONTENT_MODELS = [ 'islandora:sp_basic_image', 'islandora:sp_large_image_cmodel', 'islandora:sp_pdf' ]
+  ### @@institutions = [ 'FAMU', 'FAU', 'FIU', 'FIU', 'FLVC', 'FSU', 'NCF', 'UCF', 'UF', 'UNF', 'UWF' ]
+  ### @@content_models = [ 'islandora:sp_basic_image', 'islandora:sp_large_image_cmodel', 'islandora:sp_pdf' ]
 
   attr_reader :collections, :content_model, :identifiers, :object_history, :other_logos, :label, :content_model,
               :owning_institution, :submitting_institution, :owning_user, :valid
 
+  def self.institutions= value
+    @@institutions = value
+  end
+
+  def self.content_models= value
+    @@content_models = value
+  end
+
   def initialize
+
+    raise "You must set ManifestSaxDocument.institutions to an array of institutional codes before using this class." unless @@institutions
+    raise "You must set ManifestSaxDocument.content_models to an array of islandora content models before using this class." unless @@content_models
+
     @stack  = []     # only used for debugging
     @bogons = {}     # collect unrecognized elements
 
@@ -514,9 +527,7 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   # The following checks are done after the document is completely read.
 
-  # Check that there is at least one collection listed.  Since we're
-  # digging into islandora, we don't want to check if it actually
-  # exists, yet.
+  # Check that there is at least one collection listed.
 
   def collections_ok?
     if @elements['collection'].empty?
@@ -532,19 +543,19 @@ class ManifestSaxDocument < FedoraSaxDocument
   def content_model_ok?
 
     if @elements['contentModel'].empty?
-      @errors.push "The manifest document does not contain a content model. Exactly one of #{CONTENT_MODELS.join(', ')} is required."
+      @errors.push "The manifest document does not contain a content model. Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
     if @elements['contentModel'].length > 1
-      @errors.push "The manifest document contains multiple content models.  Exactly one of #{CONTENT_MODELS.join(', ')} is required."
+      @errors.push "The manifest document contains multiple content models.  Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
     content_model = @elements['contentModel'].shift
 
-    unless CONTENT_MODELS.include? content_model
-      @errors.push "The manifest document contains an unsupported content model, #{content_model}. Exactly one of #{CONTENT_MODELS.join(', ')} is required."
+    unless @@content_models.include? content_model
+      @errors.push "The manifest document contains an unsupported content model, #{content_model}. Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
@@ -589,38 +600,38 @@ class ManifestSaxDocument < FedoraSaxDocument
   def owning_institution_ok?
 
     if @elements['owningInstitution'].empty?
-      @errors.push "The manifest document does not list an owning institution - it must have exacly one of #{INSTITUTIONS.join(', ')}."
+      @errors.push "The manifest document does not list an owning institution - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
     if @elements['owningInstitution'].length > 1
-      @errors.push "The manifest document lists multitple owning institutions - it must have exacly one of #{INSTITUTIONS.join(', ')}."
+      @errors.push "The manifest document lists multitple owning institutions - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
     owning_institution = @elements['owningInstitution'].shift.upcase
 
-    unless INSTITUTIONS.include? owning_institution
-      @errors.push "The manifest document includes an invalid owning institution '#{owning_institution}' - it must have exacly one of #{INSTITUTIONS.join(', ')}."
+    unless @@institutions.include? owning_institution
+      @errors.push "The manifest document includes an invalid owning institution '#{owning_institution}' - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
     @owning_institution = owning_institution
   end
 
-  # Check for an optional submittingInstitution - if present it must be one of the INSTITUTIONS
+  # Check for an optional submittingInstitution - if present it must be one of the @@institutions
 
   def submitting_institution_ok?
     if @elements['submittingInstitution'].length > 1
-      @errors.push "The manifest document lists multitple submitting institutions - it must have at most one of #{INSTITUTIONS.join(', ')}."
+      @errors.push "The manifest document lists multitple submitting institutions - it must have at most one of #{@@institutions.join(', ')}."
       return
     end
 
     if @elements['submittingInstitution'].length == 1
       submitting_institution = @elements['submittingInstitution'].shift.upcase
 
-      unless INSTITUTIONS.include? submitting_institution
-        @errors.push "The manifest document includes an invalid submitting institution '#{submitting_institution}' - if present, it must be one of #{INSTITUTIONS.join(', ')}."
+      unless @@institutions.include? submitting_institution
+        @errors.push "The manifest document includes an invalid submitting institution '#{submitting_institution}' - if present, it must be one of #{@@institutions.join(', ')}."
         return
       end
 
