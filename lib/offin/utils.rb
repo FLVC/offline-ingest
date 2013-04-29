@@ -18,16 +18,7 @@ class Utils
       raise PackageError, "Package directory #{directory} does not contain a manifest file."
     end
 
-    manifest = Manifest.new(config, manifest_filename)
-
-
-    # if manifest.errors?
-    #   raise PackageError, "Package manifest in #{directory} has errors: " + manifest.errors.join(';   ')
-    # end
-
-    # TODO: add warnings
-
-    return manifest
+    return Manifest.new(config, manifest_filename)
   end
 
 
@@ -40,21 +31,7 @@ class Utils
       raise PackageError, "Package directory #{directory} does not contain a MODS file named #{name}.xml."
     end
 
-    mods = Mods.new(config, mods_filename)
-
-    # TODO: log
-
-    # if mods.errors?
-    #   raise PackageError, "Package MODS file in #{directory} has errors: " + mods.errors.join(';   ')
-    # end
-
-
-    if mods.errors?
-      STDERR.puts mods.errors
-      exit
-    end
-
-    return mods
+    return Mods.new(config, mods_filename)
   end
 
 
@@ -70,7 +47,6 @@ class Utils
     end
     return text
   end
-
 
 
   def Utils.pdf_to_thumbnail config, pdf_filepath
@@ -96,6 +72,8 @@ class Utils
   end
 
   # from molf@http://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby
+  # doesn't actually work for my STDERR cases..
+
 
   def Utils.capture_stderr
     previous_stderr, $stderr = $stderr, StringIO.new

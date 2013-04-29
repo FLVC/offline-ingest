@@ -402,16 +402,13 @@ end
 
 class ManifestSaxDocument < FedoraSaxDocument
 
+  @@institutions = nil
+  @@content_models = nil
   @@debug = false
 
   def self.debug= value
     @@debug = value
   end
-
-  # These need to get set by a configuration file.
-
-  ### @@institutions = [ 'FAMU', 'FAU', 'FIU', 'FIU', 'FLVC', 'FSU', 'NCF', 'UCF', 'UF', 'UNF', 'UWF' ]
-  ### @@content_models = [ 'islandora:sp_basic_image', 'islandora:sp_large_image_cmodel', 'islandora:sp_pdf' ]
 
   attr_reader :collections, :content_model, :identifiers, :object_history, :other_logos, :label, :content_model,
               :owning_institution, :submitting_institution, :owning_user, :valid

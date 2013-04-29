@@ -21,7 +21,7 @@ class Mods
   # *) Make sure it's a valid MODS document, first and foremost.
   # *) transform to DC
   # ---- TODO ----
-  # *) get titles
+  # *) get titles (label)
   # *) insert new title
   # *) get extension elements
   # *) insert or update extension elements (see manifest.rb for what could go in there)
@@ -42,7 +42,7 @@ class Mods
     @text = File.read(@filename)
 
     if @text.empty?
-      error "File '#{@filename}' is empty."
+      error "MODS file '#{@filename}' is empty."
       return
     end
 

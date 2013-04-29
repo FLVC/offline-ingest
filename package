@@ -34,6 +34,7 @@ ARGV.each do |directory|
   rescue => e
     STDERR.puts e
     STDERR.puts e.backtrace
+    STDERR.puts package.errors if package
   end
 
 end
