@@ -1,6 +1,18 @@
 require 'nokogiri'
 require 'offin/document-parsers'
 
+# If @config is reasonable and the server properly provisioned
+# (e.g. enough disk space) no error will be raised by this class;
+# check Mods#valid? or Mods#error? (and see Mods#errors) to determine
+# if there are failures.
+
+
+# TODO: do a sanity check on @config. Failure should throw an error that will stop all processing at the top level:
+#
+#    @config.mods_to_dc_transform_filename must exist and be readable
+#    @mods_schema_directory must exist and have the expected complement of schema versions
+
+
 class Mods
 
   # This class encapsulates what we at FLVC want to do a MODS
@@ -12,21 +24,20 @@ class Mods
   # *) get titles
   # *) insert new title
   # *) get extension elements
-  # *) insert or update extension elements (see manifest.rb for what goes in there)
+  # *) insert or update extension elements (see manifest.rb for what could go in there)
 
-  attr_reader :warnings, :errors
+  attr_reader :warnings, :errors, :xml_document
 
-  # TODO:
 
   def initialize config, path
 
     @warnings  = []
-    @errors    = []       # errors imply that this document is unusable for all practical purposes.
+    @errors    = []       # errors mean that this document is unusable for all practical purposes.
     @filename  = path
     @config    = config
     @valid     = false
 
-    # TODO: check config file for http_proxy, have nokogiri use it;  e.g.  ENV['http_proxy'] = 'http://localhost:3128/'
+    # TODO: check config file for http_proxy, have nokogiri use it;  e.g.  ENV['http_proxy'] = 'http://localhost:3128/' ??
 
     @text = File.read(@filename)
 
@@ -49,7 +60,7 @@ class Mods
   end
 
 
-  # Return DC derivation for this document as text
+  # Return DC derivation for this document as text (or, if errors, nil)
 
   def to_dc
     x = to_dc_xml
@@ -57,7 +68,7 @@ class Mods
     return
   end
 
-  # Return DC derivation for this document as an XML document
+  # Return DC derivation for this document as an XML document (or, if errors, nil)
 
   def to_dc_xml
 
@@ -84,6 +95,8 @@ class Mods
   def to_s
     @text
   end
+
+  # TODO: make all this error handling boilerplate a mixin.
 
   def warning *stuff
     @warnings.push *stuff
@@ -142,11 +155,13 @@ class Mods
     return false
   end
 
-  # We've got some MODS schemas which we identify by location; we keep 'em handy
+  # We've got some MODS schemas which we identify by location; we keep 'em handy..
 
   def get_schema location
 
-    case location
+    # we'll have to add new versions here every now and then...
+
+    case location.downcase
 
     when 'http://www.loc.gov/standards/mods/v3/mods-3-0.xsd',
          'http://www.loc.gov/standards/mods/v3/mods-3-1.xsd',
@@ -159,7 +174,7 @@ class Mods
     if location.nil?
       raise "No schema location could be determined for the MODS file '#{@filename}'"
     else
-      raise "There was an unexpected schema location '#{location}' declared in the MODS file '#{@filename}'"
+      raise "There was an unexpected/unsupported schema location '#{location}' declared in the MODS file '#{@filename}'"
     end
   end
 

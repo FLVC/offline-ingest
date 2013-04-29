@@ -8,15 +8,14 @@ $LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
 
 require 'offin/packages'
 
-
 Utils.ingest_usage if ARGV.empty?
 
 config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "i7d")
 
-if config.http_proxy
-  ENV['HTTP_PROXY'] = config.http_proxy
-  ENV['http_proxy'] = config.http_proxy
-end
+# if config.http_proxy
+#   ENV['HTTP_PROXY'] = config.http_proxy
+#   ENV['http_proxy'] = config.http_proxy
+# end
 
 factory = PackageFactory.new(config)
 
@@ -25,18 +24,16 @@ $stdout.sync = true
 ARGV.each do |directory|
 
   begin
-    puts File.basename(directory)
+    print File.basename(directory) + '.. '
 
-    t1 = Time.now
+    started = Time.now
     package = factory.new_package(directory)
     package.process
-    t2 = Time.now
 
-    puts sprintf("%5.2f %s::%s in %s", t2 - t1, package.class, package.name, package.collections.join(', '))
-
+    puts sprintf("%5.2f %s::%s in %s", Time.now - started, package.class, package.name, package.collections.join(', '))
   rescue => e
-    puts e
-    puts e.backtrace
+    STDERR.puts e
+    STDERR.puts e.backtrace
   end
 
 end
