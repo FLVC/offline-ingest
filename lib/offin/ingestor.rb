@@ -43,10 +43,7 @@ class Ingestor
     @fedora_object.save
 
   rescue => e
-    STDERR.puts "Yikes! A #{e.class}! Pssst... #{e.message}"
-    STDERR.puts e.backtrace
     attempt_delete(@pid)
-    # figure out whether we should throw a SystemError or PackageError here.... or just load @errors
     raise SystemError, "Ingestor Error: #{e.class} - #{e.message}"
   end
 

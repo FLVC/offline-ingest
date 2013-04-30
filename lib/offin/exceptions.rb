@@ -1,14 +1,9 @@
-
 # Package errors will abort processing a particular package; in
-# general, they are meant for the end user.
+# general, they are meant for the end user, and won't require a traceback.
 #
-# System errors will abort all activity entirely, (e.g., missing
+# System errors should abort all activity entirely, (e.g., missing
 # config file, can't connect to an essential service).  They are
-# meant to be kept to operations.
+# meant to be kept for internal operations.
 
 class PackageError < StandardError; end
-class CollectionError < PackageError; end
-
-
-
 class SystemError  < StandardError; end
