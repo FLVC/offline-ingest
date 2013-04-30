@@ -1,5 +1,3 @@
-# TODO: make sure PDF text is UTF8 (no illegal control characters)
-
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
@@ -31,7 +29,7 @@ class PackageFactory
     raise SystemError, "#{e.class}: #{e.message}"
   end
 
-  # TODO: sanity check config, that it has what we think we need...
+  # TODO: sanity check config, that it has what we think we need here.
 
   def sanity_check
     raise "" if false
@@ -73,7 +71,7 @@ class Package
   attr_reader :errors, :warnings, :manifest, :mods, :name, :marc, :config, :content_model, :namespace, :collections
 
   def initialize config, directory, manifest = nil
-
+    @valid = true
     @content_model = nil
     @errors = []
     @warnings = []
@@ -81,7 +79,6 @@ class Package
     @directory = directory
     @config = config
     @datafiles = list_other_files()
-    @valid = true
 
     marc_file = File.join(@directory, 'marc.xml')
 
@@ -90,8 +87,6 @@ class Package
     else
       @marc = nil
     end
-
-    # TODO: utils raised error if files don't exist.  Don't want that, but don't we check for that somewhere else?
 
     if manifest.is_a? Manifest
       @manifest = manifest
@@ -106,7 +101,6 @@ class Package
 
     @valid &&= @manifest.valid?
 
-
     @mods = Utils.get_mods @config, directory
 
     if @mods.errors?
@@ -120,13 +114,21 @@ class Package
 
     @namespace = @manifest.owning_institution.downcase
     @collections = @manifest.collections
+
+
+  rescue PackageError => e
+    error "Exception for package #{@name}: #{e.message}"
+    @valid = false
+  rescue => e
+    error "Exception for package #{@name}: #{e.class} - #{e.message}, backtrace follows:"
+    error e.backtrace
+    @valid = false
   end
 
 
   def valid?
     @valid
   end
-
 
   # Used by subclassess:
 
@@ -146,8 +148,6 @@ class Package
       end
     end
   end
-
-  # TODO: remove these if really unused
 
   def errors?
     not @errors.empty?
@@ -170,10 +170,13 @@ class Package
 
   def list_other_files
 
-    # TODO: throw PackageError if a directory is found.
-
     list = []
+
     Dir["#{@directory}/*"].each do |entry|
+
+      raise PackageError, "Found subdirectory '#{entry}' in package" if File.directory?(entry)
+      raise PackageError, "Found unreadable file '#{entry}' in package" unless File.readable?(entry)
+
       filename = File.basename entry
       next if [ '.', '..', 'manifest.xml', 'marc.xml', "#{name}.xml" ].include? filename
       list.push filename
@@ -182,7 +185,6 @@ class Package
     return list
   end
 end # of Package base class
-
 
 
 
@@ -195,16 +197,17 @@ class BasicImagePackage < Package
 
     @content_model = BASIC_IMAGE_CONTENT_MODEL
 
-    raise PackageError, 'foo'
-
-
     if @datafiles.length > 1
-      raise PackageError, "The Basic Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      error "The Basic Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      @valid = false
     end
 
     if @datafiles.length == 0
-      raise PackageError, "The Basic Image package #{@name} contains no data files."
+      error "The Basic Image package #{@name} contains no data files."
+      @valid = false
     end
+
+    return unless @valid
 
     @image_filename = @datafiles[0]
     path = File.join(@directory, @image_filename)
@@ -222,10 +225,19 @@ class BasicImagePackage < Package
       raise PackageError, "The Basic Image package #{@name} contains an unexpected file #{@datafiles[0]} with mime type #{type}."
     end
 
+  rescue PackageError => e
+    error "Exception for package #{@name}: #{e.message}"
+    @valid = false
+  rescue => e
+    error "Exception #{e.class} - #{e.message}, backtrace follows:"
+    error e.backtrace
+    @valid = false
   end
 
 
   def process
+    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+
     Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
@@ -247,10 +259,9 @@ class BasicImagePackage < Package
         ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
-
     end
   ensure
-    @image.destroy! if @image and @image.class == Magick::Image
+    @image.destroy! if @image.class == Magick::Image
   end
 end
 
@@ -263,39 +274,50 @@ class LargeImagePackage < Package
 
   def initialize config, directory, manifest
     super(config, directory, manifest)
+
     @content_model = LARGE_IMAGE_CONTENT_MODEL
 
     if @datafiles.length > 1
-      raise PackageError, "The Large Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      error "The Large Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      @valid = false
     end
 
     if @datafiles.length == 0
-      raise PackageError, "The Larg Image package #{@name} contains no data files."
+      raise PackageError, "The Large Image package #{@name} contains no data files."
+      @valid = false
     end
+
+    return unless @valid
 
     @image = nil
     @image_filename = @datafiles[0]
     path = File.join(@directory, @image_filename)
     type = Utils.mime_type(path)
 
+    # TODO: add basic support for TIFFs (not needed for digitool migration)
 
     case type
     when JP2
-
       @image = Magick::Image.read(path).first
-
-      # TODO: add basic support for TIFFs (not needed for digitool migration)
-
     when TIFF
       raise PackageError, "The Large Image package #{@name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
     else
       raise PackageError, "The Large Image package #{@name} contains an unexpected or unsupported file #{@datafiles[0]} with mime type #{type}."
     end
 
+  rescue PackageError => e
+    error "Exception for package #{@name}: #{e.message}"
+    @valid = false
+  rescue => e
+    error "Exception #{e.class} - #{e.message}, backtrace follows:"
+    error e.backtrace
+    @valid = false
   end
 
 
   def process
+    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+
     Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
@@ -329,12 +351,10 @@ class LargeImagePackage < Package
         ds.mimeType = @image.mime_type
       end
     end
-
   ensure
-    @image.destroy! if @image and @image.class == Magick::Image
+    @image.destroy! if @image.class == Magick::Image
   end
 end
-
 
 class PdfPackage < Package
 
@@ -353,11 +373,11 @@ class PdfPackage < Package
       raise PackageError, "The PDF package #{@name} contains no data files."
     end
 
-    @pdf_filename = nil
-    @ocr_filename = nil
     @pdf = nil
-    @ocr = nil
+    @pdf_filename = nil
 
+    @full_text = nil
+    @full_text_filename = nil
 
     @datafiles.each do |filename|
       path = File.join(@directory, filename)
@@ -367,36 +387,50 @@ class PdfPackage < Package
         @pdf_filename = filename
         @pdf = File.read(path)
       when TEXT
-        @ocr_filename = filename
-        @ocr = File.read(path)
+        @full_text_filename = filename
+        @full_text = File.read(path)
       else
         raise PackageError, "The PDF package #{@name} contains an unexpected file #{filename} of type #{type}."
       end
     end
 
-    if @pdf.nil?
-      raise PackageError, "The PDF package #{@name} doesn't contain a PDF file."
-    end
+    raise PackageError, "The PDF package #{@name} doesn't contain a PDF file."  if @pdf.nil?
 
-    if @ocr.nil?
-      @ocr = Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename))
-    end
+    case
+    # A full text index file was submitted, which we don't trust much:
+    when @full_text
+      @full_text = Utils.cleanup_text(Utils.re_encode_maybe(@full_text))
+      if @full_text.empty?
+        warning "The full text file #{@full_text_filename} supplied in package #{@name} was empty; using a single space to preserve the FULL_TEXT datastream."
+        @full_text = ' '
+      end
 
-    ##### TODO: need top cleanup OCR data here!  Remove control characters, etc.
-
-    if @ocr.empty?
-      @ocr = ' '
-      if @ocr_filename
-        warning "OCR full text file #{@ocr_filename} in package #{@name} was empty; adding a space to preserve the FULL_TEXT datastream."
-      else
-        warning "Generated OCR full text from #{@pdf_filename} in package #{@name} was empty; adding a space to preserve the FULL_TEXT datastream."
+    # No full text, so we generate UTF-8 using a unix utility, which we don't trust much either:
+    else
+      @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename)))
+      if @full_text.empty?
+        warning "The generated full text from #{@pdf_filename} in package #{@name} was empty; using a single space to preserve the FULL_TEXT datastream."
+        @full_text = ' '
       end
     end
 
-
+  rescue PackageError => e
+    error "Exception for package #{@name}: #{e.message}"
+    @valid = false
+  rescue => e
+    error "Exception #{e.class} - #{e.message}, backtrace follows:"
+    error e.backtrace
+    @valid = false
   end
 
+
+
   def process
+    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+
+    thumb   = Utils.pdf_to_thumbnail @config, File.join(@directory, @pdf_filename)
+    preview = Utils.pdf_to_preview @config, File.join(@directory, @pdf_filename)
+
     Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
@@ -409,27 +443,19 @@ class PdfPackage < Package
 
       ingestor.datastream('FULL_TEXT') do |ds|
         ds.dsLabel  = 'Full Text'
-        ds.content  = @ocr
+        ds.content  = @full_text
         ds.mimeType = TEXT
       end
 
-      img = Utils.pdf_to_preview @config, File.join(@directory, @pdf_filename)
-
-      # TODO: check to make sure img isn't empty
-
       ingestor.datastream('PREVIEW') do |ds|
         ds.dsLabel  = 'Preview'
-        ds.content  = img
+        ds.content  = preview
         ds.mimeType = JPEG
       end
 
-      img = Utils.pdf_to_thumbnail @config, File.join(@directory, @pdf_filename)
-
-      # TODO: check to make sure img isn't empty
-
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
-        ds.content  = img
+        ds.content  = thumb
         ds.mimeType = JPEG
       end
     end
