@@ -31,6 +31,8 @@ ARGV.each do |directory|
 
     raise "Invalid package in #{directory}." unless package.valid?
 
+    package.updater = DigitoolMetadataUpdater
+
     package.process
 
     puts sprintf("%5.2f %s::%s in %s", Time.now - started, package.class, package.name, package.collections.join(', '))
