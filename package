@@ -24,17 +24,24 @@ $stdout.sync = true
 ARGV.each do |directory|
 
   begin
-    print File.basename(directory) + '.. '
+    # print File.basename(directory) + '.. '
 
     started = Time.now
     package = factory.new_package(directory)
+
+    raise "Invalid package in #{directory}." unless package.valid?
+
     package.process
 
     puts sprintf("%5.2f %s::%s in %s", Time.now - started, package.class, package.name, package.collections.join(', '))
+
+    STDERR.puts 'Errors:', package.errors, '' if package.errors?
+    STDERR.puts 'Warnings:', package.warnings, '' if package.warnings?
+
   rescue => e
-    STDERR.puts e
-    STDERR.puts e.backtrace
-    STDERR.puts package.errors if package
+    STDERR.puts "Caught #{e.class} - #{e.message}"
+    # STDERR.puts e.backtrace
+
   end
 
 end

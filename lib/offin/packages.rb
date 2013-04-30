@@ -81,17 +81,7 @@ class Package
     @directory = directory
     @config = config
     @datafiles = list_other_files()
-
-    if manifest.is_a? Manifest
-      @manifest = manifest
-    else
-      @manifest = Utils.get_manifest @config, directory    # will raise PackageError on any issues - TODO: change this, check @manifest.errors, copy to our @errors and exit
-    end
-
-    @mods = Utils.get_mods @config, directory              # will raise PackageError on any issues - TODO: change this and check @mods.errors, copy to our @errors and exit
-
-    @namespace = @manifest.owning_institution.downcase
-    @collections = @manifest.collections
+    @valid = true
 
     marc_file = File.join(@directory, 'marc.xml')
 
@@ -101,7 +91,42 @@ class Package
       @marc = nil
     end
 
+    # TODO: utils raised error if files don't exist.  Don't want that, but don't we check for that somewhere else?
+
+    if manifest.is_a? Manifest
+      @manifest = manifest
+    else
+      @manifest = Utils.get_manifest @config, directory
+    end
+
+    if @manifest.errors?
+      error "The package #{@name} doesn't have a valid manifest file."
+      error @manifest.errors
+    end
+
+    @valid &&= @manifest.valid?
+
+
+    @mods = Utils.get_mods @config, directory
+
+    if @mods.errors?
+      error "The package #{@name} doesn't have a valid MODS file."
+      error @mods.errors
+    end
+
+    @valid &&= @mods.valid?
+
+    return unless @valid
+
+    @namespace = @manifest.owning_institution.downcase
+    @collections = @manifest.collections
   end
+
+
+  def valid?
+    @valid
+  end
+
 
   # Used by subclassess:
 
@@ -125,11 +150,19 @@ class Package
   # TODO: remove these if really unused
 
   def errors?
-    @errors.empty?
+    not @errors.empty?
   end
 
   def warnings?
-    @warnings.empty?
+    not @warnings.empty?
+  end
+
+  def error *strings
+    @errors.push *strings
+  end
+
+  def warning *strings
+    @warnings.push *strings
   end
 
   # List all the files in the directory we haven't already accounted for. Subclasses will need to work through these.
@@ -161,6 +194,9 @@ class BasicImagePackage < Package
     super(config, directory, manifest)
 
     @content_model = BASIC_IMAGE_CONTENT_MODEL
+
+    raise PackageError, 'foo'
+
 
     if @datafiles.length > 1
       raise PackageError, "The Basic Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
@@ -342,13 +378,21 @@ class PdfPackage < Package
       raise PackageError, "The PDF package #{@name} doesn't contain a PDF file."
     end
 
-    text = Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename))
-
-    # TODO: check to make sure text isn't empty
-
     if @ocr.nil?
-      @ocr = text
+      @ocr = Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename))
     end
+
+    ##### TODO: need top cleanup OCR data here!  Remove control characters, etc.
+
+    if @ocr.empty?
+      @ocr = ' '
+      if @ocr_filename
+        warning "OCR full text file #{@ocr_filename} in package #{@name} was empty; adding a space to preserve the FULL_TEXT datastream."
+      else
+        warning "Generated OCR full text from #{@pdf_filename} in package #{@name} was empty; adding a space to preserve the FULL_TEXT datastream."
+      end
+    end
+
 
   end
 
