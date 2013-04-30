@@ -1,5 +1,8 @@
 require 'open3'
 require 'stringio'
+require 'iconv'
+require 'rchardet'
+
 
 class Utils
 
@@ -47,6 +50,30 @@ class Utils
     end
     return text
   end
+
+
+  def Utils.cleanup_text text
+    re = /[\x00-\x08 \x0B \x0C \x0E-\x1F \x7F \xEF \xFF]/xm    # disallowed control characters and embedded deletes.
+    return text.gsub(re, ' ').strip
+  end
+
+
+  def Utils.re_encode_maybe text
+    detector = CharDet.detect(text)
+
+    return text if ['utf-8', 'ascii'].include? detector['encoding'].downcase
+
+    if detector['confidence'] > 0.66
+      STDERR.puts "Attempting to convert from #{detector['encoding']} (confidence #{detector['confidence']})."
+      converter = Iconv.new('UTF-8', detector['encoding'])
+      return converter.iconv(text)
+    end
+
+  rescue => e
+    STDERR.puts "Error converting with #{detector.inspect}}, returning original text"
+    return text
+  end
+
 
 
   def Utils.pdf_to_thumbnail config, pdf_filepath
