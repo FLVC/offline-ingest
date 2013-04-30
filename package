@@ -24,19 +24,14 @@ $stdout.sync = true
 ARGV.each do |directory|
 
   begin
-    print File.basename(directory) + '.. '
-
     started = Time.now
     package = factory.new_package(directory)
 
     raise "Invalid package in #{directory}." unless package.valid?
 
     package.updater = DigitoolMetadataUpdater
-
     package.process
-
-    puts sprintf("%5.2f %s::%s in %s", Time.now - started, package.class, package.name, package.collections.join(', '))
-
+    puts sprintf("%5.2f %s::%s => %s (%s)", Time.now - started, package.class, package.name, package.collections.join(', '), package.label)
   rescue => e
     STDERR.puts "Caught #{e.class} - #{e.message}"
   ensure

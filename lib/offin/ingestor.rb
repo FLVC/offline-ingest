@@ -2,7 +2,11 @@ require 'rubydora'
 require 'offin/document-parsers'
 require 'offin/mods'
 
-# Extend RI mixins to include itql queries
+
+# TODO:  have to yank ingestor warnings and errors into Package object,
+
+
+# Extend RI mixins to include itql queries:
 
 module Rubydora
   module ResourceIndex
@@ -42,9 +46,9 @@ class Ingestor
 
     @fedora_object.save
 
-  rescue => e
-    attempt_delete(@pid)
-    raise SystemError, "Ingestor Error: #{e.class} - #{e.message}"
+  # rescue => e
+    # attempt_delete(@pid)
+    # raise SystemError, "Ingestor Error: #{e.class} - #{e.message}"
   end
 
   # TODO: run down if possible
@@ -109,6 +113,8 @@ class Ingestor
   def content_model= value
     @fedora_object.models << ( value =~ /^info:fedora/ ?  value : "info:fedora/#{value}" )
   end
+
+  # TODO: XMLescape values here for next two
 
   def label= value
     @fedora_object.label = value
@@ -193,7 +199,7 @@ class Ingestor
       return if existing_collections.include? pid
     end
 
-    raise "collection #{pid} could not be created."
+    raise "collection #{pid} could not be created."   # Get into errors
   end
 
 

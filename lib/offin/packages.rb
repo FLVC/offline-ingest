@@ -1,8 +1,11 @@
+# TODO: pull in ingestor warnings and errors; set validity flag if errors
+
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
 require 'offin/mods'
 require 'offin/ingestor'
+require 'offin/metadata-updater'
 require 'datyl/config'
 require 'RMagick'
 
@@ -24,15 +27,8 @@ class PackageFactory
     else # a string naming a file:
       @config = Datyl::Config.new(config, 'default', *additional_sections)
     end
-    sanity_check
   rescue => e
     raise SystemError, "#{e.class}: #{e.message}"
-  end
-
-  # TODO: sanity check config, that it has what we think we need here.
-
-  def sanity_check
-    raise "" if false
   end
 
   def new_package directory
@@ -68,25 +64,19 @@ class Package
   PDF  = 'application/pdf'
   TEXT = 'text/plain'
 
-  attr_reader :errors, :warnings, :manifest, :mods, :name, :marc, :config, :content_model, :namespace, :collections
+  attr_reader :errors, :warnings, :manifest, :mods, :name, :marc, :config, :content_model, :namespace, :collections, :label
 
   def initialize config, directory, manifest = nil
-    @valid = true
     @content_model = nil
-    @errors = []
-    @warnings = []
-    @name = File.basename directory
-    @directory = directory
-    @config = config
-    @datafiles = list_other_files()
-
-    marc_file = File.join(@directory, 'marc.xml')
-
-    if File.exists?(marc_file)
-      @marc = File.read(marc_file)
-    else
-      @marc = nil
-    end
+    @label         = nil
+    @owner         = nil
+    @errors        = []
+    @warnings      = []
+    @valid         = true
+    @config        = config
+    @name          = File.basename directory    # change to dirname
+    @directory     = directory
+    @datafiles     = list_other_files()
 
     if manifest.is_a? Manifest
       @manifest = manifest
@@ -112,9 +102,16 @@ class Package
 
     return unless @valid
 
-    @namespace = @manifest.owning_institution.downcase
-    @collections = @manifest.collections
+    marc_file = File.join(@directory, 'marc.xml')
 
+    if File.exists?(marc_file)
+      @marc = File.read(marc_file)
+    else
+      @marc = nil
+    end
+
+    @namespace   = @manifest.owning_institution.downcase
+    @collections = @manifest.collections
 
   rescue PackageError => e
     error "Exception for package #{@name}: #{e.message}"
@@ -130,13 +127,25 @@ class Package
     @valid
   end
 
+
+  # A MetdataUpdater will fixup metadata according to rules you're
+  # better off not knowing, and various wildly by system.
+
+  def updater= value
+    metadata_updater = value.send :new, @manifest, @mods
+    @label = metadata_updater.get_label @name
+    @owner = metadata_updater.get_owner
+  end
+
+
   # Used by subclassess:
 
   def boilerplate ingestor
+
     ingestor.collections = @collections.map { |pid| pid.downcase }   # Liang doesn't read my specs...
     ingestor.content_model = @content_model
-    ingestor.label = @name           # TODO: get label from complex checks of mods, manifest, etc...
-    ingestor.owner = @config.owner   # TODO: same with owner
+    ingestor.label = @label
+    ingestor.owner = @owner
     ingestor.dc  = @mods.to_dc
     ingestor.mods = @mods.to_s
 
@@ -260,6 +269,7 @@ class BasicImagePackage < Package
         ds.mimeType = @image.mime_type
       end
     end
+
   ensure
     @image.destroy! if @image.class == Magick::Image
   end

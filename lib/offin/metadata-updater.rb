@@ -21,17 +21,17 @@ class MetadataUpdater
   # digitool always has Title?
 
   def get_label fallback
-    manifest.label || mods.title || fallback
+    @manifest.label || @mods.title || fallback
   end
 
   def set_label label
     raise PackageError, "Updating MODS <titleinfo> not yet implemented."
-    mods.title = label
+    @mods.title = label
   end
 
   def set_identifiers *identifiers
     raise PackageError, "Updating MODS/DC identifiers not yet implemented."
-    mods.identifiers << identifiers
+    @mods.identifiers << identifiers
   end
 
 
@@ -54,6 +54,10 @@ class DigitoolMetadataUpdater < MetadataUpdater
 
   def initialize manifest, mods
     super(manifest, mods)
+  end
+
+  def get_owner
+    'Digitool Migration Assistant'
   end
 
 end
