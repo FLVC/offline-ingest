@@ -29,14 +29,16 @@ end
 
 exit unless mods.valid?
 
-text = mods.to_dc
+puts "----#{mods.title}----"
 
-if text.nil?
-  puts "Errors after DC transform: ", mods.errors
-  puts "Warnings after DC transform: ", mods.warnings
-else
-  puts "DC: ", text
-end
+# text = mods.to_dc
+#
+# if text.nil?
+#   puts "Errors after DC transform: ", mods.errors
+#   puts "Warnings after DC transform: ", mods.warnings
+# else
+#   puts "DC: ", text
+# end
 
 
 exit

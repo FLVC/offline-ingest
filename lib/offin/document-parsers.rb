@@ -639,7 +639,7 @@ class ManifestSaxDocument < FedoraSaxDocument
   end
 
 
-  # optional, otherwise a list of hashes wchih must have 'source' and 'data', both non-empty strings
+  # optional, otherwise a list of hashes which must have 'source' and 'data', both non-empty strings
 
   def object_history_ok?
     return true if @elements['objectHistory'].empty?

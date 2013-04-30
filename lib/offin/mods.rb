@@ -20,11 +20,13 @@ class Mods
   #
   # *) Make sure it's a valid MODS document, first and foremost.
   # *) transform to DC
-  # ---- TODO ----
-  # *) get titles (label)
+  # *) get title (label)
+  # ---- NEEDS ----
+  # *) insert extension elements (see manifest.rb for what could go in there)
+  # ---- TODO for non-digitool ----
   # *) insert new title
+  # *) update extension elements
   # *) get extension elements
-  # *) insert or update extension elements (see manifest.rb for what could go in there)
 
   attr_reader :warnings, :errors, :xml_document
 
@@ -59,6 +61,13 @@ class Mods
     @valid = true
   end
 
+  def title
+    xslt = Nokogiri::XSLT(File.read(@config.mods_to_title_transform_filename))
+    str  = xslt.transform(@xml_document).to_s.gsub(/<[^>]*>/, '').strip.gsub(/\s\s+/, ' ')
+
+    return nil if str.empty?
+    return str
+  end
 
   # Return DC derivation for this document as text (or, if errors, nil)
 
