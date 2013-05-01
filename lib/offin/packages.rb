@@ -14,7 +14,7 @@ LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
 PDF_CONTENT_MODEL         = "islandora:sp_pdf"
 
 # PackageFactory takes a directory path and checks the manifest.xml
-# file within in it.  It determines what content model is being
+# file within it.  It determines what content model is being
 # requested, and returns the appropriate type of package.
 
 class PackageFactory
@@ -122,23 +122,29 @@ class Package
     @valid = false
   end
 
+  # super'd
+
+  def process
+    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+  end
 
   def valid?
     @valid
   end
-
 
   # A MetdataUpdater will fixup metadata according to rules you're
   # better off not knowing, and various wildly by system.
 
   def updater= value
     metadata_updater = value.send :new, @manifest, @mods
-    @label = metadata_updater.get_label @name
+    @label = metadata_updater.get_label @name                # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
     @owner = metadata_updater.get_owner
+    # metadata_updater.identifiers
   end
 
-
-  # Used by subclassess:
+  # Used by all subclassess.  Note that a MetadataUpdater call will
+  # have to have first been made to properly set up some of these
+  # (label, owner).
 
   def boilerplate ingestor
 
@@ -148,6 +154,10 @@ class Package
     ingestor.owner = @owner
     ingestor.dc  = @mods.to_dc
     ingestor.mods = @mods.to_s
+
+
+    ingestor.pid
+
 
     if @marc
       ingestor.datastream('MARCXML') do |ds|
@@ -245,7 +255,7 @@ class BasicImagePackage < Package
 
 
   def process
-    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+    super
 
     Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -257,17 +267,18 @@ class BasicImagePackage < Package
         ds.mimeType = @image.mime_type
       end
 
+      ingestor.datastream('MEDIUM_SIZE') do |ds|
+        ds.dsLabel  = "Medium Size Image"
+        ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+        ds.mimeType = @image.mime_type
+      end
+
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"
         ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
 
-      ingestor.datastream('MEDIUM_SIZE') do |ds|
-        ds.dsLabel  = "Medium Size Image"
-        ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = @image.mime_type
-      end
     end
 
   ensure
@@ -326,7 +337,7 @@ class LargeImagePackage < Package
 
 
   def process
-    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+    super
 
     Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -434,9 +445,10 @@ class PdfPackage < Package
   end
 
 
-
   def process
-    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+    super
+
+    # Do image processing now to fail faster, if fail we must, before ingest is started.
 
     thumb   = Utils.pdf_to_thumbnail @config, File.join(@directory, @pdf_filename)
     preview = Utils.pdf_to_preview @config, File.join(@directory, @pdf_filename)
