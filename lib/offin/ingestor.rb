@@ -118,8 +118,6 @@ class Ingestor
       str += "          <content_model name=\"#{name}\" dsid=\"ISLANDORACM\" namespace=\"#{@namespace}\" pid=\"#{pid}\"/>\n"
     end
 
-    # TODO: is name supposed to get the collection label? what's the convention here?
-
     return <<-XML.gsub(/^     /, '')
      <collection_policy xmlns="http://www.islandora.ca"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
