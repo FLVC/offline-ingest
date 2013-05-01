@@ -1,35 +1,18 @@
 require 'nokogiri'
 require 'ostruct'
+require 'offin/errors'
 
 # Boiler plate for the way I parse SAX documents:
 
 class FedoraSaxDocument < Nokogiri::XML::SAX::Document
 
-  attr_reader :warnings, :errors
+  include Errors
 
   def initialize
-    @errors   = []            # array of strings of errors encountered during processing
-    @warnings = []            # ditto, for warnings
     @current_string = ''      # the actual character data content between parsed elements; subclasses will play with this (usually resetting it at the 'end_element' event)
-
     super()
   end
 
-  def error string
-    @errors.push string
-  end
-
-  def errors?
-    not @errors.empty?
-  end
-
-  def warning string
-    @warnings.push string
-  end
-
-  def warnings?
-    not @warnings.empty?
-  end
 
   def characters string
     @current_string += string.strip

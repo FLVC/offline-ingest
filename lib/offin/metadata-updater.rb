@@ -1,4 +1,5 @@
 require 'offin/exceptions'
+require 'offin/errors'
 require 'offin/manifest'
 require 'offin/mods'
 
@@ -12,6 +13,8 @@ require 'offin/mods'
 
 
 class MetadataUpdater
+
+  include Errors
 
   def initialize manifest, mods
 

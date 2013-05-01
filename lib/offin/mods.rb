@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'offin/document-parsers'
+require 'offin/errors'
 
 # If @config is reasonable and the server properly provisioned
 # (e.g. enough disk space) no error will be raised by this class;
@@ -28,13 +29,14 @@ class Mods
   # *) update extension elements
   # *) get extension elements
 
-  attr_reader :warnings, :errors, :xml_document
+
+  include Errors
+
+  attr_reader :xml_document
 
 
   def initialize config, path
 
-    @warnings  = []
-    @errors    = []       # errors mean that this document is unusable for all practical purposes.
     @filename  = path
     @config    = config
     @valid     = false
@@ -63,10 +65,11 @@ class Mods
 
   def title
     xslt = Nokogiri::XSLT(File.read(@config.mods_to_title_transform_filename))
-    str  = xslt.transform(@xml_document).to_s.gsub(/<[^>]*>/, '').strip.gsub(/\s\s+/, ' ')
-
-    return nil if str.empty?
-    return str
+    text = xslt.transform(@xml_document).to_s
+    titles = text.split(/\n/).select { |t| not t =~ /<?xml/ }
+    str = titles[0]
+    return nil if str.nil? or str.empty?
+    return str.strip.gsub(/\s\s+/, ' ')
   end
 
   # Return DC derivation for this document as text (or, if errors, nil)
@@ -103,24 +106,6 @@ class Mods
 
   def to_s
     @text
-  end
-
-  # TODO: make all this error handling boilerplate a mixin.
-
-  def warning *stuff
-    @warnings.push *stuff
-  end
-
-  def error *stuff
-    @errors.push *stuff
-  end
-
-  def errors?
-    not @errors.empty?
-  end
-
-  def warnings?
-    not @warnings.empty?
   end
 
   def valid?   # we'll have warnings and errors if not

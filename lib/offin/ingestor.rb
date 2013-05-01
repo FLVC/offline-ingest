@@ -1,6 +1,7 @@
 require 'rubydora'
 require 'offin/document-parsers'
 require 'offin/mods'
+require 'offin/errors'
 
 
 # TODO:  have to yank ingestor warnings and errors into Package object,
@@ -22,13 +23,15 @@ end
 
 class Ingestor
 
-  DEBUG = true
+  include Errors
 
   # TODO: sanity check on config object, throw error that should stop all processing
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
-  # TODO: stash error and warning messages
 
-  attr_reader :repository, :pid, :namespace, :fedora_object, :errors, :warnings
+  # TODO: try to run down pid and delete if error
+
+
+  attr_reader :repository, :pid, :namespace, :fedora_object
 
   def initialize  config, namespace
     @config = config
@@ -36,48 +39,16 @@ class Ingestor
     @repository = Rubydora.connect :url => @config.url, :user => @config.user, :password => @config.password
     @namespace = namespace
 
-    @errors = []
-    @warnings = []
-
     @pid = getpid
     @fedora_object = @repository.create(@pid)
+    @owner = nil
+
 
     yield self
 
     @fedora_object.save
-
-  # rescue => e
-    # attempt_delete(@pid)
-    # raise SystemError, "Ingestor Error: #{e.class} - #{e.message}"
   end
 
-  # TODO: run down if possible
-
-  def attempt_delete pid
-    return unless pid
-    # return if nil, otherwise attempt to connect to repository and delete the PID
-    #
-  rescue => e
-    @warnings.push "When handling an error and trying to delete partial object #{pid}, got an additinal error #{e.class}: #{e.message}"
-  end
-
-  def error *strings
-    @errors.push *strings
-    strings.each { |s| STDERR.puts "Error: #{s}" } if DEBUG
-  end
-
-  def errors?
-    not @errors.empty?
-  end
-
-  def warning *strings
-    @warnings.push *strings
-    strings.each { |s| STDERR.puts "Warning: #{s}" } if DEBUG
-  end
-
-  def warnings?
-    not @warnings.empty?
-  end
 
   # TODO: check pid, repository are properly returned here...
 
@@ -121,7 +92,8 @@ class Ingestor
   end
 
   def owner= value
-    @fedora_object.ownerId = value
+    @owner = value
+    @fedora_object.ownerId = @owner
   end
 
   def datastream name
@@ -166,18 +138,18 @@ class Ingestor
   end
 
 
-  def create_new_collection_if_necessary pid
-    label = 'digitool collection: ' + pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
-    return if existing_collections.include? pid
+  def create_new_collection_if_necessary collection_pid
+    label = 'digitool collection: ' + collection_pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
+    return if existing_collections.include? collection_pid
 
-    warning "Creating new digitool collection #{pid} for object #{@pid}."
+    warning "Creating new digitool collection #{collection_pid} for object #{@pid}."
 
-    collection_object = @repository.create(pid)
+    collection_object = @repository.create(collection_pid)
 
     collection_object.memberOfCollection << @config.root_collection
     collection_object.models << 'info:fedora/islandora:collectionCModel'
     collection_object.label   = label
-    collection_object.ownerId = @config.owner  # TODO: eventually, we'll want a sanity check here that it exists in drupal. Not necessary for digitool migration
+    collection_object.ownerId = @owner
 
     ds = collection_object.datastreams['TN']
     ds.dsLabel  = "Thumbnail"
@@ -196,10 +168,10 @@ class Ingestor
 
     30.times do
       sleep 0.5
-      return if existing_collections.include? pid
+      return if existing_collections.include? collection_pid
     end
 
-    raise "collection #{pid} could not be created."   # Get into errors
+    raise PackageError, "Could not create collection #{collection_pid} for new object #{@pid}."
   end
 
 

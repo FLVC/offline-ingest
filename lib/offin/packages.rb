@@ -3,6 +3,7 @@
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
+require 'offin/errors'
 require 'offin/mods'
 require 'offin/ingestor'
 require 'offin/metadata-updater'
@@ -32,9 +33,9 @@ class PackageFactory
   end
 
   def new_package directory
-    raise PackageError, "Package directory '#{directory}' doesn't exist."     unless File.exists? directory
-    raise PackageError, "Package directory '#{directory}' isn't a driectory." unless File.directory? directory
-    raise PackageError, "Package directory '#{directory}' isn't readable."    unless File.readable? directory
+    raise PackageError, "Package directory '#{directory}' doesn't exist."            unless File.exists? directory
+    raise PackageError, "Package directory '#{directory}' isn't really a directory." unless File.directory? directory
+    raise PackageError, "Package directory '#{directory}' isn't readable."           unless File.readable? directory
 
     manifest = Utils.get_manifest @config, directory
 
@@ -54,6 +55,8 @@ end
 
 class Package
 
+  include Errors
+
   # supported MIME types go here, as returned by the file command.
 
   GIF  = 'image/gif'
@@ -64,37 +67,36 @@ class Package
   PDF  = 'application/pdf'
   TEXT = 'text/plain'
 
-  attr_reader :errors, :warnings, :manifest, :mods, :name, :marc, :config, :content_model, :namespace, :collections, :label
+  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path
 
   def initialize config, directory, manifest = nil
-    @content_model = nil
-    @label         = nil
-    @owner         = nil
-    @errors        = []
-    @warnings      = []
-    @valid         = true
-    @config        = config
-    @name          = File.basename directory    # change to dirname
-    @directory     = directory
-    @datafiles     = list_other_files()
+
+    @valid          = true
+    @config         = config
+    @content_model  = nil
+    @label          = nil
+    @owner          = nil
+    @directory_name = File.basename(directory)
+    @directory_path = directory
+    @datafiles      = list_other_files()
 
     if manifest.is_a? Manifest
       @manifest = manifest
     else
-      @manifest = Utils.get_manifest @config, directory
+      @manifest = Utils.get_manifest @config, @directory_path
     end
 
     if @manifest.errors?
-      error "The package #{@name} doesn't have a valid manifest file."
+      error "The package #{@directory_name} doesn't have a valid manifest file."
       error @manifest.errors
     end
 
     @valid &&= @manifest.valid?
 
-    @mods = Utils.get_mods @config, directory
+    @mods = Utils.get_mods @config, @directory_path
 
     if @mods.errors?
-      error "The package #{@name} doesn't have a valid MODS file."
+      error "The package #{@directory_name} doesn't have a valid MODS file."
       error @mods.errors
     end
 
@@ -102,7 +104,7 @@ class Package
 
     return unless @valid
 
-    marc_file = File.join(@directory, 'marc.xml')
+    marc_file = File.join(@directory_path, 'marc.xml')
 
     if File.exists?(marc_file)
       @marc = File.read(marc_file)
@@ -114,15 +116,18 @@ class Package
     @collections = @manifest.collections
 
   rescue PackageError => e
-    error "Exception for package #{@name}: #{e.message}"
+    error "Exception for package #{@directory_name}: #{e.message}"
     @valid = false
   rescue => e
-    error "Exception for package #{@name}: #{e.class} - #{e.message}, backtrace follows:"
-    error e.backtrace
+    error "Exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
     @valid = false
   end
 
-  # super'd
+  def name
+    @directory_name
+  end
+
+  # base classes should implement process with super():
 
   def process
     raise PackageError, 'Attempt to process an invalid package.' unless @valid
@@ -137,7 +142,7 @@ class Package
 
   def updater= value
     metadata_updater = value.send :new, @manifest, @mods
-    @label = metadata_updater.get_label @name                # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
+    @label = metadata_updater.get_label @directory_name        # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
     @owner = metadata_updater.get_owner
     # metadata_updater.identifiers
   end
@@ -148,16 +153,16 @@ class Package
 
   def boilerplate ingestor
 
-    ingestor.collections = @collections.map { |pid| pid.downcase }   # Liang doesn't read my specs...
+    # somewhat order dependent
+
+    ingestor.label         = @label
+    ingestor.owner         = @owner
     ingestor.content_model = @content_model
-    ingestor.label = @label
-    ingestor.owner = @owner
-    ingestor.dc  = @mods.to_dc
-    ingestor.mods = @mods.to_s
+    ingestor.collections   = @collections.map { |pid| pid.downcase }   # Liang doesn't read my specs...
+    ingestor.dc            = @mods.to_dc
+    ingestor.mods          = @mods.to_s
 
-
-    ingestor.pid
-
+    # TODO: use ingestor.pid to set
 
     if @marc
       ingestor.datastream('MARCXML') do |ds|
@@ -168,21 +173,6 @@ class Package
     end
   end
 
-  def errors?
-    not @errors.empty?
-  end
-
-  def warnings?
-    not @warnings.empty?
-  end
-
-  def error *strings
-    @errors.push *strings
-  end
-
-  def warning *strings
-    @warnings.push *strings
-  end
 
   # List all the files in the directory we haven't already accounted for. Subclasses will need to work through these.
   # Presumably these are all datafiles.
@@ -191,13 +181,13 @@ class Package
 
     list = []
 
-    Dir["#{@directory}/*"].each do |entry|
+    Dir["#{@directory_path}/*"].each do |entry|
 
       raise PackageError, "Found subdirectory '#{entry}' in package" if File.directory?(entry)
       raise PackageError, "Found unreadable file '#{entry}' in package" unless File.readable?(entry)
 
       filename = File.basename entry
-      next if [ '.', '..', 'manifest.xml', 'marc.xml', "#{name}.xml" ].include? filename
+      next if [ '.', '..', 'manifest.xml', 'marc.xml', "#{directory_name}.xml" ].include? filename
       list.push filename
     end
 
@@ -217,19 +207,19 @@ class BasicImagePackage < Package
     @content_model = BASIC_IMAGE_CONTENT_MODEL
 
     if @datafiles.length > 1
-      error "The Basic Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      error "The Basic Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
       @valid = false
     end
 
     if @datafiles.length == 0
-      error "The Basic Image package #{@name} contains no data files."
+      error "The Basic Image package #{@directory_name} contains no data files."
       @valid = false
     end
 
     return unless @valid
 
     @image_filename = @datafiles[0]
-    path = File.join(@directory, @image_filename)
+    path = File.join(@directory_path, @image_filename)
     type = Utils.mime_type(path)
 
     case type
@@ -239,20 +229,18 @@ class BasicImagePackage < Package
       # TODO: add special support for TIFFs (not needed for digitool migration)
 
     when TIFF
-      raise PackageError, "The Basic Image package #{@name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
+      raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
     else
-      raise PackageError, "The Basic Image package #{@name} contains an unexpected file #{@datafiles[0]} with mime type #{type}."
+      raise PackageError, "The Basic Image package #{@directory_name} contains an unexpected file #{@datafiles[0]} with mime type #{type}."
     end
 
   rescue PackageError => e
-    error "Exception for package #{@name}: #{e.message}"
+    error "Exception for package #{@directory_name}: #{e.message}"
     @valid = false
   rescue => e
-    error "Exception #{e.class} - #{e.message}, backtrace follows:"
-    error e.backtrace
+    error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
     @valid = false
   end
-
 
   def process
     super
@@ -299,12 +287,12 @@ class LargeImagePackage < Package
     @content_model = LARGE_IMAGE_CONTENT_MODEL
 
     if @datafiles.length > 1
-      error "The Large Image package #{@name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      error "The Large Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
       @valid = false
     end
 
     if @datafiles.length == 0
-      raise PackageError, "The Large Image package #{@name} contains no data files."
+      raise PackageError, "The Large Image package #{@directory_name} contains no data files."
       @valid = false
     end
 
@@ -312,7 +300,7 @@ class LargeImagePackage < Package
 
     @image = nil
     @image_filename = @datafiles[0]
-    path = File.join(@directory, @image_filename)
+    path = File.join(@directory_path, @image_filename)
     type = Utils.mime_type(path)
 
     # TODO: add basic support for TIFFs (not needed for digitool migration)
@@ -321,17 +309,16 @@ class LargeImagePackage < Package
     when JP2
       @image = Magick::Image.read(path).first
     when TIFF
-      raise PackageError, "The Large Image package #{@name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
+      raise PackageError, "The Large Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
     else
-      raise PackageError, "The Large Image package #{@name} contains an unexpected or unsupported file #{@datafiles[0]} with mime type #{type}."
+      raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles[0]} with mime type #{type}."
     end
 
   rescue PackageError => e
-    error "Exception for package #{@name}: #{e.message}"
+    error "Exception for package #{@directory_name}: #{e.message}"
     @valid = false
   rescue => e
-    error "Exception #{e.class} - #{e.message}, backtrace follows:"
-    error e.backtrace
+    error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
     @valid = false
   end
 
@@ -387,11 +374,11 @@ class PdfPackage < Package
 
 
     if @datafiles.length > 2
-      raise PackageError, "The PDF package #{@name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
+      raise PackageError, "The PDF package #{@directory_name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
     end
 
     if @datafiles.length == 0
-      raise PackageError, "The PDF package #{@name} contains no data files."
+      raise PackageError, "The PDF package #{@directory_name} contains no data files."
     end
 
     @pdf = nil
@@ -401,7 +388,7 @@ class PdfPackage < Package
     @full_text_filename = nil
 
     @datafiles.each do |filename|
-      path = File.join(@directory, filename)
+      path = File.join(@directory_path, filename)
       type = Utils.mime_type(path)
       case type
       when PDF
@@ -411,36 +398,35 @@ class PdfPackage < Package
         @full_text_filename = filename
         @full_text = File.read(path)
       else
-        raise PackageError, "The PDF package #{@name} contains an unexpected file #{filename} of type #{type}."
+        raise PackageError, "The PDF package #{@directory_name} contains an unexpected file #{filename} of type #{type}."
       end
     end
 
-    raise PackageError, "The PDF package #{@name} doesn't contain a PDF file."  if @pdf.nil?
+    raise PackageError, "The PDF package #{@directory_name} doesn't contain a PDF file."  if @pdf.nil?
 
     case
     # A full text index file was submitted, which we don't trust much:
     when @full_text
       @full_text = Utils.cleanup_text(Utils.re_encode_maybe(@full_text))
       if @full_text.empty?
-        warning "The full text file #{@full_text_filename} supplied in package #{@name} was empty; using a single space to preserve the FULL_TEXT datastream."
+        warning "The full text file #{@full_text_filename} supplied in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
 
     # No full text, so we generate UTF-8 using a unix utility, which we don't trust much either:
     else
-      @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory, @pdf_filename)))
+      @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory_path, @pdf_filename)))
       if @full_text.empty?
-        warning "The generated full text from #{@pdf_filename} in package #{@name} was empty; using a single space to preserve the FULL_TEXT datastream."
+        warning "The generated full text from #{@pdf_filename} in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
     end
 
   rescue PackageError => e
-    error "Exception for package #{@name}: #{e.message}"
+    error "Exception for package #{@directory_name}: #{e.message}"
     @valid = false
   rescue => e
-    error "Exception #{e.class} - #{e.message}, backtrace follows:"
-    error e.backtrace
+    error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
     @valid = false
   end
 
@@ -448,10 +434,10 @@ class PdfPackage < Package
   def process
     super
 
-    # Do image processing now to fail faster, if fail we must, before ingest is started.
+    # Do image processing upfront so as to fail faster, if fail we must, before ingest is started.
 
-    thumb   = Utils.pdf_to_thumbnail @config, File.join(@directory, @pdf_filename)
-    preview = Utils.pdf_to_preview @config, File.join(@directory, @pdf_filename)
+    thumb   = Utils.pdf_to_thumbnail @config, File.join(@directory_path, @pdf_filename)
+    preview = Utils.pdf_to_preview @config, File.join(@directory_path, @pdf_filename)
 
     Ingestor.new(@config, @namespace) do |ingestor|
 

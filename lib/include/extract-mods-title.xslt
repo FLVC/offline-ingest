@@ -42,6 +42,7 @@
       <xsl:text>. </xsl:text>
       <xsl:value-of select="mods:partName"/>
     </xsl:if>
+    <xsl:text>&#xa;</xsl:text>
   </xsl:template>
 
   <!-- suppress all else:-->

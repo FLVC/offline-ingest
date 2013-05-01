@@ -7,10 +7,34 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 $LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
 
 require 'offin/packages'
+require 'optparse'
 
-Utils.ingest_usage if ARGV.empty?
 
-config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "i7d")
+def parse_command args
+  system = []
+  opts   = OptionParser.new do |opt|
+    opt.banner = "Usage: packages --flag package-directory < more package-directories >\n" +
+                 "where --flag is one of:\n"
+    opt.on("--fsu",  "use fsu7t.flca.edu for ingest") do
+      system.push 'fsu7t'
+    end
+    opt.on("--d7",   "use islandora7d.fcla.edu for ingest") do
+      system.push 'i7d'
+    end
+  end
+  opts.parse!(args)
+  raise "No server specified."        if system.empty?
+  raise "Too many servers specified." if system.length > 1
+  raise "No packages specified."      if args.empty?
+rescue => e
+  STDERR.puts e, opts
+  exit
+else
+  return system.pop
+end
+
+
+config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", parse_command(ARGV))
 
 # if config.http_proxy
 #   ENV['HTTP_PROXY'] = config.http_proxy
@@ -22,7 +46,6 @@ factory = PackageFactory.new(config)
 $stdout.sync = true
 
 ARGV.each do |directory|
-
   begin
     started = Time.now
     package = factory.new_package(directory)
@@ -32,11 +55,14 @@ ARGV.each do |directory|
     package.updater = DigitoolMetadataUpdater
     package.process
     puts sprintf("%5.2f %s::%s => %s (%s)", Time.now - started, package.class, package.name, package.collections.join(', '), package.label)
+
+  rescue PackageError => e
+    STDERR.puts e
   rescue => e
-    STDERR.puts "Caught #{e.class} - #{e.message}"
+    STDERR.puts "Caught #{e.class} - #{e.message}", e.backtrace
   ensure
-    STDERR.puts 'Errors:', package.errors, '' if package.errors?
-    STDERR.puts 'Warnings:', package.warnings, '' if package.warnings?
+    STDERR.puts 'Errors:',   package.errors,   '' if package and package.errors?
+    STDERR.puts 'Warnings:', package.warnings, '' if package and package.warnings?
   end
 
 end

@@ -1,8 +1,8 @@
-require 'open3'
-require 'stringio'
 require 'iconv'
+require 'offin/exceptions'
+require 'open3'
 require 'rchardet'
-
+require 'stringio'
 
 class Utils
 
@@ -43,11 +43,16 @@ class Utils
   def Utils.pdf_to_text config, pdf_filepath
 
     text = nil
+    error = nil
+
     Open3.popen3("#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -") do |stdin, stdout, stderr|
       stdin.close
       text  = stdout.read
       error = stderr.read
     end
+
+    raise PackageError, "Processing #{pdf_filepath} resulted in these errors: #{error}" if not error.empty?
+
     return text
   end
 
@@ -57,6 +62,8 @@ class Utils
     return text.gsub(re, ' ').strip
   end
 
+
+  # TODO: get warning, error messages from here to calling program:
 
   def Utils.re_encode_maybe text
     detector = CharDet.detect(text)
@@ -182,10 +189,7 @@ class Utils
       error = "Unexpected input to /usr/bin/file: file argument was a #{file.class}"
     end
 
-    # TODO: better than this.
-
-    raise "Utils.mime_type error: #{error}" if not error.empty?
-
+    raise PackageError, "Utils.mime_type error: #{error}" if not error.empty?
     return type.strip
   end
 

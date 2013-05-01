@@ -4,18 +4,18 @@ require 'offin/document-parsers'
 
 class Manifest
 
-  attr_reader :content, :filepath, :config, :errors, :warnings
+  include Errors
+
+  attr_reader :content, :filepath, :config
 
   def initialize config, filepath
     @config = config
     @filepath = filepath
     @content = File.read(filepath)
-    @errors = []
-    @warnings = []
     @valid = false
 
     if @content.empty?
-      @errors.push "Manifest file '#{@filename}' is empty."
+      error "Manifest file '#{@filename}' is empty."
       return
     end
 
@@ -26,22 +26,17 @@ class Manifest
     Nokogiri::XML::SAX::Parser.new(@manifest_sax_doc).parse(@content)
 
     @valid     = @manifest_sax_doc.valid
-    @errors   += @manifest_sax_doc.errors
-    @warnings += @manifest_sax_doc.warnings
+
+    error   @manifest_sax_doc.errors    if @manifest_sax_doc.errors?
+    warning @manifest_sax_doc.warnings  if @manifest_sax_doc.warnings?
+
+
   end
 
   # valid is a boolean that tells us whether the manifest xml document is valid.  This goes beyond schema validation.
 
   def valid?
     @valid
-  end
-
-  def warnings?
-    not @warnings.empty?
-  end
-
-  def errors?
-    not @errors.empty?
   end
 
 
