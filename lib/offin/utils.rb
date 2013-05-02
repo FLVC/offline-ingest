@@ -58,7 +58,7 @@ class Utils
 
 
   def Utils.cleanup_text text
-    re = /[\x00-\x08 \x0B \x0C \x0E-\x1F \x7F \xEF \xFF]/xm    # disallowed control characters and embedded deletes.
+    re = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\xEF\xFF]/m    # disallowed control characters and embedded deletes.
     return text.gsub(re, ' ').strip
   end
 
