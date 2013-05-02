@@ -33,7 +33,7 @@ else
   return system.pop
 end
 
-
+indent = '   '
 config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", parse_command(ARGV))
 
 # if config.http_proxy
@@ -50,7 +50,7 @@ ARGV.each do |directory|
     started = Time.now
     package = factory.new_package(directory)
 
-    raise "Invalid package in #{directory}." unless package.valid?
+    raise PackageError, "Invalid package in #{directory}." unless package.valid?
 
     package.updater = DigitoolMetadataUpdater
     package.process
@@ -61,8 +61,8 @@ ARGV.each do |directory|
   rescue => e
     STDERR.puts "Caught #{e.class} - #{e.message}", e.backtrace
   ensure
-    STDERR.puts 'Errors:',   package.errors,   '' if package and package.errors?
-    STDERR.puts 'Warnings:', package.warnings, '' if package and package.warnings?
+    STDERR.puts 'Errors:',   package.errors.map { |line|  indent + line },   '' if package and package.errors?
+    STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package and package.warnings?
   end
 
 end
