@@ -27,11 +27,17 @@ class Ingestor
 
   # TODO: sanity check on config object, throw error that should stop all processing
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
-
-  # TODO: try to run down pid and delete if error
+  # TODO: try to run down pid and delete if error after a datastream or object save occurs...
 
 
   attr_reader :repository, :pid, :namespace, :fedora_object
+
+  # We use the yield self idiom here:
+  #
+  #  Ingestor.new(...) do |ingestor|
+  #     ingestor.do your thing..
+  #  end
+
 
   def initialize  config, namespace
     @config = config
@@ -59,6 +65,7 @@ class Ingestor
     return sax_document.pids.shift
   end
 
+
   def collections= value
     value.each do |pid|
       fedora_pid = (pid =~ /^info:fedora/ ? pid : "info:fedora/#{pid}")
@@ -85,7 +92,7 @@ class Ingestor
     @fedora_object.models << ( value =~ /^info:fedora/ ?  value : "info:fedora/#{value}" )
   end
 
-  # TODO: XMLescape values here for next two
+  # TODO: XMLescape values here for next two?
 
   def label= value
     @fedora_object.label = value
