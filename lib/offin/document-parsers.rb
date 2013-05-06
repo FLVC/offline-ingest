@@ -2,22 +2,34 @@ require 'nokogiri'
 require 'ostruct'
 require 'offin/errors'
 
-# Boiler plate for the way I parse SAX documents:
 
 class FedoraSaxDocument < Nokogiri::XML::SAX::Document
 
-  include Errors
+  @@debug = false
+
+  def self.debug= value
+    @@debug = value
+  end
+
+  include Errors     # We use this mixin for almost all our classes in
+                     # offline ingest; here, it also nicely overrides
+                     # the built-in sax parser methods error and
+                     # warning (even though the method signatures are
+                     # a bit different!).
 
   def initialize
-    @current_string = ''      # the actual character data content between parsed elements; subclasses will play with this (usually resetting it at the 'end_element' event)
+    @current_string = ''      # the actual character data content
+                              # between parsed elements; subclasses
+                              # will play with this (usually resetting
+                              # it at the 'end_element' event)
     super()
   end
 
-
   def characters string
-    @current_string += string.strip
+    @current_string += string.strip  # This may be a bit harsh to leading whitespace...
   end
-end
+
+end # of class FedoraSaxDocument
 
 class SaxDocumentAddDatastream < FedoraSaxDocument
 
@@ -105,7 +117,7 @@ class SaxDocumentAddDatastream < FedoraSaxDocument
     @results = OpenStruct.new(@record)
   end
 
-end
+end # of class SaxDocumentAddDatastream
 
 
 class SaxDocumentGetNextPID < FedoraSaxDocument
@@ -145,8 +157,7 @@ class SaxDocumentGetNextPID < FedoraSaxDocument
     end
     @current_string = ''
   end
-end
-
+end  # of class SaxDocumentGetNextPID
 
 class SaxDocumentExamineMods < FedoraSaxDocument
 
@@ -229,7 +240,7 @@ class SaxDocumentExamineMods < FedoraSaxDocument
     end
 
   end
-end
+end   # of class SaxDocumentExamineMods
 
 
 class SaxDocumentExtractSparql < FedoraSaxDocument
@@ -351,12 +362,12 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
     @stack.pop
     @current_string = ''
   end
-end
+end   # of class SaxDocumentExtractSparql
 
 
 # ManifestSaxDocument parses out these kinds of XML files (no schema yet)
 #
-# <manifest xmlns="info:/flvc/manifest/v1">
+# <manifest xmlns="info:/flvc/manifest">
 #
 #     <contentModel>
 #         islandora:sp_basic_image
@@ -381,17 +392,11 @@ end
 # </manifest>
 #
 
-### TODO: handle object history
-
 class ManifestSaxDocument < FedoraSaxDocument
 
   @@institutions = nil
   @@content_models = nil
-  @@debug = false
 
-  def self.debug= value
-    @@debug = value
-  end
 
   attr_reader :collections, :content_model, :identifiers, :object_history, :other_logos, :label, :content_model,
               :owning_institution, :submitting_institution, :owning_user, :valid
@@ -448,7 +453,7 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   # Textualize the attribute data off a stack element (ignore the :name key)
 
-  def pretty_print hash
+  def prettify hash
     text = []
     hash.keys.each do |k|
       next if k == :name  # element name
@@ -458,7 +463,7 @@ class ManifestSaxDocument < FedoraSaxDocument
   end
 
   def stack_dump
-    @stack.map { |h| h[:name] }.join(' => ') + '  ' + pretty_print(@stack[-1])
+    @stack.map { |h| h[:name] }.join(' => ') + '  ' + prettify(@stack[-1])
   end
 
   # We'll maintain a stack of elements and their attributes: each
@@ -511,7 +516,7 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   def collections_ok?
     if @elements['collection'].empty?
-      @errors.push "The manifest document does not contain a collection ID. At least one is required."
+      error "The manifest document does not contain a collection ID. At least one is required."
       return
     end
 
@@ -523,19 +528,19 @@ class ManifestSaxDocument < FedoraSaxDocument
   def content_model_ok?
 
     if @elements['contentModel'].empty?
-      @errors.push "The manifest document does not contain a content model. Exactly one of #{@@content_models.join(', ')} is required."
+      error "The manifest document does not contain a content model. Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
     if @elements['contentModel'].length > 1
-      @errors.push "The manifest document contains multiple content models.  Exactly one of #{@@content_models.join(', ')} is required."
+      errors "The manifest document contains multiple content models.  Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
     content_model = @elements['contentModel'].shift
 
     unless @@content_models.include? content_model
-      @errors.push "The manifest document contains an unsupported content model, #{content_model}. Exactly one of #{@@content_models.join(', ')} is required."
+      error "The manifest document contains an unsupported content model, #{content_model}. Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
@@ -550,7 +555,7 @@ class ManifestSaxDocument < FedoraSaxDocument
     return true if @elements['label'].empty?
 
     if @elements['label'].length > 1
-      @errors.push "The manifest document lists more than one label - at most one can be specfied."
+      error "The manifest document lists more than one label - at most one can be specfied."
       return
     end
 
@@ -564,7 +569,7 @@ class ManifestSaxDocument < FedoraSaxDocument
     return true if @elements['owningUser'].empty?
 
     if @elements['owningUser'].length > 1
-      @errors.push "The manifest document lists multiple owning users - at most, one must be present."
+      error "The manifest document lists multiple owning users - at most, one must be present."
       return
     end
 
@@ -580,19 +585,19 @@ class ManifestSaxDocument < FedoraSaxDocument
   def owning_institution_ok?
 
     if @elements['owningInstitution'].empty?
-      @errors.push "The manifest document does not list an owning institution - it must have exacly one of #{@@institutions.join(', ')}."
+      error "The manifest document does not list an owning institution - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
     if @elements['owningInstitution'].length > 1
-      @errors.push "The manifest document lists multitple owning institutions - it must have exacly one of #{@@institutions.join(', ')}."
+      error "The manifest document lists multitple owning institutions - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
     owning_institution = @elements['owningInstitution'].shift.upcase
 
     unless @@institutions.include? owning_institution
-      @errors.push "The manifest document includes an invalid owning institution '#{owning_institution}' - it must have exacly one of #{@@institutions.join(', ')}."
+      error "The manifest document includes an invalid owning institution '#{owning_institution}' - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
@@ -603,7 +608,7 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   def submitting_institution_ok?
     if @elements['submittingInstitution'].length > 1
-      @errors.push "The manifest document lists multitple submitting institutions - it must have at most one of #{@@institutions.join(', ')}."
+      error "The manifest document lists multitple submitting institutions - it must have at most one of #{@@institutions.join(', ')}."
       return
     end
 
@@ -611,7 +616,7 @@ class ManifestSaxDocument < FedoraSaxDocument
       submitting_institution = @elements['submittingInstitution'].shift.upcase
 
       unless @@institutions.include? submitting_institution
-        @errors.push "The manifest document includes an invalid submitting institution '#{submitting_institution}' - if present, it must be one of #{@@institutions.join(', ')}."
+        error "The manifest document includes an invalid submitting institution '#{submitting_institution}' - if present, it must be one of #{@@institutions.join(', ')}."
         return
       end
 
@@ -630,11 +635,11 @@ class ManifestSaxDocument < FedoraSaxDocument
     list = []
     @elements['objectHistory'].each do |hash|
       if hash['source'].nil? or hash['source'].empty?
-        @errors.push "The manifest has an object history element that is missing the 'source' attribute."
+        error "The manifest has an object history element that is missing the 'source' attribute: #{hash.inspect}."
         return
       end
       if hash['data'].nil? or hash['data'].empty?
-        @errors.push "The manifest has an object history element that is missing data."
+        error "The manifest has an object history element that is missing data: #{hash.inspect}."
         return
       end
       list.push hash
@@ -643,9 +648,6 @@ class ManifestSaxDocument < FedoraSaxDocument
     return true
   end
 
-
-
-  # TODO: make sure that objectHistory is a list of hashes that has both "source" and non-empty "data"
 
   def end_document
 
@@ -664,9 +666,225 @@ class ManifestSaxDocument < FedoraSaxDocument
     @valid =  label_ok?                    && @valid
     @valid =  object_history_ok?           && @valid
 
-    @valid &&=  true   # if not false, force to 'true' value
+    @valid &&=  true   # if not false, force to 'true' value, instead of non-boolean that ...ok? methods are allowed to return
 
 
-    @warnings.push "There were unexpected elements in the manifest:  #{@bogons.keys.sort.join(', ')}."  unless @bogons.empty?
+    warning "There were unexpected elements in the manifest:  #{@bogons.keys.sort.join(', ')}."  unless @bogons.empty?
+  end
+end   # of ManifestSaxDocument
+
+
+# Helper class for SaxDocumentExamineMets; save fileSec information.
+
+class MetsFileDictionary
+
+  # Just a simple class to keep information from a subtree such as
+  # <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+  #   <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05030701_cover1.jpg" />
+  # </METS:file>
+
+  def initialize
+    @sequence = []
+    @hash = {}
+  end
+
+  # value is a hash with  :sequence, :mimetype, :href, and :use;  we add :id.
+
+  def []=(fid, value)
+    value[:id] = fid
+    @hash[fid] = value
+    @sequence.push fid
+  end
+
+  def [](fid)
+    @hash[fid]
+  end
+
+  def each
+    @sequence.each do |fid|
+      yield @hash[fid]
+    end
+  end
+end
+
+
+# Helper class for SaxDocumentExamineMets: save structmap information
+
+class MetsStructmap
+
+end
+
+
+
+# Class for parsing out the table of contents information in a METS
+# file.
+
+class SaxDocumentExamineMets < FedoraSaxDocument
+
+  attr_reader :xml_document, :sax_document, :file_dictionary, :label, :structmaps
+
+  def initialize
+    @stack = []
+    @label = ''                                    # from the <METS:mets LABEL="The Title of This Book" ...>
+    @file_dictionary = MetsFileDictionary.new
+    @structmaps = []
+    @current_structmap = nil
+    super()
+  end
+
+  # Given a list of element names, return true if all of them are on
+  # the stack (first of the list argument is topmost on the stack).
+
+  def onstack? *list
+    i = -1
+    list.each do |el|
+      return false unless @stack[i]
+      return false unless @stack[i][:name] == el
+      i -= 1
+    end
+    return true
+  end
+
+  # Grab the value of the LABEL attribute from the topmost mets element.
+  #
+  # def handle_label
+  #   text = @stack[-1]['LABEL'] || ''
+  #   @label = text.split(/\s+/).join(' ').strip   # cleanup whitespace
+  # end
+
+  # When we've identified a 'FLocat' subtree, place it into the dictionary.
+
+  def handle_file_dictionary
+    return unless  onstack? 'FLocat', 'file', 'fileGrp', 'fileSec'   # top of stack is leftmost
+
+    flocat_element, file_element, file_group = @stack[-1], @stack[-2], @stack[-3]
+
+    return unless fid = file_element['ID']
+
+    data = {}
+
+    data[:sequence] = file_element['SEQ']
+    data[:href]     = flocat_element['href']
+    data[:mimetype] = safe_downcase(file_element['MIMETYPE'])    # expected 'image/jp2' etc.
+    data[:use]      = safe_downcase(file_group['USE'])           # expected limited set: 'archive', 'thumbnail', 'reference', 'index'.  In general we'll only be using the last two (image, ocr)
+    data[:groupid]  = file_element['GROUPID']
+
+    @file_dictionary[fid] = data
+  end
+
+  # Grab the value of the LABEL attribute from the topmost mets element.
+
+  def handle_label
+    text = @stack[-1]['LABEL'] || ''
+    @label = text.split(/\s+/).join(' ').strip   # cleanup whitespace
+  end
+
+
+  def safe_downcase text
+    return text unless text.class == String
+    return text.downcase
+  end
+
+
+  def print_file_dictionary
+    puts "File Dictionary:"
+    @file_dictionary.each { |elt| puts elt.inspect }
+  end
+
+  # Textualize the attribute data off a stack element (ignore the :name key)
+
+  def prettify hash
+    text = []
+    hash.keys.each do |k|
+      next if k == :name  # element name
+      text.push k + ' => ' + hash[k].inspect
+    end
+    return '{ ' + text.sort.join(', ') + ' }'
+  end
+
+  def stack_dump
+    @stack.map { |h| h[:name] }.join(' => ') + '  ' + prettify(@stack[-1])
+  end
+
+
+  def handle_structmap_entry
+    @current_structmap = MetsStructmap.new
+  end
+
+  def handle_structmap_exit
+    # Check to make sure we have a DMDID='DMD1' before we save?
+    @structmaps.push @current_structmap
+    @current_structmap = nil
+  end
+
+  def handle_structmap_update
+    # ............
+  end
+
+  # We'll maintain a stack of elements and their attributes: each
+  # element of the stack is a hash, with the name of the element keyed
+  # by symbol :name; all the other key/value pairs, all strings, are
+  # the attributes.
+
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
+    hash = { :name => name }
+    attributes.each { |at|  hash[at.localname] = at.value }
+    @stack.push hash
+
+    puts stack_dump if @@debug
+
+    case name
+#   when 'fptr';        handle_structmap_update
+    when 'FLocat';      handle_file_dictionary
+    when 'mets';        handle_label
+    when 'structMap';   handle_structmap_entry
+    end
+
+  end
+
+  # Pop the stack when we're done.
+
+  def end_element_namespace name, prefix = nil, uri = nil
+    case name
+    when 'structMap';   handle_structmap_exit
+    end
+
+    @stack.pop
+    @current_string = ''
+  end
+
+
+
+  # All data has now been collected into dictionaries, assemble into JSON format
+
+  def end_document
+
+    # @section_dictionary.keys.each do |id|
+    #   if @file_dictionary[id]
+    #     rec = @section_dictionary[id]
+    #     rec[:pagenum] = @file_dictionary[id][:sequence]
+    #   else
+    #     STDERR.puts "Warning: no associated file information for #{@section_dictionary[id].inspect}" if @@debug # for example, a PDF section which we ignore
+    #     @section_dictionary.delete id
+    #     next
+    #   end
+    # end
+
+    if @@debug
+      # puts "Title: #{@label}"
+      # puts "File Dictionary:"
+      # @file_dictionary.values.sort { |v,w| v[:sequence].to_i <=> w[:sequence].to_i }.each do |val|
+      #   puts val.inspect
+      # end
+      # puts "Section Dictionary:"
+      # @section_dictionary.values.sort { |v,w| v[:id].to_i <=> w[:id].to_i }.each do |val|
+      #   puts val.inspect
+      # end
+    end
+
+    if @@debug
+      print_file_dictionary
+      puts "structMap count: #{@structmaps.length}"
+    end
   end
 end
