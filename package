@@ -10,24 +10,24 @@ require 'offin/packages'
 require 'optparse'
 
 def parse_command args
-  system = []
+  server_code = []
   opts   = OptionParser.new do |opt|
     opt.banner = "Usage: packages --flag package-directory < more package-directories >\n" + "where --flag is one of:\n"
-    opt.on("--fsu",  "use fsu7t.flca.edu for ingest")       {  system.push 'fsu7t' }
-    opt.on("--d7",   "use islandora7d.fcla.edu for ingest") { system.push 'i7d' }
+    opt.on("--fsu",  "use fsu7t.flca.edu for ingest")       { server_code.push 'fsu7t' }
+    opt.on("--d7",   "use islandora7d.fcla.edu for ingest") { server_code.push 'i7d' }
   end
   opts.parse!(args)
-  raise "No server specified."        if system.empty?
-  raise "Too many servers specified." if system.length > 1
+  raise "No server specified."        if server_code.empty?
+  raise "Too many servers specified." if server_code.length > 1
   raise "No packages specified."      if args.empty?
 rescue => e
   STDERR.puts e, opts
   exit -1
 else
-  return system.pop
+  return server_code.pop
 end
 
-indent = '   '
+indent  = ' ' * 4
 config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", parse_command(ARGV))
 
 # if config.http_proxy
