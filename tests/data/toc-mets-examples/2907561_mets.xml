@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.loc.gov/METS/" xmlns:mets="http://www.loc.gov/METS/" OBJID="UF00000617_00001" LABEL="Placinda - at Lauderdale, Florida">
+  <metsHdr CREATEDATE="2011-01-31T15:41:07Z" ID="UF00000617_00001" LASTMODDATE="2011-01-31T15:41:07Z">
+    <agent ROLE="CREATOR" TYPE="ORGANIZATION">
+      <name>FCLA</name>
+      <note>
+        This is DigiTool METS created by FCLA from the institution-submitted METS package UF00000617_00001.
+      </note>
+    </agent>
+  </metsHdr>
+  <dmdSec ID="DMD1"><mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><xmlData><marc:record xmlns:marc="http://www.loc.gov/MARC21/slim"><marc:leader>     nm  22     uu 4500</marc:leader><marc:controlfield tag="008">      |           ||||||||||||||||||||||</marc:controlfield>
+                <marc:datafield tag="245" ind1="1" ind2="0"><marc:subfield code="a">Placinda - at Lauderdale, Florida</marc:subfield></marc:datafield>
+                
+                
+                
+                
+                    
+                
+                <marc:datafield tag="852" ind1=" " ind2=" "><marc:subfield code="a">UF</marc:subfield></marc:datafield>
+            <marc:datafield tag="598" ind1=" " ind2=" "><marc:subfield code="a">UF00000617_00001</marc:subfield></marc:datafield></marc:record></xmlData></mdWrap></dmdSec>
+  <fileSec>
+    <fileGrp USE="index">
+      <file MIMETYPE="text/plain" ID="T1" SEQ="1" GROUPID="G1">
+        <FLocat xlink:href="plac_Page_1.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="text/plain" ID="T2" SEQ="2" GROUPID="G2">
+        <FLocat xlink:href="plac_Page_2.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="text/plain" ID="T3" SEQ="3" GROUPID="G3">
+        <FLocat xlink:href="plac_Page_3.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="text/plain" ID="T4" SEQ="4" GROUPID="G4">
+        <FLocat xlink:href="plac_Page_4.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="text/plain" ID="T5" SEQ="5" GROUPID="G5">
+        <FLocat xlink:href="plac_Page_5.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="text/plain" ID="T6" SEQ="6" GROUPID="G6">
+        <FLocat xlink:href="plac_Page_6.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="text/plain" ID="T7" SEQ="7" GROUPID="G7">
+        <FLocat xlink:href="plac_Page_7.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="text/plain" ID="T8" SEQ="8" GROUPID="G8">
+        <FLocat xlink:href="plac_Page_8.txt" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+    </fileGrp>
+    <fileGrp USE="reference">
+      <file MIMETYPE="image/jp2" ID="E1" SEQ="1" GROUPID="G1">
+        <FLocat xlink:href="plac_Page_1.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="image/jp2" ID="E2" SEQ="2" GROUPID="G2">
+        <FLocat xlink:href="plac_Page_2.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="image/jp2" ID="E3" SEQ="3" GROUPID="G3">
+        <FLocat xlink:href="plac_Page_3.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="image/jp2" ID="E4" SEQ="4" GROUPID="G4">
+        <FLocat xlink:href="plac_Page_4.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="image/jp2" ID="E5" SEQ="5" GROUPID="G5">
+        <FLocat xlink:href="plac_Page_5.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="image/jp2" ID="E6" SEQ="6" GROUPID="G6">
+        <FLocat xlink:href="plac_Page_6.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="image/jp2" ID="E7" SEQ="7" GROUPID="G7">
+        <FLocat xlink:href="plac_Page_7.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file MIMETYPE="image/jp2" ID="E8" SEQ="8" GROUPID="G8">
+        <FLocat xlink:href="plac_Page_8.jp2" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+    </fileGrp>
+  </fileSec>
+  <structMap>
+    <div DMDID="DMD1" LABEL="Placinda - at Lauderdale, Florida" TYPE="Chapter">
+      <div TYPE="Chapter">
+        <div LABEL="Page 1" TYPE="Page">
+          <fptr FILEID="T1"/>
+          <fptr FILEID="E1"/>
+        </div>
+        <div LABEL="Page 2" TYPE="Page">
+          <fptr FILEID="T2"/>
+          <fptr FILEID="E2"/>
+        </div>
+        <div LABEL="Page 3" TYPE="Page">
+          <fptr FILEID="T3"/>
+          <fptr FILEID="E3"/>
+        </div>
+        <div LABEL="Page 4" TYPE="Page">
+          <fptr FILEID="T4"/>
+          <fptr FILEID="E4"/>
+        </div>
+        <div LABEL="Page 5" TYPE="Page">
+          <fptr FILEID="T5"/>
+          <fptr FILEID="E5"/>
+        </div>
+        <div LABEL="Page 6" TYPE="Page">
+          <fptr FILEID="T6"/>
+          <fptr FILEID="E6"/>
+        </div>
+        <div LABEL="Page 7" TYPE="Page">
+          <fptr FILEID="T7"/>
+          <fptr FILEID="E7"/>
+        </div>
+        <div LABEL="Page 8" TYPE="Page">
+          <fptr FILEID="T8"/>
+          <fptr FILEID="E8"/>
+        </div>
+      </div>
+    </div>
+  </structMap>
+</mets>

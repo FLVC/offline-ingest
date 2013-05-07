@@ -712,6 +712,9 @@ end
 
 class MetsStructmap
 
+
+
+
 end
 
 
@@ -807,6 +810,30 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   end
 
 
+  # Return nil if list doesn't contain a structMap element, otherwise,
+  # return the remainder of the list. Start at the top of the document
+  # (beginning of the stack).
+
+  def check_for_structmap list
+    while not list.empty? do
+      el = list.shift
+      return list if el[:name] == 'structMap'
+    end
+    return nil
+  end
+
+  # Return nil if list doesn't contain a '<div DMDID="DMD1" ..>'
+  # element, otherwise, return remainder of the list.
+
+  def check_for_dmd list
+    while not list.empty? do
+      el = list.shift
+      return list if el[:name] == 'div' and el['DMDID'] == 'DMD1'
+    end
+    return nil
+  end
+
+
   def handle_structmap_entry
     @current_structmap = MetsStructmap.new
   end
@@ -818,15 +845,71 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   end
 
   def handle_structmap_update
-    # ............
+    sublist = @stack.clone  # TODO: use a non n-squared technique
+
+    return unless check_for_structmap(sublist)
+    return unless check_for_dmd(sublist)
+
+    # at this point we have something like the following:
+    #
+    # [{"TYPE"=>"Chapter", :name=>"div"}, {"LABEL"=>"Cover", "TYPE"=>"Page", :name=>"div"}, {:name=>"fptr", "FILEID"=>"T1"}]
+    #
+    # The section level information associated with FILEID T1 is considered to be '1' and the label is 'Chapter'.
+    #
+    # If we were to garner the page level information we'd enter it here based on the first rightmost div with a 'page' type.
+
+    fptr_id = sublist.pop['FILEID']
+    section_label = nil
+    section_type = nil
+
+    # level = div_level(sublist)
+    #
+    # while (el = sublist.pop and not section_label and not section_type) do
+    #
+    #   next if el[:name].downcase != 'div'
+    #   next if not el['TYPE'] or el['TYPE'].downcase == 'page'
+    #
+    #   # pick up right-most texts for first non-page
+    #
+    #   section_label ||= el['LABEL']
+    #   section_type  ||= el['TYPE']
+    # end
+
+    # right now we'll just pick up level one, the leftmost (data issues I need to talk over with Caitlin); using spec as written gives us wrong level for first page
+
+
+    level = 1
+
+    sublist.each do |el|
+      next if el[:name].downcase != 'div'
+      next if not el['TYPE'] or el['TYPE'].downcase == 'page'
+
+      # pick up right-most texts for first non-page
+
+      section_label ||= el['LABEL']
+      section_type  ||= el['TYPE']
+    end
+
+
+
+    @section_dictionary[fptr_id] =  {
+      :id => fptr_id,
+      :label => section_type  || '',      # according to spec, but data's so crappy...
+      :title => section_label || '',
+      :level => level
+    }
+
+
+
   end
 
   # We'll maintain a stack of elements and their attributes: each
   # element of the stack is a hash, with the name of the element keyed
-  # by symbol :name; all the other key/value pairs, all strings, are
+  # by symbol :name; the remaining key/value pairs, all strings, are
   # the attributes.
 
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
+
     hash = { :name => name }
     attributes.each { |at|  hash[at.localname] = at.value }
     @stack.push hash
@@ -834,7 +917,7 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     puts stack_dump if @@debug
 
     case name
-#   when 'fptr';        handle_structmap_update
+    when 'fptr';        handle_structmap_update
     when 'FLocat';      handle_file_dictionary
     when 'mets';        handle_label
     when 'structMap';   handle_structmap_entry

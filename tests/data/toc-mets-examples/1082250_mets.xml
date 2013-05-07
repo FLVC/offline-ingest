@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?fcla fda="yes"?>
+<?fcla dl="yes"?>
+<METS:mets xmlns:METS="http://www.loc.gov/METS/" xmlns:daitss="http://www.fcla.edu/dls/md/daitss/" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/elements/1.1/" OBJID="UF00081048_00001" TYPE="book" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd http://www.loc.gov/mods/v3 http://www.loc.gov/mods/v3/mods-3-2.xsd http://www.fcla.edu/dls/md/daitss/ http://www.fcla.edu/dls/md/daitss/daitss.xsd">
+  <METS:metsHdr CREATEDATE="2008-03-25T10:45:41Z" ID="UF00081048_00001" LASTMODDATE="2008-03-25T10:45:41Z" RECORDSTATUS="NEW">
+    <METS:agent ROLE="CREATOR" TYPE="ORGANIZATION">
+      <METS:name>UF</METS:name>
+      <METS:note>server=TC</METS:note>
+      <METS:note>projects=JUV</METS:note>
+    </METS:agent>
+    <METS:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
+      <METS:name>Go UFDC - FDA Preparation Tool</METS:name>
+    </METS:agent>
+    <METS:agent ROLE="CREATOR" TYPE="INDIVIDUAL">
+      <METS:name>SMATHERSLIB\matmari</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+  <METS:dmdSec ID="DMD1">
+    <METS:mdWrap MDTYPE="DC" MIMETYPE="text/xml">
+      <METS:xmlData>
+        <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+          <dc:title>Fun at the circus.</dc:title>
+          
+          <dc:contributor>Raphael Tuck &amp; Sons.</dc:contributor>
+          <dc:publisher>Raphael Tuck &amp; Sons</dc:publisher>
+          <dc:language>English</dc:language>
+          <dc:identifier>002079481</dc:identifier>
+          <dc:identifier>27026956</dc:identifier>
+          <dc:identifier>AKR7905</dc:identifier>
+          <dc:description>Cover title.</dc:description>
+          <dc:description>Imprint also notes publisher's locations in Paris and New York.</dc:description>
+          <dc:description>Inscription dated 1892.</dc:description>
+          <dc:description>Also trademarked as "Artistic Series".</dc:description>
+          <dc:description>Publisher's advertisement, back cover.</dc:description>
+          <dc:type>Publishers' advertisements -- 1890.</dc:type>
+          <dc:type>Books with pop-up illustrations -- 1890.</dc:type>
+          <dc:subject>Toy and movable books -- Specimens.</dc:subject>
+          <dc:subject>Bldn -- 1890.</dc:subject>
+          <dc:subject/><dc:coverage>England--London.</dc:coverage>
+          <dc:subject/><dc:coverage>France--Paris.</dc:coverage>
+          <dc:subject/><dc:coverage>United States--New York--New York.</dc:coverage>
+          
+          
+        <dc:identifier>UF00081048_00001</dc:identifier></oai_dc:dc>
+      </METS:xmlData>
+    </METS:mdWrap>
+  </METS:dmdSec>
+  <METS:amdSec>
+    <METS:digiprovMD ID="AMD_DAITTS">
+      <METS:mdWrap MDTYPE="OTHER" OTHERMDTYPE="DAITTS">
+        <METS:xmlData>
+          <daitss:daitss>
+            <daitss:AGREEMENT_INFO ACCOUNT="UF" PROJECT="UFDC"/>
+          </daitss:daitss>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:digiprovMD>
+  </METS:amdSec>
+  <METS:fileSec>
+    <METS:fileGrp USE="index">
+      <METS:file CHECKSUM="acf13d703e677942ee7366ceee7e2af3" CHECKSUMTYPE="MD5" GROUPID="G1" ID="T1" MIMETYPE="text/plain" SIZE="378">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00000.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="cbf521fe86c18a58428addd536948018" CHECKSUMTYPE="MD5" GROUPID="G2" ID="T2" MIMETYPE="text/plain" SIZE="340">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00001.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="d81f3dc48d7099f6aa65ff2c1d5a81b1" CHECKSUMTYPE="MD5" GROUPID="G3" ID="T3" MIMETYPE="text/plain" SIZE="618">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00002.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="f6b1f0cb40923573ef17c28f0b5d4028" CHECKSUMTYPE="MD5" GROUPID="G4" ID="T4" MIMETYPE="text/plain" SIZE="890">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00003.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="db7e66c2edd0ca9338de625d3c708236" CHECKSUMTYPE="MD5" GROUPID="G5" ID="T5" MIMETYPE="text/plain" SIZE="107">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00004.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="8425a4897ea0b3fc760590f4e102823b" CHECKSUMTYPE="MD5" GROUPID="G6" ID="T6" MIMETYPE="text/plain" SIZE="938">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00005.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="9257e6dbc384e0db279e89c16f8719a8" CHECKSUMTYPE="MD5" GROUPID="G7" ID="T7" MIMETYPE="text/plain" SIZE="178">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00006.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="44e4d915ab44b6af1a94ab4ef8d2d662" CHECKSUMTYPE="MD5" GROUPID="G8" ID="T8" MIMETYPE="text/plain" SIZE="960">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00007.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="022fd4fdf871d37b4bf2438f266cdeb9" CHECKSUMTYPE="MD5" GROUPID="G9" ID="T9" MIMETYPE="text/plain" SIZE="727">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00008.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="789b066bb97cd6a604cf7c71f26c29ed" CHECKSUMTYPE="MD5" GROUPID="G10" ID="T10" MIMETYPE="text/plain" SIZE="51">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00009.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="06dc25f9be3ce2042f31b9072bb2ea8b" CHECKSUMTYPE="MD5" GROUPID="G11" ID="T11" MIMETYPE="text/plain" SIZE="139">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00010.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="b1c332853dfa97f706d1544488db7841" CHECKSUMTYPE="MD5" GROUPID="G12" ID="T12" MIMETYPE="text/plain" SIZE="786">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00011.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="91736359136408a4eb4ee2ead324723d" CHECKSUMTYPE="MD5" GROUPID="G13" ID="T13" MIMETYPE="text/plain" SIZE="783">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00012.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="3347b3dba211a26cada4d27b57b998dd" CHECKSUMTYPE="MD5" GROUPID="G14" ID="T14" MIMETYPE="text/plain" SIZE="536">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00013.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="96e80c59fc6a76a2df4e5d2be9a5f2fb" CHECKSUMTYPE="MD5" GROUPID="G15" ID="T15" MIMETYPE="text/plain" SIZE="782">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00014.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="2e5d4bb0d4a4b4ff74f8c286b18d7a29" CHECKSUMTYPE="MD5" GROUPID="G16" ID="T16" MIMETYPE="text/plain" SIZE="707">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00015.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="58e366385042b2ffde1d1617e1c0e18f" CHECKSUMTYPE="MD5" GROUPID="G17" ID="T17" MIMETYPE="text/plain" SIZE="293">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00016.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="60aae7347124334a00f0cc37c0b9d461" CHECKSUMTYPE="MD5" GROUPID="G18" ID="T18" MIMETYPE="text/plain" SIZE="520">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00017.txt"/>
+      </METS:file>
+      <METS:file CHECKSUM="7ae5aac94777e60dded91d407e724e45" CHECKSUMTYPE="MD5" GROUPID="G20" ID="T20" MIMETYPE="text/plain" SIZE="114">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00019.txt"/>
+      </METS:file>
+    </METS:fileGrp>
+    
+    <METS:fileGrp USE="reference">
+      <METS:file CHECKSUM="124f7058a45480675dc38282340fd690" CHECKSUMTYPE="MD5" GROUPID="G1" ID="E1" MIMETYPE="image/jp2" SIZE="412475" SEQ="1">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00000.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="f99505dd6717c97ce0baf476d457d2ad" CHECKSUMTYPE="MD5" GROUPID="G2" ID="E2" MIMETYPE="image/jp2" SIZE="421091" SEQ="2">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00001.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="2dd69c41950284d3a8db5dcfb392ac00" CHECKSUMTYPE="MD5" GROUPID="G3" ID="E3" MIMETYPE="image/jp2" SIZE="412546" SEQ="3">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00002.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="88c07b823e4132dfb6df8649d730a16f" CHECKSUMTYPE="MD5" GROUPID="G4" ID="E4" MIMETYPE="image/jp2" SIZE="412548" SEQ="4">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00003.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="51092eb71ade2d44c29811f119a7ec08" CHECKSUMTYPE="MD5" GROUPID="G5" ID="E5" MIMETYPE="image/jp2" SIZE="412432" SEQ="5">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00004.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="fa948fea6935bb5412a2ff9513dd4668" CHECKSUMTYPE="MD5" GROUPID="G6" ID="E6" MIMETYPE="image/jp2" SIZE="412485" SEQ="6">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00005.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="881189605c77d8f673bd5815481956ba" CHECKSUMTYPE="MD5" GROUPID="G7" ID="E7" MIMETYPE="image/jp2" SIZE="412518" SEQ="7">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00006.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="29673457f6a25f677abdadf0b63832b8" CHECKSUMTYPE="MD5" GROUPID="G8" ID="E8" MIMETYPE="image/jp2" SIZE="412543" SEQ="8">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00007.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="7cc96a05c2cb7d1305ef1c12f9c09215" CHECKSUMTYPE="MD5" GROUPID="G9" ID="E9" MIMETYPE="image/jp2" SIZE="412557" SEQ="9">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00008.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="131980d3e76bd834b12484590c744e31" CHECKSUMTYPE="MD5" GROUPID="G10" ID="E10" MIMETYPE="image/jp2" SIZE="430831" SEQ="10">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00009.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="a8e504c7cf1ac87f57f13dc1ebffea6d" CHECKSUMTYPE="MD5" GROUPID="G11" ID="E11" MIMETYPE="image/jp2" SIZE="444115" SEQ="11">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00010.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="7a5fb84a38437f5a8b40f2e5b9e56062" CHECKSUMTYPE="MD5" GROUPID="G12" ID="E12" MIMETYPE="image/jp2" SIZE="412555" SEQ="12">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00011.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="a7e7d6d90e5ec9bc37e03aa876bb050e" CHECKSUMTYPE="MD5" GROUPID="G13" ID="E13" MIMETYPE="image/jp2" SIZE="412492" SEQ="13">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00012.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="b0f0fa3ffa692ff2a9ef6d09f8892831" CHECKSUMTYPE="MD5" GROUPID="G14" ID="E14" MIMETYPE="image/jp2" SIZE="412317" SEQ="14">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00013.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="8b5a17bbfb84193fb27824790aeadf13" CHECKSUMTYPE="MD5" GROUPID="G15" ID="E15" MIMETYPE="image/jp2" SIZE="412553" SEQ="15">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00014.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="e8620fba4081618bf702827d5771deff" CHECKSUMTYPE="MD5" GROUPID="G16" ID="E16" MIMETYPE="image/jp2" SIZE="412554" SEQ="16">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00015.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="03c00c6fb743be218e4fcf4df77efa35" CHECKSUMTYPE="MD5" GROUPID="G17" ID="E17" MIMETYPE="image/jp2" SIZE="412344" SEQ="17">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00016.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="ee564a1f36be12d1981c269f8f6454f9" CHECKSUMTYPE="MD5" GROUPID="G18" ID="E18" MIMETYPE="image/jp2" SIZE="412558" SEQ="18">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00017.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="2255f4e27db5625d3181270443b8f172" CHECKSUMTYPE="MD5" GROUPID="G19" ID="E19" MIMETYPE="image/jp2" SIZE="423100" SEQ="19">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00018.jp2"/>
+      </METS:file>
+      <METS:file CHECKSUM="d072ebc11d2d7596387807711d7f7e9e" CHECKSUMTYPE="MD5" GROUPID="G20" ID="E20" MIMETYPE="image/jp2" SIZE="428022" SEQ="20">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/00019.jp2"/>
+      </METS:file>
+    </METS:fileGrp>
+    
+    
+    
+    
+  </METS:fileSec>
+  <METS:structMap ID="STRUCT1" TYPE="JPEG" LABEL="View">
+    <METS:div DMDID="DMD1" LABEL="Fun at the circus." ORDER="0" TYPE="main">
+      <METS:div ID="D1" ORDER="1" TYPE="Front Cover">
+        <METS:div ID="P1" LABEL="Front Cover 1" ORDER="1" TYPE="Page">
+          
+          <METS:fptr FILEID="T1"/>
+          
+          
+          <METS:fptr FILEID="E1"/>
+        </METS:div>
+        <METS:div ID="P2" LABEL="Front Cover 2" ORDER="2" TYPE="Page">
+          
+          <METS:fptr FILEID="T2"/>
+          
+          
+          <METS:fptr FILEID="E2"/>
+        </METS:div>
+      </METS:div>
+      <METS:div ID="D2" LABEL="Fun at the circus" ORDER="2" TYPE="Chapter">
+        <METS:div ID="P3" LABEL="Page 1" ORDER="1" TYPE="Page">
+          
+          <METS:fptr FILEID="T3"/>
+          
+          
+          <METS:fptr FILEID="E3"/>
+        </METS:div>
+        <METS:div ID="P4" LABEL="Page 2" ORDER="2" TYPE="Page">
+          
+          <METS:fptr FILEID="T4"/>
+          
+          
+          <METS:fptr FILEID="E4"/>
+        </METS:div>
+        <METS:div ID="P5" LABEL="Page 3" ORDER="3" TYPE="Page">
+          
+          <METS:fptr FILEID="T5"/>
+          
+          
+          <METS:fptr FILEID="E5"/>
+        </METS:div>
+        <METS:div ID="P6" LABEL="Page 4" ORDER="4" TYPE="Page">
+          
+          <METS:fptr FILEID="T6"/>
+          
+          
+          <METS:fptr FILEID="E6"/>
+        </METS:div>
+        <METS:div ID="P7" LABEL="Page 5" ORDER="5" TYPE="Page">
+          
+          <METS:fptr FILEID="T7"/>
+          
+          
+          <METS:fptr FILEID="E7"/>
+        </METS:div>
+        <METS:div ID="P8" LABEL="Page 6" ORDER="6" TYPE="Page">
+          
+          <METS:fptr FILEID="T8"/>
+          
+          
+          <METS:fptr FILEID="E8"/>
+        </METS:div>
+        <METS:div ID="P9" LABEL="Page 7" ORDER="7" TYPE="Page">
+          
+          <METS:fptr FILEID="T9"/>
+          
+          
+          <METS:fptr FILEID="E9"/>
+        </METS:div>
+        <METS:div ID="P10" LABEL="Page 8" ORDER="8" TYPE="Page">
+          
+          <METS:fptr FILEID="T10"/>
+          
+          
+          <METS:fptr FILEID="E10"/>
+        </METS:div>
+        <METS:div ID="P11" LABEL="Page 9" ORDER="9" TYPE="Page">
+          
+          <METS:fptr FILEID="T11"/>
+          
+          
+          <METS:fptr FILEID="E11"/>
+        </METS:div>
+        <METS:div ID="P12" LABEL="Page 10" ORDER="10" TYPE="Page">
+          
+          <METS:fptr FILEID="T12"/>
+          
+          
+          <METS:fptr FILEID="E12"/>
+        </METS:div>
+        <METS:div ID="P13" LABEL="Page 11" ORDER="11" TYPE="Page">
+          
+          <METS:fptr FILEID="T13"/>
+          
+          
+          <METS:fptr FILEID="E13"/>
+        </METS:div>
+        <METS:div ID="P14" LABEL="Page 12" ORDER="12" TYPE="Page">
+          
+          <METS:fptr FILEID="T14"/>
+          
+          
+          <METS:fptr FILEID="E14"/>
+        </METS:div>
+        <METS:div ID="P15" LABEL="Page 13" ORDER="13" TYPE="Page">
+          
+          <METS:fptr FILEID="T15"/>
+          
+          
+          <METS:fptr FILEID="E15"/>
+        </METS:div>
+        <METS:div ID="P16" LABEL="Page 14" ORDER="14" TYPE="Page">
+          
+          <METS:fptr FILEID="T16"/>
+          
+          
+          <METS:fptr FILEID="E16"/>
+        </METS:div>
+        <METS:div ID="P17" LABEL="Page 15" ORDER="15" TYPE="Page">
+          
+          <METS:fptr FILEID="T17"/>
+          
+          
+          <METS:fptr FILEID="E17"/>
+        </METS:div>
+        <METS:div ID="P18" LABEL="Page 16" ORDER="16" TYPE="Page">
+          
+          <METS:fptr FILEID="T18"/>
+          
+          
+          <METS:fptr FILEID="E18"/>
+        </METS:div>
+      </METS:div>
+      <METS:div ID="D3" ORDER="3" TYPE="Back Cover">
+        <METS:div ID="P19" LABEL="Back Cover 1" ORDER="1" TYPE="Page">
+          
+          
+          <METS:fptr FILEID="E19"/>
+        </METS:div>
+        <METS:div ID="P20" LABEL="Back Cover 2" ORDER="2" TYPE="Page">
+          
+          <METS:fptr FILEID="T20"/>
+          
+          
+          <METS:fptr FILEID="E20"/>
+        </METS:div>
+      </METS:div>
+    </METS:div>
+  </METS:structMap>
+</METS:mets>

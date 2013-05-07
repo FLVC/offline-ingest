@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mets="http://www.loc.gov/METS/" OBJID="FS00000072" LABEL="&quot;Floridelphia,&quot; Polk County, Florida">
+  <mets:metsHdr CREATEDATE="2010-12-16T21:30:50Z" ID="FS00000072" LASTMODDATE="2010-12-16T21:30:50Z">
+    <mets:agent ROLE="CREATOR" TYPE="ORGANIZATION">
+      <mets:name>FCLA</mets:name>
+      <mets:note>
+        This is DigiTool METS created by FCLA from the file inventory of FS00000072.
+      </mets:note>
+    </mets:agent>
+  </mets:metsHdr>
+  <mets:dmdSec ID="DMD1"><mets:mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><mets:xmlData><marc:record xmlns:marc="http://www.loc.gov/MARC21/slim"><marc:leader>     nam  22     uu 4500</marc:leader><marc:controlfield tag="008">      |           ||||||||||||||||||||||</marc:controlfield>
+          
+          <marc:datafield tag="245" ind1="1" ind2="0"><marc:subfield code="a">"Floridelphia," Polk County, Florida</marc:subfield></marc:datafield>
+          <marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">Hill, John L.</marc:subfield></marc:datafield>
+        <marc:datafield tag="598" ind1=" " ind2=" "><marc:subfield code="a">FS00000072</marc:subfield></marc:datafield></marc:record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file GROUPID="div1" MIMETYPE="image/jp2" ID="file-cover1.jp2" SEQ="1">
+        <mets:FLocat xlink:href="cover1.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div2" MIMETYPE="image/jp2" ID="file-cover2.jp2" SEQ="2">
+        <mets:FLocat xlink:href="cover2.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div3" MIMETYPE="image/jp2" ID="file-cover3.jp2" SEQ="3">
+        <mets:FLocat xlink:href="cover3.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div4" MIMETYPE="image/jp2" ID="file-cover4.jp2" SEQ="4">
+        <mets:FLocat xlink:href="cover4.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div5" MIMETYPE="image/jp2" ID="file-1.jp2" SEQ="5">
+        <mets:FLocat xlink:href="1.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div6" MIMETYPE="image/jp2" ID="file-2.jp2" SEQ="6">
+        <mets:FLocat xlink:href="2.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div7" MIMETYPE="image/jp2" ID="file-3.jp2" SEQ="7">
+        <mets:FLocat xlink:href="3.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div8" MIMETYPE="image/jp2" ID="file-4.jp2" SEQ="8">
+        <mets:FLocat xlink:href="4.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div9" MIMETYPE="image/jp2" ID="file-5.jp2" SEQ="9">
+        <mets:FLocat xlink:href="5.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div10" MIMETYPE="image/jp2" ID="file-6.jp2" SEQ="10">
+        <mets:FLocat xlink:href="6.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div11" MIMETYPE="image/jp2" ID="file-7.jp2" SEQ="11">
+        <mets:FLocat xlink:href="7.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div12" MIMETYPE="image/jp2" ID="file-8.jp2" SEQ="12">
+        <mets:FLocat xlink:href="8.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div13" MIMETYPE="image/jp2" ID="file-9.jp2" SEQ="13">
+        <mets:FLocat xlink:href="9.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div14" MIMETYPE="image/jp2" ID="file-10.jp2" SEQ="14">
+        <mets:FLocat xlink:href="10.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div15" MIMETYPE="image/jp2" ID="file-11.jp2" SEQ="15">
+        <mets:FLocat xlink:href="11.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div16" MIMETYPE="image/jp2" ID="file-12.jp2" SEQ="16">
+        <mets:FLocat xlink:href="12.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div17" MIMETYPE="image/jp2" ID="file-13.jp2" SEQ="17">
+        <mets:FLocat xlink:href="13.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div18" MIMETYPE="image/jp2" ID="file-14.jp2" SEQ="18">
+        <mets:FLocat xlink:href="14.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div19" MIMETYPE="image/jp2" ID="file-15.jp2" SEQ="19">
+        <mets:FLocat xlink:href="15.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div20" MIMETYPE="image/jp2" ID="file-16.jp2" SEQ="20">
+        <mets:FLocat xlink:href="16.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div21" MIMETYPE="image/jp2" ID="file-17.jp2" SEQ="21">
+        <mets:FLocat xlink:href="17.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div22" MIMETYPE="image/jp2" ID="file-18.jp2" SEQ="22">
+        <mets:FLocat xlink:href="18.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div23" MIMETYPE="image/jp2" ID="file-19.jp2" SEQ="23">
+        <mets:FLocat xlink:href="19.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div24" MIMETYPE="image/jp2" ID="file-20.jp2" SEQ="24">
+        <mets:FLocat xlink:href="20.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div25" MIMETYPE="image/jp2" ID="file-21.jp2" SEQ="25">
+        <mets:FLocat xlink:href="21.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div26" MIMETYPE="image/jp2" ID="file-22.jp2" SEQ="26">
+        <mets:FLocat xlink:href="22.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div27" MIMETYPE="image/jp2" ID="file-fly1.jp2" SEQ="27">
+        <mets:FLocat xlink:href="fly1.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div28" MIMETYPE="image/jp2" ID="file-map.jp2" SEQ="28">
+        <mets:FLocat xlink:href="map.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap>
+    <mets:div DMDID="DMD1" LABEL="&quot;Floridelphia,&quot; Polk County, Florida">
+      <mets:div TYPE="Page" LABEL="Cover 1">
+        <mets:fptr FILEID="file-cover1.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Cover 2">
+        <mets:fptr FILEID="file-cover2.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Cover 3">
+        <mets:fptr FILEID="file-cover3.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Cover 4">
+        <mets:fptr FILEID="file-cover4.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 1">
+        <mets:fptr FILEID="file-1.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 2">
+        <mets:fptr FILEID="file-2.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 3">
+        <mets:fptr FILEID="file-3.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 4">
+        <mets:fptr FILEID="file-4.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 5">
+        <mets:fptr FILEID="file-5.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 6">
+        <mets:fptr FILEID="file-6.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 7">
+        <mets:fptr FILEID="file-7.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 8">
+        <mets:fptr FILEID="file-8.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 9">
+        <mets:fptr FILEID="file-9.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 10">
+        <mets:fptr FILEID="file-10.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 11">
+        <mets:fptr FILEID="file-11.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 12">
+        <mets:fptr FILEID="file-12.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 13">
+        <mets:fptr FILEID="file-13.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 14">
+        <mets:fptr FILEID="file-14.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 15">
+        <mets:fptr FILEID="file-15.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 16">
+        <mets:fptr FILEID="file-16.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 17">
+        <mets:fptr FILEID="file-17.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 18">
+        <mets:fptr FILEID="file-18.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 19">
+        <mets:fptr FILEID="file-19.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 20">
+        <mets:fptr FILEID="file-20.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 21">
+        <mets:fptr FILEID="file-21.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 22">
+        <mets:fptr FILEID="file-22.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Dust Cover 1">
+        <mets:fptr FILEID="file-fly1.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Map">
+        <mets:fptr FILEID="file-map.jp2"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

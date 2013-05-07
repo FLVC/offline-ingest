@@ -1,4 +1,3 @@
-
 # For testing, remove soon:
 
     Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
@@ -47,7 +46,6 @@ class Mets
     create_sax_document
 
     # @sax_document.print_file_dictionary
-
   end
 
   def create_sax_document
@@ -65,7 +63,7 @@ class Mets
     @valid
   end
 
-  # TODO: check METS file for mets schema location if this makes sense
+  # TODO: check METS file for mets schema location if it makes sense
 
   def validates_against_schema?
     xsd = Nokogiri::XML::Schema(File.open(File.join(@config.schema_directory, 'mets.xsd')))
