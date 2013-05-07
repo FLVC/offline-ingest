@@ -709,12 +709,96 @@ end
 
 
 # Helper class for SaxDocumentExamineMets: save structmap information
+#
+#  eventually, we produce a list of records
+#
+#  :is_page   - true or false if this record represents a page
+#  :fids      - if :is_page, a list of file ids (strings) that should be available in the file dictionary.
+#  :level     - the section level
+#  :label     - the label from the div,
 
-class MetsStructmap
+
+# Struct.new('DivEntry',  :type, :label, :is_page, :level, :fids)
+Struct.new('DivEntry',  :level, :title, :is_page, :fids)
+Struct.new('FileEntry', :file_id)
+
+class MetsStructMap
+
+  attr_reader :number_files
+
+  def initialize
+    @list = []
+    @dmdid_ok = false
+    @number_files = 0
+  end
+
+  def each
+    @list.each { |elt| yield elt }
+  end
+
+  # include page and sections chapters here
+
+  def add_div hash, level
+    if hash['DMDID'] and hash['DMDID'] =~ /DMD1/i
+      @dmdid_ok = true
+      # there is sometimes an overall LABEL in there as well
+    elsif @dmdid_ok
+      record = Struct::DivEntry.new
+
+      record.level   = level
+      # record.type    = hash['TYPE']
+      # record.label   = hash['LABEL]'
+      record.title = hash['LABEL'] || hash['TYPE'] || nil
+
+      record.is_page = false
+      record.fids    = []
+
+      @list.push record
+    end
+  end
 
 
+  def add_file hash, level
+    return unless @dmdid_ok
+    @number_files += 1
 
+    record = Struct::FileEntry.new
+    record.file_id = hash['FILEID']
 
+    @list.push record
+  end
+
+  def ok?
+    @dmdid_ok  # and other sanity checks here, as well....
+  end
+
+  def post_process
+    new = []
+    @list.each do | rec |
+      case rec
+      when Struct::DivEntry
+        new.push rec
+      when Struct::FileEntry
+        next if new.empty?
+        parent = new[-1]
+        parent.is_page = true
+        parent.fids.push rec.file_id
+      end
+    end
+    @list = new
+  end
+
+  def print_toc
+    max = @list.map { |elt| elt.is_page ?  0 : elt.level }.max
+    indent = '. '
+    @list.each do |elt|
+      if elt.is_page
+        puts "===" + indent * (max +1)  + " " + elt.inspect
+      else
+        puts "==+" + indent * elt.level + " " + elt.inspect
+      end
+    end
+  end
 end
 
 
@@ -810,96 +894,37 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   end
 
 
-  # Return nil if list doesn't contain a structMap element, otherwise,
-  # return the remainder of the list. Start at the top of the document
-  # (beginning of the stack).
-
-  def check_for_structmap list
-    while not list.empty? do
-      el = list.shift
-      return list if el[:name] == 'structMap'
-    end
-    return nil
-  end
-
-  # Return nil if list doesn't contain a '<div DMDID="DMD1" ..>'
-  # element, otherwise, return remainder of the list.
-
-  def check_for_dmd list
-    while not list.empty? do
-      el = list.shift
-      return list if el[:name] == 'div' and el['DMDID'] == 'DMD1'
-    end
-    return nil
-  end
-
-
   def handle_structmap_entry
-    @current_structmap = MetsStructmap.new
+    @current_structmap = MetsStructMap.new
   end
 
   def handle_structmap_exit
-    # Check to make sure we have a DMDID='DMD1' before we save?
-    @structmaps.push @current_structmap
+
+    if @current_structmap.ok?
+      @current_structmap.post_process
+      @structmaps.push @current_structmap
+      @current_structmap.print_toc
+    end
+
     @current_structmap = nil
   end
 
-  def handle_structmap_update
-    sublist = @stack.clone  # TODO: use a non n-squared technique
-
-    return unless check_for_structmap(sublist)
-    return unless check_for_dmd(sublist)
-
-    # at this point we have something like the following:
-    #
-    # [{"TYPE"=>"Chapter", :name=>"div"}, {"LABEL"=>"Cover", "TYPE"=>"Page", :name=>"div"}, {:name=>"fptr", "FILEID"=>"T1"}]
-    #
-    # The section level information associated with FILEID T1 is considered to be '1' and the label is 'Chapter'.
-    #
-    # If we were to garner the page level information we'd enter it here based on the first rightmost div with a 'page' type.
-
-    fptr_id = sublist.pop['FILEID']
-    section_label = nil
-    section_type = nil
-
-    # level = div_level(sublist)
-    #
-    # while (el = sublist.pop and not section_label and not section_type) do
-    #
-    #   next if el[:name].downcase != 'div'
-    #   next if not el['TYPE'] or el['TYPE'].downcase == 'page'
-    #
-    #   # pick up right-most texts for first non-page
-    #
-    #   section_label ||= el['LABEL']
-    #   section_type  ||= el['TYPE']
-    # end
-
-    # right now we'll just pick up level one, the leftmost (data issues I need to talk over with Caitlin); using spec as written gives us wrong level for first page
-
-
-    level = 1
-
-    sublist.each do |el|
-      next if el[:name].downcase != 'div'
-      next if not el['TYPE'] or el['TYPE'].downcase == 'page'
-
-      # pick up right-most texts for first non-page
-
-      section_label ||= el['LABEL']
-      section_type  ||= el['TYPE']
+  def div_level
+    level = 0
+    @stack.reverse.each do |elt|
+      return level if elt[:name] == 'div' and elt['DMDID'] and elt['DMDID'] =~ /DMD1/i
+      level += 1 if elt[:name] == 'div'
     end
+    return level
+  end
 
+  def handle_structmap_update
+    return unless @current_structmap    # e.g, we got a <div> not inside a structmap
 
-
-    @section_dictionary[fptr_id] =  {
-      :id => fptr_id,
-      :label => section_type  || '',      # according to spec, but data's so crappy...
-      :title => section_label || '',
-      :level => level
-    }
-
-
+    level = div_level
+    elt = @stack[-1]
+    @current_structmap.add_div  elt, level  if elt[:name] == 'div'
+    @current_structmap.add_file elt, level  if elt[:name] == 'fptr'
 
   end
 
@@ -917,10 +942,10 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     puts stack_dump if @@debug
 
     case name
-    when 'fptr';        handle_structmap_update
-    when 'FLocat';      handle_file_dictionary
-    when 'mets';        handle_label
-    when 'structMap';   handle_structmap_entry
+    when 'fptr', 'div';   handle_structmap_update
+    when 'FLocat';        handle_file_dictionary
+    when 'mets';          handle_label
+    when 'structMap';     handle_structmap_entry
     end
 
   end
@@ -942,32 +967,12 @@ class SaxDocumentExamineMets < FedoraSaxDocument
 
   def end_document
 
-    # @section_dictionary.keys.each do |id|
-    #   if @file_dictionary[id]
-    #     rec = @section_dictionary[id]
-    #     rec[:pagenum] = @file_dictionary[id][:sequence]
-    #   else
-    #     STDERR.puts "Warning: no associated file information for #{@section_dictionary[id].inspect}" if @@debug # for example, a PDF section which we ignore
-    #     @section_dictionary.delete id
-    #     next
-    #   end
-    # end
-
-    if @@debug
-      # puts "Title: #{@label}"
-      # puts "File Dictionary:"
-      # @file_dictionary.values.sort { |v,w| v[:sequence].to_i <=> w[:sequence].to_i }.each do |val|
-      #   puts val.inspect
-      # end
-      # puts "Section Dictionary:"
-      # @section_dictionary.values.sort { |v,w| v[:id].to_i <=> w[:id].to_i }.each do |val|
-      #   puts val.inspect
-      # end
-    end
-
     if @@debug
       print_file_dictionary
       puts "structMap count: #{@structmaps.length}"
+      @structmaps.each do |sm|
+        sm.each { |elt| puts '. ' * elt.level + elt.inspect.gsub('#<struct Struct::DivEntry ',  '<') }
+      end
     end
   end
 end

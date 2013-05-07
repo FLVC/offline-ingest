@@ -96,7 +96,7 @@ end
 Struct.new('MockConfig', :schema_directory)
 
 config = Struct::MockConfig.new
-config.schema_directory = '/Users/fischer/WorkProjects/offline-ingest/lib/include/'
+config.schema_directory = File.join(ENV['HOME'], 'WorkProjects/offline-ingest/lib/include/')
 
 SaxDocumentExamineMets.debug = true
 
@@ -104,6 +104,9 @@ mets = Mets.new(config, ARGV[0])
 
 puts 'Errors: ',   mets.errors   if mets.errors?
 puts 'Warnings: ', mets.warnings if mets.warnings?
+
+#  mets.sax_document.print_file_dictionary
+
 
 if mets.valid?
   puts "METS is valid"
