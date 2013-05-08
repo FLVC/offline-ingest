@@ -413,7 +413,7 @@ class ManifestSaxDocument < FedoraSaxDocument
     @stack  = []     # only used for debugging
     @bogons = {}     # collect unrecognized elements
 
-    @elements = {}   # lists
+    @elements = {}   # dictionary with keys by element names (collection, contentModel), values are lists, generally of strings from XML character data
 
     [ 'collection', 'contentModel', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution' ].each do |name|
       @elements[name] = []
@@ -468,20 +468,20 @@ class ManifestSaxDocument < FedoraSaxDocument
   # the attributes.
 
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
-    debug_data = { :name => name }
-    debug_data['prefix'] = prefix if prefix
-    debug_data['uri']    = uri if uri
-    debug_data['ns']     = ns unless ns.empty?
+    datum = { :name => name }
+    datum['prefix'] = prefix if prefix
+    datum['uri']    = uri if uri
+    datum['ns']     = ns unless ns.empty?
 
     hash = {}
     attributes.each do |at|
       hash[at.localname] = at.value;
-      debug_data[at.localname] = at.value
+      datum[at.localname] = at.value
     end
 
     @elements['objectHistory'].push hash if name == 'objectHistory'
 
-    @stack.push debug_data
+    @stack.push datum
     puts stack_dump if @@debug
   end
 
@@ -645,7 +645,6 @@ class ManifestSaxDocument < FedoraSaxDocument
 
 
   def end_document
-
     # optional, multivalued
 
     @identifiers = @elements['identifier']
@@ -663,44 +662,56 @@ class ManifestSaxDocument < FedoraSaxDocument
 
     @valid &&=  true   # if not false, force to 'true' value, instead of non-boolean that ...ok? methods are allowed to return
 
-
     warning "There were unexpected elements in the manifest:  #{@bogons.keys.sort.join(', ')}."  unless @bogons.empty?
   end
 end   # of ManifestSaxDocument
 
 
-Struct.new('DictionaryEntry', :sequence, :href, :mimetype, :use, :fid)
+Struct.new('MetsFileDictionaryEntry', :sequence, :href, :mimetype, :use, :fid)
 
 # Helper class for SaxDocumentExamineMets; save fileSec information.
 
 class MetsFileDictionary
 
-  # Just a simple class to keep information from a subtree such as
-  # <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
-  #   <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05030701_cover1.jpg" />
-  # </METS:file>
+  # A simple class to keep information from a subtree such as
+  # <METS:fileGrp USE="index">
+  #   <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+  #     <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05030701_cover1.jpg" />
+  #   </METS:file>
+  #   ... more METS:file subtrees...
+  # </METS:fileGrp>
+  #
+  # We keep an ordered list of MetsFileDictionaryEntry structs, which can
+  # returned via hash-like lookup ['FID1'] or sequentially via each.
+  #
+  # The MetsFileDictionaryEntry struct has entries (using the example above) with
+  #
+  #   dictionary.sequence => '1'
+  #   dictionary.mimetype => 'image/jpeg'
+  #   dictionary.href     => 'FI05030701_cover1.jpg'
+  #   dictionary.use      => 'index'
+  #   dictionary.fid      => 'FID1'
+  #
+  # mimetype and use are always lower-cased when strings - any of the above may technically be nil, but :fid and :href will not be.
 
   def initialize
     @sequence = []
-    @hash = {}
+    @dict = {}
   end
 
-  # value is a hash with  :sequence, :mimetype, :href, and :use;  we add :fid.
 
   def []=(fid, value)
     value.fid  = fid
-    @hash[fid] = value
+    @dict[fid] = value
     @sequence.push fid
   end
 
   def [](fid)
-    @hash[fid]
+    @dict[fid]
   end
 
   def each
-    @sequence.each do |fid|
-      yield @hash[fid]
-    end
+    @sequence.each { |fid|  yield @dict[fid] }
   end
 
   def print
@@ -713,10 +724,12 @@ end
 
 # Helper class for SaxDocumentExamineMets: save structmap information
 
-Struct.new('DivEntry',  :level, :title, :is_page, :fids)
-Struct.new('FileEntry', :file_id)
+Struct.new('MetsDivData',  :level, :title, :is_page, :fids)
+Struct.new('MetsFileData', :file_id)
 
 class MetsStructMap
+
+  include Errors
 
   attr_reader :number_files
 
@@ -736,7 +749,7 @@ class MetsStructMap
     if hash['DMDID'] and hash['DMDID'] =~ /DMD1/i
       @dmdid_ok = true   # there is sometimes an overall LABEL in there as well
     elsif @dmdid_ok
-      record = Struct::DivEntry.new
+      record = Struct::MetsDivData.new
       record.level   = level
       record.title   = hash['LABEL'] || hash['TYPE'] || nil
       record.is_page = false
@@ -748,7 +761,7 @@ class MetsStructMap
   def add_file hash, level
     return unless @dmdid_ok
     @number_files += 1
-    record = Struct::FileEntry.new
+    record = Struct::MetsFileData.new
     record.file_id = hash['FILEID']
     @list.push record
   end
@@ -757,7 +770,7 @@ class MetsStructMap
     @dmdid_ok  # and other sanity checks here, as well....
   end
 
-  # post_process is called after the entire structMap subtree is
+  # post_process is called after an entire structMap subtree is
   # examined; it collapses out the FileEntry (fptr) nodes from the
   # list, assigning its fileid's to the previous DivEntry node's list
   # of file-ids (fids)
@@ -766,13 +779,16 @@ class MetsStructMap
     new = []
     @list.each do | rec |
       case rec
-      when Struct::DivEntry
+      when Struct::MetsDivData
         new.push rec
-      when Struct::FileEntry
-        next if new.empty?
-        parent = new[-1]
+      when Struct::MetsFileData
+        if new.empty?
+          warning "METS file data #{rec.inspect} doesn't have a parent <div> node, skipping."
+          next
+        end
+        parent = new[-1]            # grab immedidate parent, which will be a MetsDivData element
         parent.is_page = true
-        parent.fids.push rec.file_id
+        parent.fids.push(rec.file_id)
       end
     end
     @list = new
@@ -817,16 +833,36 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   # When we've identified a 'FLocat' subtree, place it into the dictionary.
 
   def handle_file_dictionary
+
     return unless  onstack? 'FLocat', 'file', 'fileGrp', 'fileSec'   # leftmost is towards top of stack, très confusing!
+
+    # stack  text
+    # -----  ----------
+    # [-3]   <METS:fileGrp USE="index">
+    # [-2]     <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+    # [-1]       <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05030701_cover1.jpg" />
+    #          </METS:file>
+    #   ...
+    # </METS:fileGrp>
 
     flocat_element, file_element, file_group = @stack[-1], @stack[-2], @stack[-3]
 
-    return unless fid = file_element['ID']
+    if not file_element['ID']
+      warning "METS file element #{file_element.inspect} doesn't have an ID, skipping."
+      return
+    end
 
-    data = Struct::DictionaryEntry.new
+    if not flocat_element['href']
+      warning "METS FLocat element #{flocat_element.inspect} doesn't have an href, skipping."
+      return
+    end
 
-    data.sequence = file_element['SEQ']
-    data.href     = flocat_element['href']
+    fid = file_element['ID']
+
+    data = Struct::MetsFileDictionaryEntry.new
+
+    data.sequence = file_element['SEQ']                        #
+    data.href     = flocat_element['href']                     #
     data.mimetype = safe_downcase(file_element['MIMETYPE'])    # expected 'image/jp2' etc.
     data.use      = safe_downcase(file_group['USE'])           # expected limited set: 'archive', 'thumbnail', 'reference', 'index'.  In general we'll only be using the last two (image, ocr)
 
@@ -876,18 +912,19 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   def div_level
     level = 0
     @stack.reverse.each do |elt|
-      return level if elt[:name] == 'div' and elt['DMDID'] and elt['DMDID'] =~ /DMD1/i
-      level += 1 if elt[:name] == 'div'
+      return level if (elt[:name] == 'div' and elt['DMDID'] and elt['DMDID'] =~ /DMD1/i)
+      level += 1 if (elt[:name] == 'div')
     end
     return level
   end
 
   def handle_structmap_update
-    return unless @current_structmap    # e.g, we got a <div> or <fptr> not inside a structmap
-    level = div_level
-    elt = @stack[-1]
-    @current_structmap.add_div  elt, level  if elt[:name] == 'div'
-    @current_structmap.add_file elt, level  if elt[:name] == 'fptr'
+    return unless @current_structmap    # e.g, we got a <div> or <fptr> but not inside a structmap
+    level, elt = div_level, @stack[-1]
+    case elt[:name]
+    when 'div';    @current_structmap.add_div(elt, level)
+    when 'fptr';   @current_structmap.add_file(elt, level)
+    end
   end
 
   # We'll maintain a stack of elements and their attributes: each
@@ -900,13 +937,13 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     attributes.each { |at|  hash[at.localname] = at.value }
     @stack.push hash
 
-    puts stack_dump if @@debug
+    # puts stack_dump if @@debug
 
     case name
+    when 'structMap';     handle_structmap_begin
     when 'fptr', 'div';   handle_structmap_update
     when 'FLocat';        handle_file_dictionary
     when 'mets';          handle_label
-    when 'structMap';     handle_structmap_begin
     end
   end
 
