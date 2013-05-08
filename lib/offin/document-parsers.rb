@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'nokogiri'
 require 'ostruct'
 require 'offin/errors'
@@ -5,7 +6,7 @@ require 'offin/errors'
 
 class FedoraSaxDocument < Nokogiri::XML::SAX::Document
 
-  @@debug = false
+  @@debug = false  # hmmm... wonder what this is for?
 
   def self.debug= value
     @@debug = value
@@ -20,7 +21,7 @@ class FedoraSaxDocument < Nokogiri::XML::SAX::Document
   def initialize
     @current_string = ''      # the actual character data content
                               # between parsed elements; subclasses
-                              # will play with this (usually resetting
+                              # will play with this (usually truncating
                               # it at the 'end_element' event)
     super()
   end
@@ -141,20 +142,14 @@ class SaxDocumentGetNextPID < FedoraSaxDocument
 
   def initialize
     @pids     = []            # array of PIDs for content of <pid>...</pid> elements
-    @state    = nil           # two states: parsing <pid>...</pid>, or not (nil)
-
     super()
   end
 
   def start_element name, attributes = []
-    @state = 'pid'  if name == 'pid'
   end
 
   def end_element name
-    if name == 'pid'
-      @state = nil
-      @pids.push @current_string
-    end
+    @pids.push @current_string if name == 'pid'
     @current_string = ''
   end
 end  # of class SaxDocumentGetNextPID
@@ -212,7 +207,7 @@ class SaxDocumentExamineMods < FedoraSaxDocument
     @is_simple_mods
   end
 
-  def end_element name
+  def end_element_namespace name, prefix = nil, uri = nil
     @depth -= 1
   end
 
@@ -320,10 +315,10 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
 
     # here we enter a result record (we have a list of all variables parsed
     # from the heading section at this point):
+
     when 'result'
       @parsing_result = true
       @current_result = {}
-      #####
       @variables.keys.each do |var|
         @current_result[var] = nil   # paranoia: make sure we'll have complete set of slots for missing data (can't happen, but...)
       end
@@ -332,6 +327,7 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
     # have it's data as an attribute (only one, I hope) or as
     # character data. In this latter case, we'll have to get it when we're
     # done with the element (see below):
+
     else
       if @parsing_result and @variables[name]
         @current_result[name] = (attributes.empty?  ? nil : attributes[0][1])
@@ -487,7 +483,6 @@ class ManifestSaxDocument < FedoraSaxDocument
 
     @stack.push debug_data
     puts stack_dump if @@debug
-
   end
 
   def end_element_namespace name, prefix = nil, uri = nil
@@ -674,6 +669,8 @@ class ManifestSaxDocument < FedoraSaxDocument
 end   # of ManifestSaxDocument
 
 
+Struct.new('DictionaryEntry', :sequence, :href, :mimetype, :use, :fid)
+
 # Helper class for SaxDocumentExamineMets; save fileSec information.
 
 class MetsFileDictionary
@@ -688,10 +685,10 @@ class MetsFileDictionary
     @hash = {}
   end
 
-  # value is a hash with  :sequence, :mimetype, :href, and :use;  we add :id.
+  # value is a hash with  :sequence, :mimetype, :href, and :use;  we add :fid.
 
   def []=(fid, value)
-    value[:id] = fid
+    value.fid  = fid
     @hash[fid] = value
     @sequence.push fid
   end
@@ -705,20 +702,17 @@ class MetsFileDictionary
       yield @hash[fid]
     end
   end
+
+  def print
+    puts self.to_s
+    self.each { |elt| puts "#{elt.fid}: sequence=#{elt.sequence.inspect} mimetype=#{elt.mimetype.inspect} href=#{elt.href.inspect} use=#{elt.use.inspect}" }
+  end
+
 end
 
 
 # Helper class for SaxDocumentExamineMets: save structmap information
-#
-#  eventually, we produce a list of records
-#
-#  :is_page   - true or false if this record represents a page
-#  :fids      - if :is_page, a list of file ids (strings) that should be available in the file dictionary.
-#  :level     - the section level
-#  :label     - the label from the div,
 
-
-# Struct.new('DivEntry',  :type, :label, :is_page, :level, :fids)
 Struct.new('DivEntry',  :level, :title, :is_page, :fids)
 Struct.new('FileEntry', :file_id)
 
@@ -740,37 +734,33 @@ class MetsStructMap
 
   def add_div hash, level
     if hash['DMDID'] and hash['DMDID'] =~ /DMD1/i
-      @dmdid_ok = true
-      # there is sometimes an overall LABEL in there as well
+      @dmdid_ok = true   # there is sometimes an overall LABEL in there as well
     elsif @dmdid_ok
       record = Struct::DivEntry.new
-
       record.level   = level
-      # record.type    = hash['TYPE']
-      # record.label   = hash['LABEL]'
-      record.title = hash['LABEL'] || hash['TYPE'] || nil
-
+      record.title   = hash['LABEL'] || hash['TYPE'] || nil
       record.is_page = false
       record.fids    = []
-
       @list.push record
     end
   end
 
-
   def add_file hash, level
     return unless @dmdid_ok
     @number_files += 1
-
     record = Struct::FileEntry.new
     record.file_id = hash['FILEID']
-
     @list.push record
   end
 
   def ok?
     @dmdid_ok  # and other sanity checks here, as well....
   end
+
+  # post_process is called after the entire structMap subtree is
+  # examined; it collapses out the FileEntry (fptr) nodes from the
+  # list, assigning its fileid's to the previous DivEntry node's list
+  # of file-ids (fids)
 
   def post_process
     new = []
@@ -788,20 +778,12 @@ class MetsStructMap
     @list = new
   end
 
-  def print_toc
-    max = @list.map { |elt| elt.is_page ?  0 : elt.level }.max
-    indent = '. '
-    @list.each do |elt|
-      if elt.is_page
-        puts "===" + indent * (max +1)  + " " + elt.inspect
-      else
-        puts "==+" + indent * elt.level + " " + elt.inspect
-      end
-    end
+  def print
+    puts self.to_s
+    @list.each { |elt| puts '. ' * elt.level + elt.inspect.gsub('#<struct Struct::DivEntry ',  '<') }
   end
+
 end
-
-
 
 # Class for parsing out the table of contents information in a METS
 # file.
@@ -832,29 +814,21 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     return true
   end
 
-  # Grab the value of the LABEL attribute from the topmost mets element.
-  #
-  # def handle_label
-  #   text = @stack[-1]['LABEL'] || ''
-  #   @label = text.split(/\s+/).join(' ').strip   # cleanup whitespace
-  # end
-
   # When we've identified a 'FLocat' subtree, place it into the dictionary.
 
   def handle_file_dictionary
-    return unless  onstack? 'FLocat', 'file', 'fileGrp', 'fileSec'   # top of stack is leftmost
+    return unless  onstack? 'FLocat', 'file', 'fileGrp', 'fileSec'   # leftmost is towards top of stack, très confusing!
 
     flocat_element, file_element, file_group = @stack[-1], @stack[-2], @stack[-3]
 
     return unless fid = file_element['ID']
 
-    data = {}
+    data = Struct::DictionaryEntry.new
 
-    data[:sequence] = file_element['SEQ']
-    data[:href]     = flocat_element['href']
-    data[:mimetype] = safe_downcase(file_element['MIMETYPE'])    # expected 'image/jp2' etc.
-    data[:use]      = safe_downcase(file_group['USE'])           # expected limited set: 'archive', 'thumbnail', 'reference', 'index'.  In general we'll only be using the last two (image, ocr)
-    data[:groupid]  = file_element['GROUPID']
+    data.sequence = file_element['SEQ']
+    data.href     = flocat_element['href']
+    data.mimetype = safe_downcase(file_element['MIMETYPE'])    # expected 'image/jp2' etc.
+    data.use      = safe_downcase(file_group['USE'])           # expected limited set: 'archive', 'thumbnail', 'reference', 'index'.  In general we'll only be using the last two (image, ocr)
 
     @file_dictionary[fid] = data
   end
@@ -872,12 +846,6 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     return text.downcase
   end
 
-
-  def print_file_dictionary
-    puts "File Dictionary:"
-    @file_dictionary.each { |elt| puts elt.inspect }
-  end
-
   # Textualize the attribute data off a stack element (ignore the :name key)
 
   def prettify hash
@@ -893,20 +861,16 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     @stack.map { |h| h[:name] }.join(' => ') + '  ' + prettify(@stack[-1])
   end
 
-
-  def handle_structmap_entry
+  def handle_structmap_begin
     @current_structmap = MetsStructMap.new
   end
 
-  def handle_structmap_exit
-
+  def handle_structmap_end
     if @current_structmap.ok?
       @current_structmap.post_process
       @structmaps.push @current_structmap
-      @current_structmap.print_toc
     end
-
-    @current_structmap = nil
+    @current_structmap = nil   # now used as flag to show we're not in the structMap parsing state
   end
 
   def div_level
@@ -919,13 +883,11 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   end
 
   def handle_structmap_update
-    return unless @current_structmap    # e.g, we got a <div> not inside a structmap
-
+    return unless @current_structmap    # e.g, we got a <div> or <fptr> not inside a structmap
     level = div_level
     elt = @stack[-1]
     @current_structmap.add_div  elt, level  if elt[:name] == 'div'
     @current_structmap.add_file elt, level  if elt[:name] == 'fptr'
-
   end
 
   # We'll maintain a stack of elements and their attributes: each
@@ -934,7 +896,6 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   # the attributes.
 
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
-
     hash = { :name => name }
     attributes.each { |at|  hash[at.localname] = at.value }
     @stack.push hash
@@ -945,34 +906,25 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     when 'fptr', 'div';   handle_structmap_update
     when 'FLocat';        handle_file_dictionary
     when 'mets';          handle_label
-    when 'structMap';     handle_structmap_entry
+    when 'structMap';     handle_structmap_begin
     end
-
   end
 
   # Pop the stack when we're done.
 
   def end_element_namespace name, prefix = nil, uri = nil
-    case name
-    when 'structMap';   handle_structmap_exit
-    end
-
+    handle_structmap_end if name == 'structMap'
     @stack.pop
     @current_string = ''
   end
 
-
-
   # All data has now been collected into dictionaries, assemble into JSON format
 
   def end_document
-
     if @@debug
-      print_file_dictionary
+      @file_dictionary.print
       puts "structMap count: #{@structmaps.length}"
-      @structmaps.each do |sm|
-        sm.each { |elt| puts '. ' * elt.level + elt.inspect.gsub('#<struct Struct::DivEntry ',  '<') }
-      end
+      @structmaps.each { |sm| sm.print }
     end
   end
 end
