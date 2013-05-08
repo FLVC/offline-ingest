@@ -1,7 +1,11 @@
 
-# All our main classes include 'error' and 'warning' methods (arrays
-# of strings), accessors (e.g. 'errors') and setters (e.g. 'error
-# string, string...').
+# All our main classes mix in these error and warning utilities:
+#
+#  errors                       - get the error messages, an array of strings
+#  error string [, string]      - add error message(s) to end of array of strings
+#  errors?                      - boolean, true if there are any error messages
+#
+#  and there are similar warnings, warning, and warnings? methods.
 
 module Errors
 
