@@ -143,9 +143,10 @@ class Mods
 
     return true
 
+    # TODO: catch nokogiri class errors here, others get backtrace
   rescue => e
-    error "Exception '#{e}' occurred when validating '#{@filename}' against MODS schema, backtrace follows:"
-    error e.backtrace
+    error "Exception #{e.class}, #{e.message} occurred when validating '#{@filename}' against the MODS schema '#{sax_document.mods_schema_location}'."
+    ## error e.backtrace
     return false
   end
 

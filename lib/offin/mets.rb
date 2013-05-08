@@ -44,8 +44,6 @@ class Mets
     @valid &&= validates_against_schema?
 
     create_sax_document
-
-    # @sax_document.print_file_dictionary
   end
 
   def create_sax_document
@@ -66,7 +64,8 @@ class Mets
   # TODO: check METS file for mets schema location if it makes sense
 
   def validates_against_schema?
-    xsd = Nokogiri::XML::Schema(File.open(File.join(@config.schema_directory, 'mets.xsd')))
+    schema_path = File.join(@config.schema_directory, 'mets.xsd')
+    xsd = Nokogiri::XML::Schema(File.open(schema_path))
 
     issues = []
     xsd.validate(@xml_document).each { |err| issues.push err }
@@ -78,9 +77,10 @@ class Mets
     end
     return true
 
+    # TODO: catch nokogiri class errors here, others get backtrace
   rescue => e
-    error "Exception '#{e}' occurred when validating '#{@filename}' against MODS schema, backtrace follows:"
-    error e.backtrace
+    error "Exception #{e.class}, #{e.message} occurred when validating '#{@filename}' against the METS schema '#{schema_path}'."
+    # error e.backtrace
     return false
   end
 end
