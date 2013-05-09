@@ -46,16 +46,36 @@ class Mets
     create_sax_document
   end
 
+
+  # sax document will parse and produce a file dictionary, label, structmaps, which we'll process
+
   def create_sax_document
     @sax_document = SaxDocumentExamineMets.new
     Nokogiri::XML::SAX::Parser.new(@sax_document).parse(@text)
 
+    # sax parser errors may not be fatal, so store them to warnings.
+
     if @sax_document.warnings? or @sax_document.errors?
       warning "SAX parser warnings for '#{@filename}'"
-      warning  @sax_document.errors
       warning  @sax_document.warnings
     end
+
+    if @sax_document.errors?
+      warning "SAX parser errors for '#{@filename}'"
+      warning  @sax_document.errors
+    end
   end
+
+
+
+  def process_structmap
+
+    # @sax_document.number_files
+
+  end
+
+
+
 
   def valid?
     @valid
@@ -83,6 +103,14 @@ class Mets
     # error e.backtrace
     return false
   end
+
+
+
+
+
+
+
+
 end
 
 
@@ -98,9 +126,27 @@ Struct.new('MockConfig', :schema_directory)
 config = Struct::MockConfig.new
 config.schema_directory = File.join(ENV['HOME'], 'WorkProjects/offline-ingest/lib/include/')
 
-SaxDocumentExamineMets.debug = true
+SaxDocumentExamineMets.debug = false
+
 
 mets = Mets.new(config, ARGV[0])
+
+
+dict = mets.sax_document.file_dictionary
+
+mets.sax_document.structmaps.each do |map|
+  map.each do |entry|
+    indent = '..'
+    puts indent * (entry.level - 1)  + (entry.is_page ? 'PAGE: ' : 'CHAPTER: ') + entry.title
+    if entry.is_page
+      entry.fids.each do |fid|
+        f = dict[fid]
+        puts indent * entry.level + f.use + ' ' + f.mimetype + ' ' + f.href
+      end
+    end
+  end
+end
+
 
 puts 'Errors: ',   mets.errors   if mets.errors?
 puts 'Warnings: ', mets.warnings if mets.warnings?
@@ -113,3 +159,24 @@ if mets.valid?
 else
   puts "METS is invalid"
 end
+
+
+
+<<NOTES
+
+need list of page objects, created from structmap and dictionary.  Will have image file, maybe text files + mime, sequence number (implied), pagelabel
+  <PAGE  image_filename, image_type, text_filename, text_type, label, level>
+  <CHAPTER  label, level>
+
+select best structmap (has most fids), if same, find ones that have proper :use (reference/index) or mimetype of image or texts; warn when one is dropped.
+make sure all things marked pages have fids; warn and remove from page list if not.
+make sure all files for pages exist; error if not
+
+
+create TOC
+
+
+
+
+
+NOTES

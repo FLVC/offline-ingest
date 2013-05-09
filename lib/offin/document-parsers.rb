@@ -689,7 +689,7 @@ class MetsFileDictionary
   #
   # The MetsFileDictionaryEntry struct has entries (using the example above) with
   #
-  #   dictionary.sequence => '1'                       -- we don't really trust this, instead we take the implied sequence from the structMap. TODO: maybe we'll warn if this is wrong...
+  #   dictionary.sequence => '1'                       -- we don't really use this, instead we take the sequence supplied by the structMap. TODO: maybe we'll warn if these differ...
   #   dictionary.mimetype => 'image/jpeg'              -- might be nil - we'll fill in by href extension if missing... TODO:
   #   dictionary.href     => 'FI05030701_cover1.jpg'   -- has to be present, and we'll check if it resolves to a file in the package.. TODO:
   #   dictionary.use      => 'index'                   -- we really want this to be 'index' (full text) or 'reference' (the designated format to ingest), but we may get 'archive' in some cases... TODO:
@@ -737,11 +737,13 @@ class MetsStructMap
   include Errors
 
   attr_reader :number_files
+  attr_accessor :score
 
   def initialize
     @list = []
     @dmdid_ok = false
     @number_files = 0
+    @score = 0              # in the case of multiple structmaps, we may need a scoring slot to determine which is best
   end
 
   def each
@@ -756,7 +758,7 @@ class MetsStructMap
     elsif @dmdid_ok
       record = Struct::MetsDivData.new
       record.level   = level
-      record.title   = hash['LABEL'] || hash['TYPE'] || nil
+      record.title   = hash['LABEL'] || hash['TYPE'] || ''
       record.is_page = false
       record.fids    = []
       @list.push record
@@ -883,7 +885,7 @@ class SaxDocumentExamineMets < SaxDocument
 
   def safe_downcase text
     return text unless text.class == String
-    return text.downcase
+    return text.downcase.strip
   end
 
   # Textualize the atttribute data off a stack element for printing
@@ -966,7 +968,7 @@ class SaxDocumentExamineMets < SaxDocument
   # (a list of Struct::MetsFileData thangs) and one or more
   # MetsStructMap objects (a list of Struct::MetsDivData objects).
   #
-  # TODO: resolve issues here: warn if sequences don't match, etc.
+  # TODO: resolve issues here: warn if sequences don't match, files don't exist
 
   def end_document
     if @@debug
