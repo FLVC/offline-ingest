@@ -4,7 +4,7 @@ require 'ostruct'
 require 'offin/errors'
 
 
-class FedoraSaxDocument < Nokogiri::XML::SAX::Document
+class SaxDocument < Nokogiri::XML::SAX::Document
 
   @@debug = false  # hmmm... wonder what this is for?
 
@@ -30,9 +30,9 @@ class FedoraSaxDocument < Nokogiri::XML::SAX::Document
     @current_string += string.strip  # This may be a bit harsh to leading whitespace...
   end
 
-end # of class FedoraSaxDocument
+end # of class SaxDocument
 
-class SaxDocumentAddDatastream < FedoraSaxDocument
+class SaxDocumentAddDatastream < SaxDocument
 
   # Handler for parsing the returned XML document from a successful addDatastream request. For example:
   #
@@ -121,7 +121,7 @@ class SaxDocumentAddDatastream < FedoraSaxDocument
 end # of class SaxDocumentAddDatastream
 
 
-class SaxDocumentGetNextPID < FedoraSaxDocument
+class SaxDocumentGetNextPID < SaxDocument
 
   # Handler for parsing the returned XML document from a successful
   # getNextPID request to fedora; an XML document returned for a
@@ -154,7 +154,7 @@ class SaxDocumentGetNextPID < FedoraSaxDocument
   end
 end  # of class SaxDocumentGetNextPID
 
-class SaxDocumentExamineMods < FedoraSaxDocument
+class SaxDocumentExamineMods < SaxDocument
 
   # Handler for checking if a document is a simple MODS file, and for
   # extracting some information for later handling, namely the schema
@@ -238,7 +238,7 @@ class SaxDocumentExamineMods < FedoraSaxDocument
 end   # of class SaxDocumentExamineMods
 
 
-class SaxDocumentExtractSparql < FedoraSaxDocument
+class SaxDocumentExtractSparql < SaxDocument
 
   # Handler for parsing the returned XML document from a successful resource query request.
   #
@@ -255,7 +255,7 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
   #      minus  $content <mulgara:is> <info:fedora/fedora-system:FedoraObject-3.0>
   #   order by  $title
   #
-  # mulgara returns an XML document provinding the object, title
+  # mulgara returns an XML document providing the object, title
   # and content model for all objects in the collection named
   # 'islandora:sp_basic_image_collection' as so:
   #
@@ -269,7 +269,7 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
   #   <results>
   #     <result>
   #       <object uri="info:fedora/islandora:475"/>
-  #       <title>A Page from Woody Guthrie's Diary:  New Years Resolutions</title>
+  #       <title>A Page from Woody Guthrie's Diary: New Years Resolutions</title>
   #       <content uri="info:fedora/islandora:sp_basic_image"/>
   #     </result>
   #       ....
@@ -388,7 +388,7 @@ end   # of class SaxDocumentExtractSparql
 # </manifest>
 #
 
-class ManifestSaxDocument < FedoraSaxDocument
+class ManifestSaxDocument < SaxDocument
 
   @@institutions = nil
   @@content_models = nil
@@ -435,6 +435,8 @@ class ManifestSaxDocument < FedoraSaxDocument
   end
 
   private
+
+  # What manifests are al about:
 
   # | Manifest Element      | Required | Repeatable | Allowed Character Data                                  | Notes                                               |
   # |-----------------------+----------+------------+---------------------------------------------------------+-----------------------------------------------------|
@@ -673,12 +675,13 @@ Struct.new('MetsFileDictionaryEntry', :sequence, :href, :mimetype, :use, :fid)
 
 class MetsFileDictionary
 
-  # A simple class to keep information from a subtree such as
+  # A simple class to keep information from a METS subtree such as
+  #
   # <METS:fileGrp USE="index">
   #   <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
   #     <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05030701_cover1.jpg" />
   #   </METS:file>
-  #   ... more METS:file subtrees...
+  #   ... more METS:file entries here...
   # </METS:fileGrp>
   #
   # We keep an ordered list of MetsFileDictionaryEntry structs, which can
@@ -686,13 +689,13 @@ class MetsFileDictionary
   #
   # The MetsFileDictionaryEntry struct has entries (using the example above) with
   #
-  #   dictionary.sequence => '1'
-  #   dictionary.mimetype => 'image/jpeg'
-  #   dictionary.href     => 'FI05030701_cover1.jpg'
-  #   dictionary.use      => 'index'
-  #   dictionary.fid      => 'FID1'
+  #   dictionary.sequence => '1'                       -- we don't really trust this, instead we take the implied sequence from the structMap. TODO: maybe we'll warn if this is wrong...
+  #   dictionary.mimetype => 'image/jpeg'              -- might be nil - we'll fill in by href extension if missing... TODO:
+  #   dictionary.href     => 'FI05030701_cover1.jpg'   -- has to be present, and we'll check if it resolves to a file in the package.. TODO:
+  #   dictionary.use      => 'index'                   -- we really want this to be 'index' (full text) or 'reference' (the designated format to ingest), but we may get 'archive' in some cases... TODO:
+  #   dictionary.fid      => 'FID1'                    -- has to be here.
   #
-  # mimetype and use are always lower-cased when strings - any of the above may technically be nil, but :fid and :href will not be.
+  # .mimetype and .use are always lower-cased when strings - any of the above may technically be nil, but :fid and :href will not be if we get here.
 
   def initialize
     @sequence = []
@@ -722,10 +725,12 @@ class MetsFileDictionary
 end
 
 
-# Helper class for SaxDocumentExamineMets: save structmap information
+# Data formats we'll manipulate in SaxDocumentExamineMods, though when we're done only MetsDivData will be present:
 
 Struct.new('MetsDivData',  :level, :title, :is_page, :fids)
 Struct.new('MetsFileData', :file_id)
+
+# Helper class for SaxDocumentExamineMets: save structmap information
 
 class MetsStructMap
 
@@ -771,9 +776,9 @@ class MetsStructMap
   end
 
   # post_process is called after an entire structMap subtree is
-  # examined; it collapses out the FileEntry (fptr) nodes from the
-  # list, assigning its fileid's to the previous DivEntry node's list
-  # of file-ids (fids)
+  # examined; it collapses out the MetsFileData (fptr) datum nodes
+  # from the list, assigning its fileid attributes to the previous
+  # MetsDivData node's list of file-ids (fids).
 
   def post_process
     new = []
@@ -801,19 +806,18 @@ class MetsStructMap
 
 end
 
-# Class for parsing out the table of contents information in a METS
-# file.
+# Class for parsing out the table of contents information in a METS file:
 
-class SaxDocumentExamineMets < FedoraSaxDocument
+class SaxDocumentExamineMets < SaxDocument
 
   attr_reader :xml_document, :sax_document, :file_dictionary, :label, :structmaps
 
   def initialize
-    @stack = []
-    @label = ''                                    # from the <METS:mets LABEL="The Title of This Book" ...>
-    @file_dictionary = MetsFileDictionary.new
-    @structmaps = []
-    @current_structmap = nil
+    @stack = []                                    # keeps the nested XML elements and attributes
+    @label = ''                                    # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...>
+    @file_dictionary = MetsFileDictionary.new      # collects METS data from subtree /fileGrp/file/FLocat/
+    @structmaps = []                               # collects data from multiple METS structMaps
+    @current_structmap = nil                       # the current METS structMap we're parsing (and acts as a flag to let us know we're in a structMap)
     super()
   end
 
@@ -830,7 +834,7 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     return true
   end
 
-  # When we've identified a 'FLocat' subtree, place it into the dictionary.
+  # When we've identified a 'FLocat' subtree, place it and some of its parent data into the dictionary:
 
   def handle_file_dictionary
 
@@ -882,7 +886,8 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     return text.downcase
   end
 
-  # Textualize the attribute data off a stack element (ignore the :name key)
+  # Textualize the atttribute data off a stack element for printing
+  # (ignore the :name key, the XML element name)
 
   def prettify hash
     text = []
@@ -928,9 +933,10 @@ class SaxDocumentExamineMets < FedoraSaxDocument
   end
 
   # We'll maintain a stack of elements and their attributes: each
-  # element of the stack is a hash, with the name of the element keyed
-  # by symbol :name; the remaining key/value pairs, all strings, are
-  # the attributes.
+  # entry in the stack is a hash, with the name of the XML element
+  # keyed by the symbol :name; the remaining key/value pairs, all
+  # strings, are the XML attributes of the elements. Character data
+  # are not relevent here.
 
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
     hash = { :name => name }
@@ -947,7 +953,8 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     end
   end
 
-  # Pop the stack when we're done.
+  # Pop the stack when we're done, and if we've done a structMap, do
+  # some special processing.
 
   def end_element_namespace name, prefix = nil, uri = nil
     handle_structmap_end if name == 'structMap'
@@ -955,7 +962,11 @@ class SaxDocumentExamineMets < FedoraSaxDocument
     @current_string = ''
   end
 
-  # All data has now been collected into dictionaries, assemble into JSON format
+  # All data has now been collected into one MetsFileDictionary object
+  # (a list of Struct::MetsFileData thangs) and one or more
+  # MetsStructMap objects (a list of Struct::MetsDivData objects).
+  #
+  # TODO: resolve issues here: warn if sequences don't match, etc.
 
   def end_document
     if @@debug
