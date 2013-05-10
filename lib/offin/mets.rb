@@ -1,12 +1,3 @@
-# For testing, remove soon:
-
-    Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
-    Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
-    Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
-
-    $LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
-
-
 require 'nokogiri'
 require 'offin/document-parsers'
 require 'offin/errors'
@@ -20,11 +11,11 @@ Struct.new('Chapter', :title, :level)
 
 class TableOfContents
 
-  include Errors  # really, goes without saying
+  include Errors  # because I don't have enough of my own.
 
   def initialize structmap
     @sequence = []
-
+    @valid = true
     @structmap = structmap
 
     # The structmap object (class MetsStructMap) provides an ordered list of these objects:
@@ -57,10 +48,9 @@ class TableOfContents
       @sequence.push entry
     end
 
-    ## TODO:  check we have an image_href everywhere (if we have it, we'll have mime type)
-
     cleanup_chapter_titles
     cleanup_page_titles
+    check_for_page_images
   end
 
   def each
@@ -81,13 +71,15 @@ class TableOfContents
     list.push( { 'title' => label } )  unless label.nil? || label.empty?
 
     toc = []
+    seq = 1
     @sequence.each do |entry|
-      rec = { 'level' => entry.level, 'title' => entry.title   }
+      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => seq  }
       case entry
-      when Struct::Page
-        rec['type'] = 'page'
       when Struct::Chapter
         rec['type'] = 'chapter'
+      when Struct::Page
+        rec['type'] = 'page'
+        seq += 1
       end
       toc.push rec
     end
@@ -97,7 +89,27 @@ class TableOfContents
     return JSON.pretty_generate list
   end
 
+  def valid?
+    @valid and not errors?
+  end
+
   private
+
+  # TODO: not too sure how to approach this yet; it may be too early
+  # to do filename checks (we have to do some checking in the package)
+  #
+  # So this may be a fatal error (@valid => false) but let's wait and
+  # experiment for now; just issue warnings.
+
+  def check_for_page_images
+
+    issues = []
+    pages.each do |p|
+      issues.push  "#{p.title} does not have an associated image file." unless p.image_filename
+    end
+
+    warning issues unless issues.empty?
+  end
 
   # strip off the extension the filename (no directory components)
 
@@ -115,7 +127,7 @@ class TableOfContents
 
     pages.each do |p|
       if p.title.empty?
-        if p.image_filename                            # we need to be able to make the assumption this exists
+        if p.image_filename                    # we need to be able to make the assumption this exists
           p.title = file_name(p.image_filename)
         end
       end
@@ -137,14 +149,16 @@ class TableOfContents
     end
 
     if not problems.empty?
-      warning "Some page labels were not unique; the sequence number was appended: '" + problems.join("', '") + "'"
+      warning "Some page labels were not unique; the sequence number was appended: '" + problems.join("', '") + "'."
     end
   end
 
   def cleanup_chapter_titles
     chapters.each { |c| c.title = 'Chapter' if (not c.title or c.title.empty?) }
   end
-end
+
+
+end # of class TableOfContents
 
 
 class Mets
@@ -213,14 +227,14 @@ class Mets
     # sax parser errors may not be fatal, so store them to warnings.
 
     if sax_document.warnings? or sax_document.errors?
-      warning "SAX parser warnings for '#{short_filename}'"
+      warning "SAX parser warnings for '#{short_filename}':"
       warning  sax_document.warnings
     end
 
     # SAX errors just treated as warnings (for now)
 
     if sax_document.errors?
-      warning "SAX parser errors for '#{short_filename}'"
+      warning "SAX parser errors for '#{short_filename}':"
       warning  sax_document.errors
     end
 
@@ -229,6 +243,13 @@ class Mets
 
 
   def select_best_structmap list
+
+    if list.empty?
+      @valid = false
+      error "No valid structMaps were found in the METS document."
+      return
+    end
+
 
     # If there's only one, it's the best.
 
@@ -305,38 +326,3 @@ class Mets
   end
 
 end # of class Mets
-
-
-
-# TODO: check for image filenames (need errors, warnings, valid? on TOC)
-# TODO: compare package contents to expected list of pages in TOC object
-
-# TESTING
-
-Struct.new('MockConfig', :schema_directory)
-
-config = Struct::MockConfig.new
-config.schema_directory = File.join(ENV['HOME'], 'WorkProjects/offline-ingest/lib/include/')
-
-SaxDocumentExamineMets.debug = false
-
-ARGV.each do |filename|
-
-  puts '', filename, ''
-  start = Time.now
-
-  mets = Mets.new(config, filename)
-  toc  = TableOfContents.new(mets.structmap)
-
-  puts toc.to_json(mets.label)
-
-  puts 'METS Errors: ',   mets.errors   if mets.errors?
-  puts 'METS Warnings: ', mets.warnings if mets.warnings?
-
-  puts 'TOC Errors: ',   toc.errors   if toc.errors?
-  puts 'TOC Warnings: ', toc.warnings if toc.warnings?
-
-  puts mets.valid? ? "METS is valid" : "METS is invalid"
-  puts sprintf("Parsed #{toc.pages.length} pages in %5.2f seconds.", Time.now - start)
-
-end
