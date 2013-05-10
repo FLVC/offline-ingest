@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
+  <mets:fileSec>
+    <mets:fileGrp USE="VIEW" VERSDATE="2007-06-21T14:30:26.374Z">
+      <mets:fileGrp>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.421Z" MIMETYPE="image/jpeg" ID="pg001m1" GROUPID="pg001view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-1" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.441Z" MIMETYPE="image/jpeg" ID="pg002m1" GROUPID="pg002view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-2" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.441Z" MIMETYPE="image/jpeg" ID="pg003m1" GROUPID="pg003view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-3" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.442Z" MIMETYPE="image/jpeg" ID="pg004m1" GROUPID="pg004view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-4" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.442Z" MIMETYPE="image/jpeg" ID="pg005m1" GROUPID="pg005view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-5" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.442Z" MIMETYPE="image/jpeg" ID="pg006m1" GROUPID="pg006view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-6" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.443Z" MIMETYPE="image/jpeg" ID="pg007m1" GROUPID="pg007view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-7" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.443Z" MIMETYPE="image/jpeg" ID="pg008m1" GROUPID="pg008view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-8" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.444Z" MIMETYPE="image/jpeg" ID="pg009m1" GROUPID="pg009view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-9" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.444Z" MIMETYPE="image/jpeg" ID="pg010m1" GROUPID="pg010view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-10" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.445Z" MIMETYPE="image/jpeg" ID="pg011m1" GROUPID="pg011view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-11" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.445Z" MIMETYPE="image/jpeg" ID="pg012m1" GROUPID="pg012view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-12" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.446Z" MIMETYPE="image/jpeg" ID="pg013m1" GROUPID="pg013view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-13" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.446Z" MIMETYPE="image/jpeg" ID="pg014m1" GROUPID="pg014view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-14" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.448Z" MIMETYPE="image/jpeg" ID="pg015m1" GROUPID="pg015view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-15" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.449Z" MIMETYPE="image/jpeg" ID="pg016m1" GROUPID="pg016view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-16" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.450Z" MIMETYPE="image/jpeg" ID="pg017m1" GROUPID="pg017view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-17" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.451Z" MIMETYPE="image/jpeg" ID="pg018m1" GROUPID="pg018view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-18" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+        <mets:file USE="VIEW" CREATED="2007-06-21T14:30:26.451Z" MIMETYPE="image/jpeg" ID="pg019m1" GROUPID="pg019view">
+          <mets:FLocat LOCTYPE="URL" xlin:href="METSID-19" xmlns:xlin="http://www.w3.org/TR/xlink"/>
+        </mets:file>
+      </mets:fileGrp>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap>
+    <mets:div LABEL="">
+      <mets:div LABEL="Cover">
+        <mets:fptr FILEID="pg001m1"/>
+        <mets:div LABEL="cover2">
+          <mets:fptr FILEID="pg002m1"/>
+        </mets:div>
+      </mets:div>
+      <mets:div LABEL="Title page">
+        <mets:fptr FILEID="pg003m1"/>
+      </mets:div>
+      <mets:div LABEL="A Bid Basket">
+        <mets:fptr FILEID="pg004m1"/>
+      </mets:div>
+      <mets:div LABEL="A Visit to Santa Claus' Shop">
+        <mets:fptr FILEID="pg005m1"/>
+      </mets:div>
+      <mets:div LABEL="Four-and-tweny Blackbirds">
+        <mets:fptr FILEID="pg006m1"/>
+      </mets:div>
+      <mets:div LABEL="St. Bernard to Rescue">
+        <mets:fptr FILEID="pg007m1"/>
+      </mets:div>
+      <mets:div LABEL="What a Big Man am I">
+        <mets:fptr FILEID="pg008m1"/>
+        <mets:div LABEL="page09">
+          <mets:fptr FILEID="pg009m1"/>
+        </mets:div>
+      </mets:div>
+      <mets:div LABEL="Some Arithmetical Pictures">
+        <mets:fptr FILEID="pg010m1"/>
+      </mets:div>
+      <mets:div LABEL="The Sick Dolly">
+        <mets:fptr FILEID="pg011m1"/>
+      </mets:div>
+      <mets:div LABEL="Dollie's Party">
+        <mets:fptr FILEID="pg012m1"/>
+      </mets:div>
+      <mets:div LABEL="Dolly's Tea Party">
+        <mets:fptr FILEID="pg013m1"/>
+      </mets:div>
+      <mets:div LABEL="What Baby Does">
+        <mets:fptr FILEID="pg014m1"/>
+      </mets:div>
+      <mets:div LABEL="Ring-A-Round A Rosy">
+        <mets:fptr FILEID="pg015m1"/>
+      </mets:div>
+      <mets:div LABEL="All About A Frog">
+        <mets:fptr FILEID="pg016m1"/>
+      </mets:div>
+      <mets:div LABEL="Dolly's Revenge">
+        <mets:fptr FILEID="pg017m1"/>
+      </mets:div>
+      <mets:div LABEL="Santa Claus' Visit">
+        <mets:fptr FILEID="pg018m1"/>
+      </mets:div>
+      <mets:div LABEL="page19">
+        <mets:fptr FILEID="pg019m1"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

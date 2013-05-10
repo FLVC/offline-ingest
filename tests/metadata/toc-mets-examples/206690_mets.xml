@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
+  <mets:fileSec>
+    <mets:fileGrp VERSDATE="2009-06-04T10:56:07.350-04:00" USE="VIEW">
+      <mets:file GROUPID="pg001" ID="pg001m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.416-04:00" USE="VIEW" SEQ="1">
+        <mets:FLocat xlin:href="METSID-1" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg002" ID="pg002m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.441-04:00" USE="VIEW" SEQ="2">
+        <mets:FLocat xlin:href="METSID-2" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg003" ID="pg003m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.441-04:00" USE="VIEW" SEQ="3">
+        <mets:FLocat xlin:href="METSID-3" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg004" ID="pg004m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.442-04:00" USE="VIEW" SEQ="4">
+        <mets:FLocat xlin:href="METSID-4" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg005" ID="pg005m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.443-04:00" USE="VIEW" SEQ="5">
+        <mets:FLocat xlin:href="METSID-5" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg006" ID="pg006m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.445-04:00" USE="VIEW" SEQ="6">
+        <mets:FLocat xlin:href="METSID-6" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg007" ID="pg007m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.449-04:00" USE="VIEW" SEQ="7">
+        <mets:FLocat xlin:href="METSID-7" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg008" ID="pg008m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.449-04:00" USE="VIEW" SEQ="8">
+        <mets:FLocat xlin:href="METSID-8" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg009" ID="pg009m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.451-04:00" USE="VIEW" SEQ="9">
+        <mets:FLocat xlin:href="METSID-9" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg010" ID="pg010m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.452-04:00" USE="VIEW" SEQ="10">
+        <mets:FLocat xlin:href="METSID-10" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg011" ID="pg011m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.455-04:00" USE="VIEW" SEQ="11">
+        <mets:FLocat xlin:href="METSID-11" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+      <mets:file GROUPID="pg012" ID="pg012m1" MIMETYPE="image/jpeg" CREATED="2009-06-04T10:56:07.456-04:00" USE="VIEW" SEQ="12">
+        <mets:FLocat xlin:href="METSID-12" LOCTYPE="URL" xmlns:xlin="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap>
+    <mets:div LABEL="">
+      <mets:div LABEL="Cover-Title Page">
+        <mets:fptr FILEID="pg001m1"/>
+      </mets:div>
+      <mets:div LABEL="Brachyuran Crabs Collected at Curacao">
+        <mets:fptr FILEID="pg002m1"/>
+        <mets:div LABEL="page 14">
+          <mets:fptr FILEID="pg003m1"/>
+        </mets:div>
+        <mets:div LABEL="page 15">
+          <mets:fptr FILEID="pg004m1"/>
+        </mets:div>
+        <mets:div LABEL="page 16">
+          <mets:fptr FILEID="pg005m1"/>
+        </mets:div>
+        <mets:div LABEL="page 17">
+          <mets:fptr FILEID="pg006m1"/>
+        </mets:div>
+        <mets:div LABEL="page 18">
+          <mets:fptr FILEID="pg007m1"/>
+        </mets:div>
+        <mets:div LABEL="page 19">
+          <mets:fptr FILEID="pg008m1"/>
+        </mets:div>
+        <mets:div LABEL="page 20">
+          <mets:fptr FILEID="pg009m1"/>
+        </mets:div>
+        <mets:div LABEL="page 21">
+          <mets:fptr FILEID="pg010m1"/>
+        </mets:div>
+        <mets:div LABEL="List of Illustrations">
+          <mets:fptr FILEID="pg011m1"/>
+        </mets:div>
+        <mets:div LABEL="Illustrations">
+          <mets:fptr FILEID="pg012m1"/>
+        </mets:div>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

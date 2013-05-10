@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" TYPE="book" OBJID="FA00000012" LABEL="Scenes of Florida.">
+  <mets:metsHdr CREATEDATE="2010-07-11T15:22:44-04:00">
+    <mets:agent ROLE="OTHER" TYPE="OTHER" OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE">
+      <mets:name>DigiTool METS Maker</mets:name>
+    </mets:agent>
+  </mets:metsHdr><mets:dmdSec ID="DMD1"><mets:mdWrap MIMETYPE="text/xml" MDTYPE="MARC"><mets:xmlData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>01192nam a2200325Ia 4500</leader>
+  <controlfield tag="001">QFAAA0211</controlfield>
+  <controlfield tag="005">20060712120119.3</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(FCLAZ)AAA0211QF00005/06/199907/12/200617281BnamIa D0QF</subfield>
+  </datafield>
+  <controlfield tag="008">990630s19uu    nyuf    z     000 0 eng d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(Source)ONIFA170-     0</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)41632602</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(NOTISFA)ADX4346</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(SNX) FHP C FAU 1999-05-06</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(snx)FCLA url 19991229</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FGM</subfield>
+    <subfield code="c">FGM</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-us-fl</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FGMS</subfield>
+  </datafield>
+  <datafield tag="090" ind1=" " ind2=" ">
+    <subfield code="a">F316</subfield>
+    <subfield code="b">.S33</subfield>
+  </datafield>
+  <datafield tag="245" ind1="0" ind2="0">
+    <subfield code="a">Scenes of Florida.</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">[Brooklyn, N.Y. :</subfield>
+    <subfield code="b">Albertype Co.,</subfield>
+    <subfield code="c">19--]</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">[18 leaves of plates :</subfield>
+    <subfield code="b">chiefly col. plates ;</subfield>
+    <subfield code="c">26 x 34 cm.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Hand colored plates.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Cover title.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">"Published exclusively for the Interstate Co."</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="8">
+    <subfield code="a">Description and travel</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="7">
+    <subfield code="a">Economics and Society: Post-Civil War Florida, 1865-1913</subfield>
+    <subfield code="x">Business, Agriculture, and Tourism, 1878-1897</subfield>
+    <subfield code="3">fh4650</subfield>
+    <subfield code="2">fhp </subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">Florida</subfield>
+    <subfield code="x">Pictorial works.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">fhp</subfield>
+  </datafield>
+  
+  
+<datafield tag="598" ind1=" " ind2=" "><subfield code="a">FA00000012</subfield></datafield></record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID1" MIMETYPE="image/jpeg" SEQ="1" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/cover1.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID2" MIMETYPE="image/jpeg" SEQ="2" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/1.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID3" MIMETYPE="image/jpeg" SEQ="3" GROUPID="GID3">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/2.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID4" MIMETYPE="image/jpeg" SEQ="4" GROUPID="GID4">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/3.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID5" MIMETYPE="image/jpeg" SEQ="5" GROUPID="GID5">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/4.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID6" MIMETYPE="image/jpeg" SEQ="6" GROUPID="GID6">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/5.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID7" MIMETYPE="image/jpeg" SEQ="7" GROUPID="GID7">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/6.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID8" MIMETYPE="image/jpeg" SEQ="8" GROUPID="GID8">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/7.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID9" MIMETYPE="image/jpeg" SEQ="9" GROUPID="GID9">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/8.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID10" MIMETYPE="image/jpeg" SEQ="10" GROUPID="GID10">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/9.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID11" MIMETYPE="image/jpeg" SEQ="11" GROUPID="GID11">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/10.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID12" MIMETYPE="image/jpeg" SEQ="12" GROUPID="GID12">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/11.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID13" MIMETYPE="image/jpeg" SEQ="13" GROUPID="GID13">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/12.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID14" MIMETYPE="image/jpeg" SEQ="14" GROUPID="GID14">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/13.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID15" MIMETYPE="image/jpeg" SEQ="15" GROUPID="GID15">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/14.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID16" MIMETYPE="image/jpeg" SEQ="16" GROUPID="GID16">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/15.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID17" MIMETYPE="image/jpeg" SEQ="17" GROUPID="GID17">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/16.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID18" MIMETYPE="image/jpeg" SEQ="18" GROUPID="GID18">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/17.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID19" MIMETYPE="image/jpeg" SEQ="19" GROUPID="GID19">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/18.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID20" MIMETYPE="application/pdf" SEQ="20" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/file1.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID21" MIMETYPE="application/pdf" SEQ="21" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/FA/fa00000012/file2.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="JPEG" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Scenes of Florida.">
+      <mets:div TYPE="chapter" LABEL="Front Matter">
+        <mets:div TYPE="page" LABEL="cover1">
+          <mets:fptr FILEID="FID1"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Visuals">
+        <mets:div TYPE="page" LABEL="1">
+          <mets:fptr FILEID="FID2"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="2">
+          <mets:fptr FILEID="FID3"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="3">
+          <mets:fptr FILEID="FID4"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="4">
+          <mets:fptr FILEID="FID5"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="5">
+          <mets:fptr FILEID="FID6"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="6">
+          <mets:fptr FILEID="FID7"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="7">
+          <mets:fptr FILEID="FID8"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="8">
+          <mets:fptr FILEID="FID9"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="9">
+          <mets:fptr FILEID="FID10"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="10">
+          <mets:fptr FILEID="FID11"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="11">
+          <mets:fptr FILEID="FID12"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="12">
+          <mets:fptr FILEID="FID13"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="13">
+          <mets:fptr FILEID="FID14"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="14">
+          <mets:fptr FILEID="FID15"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="15">
+          <mets:fptr FILEID="FID16"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="16">
+          <mets:fptr FILEID="FID17"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="17">
+          <mets:fptr FILEID="FID18"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="18">
+          <mets:fptr FILEID="FID19"/>
+        </mets:div>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structMap TYPE="PDF" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Scenes of Florida.">
+      <mets:div TYPE="chapter" LABEL="Front Matter">
+        <mets:fptr FILEID="FID20"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Visuals">
+        <mets:fptr FILEID="FID21"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>
