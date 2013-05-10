@@ -727,17 +727,17 @@ end
 
 # Data formats we'll manipulate in SaxDocumentExamineMods, though when we're done only MetsDivData will be present:
 
-Struct.new('MetsDivData',  :level, :title, :is_page, :fids)
+Struct.new('MetsDivData',  :level, :title, :is_page, :fids, :files)
 Struct.new('MetsFileData', :file_id)
 
-# Helper class for SaxDocumentExamineMets: save structmap information
+# Helper class for SaxDocumentExamineMets: save structmap information.  When we're done with post_processing here, we will only
+# have
 
 class MetsStructMap
 
   include Errors
 
   attr_reader :number_files
-  attr_accessor :score
 
   def initialize
     @list = []
@@ -761,6 +761,7 @@ class MetsStructMap
       record.title   = hash['LABEL'] || hash['TYPE'] || ''
       record.is_page = false
       record.fids    = []
+      record.files   = []
       @list.push record
     end
   end
@@ -778,11 +779,14 @@ class MetsStructMap
   end
 
   # post_process is called after an entire structMap subtree is
-  # examined; it collapses out the MetsFileData (fptr) datum nodes
-  # from the list, assigning its fileid attributes to the previous
-  # MetsDivData node's list of file-ids (fids).
+  # examined (but perhaps before the document as a whole has been read).
 
-  def post_process
+  def post_process file_dictionary
+
+    # Collapse out the MetsFileData (fptr) datum nodes
+    # from the list, assigning its fileid attributes to the previous
+    # MetsDivData node's list of file-ids (fids).
+
     new = []
     @list.each do | rec |
       case rec
@@ -799,6 +803,17 @@ class MetsStructMap
       end
     end
     @list = new
+
+    @list.each do |div_data|
+      div_data.fids.each do |fid|
+        file_entry = file_dictionary[fid]
+        if not file_entry
+          warning "METS structMap FILEID #{file.inspect} was not found in the METS fileSec."
+        else
+          div_data.files.push file_entry
+        end
+      end
+    end
   end
 
   def print
@@ -806,11 +821,14 @@ class MetsStructMap
     @list.each { |elt| puts '. ' * elt.level + elt.inspect.gsub('#<struct Struct::DivEntry ',  '<') }
   end
 
-end
+end # of class MetsStructMap
+
 
 # Class for parsing out the table of contents information in a METS file:
 
 class SaxDocumentExamineMets < SaxDocument
+
+  include Errors
 
   attr_reader :xml_document, :sax_document, :file_dictionary, :label, :structmaps
 
@@ -909,11 +927,12 @@ class SaxDocumentExamineMets < SaxDocument
   end
 
   def handle_structmap_end
-    if @current_structmap.ok?
-      @current_structmap.post_process
+    if not @current_structmap.ok?
+      warning "METS structMap discarded (missing or inappropriate DMDID)"
+    else
       @structmaps.push @current_structmap
     end
-    @current_structmap = nil   # now used as flag to show we're not in the structMap parsing state
+    @current_structmap = nil   # also used as flag to show we're not currently in the structMap parsing state
   end
 
   def div_level
@@ -945,7 +964,7 @@ class SaxDocumentExamineMets < SaxDocument
     attributes.each { |at|  hash[at.localname] = at.value }
     @stack.push hash
 
-    # puts stack_dump if @@debug
+    puts stack_dump if @@debug
 
     case name
     when 'structMap';     handle_structmap_begin
@@ -968,13 +987,21 @@ class SaxDocumentExamineMets < SaxDocument
   # (a list of Struct::MetsFileData thangs) and one or more
   # MetsStructMap objects (a list of Struct::MetsDivData objects).
   #
-  # TODO: resolve issues here: warn if sequences don't match, files don't exist
+  # TODO: resolve some appropriate issues here: warn if sequences don't match (??)
+
+  # TODO: pull in warnings, errors from structmaps and dictionary into class warnings, errors
 
   def end_document
+
+    @structmaps.each do |structmap|
+      structmap.post_process(@file_dictionary)
+    end
+
+
     if @@debug
       @file_dictionary.print
       puts "structMap count: #{@structmaps.length}"
       @structmaps.each { |sm| sm.print }
     end
   end
-end
+end  # of class SaxDocumentExamineMets

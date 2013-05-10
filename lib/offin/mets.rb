@@ -12,11 +12,85 @@ require 'offin/document-parsers'
 require 'offin/errors'
 
 
+# helper classes for maintaining mets data
+
+Struct.new('Page',    :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype)
+Struct.new('Chapter', :title, :level)
+
+class TableOfContents
+
+  include Errors  # really, goes without saying
+
+  def initialize
+    @sequence = []
+  end
+
+
+  def pages
+    @sequence.select{ |elt| elt.class == Struct::Page }
+  end
+
+  def chapters
+    @sequence.select{ |elt| elt.class == Struct::Chapter }
+  end
+
+
+
+  # if we have a :image_filename or :text_filename, but no corresponding _mimetype, assign one based on the filename extension
+
+  def cleanup_mimetype
+
+  end
+
+  def cleanup_unassigned_pages
+
+  end
+
+
+  # chek that page titles are uniqe and non-empty
+
+  def page_titles_ok?
+    seen = {}
+    pages.each do |p|
+      return false if (p.title.empty? or seen[p.title])
+      seen[p.title] = true
+    end
+    return true
+  end
+
+  # strip off filenames
+
+  def file_name name
+    File.basename(name).sub(/\.[^\.]*/, '')
+  end
+
+  # clean out page names
+
+  def cleanup_page_title
+    pages.each do |p|
+      p.title.sub(/^page\s+/i, '')
+    end
+
+    pages.each do |p|
+      if p.title.empty?
+        p.title = file_name(p.image_filename) if p.image_filename
+      end
+    end
+
+    if not page_titles_ok?
+      i = 1
+      pages.each { |p| i.to_s; i += 1 }
+    end
+  end
+end
+
+
+
 class Mets
 
   include Errors
 
-  attr_reader :xml_document, :sax_document
+  attr_reader :xml_document, :sax_document, :filename
 
   def initialize config, path
 
@@ -67,11 +141,37 @@ class Mets
   end
 
 
+  def select_best_structmap
+
+    # if there's only one, it's the best
+
+    list = @sax_document.structmaps
+    return list.pop if list.length == 1
+    scores = {}
+    list.each { |sm| scores[sm] = sm.number_files }
+
+    # if there are two or more, and one has more file references than the others, select it.
+
+    if scores.values.uniq == scores.values
+      max = scores.values.max
+      warning "Multiple structMaps found in METS file '#{@filename}', discarding the shortest"
+      scores.each { |sm,num| return sm if num == max }
+    end
+
+    # TODO: otherwise, we need to do lots more work
+
+    dict = @sax_document.file_dictionary
+    scores = {}
+    list.each do |sm|
+        #### TODO: scores[sm] = some rating system
+    end
+  end
+
+
+  # structmaps
 
   def process_structmap
-
-    # @sax_document.number_files
-
+    structmap = select_best_structmap
   end
 
 
@@ -104,13 +204,6 @@ class Mets
     return false
   end
 
-
-
-
-
-
-
-
 end
 
 
@@ -126,26 +219,25 @@ Struct.new('MockConfig', :schema_directory)
 config = Struct::MockConfig.new
 config.schema_directory = File.join(ENV['HOME'], 'WorkProjects/offline-ingest/lib/include/')
 
-SaxDocumentExamineMets.debug = false
-
+SaxDocumentExamineMets.debug = true
 
 mets = Mets.new(config, ARGV[0])
 
 
-dict = mets.sax_document.file_dictionary
+# dict = mets.sax_document.file_dictionary
 
-mets.sax_document.structmaps.each do |map|
-  map.each do |entry|
-    indent = '..'
-    puts indent * (entry.level - 1)  + (entry.is_page ? 'PAGE: ' : 'CHAPTER: ') + entry.title
-    if entry.is_page
-      entry.fids.each do |fid|
-        f = dict[fid]
-        puts indent * entry.level + f.use + ' ' + f.mimetype + ' ' + f.href
-      end
-    end
-  end
-end
+# mets.sax_document.structmaps.each do |map|
+#   map.each do |entry|
+#     indent = '..'
+#     puts indent * (entry.level - 1)  + (entry.is_page ? 'PAGE: ' : 'CHAPTER: ') + entry.title
+#     if entry.is_page
+#       entry.fids.each do |fid|
+#         f = dict[fid]
+#         puts indent * entry.level + f.use + ' ' + f.mimetype + ' ' + f.href
+#       end
+#     end
+#   end
+# end
 
 
 puts 'Errors: ',   mets.errors   if mets.errors?
