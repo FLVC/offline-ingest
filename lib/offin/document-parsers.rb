@@ -2,6 +2,7 @@
 require 'nokogiri'
 require 'ostruct'
 require 'offin/errors'
+require 'mime/types'
 
 
 class SaxDocument < Nokogiri::XML::SAX::Document
@@ -675,6 +676,8 @@ Struct.new('MetsFileDictionaryEntry', :sequence, :href, :mimetype, :use, :fid)
 
 class MetsFileDictionary
 
+  include Errors
+
   # A simple class to keep information from a METS subtree such as
   #
   # <METS:fileGrp USE="index">
@@ -702,9 +705,19 @@ class MetsFileDictionary
     @dict = {}
   end
 
+  def safe_type str
+    type = MIME::Types.type_for(str).shift
+    return type.content_type if type
+    warning "Can't determine MIME type for #{str.inspect}, using application/octet-stream."
+    return 'application/octet-stream'
+  rescue => e
+    warning "Exception #{e.class}, '#{e.message}' trying to find MIME type for #{str.inspect}, using application/octet-stream."
+    return 'application/octet-stream'
+  end
 
   def []=(fid, value)
-    value.fid  = fid
+    value.fid = fid
+    value.mimetype = safe_type(value.href) unless value.mimetype
     @dict[fid] = value
     @sequence.push fid
   end
@@ -737,13 +750,13 @@ class MetsStructMap
 
   include Errors
 
-  attr_reader :number_files
+  attr_reader :number_files, :label
 
   def initialize
     @list = []
     @dmdid_ok = false
     @number_files = 0
-    @score = 0              # in the case of multiple structmaps, we may need a scoring slot to determine which is best
+    @label = nil
   end
 
   def each
@@ -755,6 +768,9 @@ class MetsStructMap
   def add_div hash, level
     if hash['DMDID'] and hash['DMDID'] =~ /DMD1/i
       @dmdid_ok = true   # there is sometimes an overall LABEL in there as well
+      if hash['LABEL']
+        @label = hash['LABEL'].split(/\s+/).join(' ').strip
+      end
     elsif @dmdid_ok
       record = Struct::MetsDivData.new
       record.level   = level
@@ -834,7 +850,7 @@ class SaxDocumentExamineMets < SaxDocument
 
   def initialize
     @stack = []                                    # keeps the nested XML elements and attributes
-    @label = ''                                    # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...>
+    @label = nil                                    # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...>
     @file_dictionary = MetsFileDictionary.new      # collects METS data from subtree /fileGrp/file/FLocat/
     @structmaps = []                               # collects data from multiple METS structMaps
     @current_structmap = nil                       # the current METS structMap we're parsing (and acts as a flag to let us know we're in a structMap)
@@ -893,13 +909,13 @@ class SaxDocumentExamineMets < SaxDocument
     @file_dictionary[fid] = data
   end
 
-  # Grab the value of the LABEL attribute from the topmost mets element.
+  # Grab the value of the LABEL attribute from the topmost mets element; a label from a DMD sec may be assigned to the structmap as well.
 
   def handle_label
-    text = @stack[-1]['LABEL'] || ''
-    @label = text.split(/\s+/).join(' ').strip   # cleanup whitespace
+    if text = @stack[-1]['LABEL']  # cleanup whitespace
+      @label = text.split(/\s+/).join(' ').strip
+    end
   end
-
 
   def safe_downcase text
     return text unless text.class == String
@@ -964,7 +980,7 @@ class SaxDocumentExamineMets < SaxDocument
     attributes.each { |at|  hash[at.localname] = at.value }
     @stack.push hash
 
-    puts stack_dump if @@debug
+    # puts stack_dump if @@debug
 
     case name
     when 'structMap';     handle_structmap_begin
@@ -995,11 +1011,14 @@ class SaxDocumentExamineMets < SaxDocument
 
     @structmaps.each do |structmap|
       structmap.post_process(@file_dictionary)
+      warning structmap.warnings
+      error   structmap.errors
     end
 
+    warning @file_dictionary.warnings
+    error   @file_dictionary.errors
 
     if @@debug
-      @file_dictionary.print
       puts "structMap count: #{@structmaps.length}"
       @structmaps.each { |sm| sm.print }
     end
