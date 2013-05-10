@@ -1,0 +1,7 @@
+<manifest xmlns="info:/flvc/manifest/v1">
+    <contentModel>islandora:sp_basic_image</contentModel>
+    <collection>NCF:slides</collection>
+    <submittingInstitution>NCF</submittingInstitution>
+    <owningInstitution>NCF</owningInstitution>
+    <objectHistory source="digitool">admin_unit="NCF01", ingest_id="ing13186", creator="creator:SNORRIS", creation_date="2012-07-09 12:21:18", modified_by="creator:SNORRIS", modification_date="2012-07-09 12:22:19"</objectHistory>
+</manifest>

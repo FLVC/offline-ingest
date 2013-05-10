@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.loc.gov/mods/v3" version="3.4" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+  <titleInfo>
+    <title>Remembering Paul A.M. Dirac: Florida State colleagues recall the legendary physicist</title>
+  </titleInfo>
+  <titleInfo type="uniform">
+    <title>Florida State Times</title>
+  </titleInfo>
+  <name type="personal" usage="primary">
+    <namePart>Fineout, Gary.</namePart>
+  </name>
+  <name type="corporate">
+    <namePart>Florida State University</namePart>
+  </name>
+  <typeOfResource>text</typeOfResource>
+  <originInfo>
+    <place>
+      <placeTerm type="code" authority="marccountry">flu</placeTerm>
+    </place>
+    <place>
+      <placeTerm type="text">Tallahassee, Fla.</placeTerm>
+    </place>
+    <publisher>Florida State University</publisher>
+    <dateIssued>2009</dateIssued>
+    <issuance>monographic</issuance>
+  </originInfo>
+  <language>
+    <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+  </language>
+  <physicalDescription>
+    <form authority="marcform">electronic</form>
+    <form authority="marccategory">electronic resource</form>
+    <form authority="marcsmd">remote</form>
+    <extent>1 online resource (1 p.) : ill., ports.</extent>
+  </physicalDescription>
+  <note type="statement of responsibility" altRepGroup="00">by Gary Fineout.</note>
+  <note>Originally published in: Florida State Times. Vol. 14, no. 6 (April/May 2009).</note>
+  <subject authority="lcsh">
+    <name type="personal">
+      <namePart>Dirac, P. A. M. (Paul Adrien Maurice)</namePart>
+      <namePart type="date">1902-1984</namePart>
+    </name>
+  </subject>
+  <location>
+    <physicalLocation>FTaSU FSUER</physicalLocation>
+  </location>
+  <identifier type="oclc">465223999</identifier>
+  <identifier type="digitool">332864</identifier>
+  <recordInfo>
+    <descriptionStandard>aacr</descriptionStandard>
+    <recordContentSource authority="marcorg">FDA</recordContentSource>
+    <recordCreationDate encoding="marc">091112</recordCreationDate>
+    <recordChangeDate encoding="iso8601">20091112140143.0</recordChangeDate>
+    <recordIdentifier>002592197</recordIdentifier>
+    <recordOrigin>Converted from MARCXML to MODS version 3.4 using MARC21slim2MODS3-4.xsl
+				(Revision 1.85 2013/03/07)</recordOrigin>
+  </recordInfo>
+</mods>
