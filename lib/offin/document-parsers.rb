@@ -844,6 +844,8 @@ end # of class MetsStructMap
 
 class SaxDocumentExamineMets < SaxDocument
 
+  METS_NAMESPACE = %r{^http://www.loc.gov/METS/}
+
   include Errors
 
   attr_reader :xml_document, :sax_document, :file_dictionary, :label, :structmaps
@@ -976,6 +978,9 @@ class SaxDocumentExamineMets < SaxDocument
   # are not relevent here.
 
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
+
+    return unless uri =~ METS_NAMESPACE
+
     hash = { :name => name }
     attributes.each { |at|  hash[at.localname] = at.value }
     @stack.push hash
@@ -994,6 +999,9 @@ class SaxDocumentExamineMets < SaxDocument
   # some special processing.
 
   def end_element_namespace name, prefix = nil, uri = nil
+
+    return unless uri =~ METS_NAMESPACE
+
     handle_structmap_end if name == 'structMap'
     @stack.pop
     @current_string = ''
@@ -1004,8 +1012,6 @@ class SaxDocumentExamineMets < SaxDocument
   # MetsStructMap objects (a list of Struct::MetsDivData objects).
   #
   # TODO: resolve some appropriate issues here: warn if sequences don't match (??)
-
-  # TODO: pull in warnings, errors from structmaps and dictionary into class warnings, errors
 
   def end_document
 
