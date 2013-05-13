@@ -207,7 +207,7 @@ class Mets
   end
 
   def valid?
-    @valid
+    @valid and not errors?
   end
 
   private
@@ -241,15 +241,14 @@ class Mets
     return false
   end
 
-
-  # for error messages:
+  # for error messages, give the rightmost directory name along with the filename
 
   def short_filename
     return $1 if @filename =~ %r{.*/(.*/[^/]+)$}
     return @filename
   end
 
-  # sax document will parse and produce a file dictionary, label, structmaps, which we'll process
+  # sax document will parse and produce a file dictionary, label, structmaps.
 
   def create_sax_document
     sax_document = SaxDocumentExamineMets.new
@@ -262,7 +261,7 @@ class Mets
       warning  sax_document.warnings
     end
 
-    # SAX errors just treated as warnings (for now)
+    # SAX errors just treated as warnings (for now).
 
     if sax_document.errors?
       warning "SAX parser errors for '#{short_filename}':"
