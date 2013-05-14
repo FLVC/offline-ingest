@@ -24,28 +24,30 @@ SaxDocumentExamineMets.debug = false
 
 ARGV.each do |filename|
 
-  puts filename
+  puts '', filename, ''
 
   start = Time.now
 
   mets = Mets.new(config, filename)
 
-  STDERR.puts mets.valid? ? "METS is valid" : "METS is invalid"
-  STDERR.puts 'METS Errors: ',   mets.errors   if mets.errors?
-  STDERR.puts 'METS Warnings: ', mets.warnings if mets.warnings?
+  puts mets.valid? ? "METS is valid" : "METS is invalid"
+  puts 'METS Errors: ',   mets.errors   if mets.errors?
+  puts 'METS Warnings: ', mets.warnings if mets.warnings?
 
   next unless mets.valid?
 
   toc  = TableOfContents.new(mets.structmap)
 
-  STDERR.puts toc.valid? ? "TOC is valid" : "TOC is invalid"
-  STDERR.puts 'TOC Errors: ',   toc.errors   if toc.errors?
-  STDERR.puts 'TOC Warnings: ', toc.warnings if toc.warnings?
+  puts toc.valid? ? "TOC is valid" : "TOC is invalid"
+  puts 'TOC Errors: ',   toc.errors   if toc.errors?
+  puts 'TOC Warnings: ', toc.warnings if toc.warnings?
 
   next unless toc.valid?
 
-  STDERR.puts sprintf("Successfully parsed #{toc.pages.length} pages in %5.2f seconds.", Time.now - start)
+  puts sprintf("Successfully parsed #{toc.pages.length} pages in %5.2f seconds.", Time.now - start)
 
-  puts toc.to_json(mets.label)
+  # puts toc.to_json(mets.label)
+  puts ''
+  toc.print
 
 end

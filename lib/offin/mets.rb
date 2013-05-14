@@ -93,6 +93,21 @@ class TableOfContents
     @valid and not errors?
   end
 
+
+  def print
+    @sequence.each do |entry|
+      case entry
+      when Struct::Chapter
+        indent = '++ ' * entry.level
+      when Struct::Page
+        indent = '-- ' * entry.level
+      end
+      puts indent + entry.title
+    end
+
+  end
+
+
   private
 
   # TODO: not too sure how to approach this yet; it may be too early

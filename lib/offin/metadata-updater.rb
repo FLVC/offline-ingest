@@ -3,13 +3,11 @@ require 'offin/errors'
 require 'offin/manifest'
 require 'offin/mods'
 
-
-
 # The metadata updater class wraps behavior; we have packages arriving
 # from many sources, and metadata may arrive embedded in a
-# manifest.xml file, a MODS file (e.g. digitool), METS, MARC, DC, or
-# defaults (this is caused, at least in part, because librarians are
-# playing at software design at FLVC).
+# manifest.xml file, a MODS file, METS, MARC, DC, or defaults.
+
+#
 
 
 class MetadataUpdater
@@ -86,9 +84,9 @@ class DigitoolMetadataUpdater < MetadataUpdater
 
   def get_extension
     return <<-XML.gsub(/^    /, '')
-    <extension xmlns="info:/flvc/manifest/v1">
-      <owningInstitution>#{@manifest.owning_institution}</owningInstitution>
-      <submittingInstitution>#{@manifest.submitting_institution || @manifest.owning_institution}</submittingInstitution>
+    <extension xmlns:man="info:/flvc/manifest/v1">
+      <man:owningInstitution>#{@manifest.owning_institution}</man:owningInstitution>
+      <man:submittingInstitution>#{@manifest.submitting_institution || @manifest.owning_institution}</man:submittingInstitution>
     </extension>
     XML
   end

@@ -129,7 +129,7 @@ class Package
 
   # base classes should implement process with super():
 
-  def process
+  def ingest
     raise PackageError, 'Attempt to process an invalid package.' unless @valid
   end
 
@@ -137,8 +137,20 @@ class Package
     @valid
   end
 
-  # A MetdataUpdater will fixup metadata according to rules you're
-  # better off not knowing, and various wildly by system.
+
+  # A MetdataUpdater mediates metadata updates according to rules you're
+  # better off not knowing, and various wildly by originating system.
+
+  # TODO:
+  #
+  # updater needs to:
+  #
+  # If simple digitool package (basic, pdf, large):  expects MODS, Manifest objects.
+  #      MODS gets updated with selected manifest data:
+  #      DC gets generated with
+  # If books digitool package: expects METS with embedded manifest data (why?)
+  #      MODS
+
 
   def updater= value
     metadata_updater = value.send :new, @manifest, @mods
@@ -242,7 +254,7 @@ class BasicImagePackage < Package
     @valid = false
   end
 
-  def process
+  def ingest
     super
 
     Ingestor.new(@config, @namespace) do |ingestor|
@@ -323,7 +335,7 @@ class LargeImagePackage < Package
   end
 
 
-  def process
+  def ingest
     super
 
     Ingestor.new(@config, @namespace) do |ingestor|
@@ -431,7 +443,7 @@ class PdfPackage < Package
   end
 
 
-  def process
+  def ingest
     super
 
     # Do image processing upfront so as to fail faster, if fail we must, before ingest is started.

@@ -34,6 +34,7 @@ class Mods
 
   attr_reader :xml_document
 
+  # TODO: sanity check config
 
   def initialize config, path
 
@@ -92,7 +93,7 @@ class Mods
 
     if not output.errors.empty?
       error "When transforming the MODS document '#{@filename}' to DC with stylesheet '#{@config.mods_to_dc_transform_filename}', the following errors occured:"
-      error *output.errors
+      error output.errors
       return
     end
 
@@ -111,6 +112,21 @@ class Mods
   def valid?   # we'll have warnings and errors if not
     @valid
   end
+
+  def add_islandora_identifier str
+
+  end
+
+
+  # TODO: this assumes no extension elements present. Make it smarter, adding to an existing one.
+
+  def add_extension_elements hash
+
+
+  end
+
+
+
 
   private
 
@@ -137,7 +153,7 @@ class Mods
 
     if not issues.empty?
       error "MODS file '#{@filename}' had validation errors as follows:"
-      error *issues
+      error issues
       return false
     end
 

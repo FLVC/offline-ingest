@@ -13,8 +13,9 @@ def parse_command args
   server_code = []
   opts   = OptionParser.new do |opt|
     opt.banner = "Usage: packages --flag package-directory < more package-directories >\n" + "where --flag is one of:\n"
-    opt.on("--fsu",  "use fsu7t.flca.edu for ingest")       { server_code.push 'fsu7t' }
-    opt.on("--d7",   "use islandora7d.fcla.edu for ingest") { server_code.push 'i7d' }
+    opt.on("--fsu",  "use fsu7t.flca.edu for ingest")          { server_code.push 'fsu7t' }
+    opt.on("--d7",   "use islandora7d.fcla.edu for ingest")    { server_code.push 'i7d' }
+    opt.on("--alpo", "use alasnorid.alpo.fcla.edu for ingest") { server_code.push 'alpo' }
   end
   opts.parse!(args)
   raise "No server specified."        if server_code.empty?
@@ -47,7 +48,7 @@ ARGV.each do |directory|
     raise PackageError, "Invalid package in #{directory}." unless package.valid?
 
     package.updater = DigitoolMetadataUpdater
-    package.process
+    package.ingest
     puts sprintf("%5.2f %s::%s => %s (%s)", Time.now - started, package.class, package.name, package.collections.join(', '), package.label)
 
   rescue PackageError => e

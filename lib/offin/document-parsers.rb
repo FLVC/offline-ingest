@@ -219,6 +219,8 @@ class SaxDocumentExamineMods < SaxDocument
     # of the document.  We're also trying to locate the schema document
     # used for this MODS document.
 
+    puts name
+
     if name == 'mods' and @depth == 1 and uri =~ %r{^http://www.loc.gov/mods}i
       @is_simple_mods = true
 
@@ -774,8 +776,8 @@ class MetsStructMap
     elsif @dmdid_ok
       record = Struct::MetsDivData.new
       record.level   = level
-      record.title   = hash['LABEL'] || hash['TYPE'] || ''
-      record.is_page = false
+      record.title   = hash['LABEL'] || ''
+      record.is_page = hash['TYPE'] && hash['TYPE'].downcase == 'page'
       record.fids    = []
       record.files   = []
       @list.push record
@@ -820,6 +822,21 @@ class MetsStructMap
     end
     @list = new
 
+    # Now we have nothing but Struct::MetsDivData; we'll first remove any record that claims to be a page
+    # but has no associated fids:
+
+    new = []
+    @list.each do |div_data|
+      if div_data.fids.empty? and div_data.is_page
+        warning "<div> element of type page, labeled '#{div_data.title}', has no associated file data, skipped."
+      else
+        new.push div_data
+      end
+    end
+    @list = new
+
+    # finally, fill in the files data from the dictionary:
+
     @list.each do |div_data|
       div_data.fids.each do |fid|
         file_entry = file_dictionary[fid]
@@ -834,7 +851,9 @@ class MetsStructMap
 
   def print
     puts self.to_s
-    @list.each { |elt| puts '. ' * elt.level + elt.inspect.gsub('#<struct Struct::DivEntry ',  '<') }
+    @list.each  do |elt|
+      puts '. ' * elt.level + elt.inspect.gsub('#<struct Struct::MetsDivData ',  '<')
+    end
   end
 
 end # of class MetsStructMap
@@ -965,6 +984,16 @@ class SaxDocumentExamineMets < SaxDocument
   def handle_structmap_update
     return unless @current_structmap    # e.g, we got a <div> or <fptr> but not inside a structmap
     level, elt = div_level, @stack[-1]
+
+    # example div records from stack:
+    #
+    #  { "ID"=>"D1", "ORDER"=>"1", "TYPE"=>"Main", :name=>"div" }
+    #  { "LABEL"=>"Page vii", "ID"=>"P7", :name=>"div", "TYPE"=>"Page" }
+    #
+    # example fptr elements from stack:
+    #
+    #  { "FILEID"=>"E7", :name=>"fptr" }
+
     case elt[:name]
     when 'div';    @current_structmap.add_div(elt, level)
     when 'fptr';   @current_structmap.add_file(elt, level)
@@ -1017,12 +1046,24 @@ class SaxDocumentExamineMets < SaxDocument
 
     @structmaps.each do |structmap|
       structmap.post_process(@file_dictionary)
-      warning structmap.warnings
-      error   structmap.errors
+      if structmap.warnings?
+        warning "Warnings when post-processing structMap:"
+        warning structmap.warnings
+      end
+      if structmap.errors?
+        error "Errors when post-processing structMap:"
+        error structmap.errors
+      end
     end
 
-    warning @file_dictionary.warnings
-    error   @file_dictionary.errors
+    if @file_dictionary.warnings?
+      warning "Warnings when post-processing file section:"
+      warning @file_dictionary.warnings
+    end
+    if @file_dictionary.errors?
+      error "Errors when post-processing file section:"
+      error @file_dictionary.errors
+    end
 
     if @@debug
       puts "structMap count: #{@structmaps.length}"
