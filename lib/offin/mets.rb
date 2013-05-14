@@ -172,8 +172,9 @@ class TableOfContents
     chapters.each { |c| c.title = 'Chapter' if (not c.title or c.title.empty?) }
   end
 
-
 end # of class TableOfContents
+
+
 
 
 class Mets
@@ -199,17 +200,17 @@ class Mets
 
     @xml_document = Nokogiri::XML(@text)
 
-    if not @xml_document.errors.empty?
-      error "Error parsing METS file '#{short_filename}':"
-      error @xml_document.errors
+    if xml_syntax_errors? @xml_document.errors
       @valid = false
       return
     end
 
-    @valid &&= validates_against_schema?
+    if not validates_against_schema?
+      @valid = false
+      return
+    end
 
     @sax_document = create_sax_document
-
     @structmap = select_best_structmap @sax_document.structmaps
   end
 
@@ -221,19 +222,48 @@ class Mets
   end
 
   def valid?
-    @valid
+    @valid and not errors?
   end
 
   private
 
-  # for error messages:
+  def xml_syntax_errors? list
+    return false if list.empty?
+
+    validation_warnings = []
+    validation_errors   = []
+    list.each do |err|
+      next unless err.class == Nokogiri::XML::SyntaxError
+      mesg = " on line #{err.line}: #{err.message}"
+      case
+      when (err.warning? or err.none?);   validation_warnings.push 'Warning' + mesg
+      when err.error?;                    validation_errors.push   'Error' + mesg
+      when err.fatal?;                    validation_errors.push   'Fatal Error' + mesg
+      end
+    end
+
+    unless validation_warnings.empty?
+      warning "Validation of the METS file '#{short_filename}' produced the following warnings:"
+      warning  validation_warnings
+    end
+
+    unless validation_errors.empty?
+      error "Validation of the METS file '#{short_filename}' produced the following errors:"
+      error  validation_errors
+      return true
+    end
+
+    return false
+  end
+
+  # for error messages, give the rightmost directory name along with the filename
 
   def short_filename
     return $1 if @filename =~ %r{.*/(.*/[^/]+)$}
     return @filename
   end
 
-  # sax document will parse and produce a file dictionary, label, structmaps, which we'll process
+  # sax document will parse and produce a file dictionary, label, structmaps.
 
   def create_sax_document
     sax_document = SaxDocumentExamineMets.new
@@ -246,7 +276,7 @@ class Mets
       warning  sax_document.warnings
     end
 
-    # SAX errors just treated as warnings (for now)
+    # SAX errors just treated as warnings (for now).
 
     if sax_document.errors?
       warning "SAX parser errors for '#{short_filename}':"
@@ -258,13 +288,11 @@ class Mets
 
 
   def select_best_structmap list
-
     if list.empty?
       @valid = false
       error "No valid structMaps were found in the METS document."
       return
     end
-
 
     # If there's only one, it's the best.
 
@@ -317,25 +345,16 @@ class Mets
     return
   end
 
-  # TODO: check METS file for mets schema location if it makes sense
 
   def validates_against_schema?
     schema_path = File.join(@config.schema_directory, 'mets.xsd')
     xsd = Nokogiri::XML::Schema(File.open(schema_path))
 
-    issues = []
-    xsd.validate(@xml_document).each { |err| issues.push err }
-
-    if not issues.empty?
-      error "The METS file '#{short_filename}' had validation errors as follows:"
-      error  issues
-      return false
-    end
-    return true
+    return ! xml_syntax_errors?(xsd.validate(@xml_document))
 
     # TODO: catch nokogiri class errors here, others should get backtrace
   rescue => e
-    error "Exception #{e.class}, #{e.message} occurred when validating '#{short_filename}' against the METS schema '#{schema_path}'."
+    error "Exception #{e.class}, #{e.message} occurred when validating '#{short_filename}' using the METS schema at '#{schema_path}'."
     # error e.backtrace
     return false
   end

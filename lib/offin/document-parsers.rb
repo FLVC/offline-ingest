@@ -796,8 +796,8 @@ class MetsStructMap
     @dmdid_ok  # and other sanity checks here, as well....
   end
 
-  # post_process is called after an entire structMap subtree is
-  # examined (but perhaps before the document as a whole has been read).
+  # post_process should be called after an entire METS document has been
+  # read (so we know we have the complete file dictionary, too).
 
   def post_process file_dictionary
 
@@ -849,6 +849,7 @@ class MetsStructMap
     end
   end
 
+
   def print
     puts self.to_s
     @list.each  do |elt|
@@ -871,7 +872,7 @@ class SaxDocumentExamineMets < SaxDocument
 
   def initialize
     @stack = []                                    # keeps the nested XML elements and attributes
-    @label = nil                                    # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...>
+    @label = nil                                   # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...> or structMap label
     @file_dictionary = MetsFileDictionary.new      # collects METS data from subtree /fileGrp/file/FLocat/
     @structmaps = []                               # collects data from multiple METS structMaps
     @current_structmap = nil                       # the current METS structMap we're parsing (and acts as a flag to let us know we're in a structMap)
@@ -965,7 +966,7 @@ class SaxDocumentExamineMets < SaxDocument
 
   def handle_structmap_end
     if not @current_structmap.ok?
-      warning "METS structMap discarded (missing or inappropriate DMDID)"
+      warning "METS structMap discarded."
     else
       @structmaps.push @current_structmap
     end
