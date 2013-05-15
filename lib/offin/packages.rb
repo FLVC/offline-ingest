@@ -165,6 +165,9 @@ class Package
 
   def boilerplate ingestor
 
+    @mods.add_islandora_identifier ingestor.pid
+    @mods.add_extension_elements @manifest
+
     # somewhat order dependent
 
     ingestor.label         = @label
@@ -183,6 +186,9 @@ class Package
         ds.mimeType = 'text/xml'
       end
     end
+
+
+    STDERR.puts 'done with boilerplate'
   end
 
 
@@ -261,17 +267,23 @@ class BasicImagePackage < Package
 
       boilerplate(ingestor)
 
+      STDERR.puts 'starting ingest'
+
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @image_filename
         ds.content  = @image.to_blob
         ds.mimeType = @image.mime_type
       end
 
+      STDERR.puts 'starting ingest'
+
       ingestor.datastream('MEDIUM_SIZE') do |ds|
         ds.dsLabel  = "Medium Size Image"
         ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
+
+      STDERR.puts 'starting ingest'
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"

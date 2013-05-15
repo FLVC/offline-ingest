@@ -30,9 +30,11 @@ class Mods
   # *) get extension elements
 
 
+  MANIFEST_NAMESPACE = 'info:/flvc/manifest/v1'
+
   include Errors
 
-  attr_reader :xml_document
+  attr_reader :xml_document  # won't need external access to prefix after testing
 
   # TODO: sanity check config
 
@@ -41,6 +43,8 @@ class Mods
     @filename  = path
     @config    = config
     @valid     = false
+    @prefix    = nil         # the SAX parser supplies what prefix corresponds to the MODS namespace within the document
+
 
     # TODO: check config file for http_proxy, have nokogiri use it;  e.g.  ENV['http_proxy'] = 'http://localhost:3128/' ??
 
@@ -106,26 +110,65 @@ class Mods
   end
 
   def to_s
-    @text
+    @xml_document.to_s
   end
 
   def valid?   # we'll have warnings and errors if not
     @valid
   end
 
+
+  # if @prefix is nil, then MODS is the default namespace here.
+
+  def format_prefix
+    @prefix.nil? ? '' : "#{prefix}:"
+  end
+
   def add_islandora_identifier str
 
+    ident = Nokogiri::XML::Node.new("#{format_prefix}identifier", @xml_document)
+    ident.content = str                                               # TODO: XML escape
+    ident['type'] = 'fedora'
+
+    @xml_document.children[0].add_child(ident)
+    ident.after "\n"
+
+  rescue => e
+    error "Can't add islandora identifier '#{str}' to MODS document '#{@filename}', error #{e.class} - #{e.message}."
   end
 
 
   # TODO: this assumes no extension elements present. Make it smarter, adding to an existing one.
+  # Also assumes particular set of manifest elements - we'll have validated the manifest at this point.
 
-  def add_extension_elements hash
+  def add_extension_elements manifest
 
+    STDERR.puts 'create node'
 
+    extension = Nokogiri::XML::Node.new("#{format_prefix}extension", @xml_document)
+
+    STDERR.puts 'add namespace'
+
+    extension.add_namespace('man', MANIFEST_NAMESPACE)
+
+    STDERR.puts 'adding text'
+
+    extension << "\n  "
+    extension << "<man:owningInstitution>#{manifest.owning_institution}</man:owningInstitution>"
+    extension << "\n  "
+    extension << "<man:submittingInstitution>#{manifest.submitting_institution || manifest.owning_institution}</man:submittingInstitution>"
+    extension << "\n"
+
+    STDERR.puts 'adding to doc'
+
+    @xml_document.children[0].add_child(extension)
+    extension.after "\n"
+
+    STDERR.puts 'done with manifest'
+
+  rescue => e
+    error "Can't add extension elements to MODS document '#{@filename}', error #{e.class} - #{e.message}."
   end
-
-
 
 
   private
@@ -135,8 +178,10 @@ class Mods
     sax_document = SaxDocumentExamineMods.new
     Nokogiri::XML::SAX::Parser.new(sax_document).parse(@text)
 
+    @prefix = sax_document.prefix
+
     if sax_document.warnings? or sax_document.errors?
-      warning "SAX parsing warnings for '#{@filename}'"
+      warning "SAX parser warnings for '#{@filename}':"
       warning  sax_document.errors
       warning  sax_document.warnings
     end

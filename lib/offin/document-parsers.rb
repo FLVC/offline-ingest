@@ -192,8 +192,9 @@ class SaxDocumentExamineMods < SaxDocument
   #    puts "You can find its schema at " + sax_document.mods_schema_location \
   #         if sax_document.mods_schema_location
 
+  MODS_NAMESPACE = %r{^http://www.loc.gov/mods}i
 
-  attr_reader :mods_schema_location
+  attr_reader :mods_schema_location, :prefix
 
   def initialize
     @is_simple_mods = false
@@ -201,12 +202,23 @@ class SaxDocumentExamineMods < SaxDocument
     @declared_version = nil
     @schema_locations = {}
     @mods_schema_location = nil
+    @prefix = nil
     super()
   end
 
   def is_simple_mods?
     @is_simple_mods
   end
+
+
+  def find_mods_namespace namespaces
+    candidates = []
+    namespaces.each do |prefix, namespace|
+      candidates.push prefix  if namespace =~ MODS_NAMESPACE
+    end
+  end
+
+
 
   def end_element_namespace name, prefix = nil, uri = nil
     @depth -= 1
@@ -217,12 +229,17 @@ class SaxDocumentExamineMods < SaxDocument
 
     # We're handling the case for when <mods ...> is the first element
     # of the document.  We're also trying to locate the schema document
-    # used for this MODS document.
+    # used for this MODS document (we'll default to versoin 3.4) and
+    # get the prefix used....
 
-    puts name
 
-    if name == 'mods' and @depth == 1 and uri =~ %r{^http://www.loc.gov/mods}i
+
+    if name == 'mods' and @depth == 1 and uri =~ MODS_NAMESPACE
       @is_simple_mods = true
+
+      find_mods_namespace ns
+
+      @prefix = prefix  # if nil, we get to use the default namespace.
 
       attributes.each do |a|
         case
@@ -234,7 +251,13 @@ class SaxDocumentExamineMods < SaxDocument
           @declared_version = a.value
         end
       end
-      @mods_schema_location = @schema_locations[uri]
+
+      if not @schema_locations[uri]
+        warning "The MODS document does not specify a schemaLocation for '#{uri}', assuming 'http://www.loc.gov/standards/mods/v3/mods-3-4.xsd'"
+        @mods_schema_location = "http://www.loc.gov/standards/mods/v3/mods-3-4.xsd"
+      else
+        @mods_schema_location = @schema_locations[uri]
+      end
     end
 
   end
