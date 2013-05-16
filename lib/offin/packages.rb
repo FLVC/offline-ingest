@@ -234,7 +234,7 @@ class BasicImagePackage < Package
     when GIF, JPEG, PNG
       @image = Magick::Image.read(path).first
 
-   # TODO: add special support for TIFFs (not needed for digitool migration)
+      # TODO: add special support for TIFFs (not needed for digitool migration)
 
     when TIFF
       raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
@@ -251,7 +251,7 @@ class BasicImagePackage < Package
   def ingest
     super
 
-    Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -274,11 +274,9 @@ class BasicImagePackage < Package
       end
     end
 
-  rescue PackageError => e
-    error "Ingest error for #{@directory_name}:",  e.message
-  rescue => e
-    error "Ingest error for #{@directory_name}:  #{e.class} #{e.message}.  Backtrace follows:", e.backtrace
   ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
 end
@@ -330,7 +328,7 @@ class LargeImagePackage < Package
   def ingest
     super
 
-    Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -364,11 +362,9 @@ class LargeImagePackage < Package
       end
     end
 
-  rescue PackageError => e
-    error "Ingest error for #{@directory_name}:",  e.message
-  rescue => e
-    error "Ingest error for #{@directory_name}:  #{e.class} #{e.message}.  Backtrace follows:", e.backtrace
   ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
 end
@@ -445,7 +441,7 @@ class PdfPackage < Package
     thumb   = Utils.pdf_to_thumbnail @config, File.join(@directory_path, @pdf_filename)
     preview = Utils.pdf_to_preview @config, File.join(@directory_path, @pdf_filename)
 
-    Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -474,9 +470,8 @@ class PdfPackage < Package
       end
     end
 
-  rescue PackageError => e
-    error "Ingest error for #{@directory_name}:",  e.message
-  rescue => e
-    error "Ingest error for #{@directory_name}:  #{e.class} #{e.message}.  Backtrace follows:", e.backtrace
+  ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
   end
 end

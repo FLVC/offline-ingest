@@ -23,6 +23,7 @@ end
 
 class Ingestor
 
+  include Errors
 
   # TODO: sanity check on config object, throw error that should stop all processing
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
@@ -33,16 +34,18 @@ class Ingestor
 
   # We use the yield self idiom here:
   #
-  #  Ingestor.new(...) do |ingestor|
+  #  ingestor = Ingestor.new(...) do |ingestor|
   #     ingestor.do-your-thing..
   #  end
+  #
+  #  ingestot.warnings
 
 
   def initialize  config, namespace
     @config = config
+    @namespace = namespace
 
     @repository = Rubydora.connect :url => @config.url, :user => @config.user, :password => @config.password
-    @namespace = namespace
 
     @pid = getpid
     @fedora_object = @repository.create(@pid)
@@ -51,6 +54,15 @@ class Ingestor
     yield self
 
     @fedora_object.save
+
+  # TODO: not sure if we should just let these percolate up, or just non-package errors, or what, exactly
+
+  rescue PackageError => e
+    error e.message
+    return self
+  rescue => e
+    error "Caught exception #{e.class} #{e.message}, backtrace follows:", e.backtrace
+    return self
   end
 
 
@@ -62,7 +74,6 @@ class Ingestor
     Nokogiri::XML::SAX::Parser.new(sax_document).parse(pid_doc)
     return sax_document.pids.shift
   end
-
 
   def collections= value
     value.each do |pid|
@@ -116,6 +127,9 @@ class Ingestor
 
     @repository.itql(query).map{ |row| row[0] }
   end
+
+
+  # TODO: label below needs to be xml escaped at some point...
 
   def collection_policy_text label
     str = ''
