@@ -140,7 +140,6 @@ class Package
 
   # A MetdataUpdater mediates metadata updates according to rules you're
   # better off not knowing, and various wildly by originating system.
-
   # TODO:
   #
   # updater needs to:
@@ -177,8 +176,6 @@ class Package
     ingestor.dc            = @mods.to_dc
     ingestor.mods          = @mods.to_s
 
-    # TODO: use ingestor.pid to set
-
     if @marc
       ingestor.datastream('MARCXML') do |ds|
         ds.dsLabel  = "Archived Digitool MarcXML"
@@ -186,11 +183,7 @@ class Package
         ds.mimeType = 'text/xml'
       end
     end
-
-
-    STDERR.puts 'done with boilerplate'
   end
-
 
   # List all the files in the directory we haven't already accounted for. Subclasses will need to work through these.
   # Presumably these are all datafiles.
@@ -244,7 +237,7 @@ class BasicImagePackage < Package
     when GIF, JPEG, PNG
       @image = Magick::Image.read(path).first
 
-      # TODO: add special support for TIFFs (not needed for digitool migration)
+   # TODO: add special support for TIFFs (not needed for digitool migration)
 
     when TIFF
       raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
@@ -267,15 +260,11 @@ class BasicImagePackage < Package
 
       boilerplate(ingestor)
 
-      STDERR.puts 'starting ingest'
-
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @image_filename
         ds.content  = @image.to_blob
         ds.mimeType = @image.mime_type
       end
-
-      STDERR.puts 'starting ingest'
 
       ingestor.datastream('MEDIUM_SIZE') do |ds|
         ds.dsLabel  = "Medium Size Image"
@@ -283,14 +272,11 @@ class BasicImagePackage < Package
         ds.mimeType = @image.mime_type
       end
 
-      STDERR.puts 'starting ingest'
-
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"
         ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
-
     end
 
   ensure
@@ -346,7 +332,6 @@ class LargeImagePackage < Package
     @valid = false
   end
 
-
   def ingest
     super
 
@@ -396,7 +381,6 @@ class PdfPackage < Package
     super(config, directory, manifest)
     @content_model = PDF_CONTENT_MODEL
 
-
     if @datafiles.length > 2
       raise PackageError, "The PDF package #{@directory_name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
     end
@@ -436,7 +420,6 @@ class PdfPackage < Package
         warning "The full text file #{@full_text_filename} supplied in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
-
     # No full text, so we generate UTF-8 using a unix utility, which we don't trust much either:
     else
       @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory_path, @pdf_filename)))
@@ -453,7 +436,6 @@ class PdfPackage < Package
     error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
     @valid = false
   end
-
 
   def ingest
     super

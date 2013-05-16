@@ -11,7 +11,7 @@ require 'offin/errors'
 # TODO: do a sanity check on @config. Failure should throw an error that will stop all processing at the top level:
 #
 #    @config.mods_to_dc_transform_filename must exist and be readable
-#    @mods_schema_directory must exist and have the expected complement of schema versions
+#    @schema_directory must exist and have the expected complement of schemas
 
 
 class Mods
@@ -28,7 +28,6 @@ class Mods
   # *) insert new title
   # *) update extension elements
   # *) get extension elements
-
 
   MANIFEST_NAMESPACE = 'info:/flvc/manifest/v1'
 
@@ -51,14 +50,14 @@ class Mods
     @text = File.read(@filename)
 
     if @text.empty?
-      error "MODS file '#{@filename}' is empty."
+      error "MODS file '#{short_filename}' is empty."
       return
     end
 
     @xml_document = Nokogiri::XML(@text)
 
     if not @xml_document.errors.empty?
-      error "Error parsing MODS file '#{@filename}':"
+      error "Error parsing MODS file '#{short_filename}':"
       error @xml_document.errors
       return
     end
@@ -88,15 +87,17 @@ class Mods
   # Return DC derivation for this document as an XML document (or, if errors, nil)
 
   def to_dc_xml
-
     return unless @valid
 
+    # We create a new XML Document to avoid the seqfault that re-using the existing @xml_document sometime causes.
+
+    newdoc = Nokogiri::XML(@xml_document.to_xml)
     mods_to_dc = File.read(@config.mods_to_dc_transform_filename)
     xslt = Nokogiri::XSLT(mods_to_dc)
-    output =  xslt.transform(@xml_document)
+    output =  xslt.transform(newdoc)
 
     if not output.errors.empty?
-      error "When transforming the MODS document '#{@filename}' to DC with stylesheet '#{@config.mods_to_dc_transform_filename}', the following errors occured:"
+      error "When transforming the MODS document '#{short_filename}' to DC with stylesheet '#{@config.mods_to_dc_transform_filename}', the following errors occured:"
       error output.errors
       return
     end
@@ -104,24 +105,17 @@ class Mods
     return output  # a Nokogiri::XML::Document
 
   rescue => e
-    error "Exception '#{e}' occured transforming the MODS document '#{@filename}' to DC with stylesheet '#{@config.mods_to_dc_transform_filename}', backtrace follows"
+    error "Exception '#{e}' occured transforming the MODS document '#{short_filename}' to DC with stylesheet '#{@config.mods_to_dc_transform_filename}', backtrace follows"
     error e.backtrace
     return nil
   end
 
   def to_s
-    @xml_document.to_s
+    @xml_document.to_xml
   end
 
   def valid?   # we'll have warnings and errors if not
     @valid
-  end
-
-
-  # if @prefix is nil, then MODS is the default namespace here.
-
-  def format_prefix
-    @prefix.nil? ? '' : "#{prefix}:"
   end
 
   def add_islandora_identifier str
@@ -134,44 +128,56 @@ class Mods
     ident.after "\n"
 
   rescue => e
-    error "Can't add islandora identifier '#{str}' to MODS document '#{@filename}', error #{e.class} - #{e.message}."
+    error "Can't add islandora identifier '#{str}' to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
   end
 
+  # TODO: this assumes no extension elements present. We'll need it
+  # smarter, adding to an existing extension in the mods document if
+  # necessary.
 
-  # TODO: this assumes no extension elements present. Make it smarter, adding to an existing one.
-  # Also assumes particular set of manifest elements - we'll have validated the manifest at this point.
+  # From the manifest, add owningInstitution, submittingInstitution
+  # (defaults to owningInstitution) and optionally one or more
+  # objectHistory elements.
 
   def add_extension_elements manifest
 
-    STDERR.puts 'create node'
-
     extension = Nokogiri::XML::Node.new("#{format_prefix}extension", @xml_document)
-
-    STDERR.puts 'add namespace'
-
-    extension.add_namespace('man', MANIFEST_NAMESPACE)
-
-    STDERR.puts 'adding text'
+    extension.add_namespace("man", MANIFEST_NAMESPACE)
 
     extension << "\n  "
     extension << "<man:owningInstitution>#{manifest.owning_institution}</man:owningInstitution>"
     extension << "\n  "
     extension << "<man:submittingInstitution>#{manifest.submitting_institution || manifest.owning_institution}</man:submittingInstitution>"
-    extension << "\n"
 
-    STDERR.puts 'adding to doc'
+    manifest.object_history.each do |record|
+      extension << "\n  "
+      extension << "<man:objectHistory source=\"#{record['source']}\">#{record['data']}</man:objectHistory>"
+    end
+    extension << "\n"
 
     @xml_document.children[0].add_child(extension)
     extension.after "\n"
 
-    STDERR.puts 'done with manifest'
-
   rescue => e
-    error "Can't add extension elements to MODS document '#{@filename}', error #{e.class} - #{e.message}."
+    error "Can't add extension elements to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
   end
 
-
   private
+
+  # for error messages, give the rightmost directory name along with the filename
+
+  def short_filename
+    return $1 if @filename =~ %r{.*/(.*/[^/]+)$}
+    return @filename
+  end
+
+  # @prefix is the XML element prefix used for the MODS namespace; if
+  # @prefix is nil, then MODS is the default namespace here and we
+  # don't need prefix:element.
+
+  def format_prefix
+    @prefix.nil? ? '' : "#{prefix}:"
+  end
 
   def validates_against_schema?
 
@@ -181,13 +187,13 @@ class Mods
     @prefix = sax_document.prefix
 
     if sax_document.warnings? or sax_document.errors?
-      warning "SAX parser warnings for '#{@filename}':"
+      warning "SAX parser warnings for '#{short_filename}':"
       warning  sax_document.errors
       warning  sax_document.warnings
     end
 
     if sax_document.mods_schema_location.nil?
-      error "Can't find the MODS schema location in the MODS file '#{@filename}'"
+      error "Can't find the MODS schema location in the MODS file '#{short_filename}'"
       return false
     end
 
@@ -197,7 +203,7 @@ class Mods
     xsd.validate(@xml_document).each { |err| issues.push err }
 
     if not issues.empty?
-      error "MODS file '#{@filename}' had validation errors as follows:"
+      error "MODS file '#{short_filename}' had validation errors as follows:"
       error issues
       return false
     end
@@ -206,7 +212,7 @@ class Mods
 
     # TODO: catch nokogiri class errors here, others get backtrace
   rescue => e
-    error "Exception #{e.class}, #{e.message} occurred when validating '#{@filename}' against the MODS schema '#{sax_document.mods_schema_location}'."
+    error "Exception #{e.class}, #{e.message} occurred when validating '#{short_filename}' against the MODS schema '#{sax_document.mods_schema_location}'."
     ## error e.backtrace
     return false
   end
@@ -228,9 +234,9 @@ class Mods
     end
 
     if location.nil?
-      raise "No schema location could be determined for the MODS file '#{@filename}'"
+      raise "No schema location could be determined for the MODS file '#{short_filename}'"
     else
-      raise "There was an unexpected/unsupported schema location '#{location}' declared in the MODS file '#{@filename}'"
+      raise "There was an unexpected/unsupported schema location '#{location}' declared in the MODS file '#{short_filename}'"
     end
   end
 

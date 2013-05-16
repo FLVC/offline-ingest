@@ -171,11 +171,7 @@ class TableOfContents
   def cleanup_chapter_titles
     chapters.each { |c| c.title = 'Chapter' if (not c.title or c.title.empty?) }
   end
-
 end # of class TableOfContents
-
-
-
 
 class Mets
 
@@ -288,6 +284,7 @@ class Mets
 
 
   def select_best_structmap list
+
     if list.empty?
       @valid = false
       error "No valid structMaps were found in the METS document."
@@ -308,7 +305,7 @@ class Mets
       scores.each { |sm,num| return sm if num == max }
     end
 
-    # Otherwise, we need to do lots more work.  This tries to do some sort of scoring based on file information.
+    # Otherwise, we need to do more work.  This tries to do some sort of scoring based on file information.
 
     scores = {}
     list.each do |sm|
