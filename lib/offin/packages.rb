@@ -57,7 +57,7 @@ class Package
 
   include Errors
 
-  # supported MIME types go here, as returned by the file command.
+  # supported MIME types go here, using the file command's returned values:
 
   GIF  = 'image/gif'
   JP2  = 'image/jp2'
@@ -102,7 +102,7 @@ class Package
 
     @valid &&= @mods.valid?
 
-    return unless @valid
+    return unless valid?
 
     marc_file = File.join(@directory_path, 'marc.xml')
 
@@ -117,30 +117,29 @@ class Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
   def name
     @directory_name
   end
 
-  # base classes should implement process with super():
+  # base classes should implement ingest with super():
 
   def ingest
-    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+    raise PackageError, 'Attempt to ingest an invalid package.' unless valid?
   end
 
   def valid?
-    @valid
+    @valid and not errors?
   end
 
 
   # A MetdataUpdater mediates metadata updates according to rules you're
   # better off not knowing, and various wildly by originating system.
-  # TODO:
+  #
+  # TODO: flesh this out
   #
   # updater needs to:
   #
@@ -219,15 +218,13 @@ class BasicImagePackage < Package
 
     if @datafiles.length > 1
       error "The Basic Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
-      @valid = false
     end
 
     if @datafiles.length == 0
       error "The Basic Image package #{@directory_name} contains no data files."
-      @valid = false
     end
 
-    return unless @valid
+    return unless valid?
 
     @image_filename = @datafiles[0]
     path = File.join(@directory_path, @image_filename)
@@ -247,10 +244,8 @@ class BasicImagePackage < Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
   def ingest
@@ -279,6 +274,10 @@ class BasicImagePackage < Package
       end
     end
 
+  rescue PackageError => e
+    error "Ingest error for #{@directory_name}:",  e.message
+  rescue => e
+    error "Ingest error for #{@directory_name}:  #{e.class} #{e.message}.  Backtrace follows:", e.backtrace
   ensure
     @image.destroy! if @image.class == Magick::Image
   end
@@ -298,15 +297,13 @@ class LargeImagePackage < Package
 
     if @datafiles.length > 1
       error "The Large Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
-      @valid = false
     end
 
     if @datafiles.length == 0
       raise PackageError, "The Large Image package #{@directory_name} contains no data files."
-      @valid = false
     end
 
-    return unless @valid
+    return unless valid?
 
     @image = nil
     @image_filename = @datafiles[0]
@@ -326,10 +323,8 @@ class LargeImagePackage < Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
   def ingest
@@ -368,6 +363,11 @@ class LargeImagePackage < Package
         ds.mimeType = @image.mime_type
       end
     end
+
+  rescue PackageError => e
+    error "Ingest error for #{@directory_name}:",  e.message
+  rescue => e
+    error "Ingest error for #{@directory_name}:  #{e.class} #{e.message}.  Backtrace follows:", e.backtrace
   ensure
     @image.destroy! if @image.class == Magick::Image
   end
@@ -413,15 +413,17 @@ class PdfPackage < Package
     raise PackageError, "The PDF package #{@directory_name} doesn't contain a PDF file."  if @pdf.nil?
 
     case
-    # A full text index file was submitted, which we don't trust much:
+    # A full text index file was submitted, which we don't trust much, so cleanup and re-encode to UTF:
     when @full_text
+      @full_text_label = "Full text from index file"
       @full_text = Utils.cleanup_text(Utils.re_encode_maybe(@full_text))
       if @full_text.empty?
         warning "The full text file #{@full_text_filename} supplied in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
-    # No full text, so we generate UTF-8 using a unix utility, which we don't trust much either:
+    # No full text, so we generate UTF-8 using a unix utility, which we'll still cleanup:
     else
+      @full_text_label = 'Full text derived from PDF'
       @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory_path, @pdf_filename)))
       if @full_text.empty?
         warning "The generated full text from #{@pdf_filename} in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
@@ -431,10 +433,8 @@ class PdfPackage < Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
   def ingest
@@ -456,7 +456,7 @@ class PdfPackage < Package
       end
 
       ingestor.datastream('FULL_TEXT') do |ds|
-        ds.dsLabel  = 'Full Text'
+        ds.dsLabel  = @full_text_label
         ds.content  = @full_text
         ds.mimeType = TEXT
       end
@@ -473,5 +473,10 @@ class PdfPackage < Package
         ds.mimeType = JPEG
       end
     end
+
+  rescue PackageError => e
+    error "Ingest error for #{@directory_name}:",  e.message
+  rescue => e
+    error "Ingest error for #{@directory_name}:  #{e.class} #{e.message}.  Backtrace follows:", e.backtrace
   end
 end

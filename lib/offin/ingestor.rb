@@ -23,7 +23,6 @@ end
 
 class Ingestor
 
-  include Errors
 
   # TODO: sanity check on config object, throw error that should stop all processing
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
@@ -35,7 +34,7 @@ class Ingestor
   # We use the yield self idiom here:
   #
   #  Ingestor.new(...) do |ingestor|
-  #     ingestor.do your thing..
+  #     ingestor.do-your-thing..
   #  end
 
 
@@ -48,7 +47,6 @@ class Ingestor
     @pid = getpid
     @fedora_object = @repository.create(@pid)
     @owner = nil
-
 
     yield self
 
@@ -144,6 +142,7 @@ class Ingestor
 
 
   def create_new_collection_if_necessary collection_pid
+
     label = 'digitool collection: ' + collection_pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
     return if existing_collections.include? collection_pid
 

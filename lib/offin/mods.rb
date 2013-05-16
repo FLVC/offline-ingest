@@ -87,7 +87,7 @@ class Mods
   # Return DC derivation for this document as an XML document (or, if errors, nil)
 
   def to_dc_xml
-    return unless @valid
+    return unless valid?
 
     # We create a new XML Document to avoid the seqfault that re-using the existing @xml_document sometime causes.
 
@@ -115,7 +115,7 @@ class Mods
   end
 
   def valid?   # we'll have warnings and errors if not
-    @valid
+    @valid and not errors?
   end
 
   def add_islandora_identifier str
