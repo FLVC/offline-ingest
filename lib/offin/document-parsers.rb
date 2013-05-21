@@ -718,12 +718,12 @@ class MetsFileDictionary
   # The MetsFileDictionaryEntry struct has entries (using the example above) with
   #
   #   dictionary.sequence => '1'                       -- we don't really use this, instead we take the sequence supplied by the structMap. TODO: maybe we'll warn if these differ...
-  #   dictionary.mimetype => 'image/jpeg'              -- might be nil - we'll fill in by href extension if missing... TODO:
-  #   dictionary.href     => 'FI05030701_cover1.jpg'   -- has to be present, and we'll check if it resolves to a file in the package.. TODO:
-  #   dictionary.use      => 'index'                   -- we really want this to be 'index' (full text) or 'reference' (the designated format to ingest), but we may get 'archive' in some cases... TODO:
-  #   dictionary.fid      => 'FID1'                    -- has to be here.
+  #   dictionary.mimetype => 'image/jpeg'              -- might be nil - we'll fill in by MIME href extension if missing.
+  #   dictionary.href     => 'FI05030701_cover1.jpg'   -- has to be present; we check if it resolves to a file in the package cod.
+  #   dictionary.use      => 'index'                   -- we really want this to be 'index' (full text) or 'reference' (the designated format to ingest), but we may get 'archive' in some cases.
+  #   dictionary.fid      => 'FID1'                    -- this string will be present.
   #
-  # .mimetype and .use are always lower-cased when strings - any of the above may technically be nil, but :fid and :href will not be if we get here.
+  # .mimetype and .use are always lower-cased when strings -  :fid and :href will be present.
 
   def initialize
     @sequence = []

@@ -125,6 +125,7 @@ class Mods
     ident['type'] = 'fedora'
 
     @xml_document.children[0].add_child(ident)
+    ident.before "\n"
     ident.after "\n"
 
   rescue => e
