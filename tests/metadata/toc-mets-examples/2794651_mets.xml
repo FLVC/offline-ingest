@@ -1,0 +1,3399 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fcla dl="no"?>
+<!--  History of women's intercollegiate athletics at Florida State University from 1905 1972 ( Book ) -->
+<METS:mets xmlns:METS="http://www.loc.gov/METS/" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:ufdc="http://www.uflib.ufl.edu/digital/metadata/ufdc2/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OBJID="FS00000105_00001" xsi:schemaLocation="http://www.loc.gov/METS/   http://www.loc.gov/standards/mets/mets.xsd    http://www.loc.gov/mods/v3   http://www.loc.gov/mods/v3/mods-3-3.xsd   http://www.uflib.ufl.edu/digital/metadata/ufdc2/   http://www.uflib.ufl.edu/digital/metadata/ufdc2/ufdc2.xsd" TYPE="book">
+<METS:metsHdr CREATEDATE="2009-03-18T08:30:26Z" ID="FS00000105_00001" LASTMODDATE="2009-03-18T08:30:26Z" RECORDSTATUS="METADATA_UPDATE">
+	<METS:agent ROLE="CREATOR" TYPE="ORGANIZATION"> 
+		<METS:name>UF</METS:name>
+	</METS:agent>
+	<METS:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER"> 
+		<METS:name>PreQC Application, 4.3.6</METS:name>
+	</METS:agent>
+</METS:metsHdr>
+<METS:dmdSec ID="DMD1">
+	<METS:mdWrap MDTYPE="MARC" MIMETYPE="text/xml" LABEL="MARC"> 
+		<METS:xmlData>
+			<marc:record xmlns:marc="http://www.loc.gov/MARC21/slim"><marc:leader>     nam  22     uu 4500</marc:leader><marc:controlfield tag="001">FS00000105_00001</marc:controlfield><marc:controlfield tag="003">ufdc</marc:controlfield><marc:controlfield tag="008">      |           ||||||||||||||||||||||</marc:controlfield>
+				
+				<marc:datafield tag="852" ind1=" " ind2=" "><marc:subfield code="a">Florida State University</marc:subfield></marc:datafield><marc:datafield tag="852" ind1=" " ind2=" "><marc:subfield code="a">FSU</marc:subfield></marc:datafield>
+				<marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">Usher, Mildred M</marc:subfield></marc:datafield>
+				
+				<marc:datafield tag="440" ind1=" " ind2=" "><marc:subfield code="a">History of women's intercollegiate athletics at Florida State University from 1905-1972</marc:subfield></marc:datafield>
+				<marc:datafield tag="245" ind1="1" ind2="0"><marc:subfield code="a">History of women's intercollegiate athletics at Florida State University from 1905-1972</marc:subfield></marc:datafield>
+				
+			<marc:datafield tag="598" ind1=" " ind2=" "><marc:subfield code="a">FS00000105_00001</marc:subfield></marc:datafield></marc:record>
+		</METS:xmlData>
+	</METS:mdWrap>
+</METS:dmdSec>
+<METS:dmdSec ID="DMD2">
+	<METS:mdWrap MDTYPE="OTHER" OTHERMDTYPE="UFDC" MIMETYPE="text/xml" LABEL="University of Florida Digital Collections Metadata"> 
+		<METS:xmlData>
+			<ufdc:procParam>
+				<ufdc:Collection.Primary>FHPC</ufdc:Collection.Primary>
+				<ufdc:MainThumbnail>100thm.jpg</ufdc:MainThumbnail>
+				<ufdc:Wordmark>FSU</ufdc:Wordmark>
+			</ufdc:procParam>
+			<ufdc:bibDesc>
+				<ufdc:BibID>FS00000105</ufdc:BibID>
+				<ufdc:VID>00001</ufdc:VID>
+				<ufdc:Source>
+					<ufdc:statement code="FSU">Florida State University</ufdc:statement>
+				</ufdc:Source>
+				<ufdc:Type>Book</ufdc:Type>
+			</ufdc:bibDesc>
+		</METS:xmlData>
+	</METS:mdWrap>
+</METS:dmdSec>
+<METS:fileSec> 
+	 
+	<METS:fileGrp USE="reference"> 
+		<METS:file GROUPID="G3" ID="E3" MIMETYPE="image/jp2" CHECKSUM="312bc01d2fb90bd63ef1fa05601bbfc4" CHECKSUMTYPE="MD5" SIZE="238500" SEQ="1"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/iii.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G5" ID="E5" MIMETYPE="image/jp2" CHECKSUM="c5c0becf2380a5e96752f5d10e8e34c3" CHECKSUMTYPE="MD5" SIZE="240028" SEQ="2"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/v.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G7" ID="E7" MIMETYPE="image/jp2" CHECKSUM="5d0a20d97d9cb3fe19651cc1fe671e30" CHECKSUMTYPE="MD5" SIZE="238511" SEQ="3"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/vii.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G9" ID="E9" MIMETYPE="image/jp2" CHECKSUM="025466d0371dd52377b65e70aa35fa8c" CHECKSUMTYPE="MD5" SIZE="238476" SEQ="4"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/ix.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G11" ID="E11" MIMETYPE="image/jp2" CHECKSUM="6a4776608666bbe2152fddbade66afc6" CHECKSUMTYPE="MD5" SIZE="240877" SEQ="5"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/xi.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G13" ID="E13" MIMETYPE="image/jp2" CHECKSUM="940e5551f4382532c97bae1e6aa69df1" CHECKSUMTYPE="MD5" SIZE="240845" SEQ="6"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/xiii.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G15" ID="E15" MIMETYPE="image/jp2" CHECKSUM="d7565be20c2fb4d1d36f2cca853f2309" CHECKSUMTYPE="MD5" SIZE="238457" SEQ="7"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/xv.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G16" ID="E16" MIMETYPE="image/jp2" CHECKSUM="ddbda942764c010ba631d780def38fb5" CHECKSUMTYPE="MD5" SIZE="238442" SEQ="8"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/i.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G17" ID="E17" MIMETYPE="image/jp2" CHECKSUM="503f7b211c6edd310f60ab89a0d4ff03" CHECKSUMTYPE="MD5" SIZE="240075" SEQ="9"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/ii.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G19" ID="E19" MIMETYPE="image/jp2" CHECKSUM="61077dcaa4e5a48c4f4a271eb2f11aa7" CHECKSUMTYPE="MD5" SIZE="240105" SEQ="10"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/iv.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G21" ID="E21" MIMETYPE="image/jp2" CHECKSUM="cd43e76bf28b7b14b0ef4fbe3d4966cf" CHECKSUMTYPE="MD5" SIZE="240109" SEQ="11"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/vi.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G23" ID="E23" MIMETYPE="image/jp2" CHECKSUM="d51caa708bbbd946b6fcc939040bd05f" CHECKSUMTYPE="MD5" SIZE="240086" SEQ="12"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/viii.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G25" ID="E25" MIMETYPE="image/jp2" CHECKSUM="c84e1135a44979f477e3335562b946a0" CHECKSUMTYPE="MD5" SIZE="240809" SEQ="13"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/x.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G27" ID="E27" MIMETYPE="image/jp2" CHECKSUM="4623a2c8af6e92868f093d3783d7ab95" CHECKSUMTYPE="MD5" SIZE="240002" SEQ="14"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/xii.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G29" ID="E29" MIMETYPE="image/jp2" CHECKSUM="62d40d9211a172460173a1e7fe0cc28e" CHECKSUMTYPE="MD5" SIZE="241668" SEQ="15"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/xiv.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G31" ID="E31" MIMETYPE="image/jp2" CHECKSUM="b123705086fdb868eb9f8b8e6e75d5d8" CHECKSUMTYPE="MD5" SIZE="242510" SEQ="16"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/1.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G32" ID="E32" MIMETYPE="image/jp2" CHECKSUM="11d94c1b870e4a243340936297dca48b" CHECKSUMTYPE="MD5" SIZE="240100" SEQ="17"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/2.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G33" ID="E33" MIMETYPE="image/jp2" CHECKSUM="4c38301adf6d80743111f0e74c80b961" CHECKSUMTYPE="MD5" SIZE="240851" SEQ="18"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/3.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G34" ID="E34" MIMETYPE="image/jp2" CHECKSUM="e4ce448767be8b09a3f79d942de48078" CHECKSUMTYPE="MD5" SIZE="242455" SEQ="19"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/4.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G35" ID="E35" MIMETYPE="image/jp2" CHECKSUM="cfb42ae326aee665e1aceba55cdb7d06" CHECKSUMTYPE="MD5" SIZE="238493" SEQ="20"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/5.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G36" ID="E36" MIMETYPE="image/jp2" CHECKSUM="5a297356668a90eeb55561983a122f33" CHECKSUMTYPE="MD5" SIZE="240026" SEQ="21"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/6.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G37" ID="E37" MIMETYPE="image/jp2" CHECKSUM="c7141b5a67c0d6953e282d9f368252bf" CHECKSUMTYPE="MD5" SIZE="240102" SEQ="22"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/7.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G38" ID="E38" MIMETYPE="image/jp2" CHECKSUM="5a5732e238716e8acf9247e405a98718" CHECKSUMTYPE="MD5" SIZE="240071" SEQ="23"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/8.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G39" ID="E39" MIMETYPE="image/jp2" CHECKSUM="c28b92b6fdf5df361aa9907c1e7df02f" CHECKSUMTYPE="MD5" SIZE="242492" SEQ="24"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/9.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G40" ID="E40" MIMETYPE="image/jp2" CHECKSUM="f2259697f3eaf9fcaadbf7d49975aa55" CHECKSUMTYPE="MD5" SIZE="240103" SEQ="25"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/10.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G41" ID="E41" MIMETYPE="image/jp2" CHECKSUM="fa0f578d5d2d065f6a83bca3da21f717" CHECKSUMTYPE="MD5" SIZE="240104" SEQ="26"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/11.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G42" ID="E42" MIMETYPE="image/jp2" CHECKSUM="fecfdf73ec99238553b161ecbe4b8e34" CHECKSUMTYPE="MD5" SIZE="241700" SEQ="27"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/12.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G43" ID="E43" MIMETYPE="image/jp2" CHECKSUM="60838044dafea87c76e558d30752ced1" CHECKSUMTYPE="MD5" SIZE="240009" SEQ="28"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/13.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G44" ID="E44" MIMETYPE="image/jp2" CHECKSUM="95e1964f9a5656d7864b90dbe1b78994" CHECKSUMTYPE="MD5" SIZE="242418" SEQ="29"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/14.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G45" ID="E45" MIMETYPE="image/jp2" CHECKSUM="c289f21c7d517f58dcc2a8c228f788a0" CHECKSUMTYPE="MD5" SIZE="238465" SEQ="30"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/15.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G46" ID="E46" MIMETYPE="image/jp2" CHECKSUM="32ac5a33e63860a56a2e89d25268b57d" CHECKSUMTYPE="MD5" SIZE="240064" SEQ="31"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/16.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G47" ID="E47" MIMETYPE="image/jp2" CHECKSUM="996497fe104e5966de24634548b1070c" CHECKSUMTYPE="MD5" SIZE="241628" SEQ="32"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/17.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G48" ID="E48" MIMETYPE="image/jp2" CHECKSUM="2c793f0992807776da7c4ce8feb51eba" CHECKSUMTYPE="MD5" SIZE="238261" SEQ="33"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/18.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G49" ID="E49" MIMETYPE="image/jp2" CHECKSUM="4a94be4a81f591208cabb9245098423e" CHECKSUMTYPE="MD5" SIZE="241582" SEQ="34"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/19.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G50" ID="E50" MIMETYPE="image/jp2" CHECKSUM="66af812be473d2bc0d87a2a56ea546c1" CHECKSUMTYPE="MD5" SIZE="241695" SEQ="35"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/20.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G51" ID="E51" MIMETYPE="image/jp2" CHECKSUM="378f3574b461c9aea3af92c83f6f36fc" CHECKSUMTYPE="MD5" SIZE="241657" SEQ="36"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/21.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G52" ID="E52" MIMETYPE="image/jp2" CHECKSUM="c81eb1a836279c80b0025ba5f278bab3" CHECKSUMTYPE="MD5" SIZE="241436" SEQ="37"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/22.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G53" ID="E53" MIMETYPE="image/jp2" CHECKSUM="5aa4f4216d37c36965c8ea6a003545fa" CHECKSUMTYPE="MD5" SIZE="240076" SEQ="38"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/23.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G54" ID="E54" MIMETYPE="image/jp2" CHECKSUM="f7c8d30825bc041f11c8db9a5ba73b86" CHECKSUMTYPE="MD5" SIZE="239994" SEQ="39"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/24.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G55" ID="E55" MIMETYPE="image/jp2" CHECKSUM="0e83b983bf73442383009bbbcdbcd2e4" CHECKSUMTYPE="MD5" SIZE="241697" SEQ="40"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/25.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G56" ID="E56" MIMETYPE="image/jp2" CHECKSUM="e6780673bcbf7af4879c38ad3a4e5c27" CHECKSUMTYPE="MD5" SIZE="244051" SEQ="41"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/26.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G57" ID="E57" MIMETYPE="image/jp2" CHECKSUM="92bcc95d597165a162d3cc3956bb7f53" CHECKSUMTYPE="MD5" SIZE="241516" SEQ="42"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/27.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G58" ID="E58" MIMETYPE="image/jp2" CHECKSUM="4692479fe3a3cf38a418b51f5350f3ea" CHECKSUMTYPE="MD5" SIZE="241630" SEQ="43"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/28.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G59" ID="E59" MIMETYPE="image/jp2" CHECKSUM="a9a46ae8f59ab96683b42696a504309a" CHECKSUMTYPE="MD5" SIZE="240053" SEQ="44"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/29.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G60" ID="E60" MIMETYPE="image/jp2" CHECKSUM="63a57a5a0e1722f657bdb1ec2d51d892" CHECKSUMTYPE="MD5" SIZE="240049" SEQ="45"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/30.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G61" ID="E61" MIMETYPE="image/jp2" CHECKSUM="896919f0f1ea31bef44d0d3280ddc31f" CHECKSUMTYPE="MD5" SIZE="241683" SEQ="46"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/31.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G62" ID="E62" MIMETYPE="image/jp2" CHECKSUM="55b93f74886fac8fb2577c20fbb9bf7a" CHECKSUMTYPE="MD5" SIZE="241635" SEQ="47"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/32.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G63" ID="E63" MIMETYPE="image/jp2" CHECKSUM="eb9587fb498e08509bad41a6b5ffc632" CHECKSUMTYPE="MD5" SIZE="240005" SEQ="48"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/33.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G64" ID="E64" MIMETYPE="image/jp2" CHECKSUM="c6063e601b8c25628e8b25e978f227bc" CHECKSUMTYPE="MD5" SIZE="241678" SEQ="49"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/34.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G65" ID="E65" MIMETYPE="image/jp2" CHECKSUM="348501326d2484a49bce7edaf6024590" CHECKSUMTYPE="MD5" SIZE="241689" SEQ="50"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/35.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G66" ID="E66" MIMETYPE="image/jp2" CHECKSUM="b83ab779cdc32a1a6498d9aff29a59fe" CHECKSUMTYPE="MD5" SIZE="241683" SEQ="51"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/36.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G67" ID="E67" MIMETYPE="image/jp2" CHECKSUM="0e018e1d0f4551f1c57bcba56083e978" CHECKSUMTYPE="MD5" SIZE="243904" SEQ="52"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/37.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G68" ID="E68" MIMETYPE="image/jp2" CHECKSUM="44785b7294718a10fb9820d1991c40da" CHECKSUMTYPE="MD5" SIZE="244114" SEQ="53"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/38.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G69" ID="E69" MIMETYPE="image/jp2" CHECKSUM="e2f65ddc8b17e6b7363188eb0b83504a" CHECKSUMTYPE="MD5" SIZE="241709" SEQ="54"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/39.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G70" ID="E70" MIMETYPE="image/jp2" CHECKSUM="f2d272daa58793c3ed79ec414ca5ee78" CHECKSUMTYPE="MD5" SIZE="240028" SEQ="55"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/40.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G71" ID="E71" MIMETYPE="image/jp2" CHECKSUM="7fbb19092c73ddbd0b0bcbe30d83c54d" CHECKSUMTYPE="MD5" SIZE="242505" SEQ="56"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/41.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G72" ID="E72" MIMETYPE="image/jp2" CHECKSUM="838c78001ae5f73393476660224d55ad" CHECKSUMTYPE="MD5" SIZE="238487" SEQ="57"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/42.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G73" ID="E73" MIMETYPE="image/jp2" CHECKSUM="35ff27ba4722c64b610ee558c1a58bf4" CHECKSUMTYPE="MD5" SIZE="238405" SEQ="58"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/43.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G74" ID="E74" MIMETYPE="image/jp2" CHECKSUM="12bbd0d977000ee82e0eb6f68fd3c9fa" CHECKSUMTYPE="MD5" SIZE="240097" SEQ="59"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/44.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G75" ID="E75" MIMETYPE="image/jp2" CHECKSUM="5de22b1b0eaa97fcbd0518e598922836" CHECKSUMTYPE="MD5" SIZE="238436" SEQ="60"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/45.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G76" ID="E76" MIMETYPE="image/jp2" CHECKSUM="22255e627a3d6db571f8e52ecf3a50aa" CHECKSUMTYPE="MD5" SIZE="240075" SEQ="61"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/46.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G77" ID="E77" MIMETYPE="image/jp2" CHECKSUM="62a6e3a7091f65b263258debd57710de" CHECKSUMTYPE="MD5" SIZE="238485" SEQ="62"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/47.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G78" ID="E78" MIMETYPE="image/jp2" CHECKSUM="f8989fd13d88c7f7cfc9c0fb2831322b" CHECKSUMTYPE="MD5" SIZE="240109" SEQ="63"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/48.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G79" ID="E79" MIMETYPE="image/jp2" CHECKSUM="92f37ce42a1d58740d0ba927b38c7ba1" CHECKSUMTYPE="MD5" SIZE="242415" SEQ="64"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/49.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G80" ID="E80" MIMETYPE="image/jp2" CHECKSUM="fe7536b41d6ef5ab8e5b6f2dec4f5bd4" CHECKSUMTYPE="MD5" SIZE="240079" SEQ="65"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/50.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G81" ID="E81" MIMETYPE="image/jp2" CHECKSUM="ea47d02f9c02bf359040b62b99bd9c75" CHECKSUMTYPE="MD5" SIZE="240107" SEQ="66"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/51.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G82" ID="E82" MIMETYPE="image/jp2" CHECKSUM="9af0e92627dc951f5100b8929b7b838c" CHECKSUMTYPE="MD5" SIZE="240106" SEQ="67"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/52.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G83" ID="E83" MIMETYPE="image/jp2" CHECKSUM="59f45d9996f49abfd711591520de6e5f" CHECKSUMTYPE="MD5" SIZE="240867" SEQ="68"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/53.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G84" ID="E84" MIMETYPE="image/jp2" CHECKSUM="28dc10bf5a9898739246f4a2300ce39d" CHECKSUMTYPE="MD5" SIZE="240082" SEQ="69"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/54.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G85" ID="E85" MIMETYPE="image/jp2" CHECKSUM="e463f19d7d435bf583a71ad6a461f71c" CHECKSUMTYPE="MD5" SIZE="242457" SEQ="70"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/55.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G86" ID="E86" MIMETYPE="image/jp2" CHECKSUM="b4b41116de02ff108413bdfa63c4f988" CHECKSUMTYPE="MD5" SIZE="242481" SEQ="71"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/56.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G87" ID="E87" MIMETYPE="image/jp2" CHECKSUM="608797c4e22741f193cda6c666dacfc0" CHECKSUMTYPE="MD5" SIZE="238486" SEQ="72"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/57.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G88" ID="E88" MIMETYPE="image/jp2" CHECKSUM="f6e6ea89b9040de6ecb940eea74c1d0d" CHECKSUMTYPE="MD5" SIZE="242511" SEQ="73"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/58.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G89" ID="E89" MIMETYPE="image/jp2" CHECKSUM="2340b84e3617e1834a3ee2170e9b4788" CHECKSUMTYPE="MD5" SIZE="238476" SEQ="74"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/59.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G90" ID="E90" MIMETYPE="image/jp2" CHECKSUM="cc7a881f6f3427392fbec4764d9a9f77" CHECKSUMTYPE="MD5" SIZE="240098" SEQ="75"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/60.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G91" ID="E91" MIMETYPE="image/jp2" CHECKSUM="730d7a07abfb885b3268842b4f7bc85b" CHECKSUMTYPE="MD5" SIZE="240051" SEQ="76"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/61.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G92" ID="E92" MIMETYPE="image/jp2" CHECKSUM="b4741d5265482cb2a76b358ed53cb62d" CHECKSUMTYPE="MD5" SIZE="240059" SEQ="77"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/62.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G93" ID="E93" MIMETYPE="image/jp2" CHECKSUM="02de80da4f645ddb381cd375559af088" CHECKSUMTYPE="MD5" SIZE="240083" SEQ="78"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/63.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G94" ID="E94" MIMETYPE="image/jp2" CHECKSUM="a6df0400ef2c2b6f7473cb676fedf498" CHECKSUMTYPE="MD5" SIZE="240101" SEQ="79"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/64.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G95" ID="E95" MIMETYPE="image/jp2" CHECKSUM="73f0469654c558fd93a461f0a3726bcd" CHECKSUMTYPE="MD5" SIZE="238490" SEQ="80"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/65.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G96" ID="E96" MIMETYPE="image/jp2" CHECKSUM="f4d17a1d3181fd6a37792806433029a5" CHECKSUMTYPE="MD5" SIZE="238452" SEQ="81"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/66.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G97" ID="E97" MIMETYPE="image/jp2" CHECKSUM="886e241524c0b8c5545689cf2d321adf" CHECKSUMTYPE="MD5" SIZE="240087" SEQ="82"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/67.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G98" ID="E98" MIMETYPE="image/jp2" CHECKSUM="acfea99569b31447d281cbc61107d223" CHECKSUMTYPE="MD5" SIZE="240010" SEQ="83"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/68.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G99" ID="E99" MIMETYPE="image/jp2" CHECKSUM="2e80e830d4d63935e36d7278b2460594" CHECKSUMTYPE="MD5" SIZE="240798" SEQ="84"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/69.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G100" ID="E100" MIMETYPE="image/jp2" CHECKSUM="62ca7168709fe23dd0b24a92f705d5b9" CHECKSUMTYPE="MD5" SIZE="240062" SEQ="85"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/70.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G101" ID="E101" MIMETYPE="image/jp2" CHECKSUM="47abdfe57b8e270b66bbfba5d4e456f6" CHECKSUMTYPE="MD5" SIZE="240096" SEQ="86"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/71.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G102" ID="E102" MIMETYPE="image/jp2" CHECKSUM="3aeffa10d50099525d62650035cd302e" CHECKSUMTYPE="MD5" SIZE="242353" SEQ="87"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/72.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G103" ID="E103" MIMETYPE="image/jp2" CHECKSUM="3879b7638da56bce7ff488d1b40c4533" CHECKSUMTYPE="MD5" SIZE="240106" SEQ="88"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/73.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G104" ID="E104" MIMETYPE="image/jp2" CHECKSUM="ba7818e058a98c4ce9f2aee59dd22f84" CHECKSUMTYPE="MD5" SIZE="239974" SEQ="89"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/74.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G105" ID="E105" MIMETYPE="image/jp2" CHECKSUM="4ef25bf6077a59c3eaf0381f3734e040" CHECKSUMTYPE="MD5" SIZE="240106" SEQ="90"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/75.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G106" ID="E106" MIMETYPE="image/jp2" CHECKSUM="b5a9ec587dbf8c33c393c03d41695464" CHECKSUMTYPE="MD5" SIZE="240095" SEQ="91"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/76.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G107" ID="E107" MIMETYPE="image/jp2" CHECKSUM="9ea9566da9aa1147b7c7744c4c84f384" CHECKSUMTYPE="MD5" SIZE="241693" SEQ="92"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/77.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G108" ID="E108" MIMETYPE="image/jp2" CHECKSUM="38485ab6a44f3904958219969d0034e7" CHECKSUMTYPE="MD5" SIZE="240100" SEQ="93"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/78.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G109" ID="E109" MIMETYPE="image/jp2" CHECKSUM="4a4c548c6a2861e8bc8f99f792a60ee3" CHECKSUMTYPE="MD5" SIZE="240102" SEQ="94"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/79.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G110" ID="E110" MIMETYPE="image/jp2" CHECKSUM="c1af7d6a9219b9f9a724ed0329d7a65c" CHECKSUMTYPE="MD5" SIZE="240096" SEQ="95"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/80.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G111" ID="E111" MIMETYPE="image/jp2" CHECKSUM="d802380d594001c465727301941a6c31" CHECKSUMTYPE="MD5" SIZE="241581" SEQ="96"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/81.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G112" ID="E112" MIMETYPE="image/jp2" CHECKSUM="33181b81911f61eddc0b7c514242534b" CHECKSUMTYPE="MD5" SIZE="240089" SEQ="97"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/82.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G113" ID="E113" MIMETYPE="image/jp2" CHECKSUM="90d020816674a3768bef96a3a938529c" CHECKSUMTYPE="MD5" SIZE="240042" SEQ="98"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/83.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G114" ID="E114" MIMETYPE="image/jp2" CHECKSUM="871eaafe7aeb9c3c435e72e3b1419bd3" CHECKSUMTYPE="MD5" SIZE="239924" SEQ="99"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/84.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G115" ID="E115" MIMETYPE="image/jp2" CHECKSUM="2d29ef93e226f0fc69883563f3050719" CHECKSUMTYPE="MD5" SIZE="241512" SEQ="100"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/85.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G116" ID="E116" MIMETYPE="image/jp2" CHECKSUM="c256d0c7ea3b4b922ff5397cfccc0ef1" CHECKSUMTYPE="MD5" SIZE="240048" SEQ="101"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/86.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G117" ID="E117" MIMETYPE="image/jp2" CHECKSUM="8e11d79779b4bd5c682552f08aa37279" CHECKSUMTYPE="MD5" SIZE="240042" SEQ="102"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/87.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G118" ID="E118" MIMETYPE="image/jp2" CHECKSUM="094a22315d6716a13c20a12636e51e68" CHECKSUMTYPE="MD5" SIZE="242358" SEQ="103"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/88.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G119" ID="E119" MIMETYPE="image/jp2" CHECKSUM="1ac4a891f48d6bdb38ff51284ef6ab2c" CHECKSUMTYPE="MD5" SIZE="240110" SEQ="104"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/89.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G120" ID="E120" MIMETYPE="image/jp2" CHECKSUM="3effa34401071c5e3ecf26a204e5c421" CHECKSUMTYPE="MD5" SIZE="239914" SEQ="105"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/90.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G121" ID="E121" MIMETYPE="image/jp2" CHECKSUM="a4b1117e02eeb9dd4d1725e51f34eb32" CHECKSUMTYPE="MD5" SIZE="240082" SEQ="106"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/91.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G122" ID="E122" MIMETYPE="image/jp2" CHECKSUM="e11ad8b33b70b2764238fd039623a1a0" CHECKSUMTYPE="MD5" SIZE="244108" SEQ="107"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/92.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G123" ID="E123" MIMETYPE="image/jp2" CHECKSUM="655c40cca5d32a81159ece5e79af1426" CHECKSUMTYPE="MD5" SIZE="241697" SEQ="108"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/93.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G124" ID="E124" MIMETYPE="image/jp2" CHECKSUM="f8ac1cadee68b3b2fd0f66ed31e54b3b" CHECKSUMTYPE="MD5" SIZE="241595" SEQ="109"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/94.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G125" ID="E125" MIMETYPE="image/jp2" CHECKSUM="6d2d75e0280725118942e4682d84fbb2" CHECKSUMTYPE="MD5" SIZE="241568" SEQ="110"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/95.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G126" ID="E126" MIMETYPE="image/jp2" CHECKSUM="ae9d14d5974e920b8d80adc6aec3dc6e" CHECKSUMTYPE="MD5" SIZE="241634" SEQ="111"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/96.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G127" ID="E127" MIMETYPE="image/jp2" CHECKSUM="b8e8c7b2e1a6981bc57d9aefb9385496" CHECKSUMTYPE="MD5" SIZE="241440" SEQ="112"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/97.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G128" ID="E128" MIMETYPE="image/jp2" CHECKSUM="705f3fb7c8bf391f214552332d091dfc" CHECKSUMTYPE="MD5" SIZE="242458" SEQ="113"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/98.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G129" ID="E129" MIMETYPE="image/jp2" CHECKSUM="fe6e5899b42aafad8bcaca90bbad88d9" CHECKSUMTYPE="MD5" SIZE="240052" SEQ="114"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/99.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G130" ID="E130" MIMETYPE="image/jp2" CHECKSUM="31bed67c4da0f5fdc8c6d6e6b27f9146" CHECKSUMTYPE="MD5" SIZE="241686" SEQ="115"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/100.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G131" ID="E131" MIMETYPE="image/jp2" CHECKSUM="25a58f22e9c18f9e465e1a8ab6d9ca0a" CHECKSUMTYPE="MD5" SIZE="241654" SEQ="116"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/101.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G132" ID="E132" MIMETYPE="image/jp2" CHECKSUM="24ce283e08c13c1562a25d89d2e41823" CHECKSUMTYPE="MD5" SIZE="244055" SEQ="117"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/102.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G133" ID="E133" MIMETYPE="image/jp2" CHECKSUM="a61107de4e0026acfe22e6b7cf35a25c" CHECKSUMTYPE="MD5" SIZE="242445" SEQ="118"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/103.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G134" ID="E134" MIMETYPE="image/jp2" CHECKSUM="1cd80710931e91a1d2814580738b4a70" CHECKSUMTYPE="MD5" SIZE="240038" SEQ="119"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/104.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G135" ID="E135" MIMETYPE="image/jp2" CHECKSUM="c757b580d4a00f27b303b0d4d4f598e1" CHECKSUMTYPE="MD5" SIZE="242501" SEQ="120"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/105.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G136" ID="E136" MIMETYPE="image/jp2" CHECKSUM="d6031574f758ed6f09b5e1e007102c91" CHECKSUMTYPE="MD5" SIZE="243951" SEQ="121"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/106.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G137" ID="E137" MIMETYPE="image/jp2" CHECKSUM="1ea68d0cc86e3ed8d920cc2056d724c8" CHECKSUMTYPE="MD5" SIZE="241629" SEQ="122"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/107.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G138" ID="E138" MIMETYPE="image/jp2" CHECKSUM="f63185f738842382a1f582a18dfc08a9" CHECKSUMTYPE="MD5" SIZE="243287" SEQ="123"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/108.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G139" ID="E139" MIMETYPE="image/jp2" CHECKSUM="08987e45a1d5226e402909ba055ff356" CHECKSUMTYPE="MD5" SIZE="243055" SEQ="124"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/109.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G140" ID="E140" MIMETYPE="image/jp2" CHECKSUM="036ccd22a913c6d797f4b1743435b554" CHECKSUMTYPE="MD5" SIZE="243187" SEQ="125"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/110.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G141" ID="E141" MIMETYPE="image/jp2" CHECKSUM="2b72c657983a298d20d15fefafc4252f" CHECKSUMTYPE="MD5" SIZE="243289" SEQ="126"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/111.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G142" ID="E142" MIMETYPE="image/jp2" CHECKSUM="41c86348b725a010df3588fcf78a518d" CHECKSUMTYPE="MD5" SIZE="242459" SEQ="127"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/112.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G143" ID="E143" MIMETYPE="image/jp2" CHECKSUM="dba93b1776748c4b2b7449555e8b4824" CHECKSUMTYPE="MD5" SIZE="243279" SEQ="128"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/113.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G144" ID="E144" MIMETYPE="image/jp2" CHECKSUM="f25133a41a9465642d83676c921d6929" CHECKSUMTYPE="MD5" SIZE="243207" SEQ="129"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/114.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G145" ID="E145" MIMETYPE="image/jp2" CHECKSUM="2a0a7fc71ac8e883b0c1d6b20c12ef8f" CHECKSUMTYPE="MD5" SIZE="243143" SEQ="130"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/115.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G146" ID="E146" MIMETYPE="image/jp2" CHECKSUM="26d347f89ca4faedd493a09e5a979d4d" CHECKSUMTYPE="MD5" SIZE="243084" SEQ="131"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/116.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G147" ID="E147" MIMETYPE="image/jp2" CHECKSUM="2ade67f4c1f6b3121f33225c76197421" CHECKSUMTYPE="MD5" SIZE="240100" SEQ="132"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/117.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G148" ID="E148" MIMETYPE="image/jp2" CHECKSUM="385938443e7cfb60de8d79bc266b6fd7" CHECKSUMTYPE="MD5" SIZE="243267" SEQ="133"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/118.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G149" ID="E149" MIMETYPE="image/jp2" CHECKSUM="dc0ea6d2b5a422b7615dead3f916d0f1" CHECKSUMTYPE="MD5" SIZE="243307" SEQ="134"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/119.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G150" ID="E150" MIMETYPE="image/jp2" CHECKSUM="eb4d1d47fab3683e9aad12e33c83aab3" CHECKSUMTYPE="MD5" SIZE="241622" SEQ="135"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/120.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G151" ID="E151" MIMETYPE="image/jp2" CHECKSUM="5c89175e3c2094b4042164d2eca6a414" CHECKSUMTYPE="MD5" SIZE="240111" SEQ="136"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/121.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G152" ID="E152" MIMETYPE="image/jp2" CHECKSUM="d83e9fa8e675195ff9af52513c15a4bf" CHECKSUMTYPE="MD5" SIZE="244887" SEQ="137"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/122.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G153" ID="E153" MIMETYPE="image/jp2" CHECKSUM="32e91d2a3a706348ec2ec5b377258e2b" CHECKSUMTYPE="MD5" SIZE="240070" SEQ="138"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/123.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G154" ID="E154" MIMETYPE="image/jp2" CHECKSUM="51c4510c72f78263a7b7453a0d1b08ae" CHECKSUMTYPE="MD5" SIZE="241573" SEQ="139"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/124.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G155" ID="E155" MIMETYPE="image/jp2" CHECKSUM="ac334016381207bcfa280507ff746e2e" CHECKSUMTYPE="MD5" SIZE="244846" SEQ="140"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/125.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G156" ID="E156" MIMETYPE="image/jp2" CHECKSUM="336b229dd6353a21a5d43dde45372813" CHECKSUMTYPE="MD5" SIZE="242491" SEQ="141"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/126.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G157" ID="E157" MIMETYPE="image/jp2" CHECKSUM="61a55e3d6f32fea31fcece51b9db0eac" CHECKSUMTYPE="MD5" SIZE="241698" SEQ="142"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/127.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G158" ID="E158" MIMETYPE="image/jp2" CHECKSUM="dbacdf6d936ea311fa8595f71d8a182e" CHECKSUMTYPE="MD5" SIZE="240780" SEQ="143"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/128.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G159" ID="E159" MIMETYPE="image/jp2" CHECKSUM="45160142a25a311c7e8c80e17106b7b9" CHECKSUMTYPE="MD5" SIZE="240097" SEQ="144"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/129.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G160" ID="E160" MIMETYPE="image/jp2" CHECKSUM="244f6680d0e775ff05e293a17c8740ef" CHECKSUMTYPE="MD5" SIZE="240095" SEQ="145"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/130.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G161" ID="E161" MIMETYPE="image/jp2" CHECKSUM="3d4f6b250e23ed89f4777d57ee8cc412" CHECKSUMTYPE="MD5" SIZE="241541" SEQ="146"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/131.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G162" ID="E162" MIMETYPE="image/jp2" CHECKSUM="be8307367b60c6275e718a263d25ea7c" CHECKSUMTYPE="MD5" SIZE="241669" SEQ="147"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/132.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G163" ID="E163" MIMETYPE="image/jp2" CHECKSUM="f7d9fab7c9bd066f9a70bea7530d1231" CHECKSUMTYPE="MD5" SIZE="240070" SEQ="148"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/133.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G164" ID="E164" MIMETYPE="image/jp2" CHECKSUM="c8eef183ed7f04a315b45610df44aa6e" CHECKSUMTYPE="MD5" SIZE="242470" SEQ="149"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/134.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G165" ID="E165" MIMETYPE="image/jp2" CHECKSUM="e4527a19c6c546ee4c946eb206ec5f68" CHECKSUMTYPE="MD5" SIZE="240091" SEQ="150"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/135.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G166" ID="E166" MIMETYPE="image/jp2" CHECKSUM="95a619a40168a5aa9b82a4ac752f52e9" CHECKSUMTYPE="MD5" SIZE="244850" SEQ="151"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/136.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G167" ID="E167" MIMETYPE="image/jp2" CHECKSUM="cf7bebd157593f14c38042c457d1aedc" CHECKSUMTYPE="MD5" SIZE="240053" SEQ="152"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/137.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G168" ID="E168" MIMETYPE="image/jp2" CHECKSUM="2abb179e3bd7e52421d87456336bd98c" CHECKSUMTYPE="MD5" SIZE="240107" SEQ="153"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/138.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G169" ID="E169" MIMETYPE="image/jp2" CHECKSUM="555d3076badeb0d4d0330e49f6004f90" CHECKSUMTYPE="MD5" SIZE="241710" SEQ="154"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/139.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G170" ID="E170" MIMETYPE="image/jp2" CHECKSUM="de2d37a03be131f5a280c86cb3a684ab" CHECKSUMTYPE="MD5" SIZE="244088" SEQ="155"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/140.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G171" ID="E171" MIMETYPE="image/jp2" CHECKSUM="9f515f4389332728f7623de76327c767" CHECKSUMTYPE="MD5" SIZE="239968" SEQ="156"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/141.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G172" ID="E172" MIMETYPE="image/jp2" CHECKSUM="7dab31ac91ee77d80b2e064db652922e" CHECKSUMTYPE="MD5" SIZE="241635" SEQ="157"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/142.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G173" ID="E173" MIMETYPE="image/jp2" CHECKSUM="1116ee56ed796b6a45af2491b0d20d21" CHECKSUMTYPE="MD5" SIZE="241680" SEQ="158"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/143.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G174" ID="E174" MIMETYPE="image/jp2" CHECKSUM="396c38649d7a4b82942172cfe0d6180c" CHECKSUMTYPE="MD5" SIZE="241638" SEQ="159"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/144.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G175" ID="E175" MIMETYPE="image/jp2" CHECKSUM="aa87731538eebf4c722b52bc6a74875c" CHECKSUMTYPE="MD5" SIZE="243297" SEQ="160"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/145.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G176" ID="E176" MIMETYPE="image/jp2" CHECKSUM="517fffc05fefceced8a124cffe117218" CHECKSUMTYPE="MD5" SIZE="241608" SEQ="161"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/146.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G177" ID="E177" MIMETYPE="image/jp2" CHECKSUM="1bad22be16ba0953ef5244772851dab0" CHECKSUMTYPE="MD5" SIZE="241702" SEQ="162"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/147.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G178" ID="E178" MIMETYPE="image/jp2" CHECKSUM="64873b5b20aec04399f38f03848e18a3" CHECKSUMTYPE="MD5" SIZE="244102" SEQ="163"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/148.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G179" ID="E179" MIMETYPE="image/jp2" CHECKSUM="e2a7cbdc9688533be3e452d02a56a45c" CHECKSUMTYPE="MD5" SIZE="241703" SEQ="164"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/149.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G180" ID="E180" MIMETYPE="image/jp2" CHECKSUM="05ec86710e1dec3339f8da9af21c1bc9" CHECKSUMTYPE="MD5" SIZE="240099" SEQ="165"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/150.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G181" ID="E181" MIMETYPE="image/jp2" CHECKSUM="f40749877c6974b97a87346391d861f7" CHECKSUMTYPE="MD5" SIZE="241676" SEQ="166"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/151.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G182" ID="E182" MIMETYPE="image/jp2" CHECKSUM="911b061eb2212626653f20a85a5d8391" CHECKSUMTYPE="MD5" SIZE="239920" SEQ="167"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/152.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G183" ID="E183" MIMETYPE="image/jp2" CHECKSUM="cde4bd28f71815bd90896666fc5e81a0" CHECKSUMTYPE="MD5" SIZE="241469" SEQ="168"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/153.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G184" ID="E184" MIMETYPE="image/jp2" CHECKSUM="19c687e9f4d6706642973a842b37502c" CHECKSUMTYPE="MD5" SIZE="244089" SEQ="169"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/154.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G185" ID="E185" MIMETYPE="image/jp2" CHECKSUM="396e77aab8fd5a2a440041ff7c644bff" CHECKSUMTYPE="MD5" SIZE="239865" SEQ="170"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/155.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G186" ID="E186" MIMETYPE="image/jp2" CHECKSUM="7296ff8395683db98102f1b9318c0f76" CHECKSUMTYPE="MD5" SIZE="241644" SEQ="171"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/156.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G187" ID="E187" MIMETYPE="image/jp2" CHECKSUM="a6b6086f5716acdae7a487116a4ce608" CHECKSUMTYPE="MD5" SIZE="240103" SEQ="172"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/157.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G188" ID="E188" MIMETYPE="image/jp2" CHECKSUM="bf0d3a9d475cef7574a5e235e924f8c1" CHECKSUMTYPE="MD5" SIZE="240000" SEQ="173"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/158.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G189" ID="E189" MIMETYPE="image/jp2" CHECKSUM="27ca332c6e8ee156b2c73eb6b261f4f8" CHECKSUMTYPE="MD5" SIZE="241699" SEQ="174"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/159.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G190" ID="E190" MIMETYPE="image/jp2" CHECKSUM="5ef01dafebbe6a4467827c257fee7b3a" CHECKSUMTYPE="MD5" SIZE="241705" SEQ="175"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/160.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G191" ID="E191" MIMETYPE="image/jp2" CHECKSUM="815e865e735b31bafa389afe4ad3f710" CHECKSUMTYPE="MD5" SIZE="241649" SEQ="176"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/161.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G192" ID="E192" MIMETYPE="image/jp2" CHECKSUM="784fc2185639cb03dfb94001210fef5c" CHECKSUMTYPE="MD5" SIZE="241708" SEQ="177"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/162.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G193" ID="E193" MIMETYPE="image/jp2" CHECKSUM="f8bdf38d5d36b33b0d98ad73eb1f5c8d" CHECKSUMTYPE="MD5" SIZE="240054" SEQ="178"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/163.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G194" ID="E194" MIMETYPE="image/jp2" CHECKSUM="10db58449bfc4ffff5e4148b44eca232" CHECKSUMTYPE="MD5" SIZE="241637" SEQ="179"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/164.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G195" ID="E195" MIMETYPE="image/jp2" CHECKSUM="11ef96cb46ec3cd7c24703250faa3b57" CHECKSUMTYPE="MD5" SIZE="243923" SEQ="180"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/165.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G196" ID="E196" MIMETYPE="image/jp2" CHECKSUM="fede2b5cba3427a48cb457773d8091b1" CHECKSUMTYPE="MD5" SIZE="240810" SEQ="181"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/166.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G197" ID="E197" MIMETYPE="image/jp2" CHECKSUM="8b1ad6d6cc83680afb3895867d2237b2" CHECKSUMTYPE="MD5" SIZE="240804" SEQ="182"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/167.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G198" ID="E198" MIMETYPE="image/jp2" CHECKSUM="1a1bab4a5c8eb35e06fa8e8d494438af" CHECKSUMTYPE="MD5" SIZE="238450" SEQ="183"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/168.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G199" ID="E199" MIMETYPE="image/jp2" CHECKSUM="7ec52e698cd7e74068e57b0151ae787f" CHECKSUMTYPE="MD5" SIZE="240895" SEQ="184"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/169.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G200" ID="E200" MIMETYPE="image/jp2" CHECKSUM="0beccb7725ab98b64dba0a25b0a4c1c8" CHECKSUMTYPE="MD5" SIZE="238473" SEQ="185"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/170.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G201" ID="E201" MIMETYPE="image/jp2" CHECKSUM="06f23c0b969a823c62d0b2daaf10a5c0" CHECKSUMTYPE="MD5" SIZE="240861" SEQ="186"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/171.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G202" ID="E202" MIMETYPE="image/jp2" CHECKSUM="39d72a6bb262947410485d0162d1972b" CHECKSUMTYPE="MD5" SIZE="240110" SEQ="187"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/172.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G203" ID="E203" MIMETYPE="image/jp2" CHECKSUM="06e709ea8293b0bcf452073bdd1d24df" CHECKSUMTYPE="MD5" SIZE="238509" SEQ="188"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/173.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G204" ID="E204" MIMETYPE="image/jp2" CHECKSUM="ba6062d222d58e6977c2c9825f80f1e4" CHECKSUMTYPE="MD5" SIZE="238476" SEQ="189"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/174.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G205" ID="E205" MIMETYPE="image/jp2" CHECKSUM="8c6733ee4698abd25dc81a877cfacb7d" CHECKSUMTYPE="MD5" SIZE="239928" SEQ="190"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/175.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G206" ID="E206" MIMETYPE="image/jp2" CHECKSUM="85f161bdadf969f93e713cd23018a29f" CHECKSUMTYPE="MD5" SIZE="240089" SEQ="191"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/176.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G207" ID="E207" MIMETYPE="image/jp2" CHECKSUM="96cdeef705ad475834419ee7a10aef81" CHECKSUMTYPE="MD5" SIZE="240012" SEQ="192"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/177.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G208" ID="E208" MIMETYPE="image/jp2" CHECKSUM="97e9189952718f7709db0ce28a708187" CHECKSUMTYPE="MD5" SIZE="240052" SEQ="193"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/178.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G209" ID="E209" MIMETYPE="image/jp2" CHECKSUM="076716be3cc5332370bed873dc582fac" CHECKSUMTYPE="MD5" SIZE="239976" SEQ="194"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/179.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G210" ID="E210" MIMETYPE="image/jp2" CHECKSUM="f648688094371216c695670d0752518a" CHECKSUMTYPE="MD5" SIZE="240085" SEQ="195"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/180.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G211" ID="E211" MIMETYPE="image/jp2" CHECKSUM="db0b02edca180c3e41504015cfae2207" CHECKSUMTYPE="MD5" SIZE="239932" SEQ="196"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/181.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G212" ID="E212" MIMETYPE="image/jp2" CHECKSUM="e57dd948dc7ee56355bb5e798190dd37" CHECKSUMTYPE="MD5" SIZE="238488" SEQ="197"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/182.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G213" ID="E213" MIMETYPE="image/jp2" CHECKSUM="ac59494c48da7f4c8aeb441318e97d46" CHECKSUMTYPE="MD5" SIZE="240811" SEQ="198"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/183.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G214" ID="E214" MIMETYPE="image/jp2" CHECKSUM="ba54a563f6c74d40320696c16bd03664" CHECKSUMTYPE="MD5" SIZE="238484" SEQ="199"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/184.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G215" ID="E215" MIMETYPE="image/jp2" CHECKSUM="40fd740d48cc8cc04dedc51e88315f01" CHECKSUMTYPE="MD5" SIZE="240093" SEQ="200"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/185.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G216" ID="E216" MIMETYPE="image/jp2" CHECKSUM="9db4871c7842ea4fc3fa6ee764a39675" CHECKSUMTYPE="MD5" SIZE="240847" SEQ="201"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/186.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G217" ID="E217" MIMETYPE="image/jp2" CHECKSUM="913ba2e303ce6e3870ee92c553e28ede" CHECKSUMTYPE="MD5" SIZE="242462" SEQ="202"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/187.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G218" ID="E218" MIMETYPE="image/jp2" CHECKSUM="8ad98990f78ce66e02f85627a13e7e63" CHECKSUMTYPE="MD5" SIZE="240020" SEQ="203"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/188.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G219" ID="E219" MIMETYPE="image/jp2" CHECKSUM="d5cd9b0de67b5e0ebb195a3cef50eb78" CHECKSUMTYPE="MD5" SIZE="240082" SEQ="204"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/189.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G220" ID="E220" MIMETYPE="image/jp2" CHECKSUM="76f6af345a4f0da270b60369bafd84b5" CHECKSUMTYPE="MD5" SIZE="238296" SEQ="205"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/190.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G221" ID="E221" MIMETYPE="image/jp2" CHECKSUM="92d410757318556fa35e8ee0e46a2bba" CHECKSUMTYPE="MD5" SIZE="239971" SEQ="206"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/191.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G222" ID="E222" MIMETYPE="image/jp2" CHECKSUM="42a887aedfba87ecc2c89aff52366e8f" CHECKSUMTYPE="MD5" SIZE="240101" SEQ="207"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/192.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G223" ID="E223" MIMETYPE="image/jp2" CHECKSUM="35bfc4f2a58f91cedff26284f29c18a2" CHECKSUMTYPE="MD5" SIZE="240841" SEQ="208"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/193.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G224" ID="E224" MIMETYPE="image/jp2" CHECKSUM="d9f8517d626b2eae2d1459c0629be487" CHECKSUMTYPE="MD5" SIZE="240887" SEQ="209"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/194.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G225" ID="E225" MIMETYPE="image/jp2" CHECKSUM="372e401bd03709413a641b3de4f024e2" CHECKSUMTYPE="MD5" SIZE="240096" SEQ="210"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/195.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G226" ID="E226" MIMETYPE="image/jp2" CHECKSUM="c5daa30cce552d5895fae7d73a726c96" CHECKSUMTYPE="MD5" SIZE="241613" SEQ="211"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/196.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G227" ID="E227" MIMETYPE="image/jp2" CHECKSUM="a4e856b15e67076569ca7ad411ac98ab" CHECKSUMTYPE="MD5" SIZE="240072" SEQ="212"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/197.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G228" ID="E228" MIMETYPE="image/jp2" CHECKSUM="385a2dcdc8913ec9dcdc9fa1ac44943b" CHECKSUMTYPE="MD5" SIZE="240045" SEQ="213"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/198.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G229" ID="E229" MIMETYPE="image/jp2" CHECKSUM="c1fd802d018a55d132d56bb4e840f40c" CHECKSUMTYPE="MD5" SIZE="240062" SEQ="214"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/199.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G230" ID="E230" MIMETYPE="image/jp2" CHECKSUM="090d2f329e0d94e92e1720d091a4491a" CHECKSUMTYPE="MD5" SIZE="242483" SEQ="215"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/200.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G231" ID="E231" MIMETYPE="image/jp2" CHECKSUM="b2dca1cb16f5a47b136faac3d561689e" CHECKSUMTYPE="MD5" SIZE="242442" SEQ="216"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/201.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G232" ID="E232" MIMETYPE="image/jp2" CHECKSUM="6c6fdf6a9631c3e068b5f5d8afa90bd0" CHECKSUMTYPE="MD5" SIZE="239975" SEQ="217"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/202.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G233" ID="E233" MIMETYPE="image/jp2" CHECKSUM="0e419a79aae5a6b51cc0d5747748761d" CHECKSUMTYPE="MD5" SIZE="240107" SEQ="218"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/203.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G234" ID="E234" MIMETYPE="image/jp2" CHECKSUM="9d95e2fd9a05423caf19cb9653c3738d" CHECKSUMTYPE="MD5" SIZE="243249" SEQ="219"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/204.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G235" ID="E235" MIMETYPE="image/jp2" CHECKSUM="eb39292a33e2efd6372c6f200e0bbf93" CHECKSUMTYPE="MD5" SIZE="240895" SEQ="220"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/205.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G236" ID="E236" MIMETYPE="image/jp2" CHECKSUM="4e27efde5f553191a05df15077794166" CHECKSUMTYPE="MD5" SIZE="243171" SEQ="221"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/206.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G237" ID="E237" MIMETYPE="image/jp2" CHECKSUM="50a0c27591c88c6771c2a1872d2cb064" CHECKSUMTYPE="MD5" SIZE="240106" SEQ="222"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/207.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G238" ID="E238" MIMETYPE="image/jp2" CHECKSUM="8469ab5b7b30fc8b487fd72e6c708942" CHECKSUMTYPE="MD5" SIZE="242377" SEQ="223"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/208.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G239" ID="E239" MIMETYPE="image/jp2" CHECKSUM="543a04fef804748d587318e666186a39" CHECKSUMTYPE="MD5" SIZE="242480" SEQ="224"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/209.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G240" ID="E240" MIMETYPE="image/jp2" CHECKSUM="a3f9c07f19be066df08b3d9859aa83e4" CHECKSUMTYPE="MD5" SIZE="242486" SEQ="225"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/210.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G241" ID="E241" MIMETYPE="image/jp2" CHECKSUM="685a7da600948f39f09c8febb8788185" CHECKSUMTYPE="MD5" SIZE="240076" SEQ="226"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/211.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G242" ID="E242" MIMETYPE="image/jp2" CHECKSUM="d6ada3b33c0d3e1441d16ef11796fac3" CHECKSUMTYPE="MD5" SIZE="240083" SEQ="227"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/212.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G243" ID="E243" MIMETYPE="image/jp2" CHECKSUM="a9ffb3ff5a6da62353e461815ffe4baa" CHECKSUMTYPE="MD5" SIZE="240879" SEQ="228"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/213.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G244" ID="E244" MIMETYPE="image/jp2" CHECKSUM="5e0fa14ea4e0a88af3936a01d7078267" CHECKSUMTYPE="MD5" SIZE="240095" SEQ="229"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/214.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G245" ID="E245" MIMETYPE="image/jp2" CHECKSUM="c4c8115b5f4012d1869627feb339f7fb" CHECKSUMTYPE="MD5" SIZE="240032" SEQ="230"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/215.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G246" ID="E246" MIMETYPE="image/jp2" CHECKSUM="8deca37f6a461b745dfa66f7a3e0af12" CHECKSUMTYPE="MD5" SIZE="241524" SEQ="231"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/216.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G247" ID="E247" MIMETYPE="image/jp2" CHECKSUM="d7921d942a42c4700923edebfdda50a9" CHECKSUMTYPE="MD5" SIZE="241610" SEQ="232"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/217.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G248" ID="E248" MIMETYPE="image/jp2" CHECKSUM="eab9088e84a3b041ade4e7bef8d49919" CHECKSUMTYPE="MD5" SIZE="240013" SEQ="233"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/218.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G249" ID="E249" MIMETYPE="image/jp2" CHECKSUM="4dc88bbff319e9b4997387613e7c5958" CHECKSUMTYPE="MD5" SIZE="240109" SEQ="234"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/219.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G250" ID="E250" MIMETYPE="image/jp2" CHECKSUM="1211c72cc8c5e7ae9a7e4626210a0b09" CHECKSUMTYPE="MD5" SIZE="241655" SEQ="235"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/220.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G251" ID="E251" MIMETYPE="image/jp2" CHECKSUM="6b6054026d1600667aeae796fe2c6e49" CHECKSUMTYPE="MD5" SIZE="241657" SEQ="236"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/221.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G252" ID="E252" MIMETYPE="image/jp2" CHECKSUM="6a0720edfafb083e7ff07d2b4a7c1db6" CHECKSUMTYPE="MD5" SIZE="240094" SEQ="237"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/222.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G253" ID="E253" MIMETYPE="image/jp2" CHECKSUM="ef90bac5df4ce2be30a6fbcad594a252" CHECKSUMTYPE="MD5" SIZE="242484" SEQ="238"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/223.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G254" ID="E254" MIMETYPE="image/jp2" CHECKSUM="55d3fc0ec652ea380c21c711dc520b63" CHECKSUMTYPE="MD5" SIZE="241598" SEQ="239"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/224.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G255" ID="E255" MIMETYPE="image/jp2" CHECKSUM="0d334164a4d866318af1b809663fe984" CHECKSUMTYPE="MD5" SIZE="241651" SEQ="240"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/225.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G256" ID="E256" MIMETYPE="image/jp2" CHECKSUM="88914be7a352ef19360366e23540838c" CHECKSUMTYPE="MD5" SIZE="241645" SEQ="241"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/226.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G257" ID="E257" MIMETYPE="image/jp2" CHECKSUM="ea3ecb300a36cc206c9233b0142c1a93" CHECKSUMTYPE="MD5" SIZE="241649" SEQ="242"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/227.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G258" ID="E258" MIMETYPE="image/jp2" CHECKSUM="709b1f8f2f6e80d1481b056fcc13b706" CHECKSUMTYPE="MD5" SIZE="240041" SEQ="243"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/228.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G259" ID="E259" MIMETYPE="image/jp2" CHECKSUM="a0522cbd1a9eac66b923172ed0bf88e5" CHECKSUMTYPE="MD5" SIZE="241634" SEQ="244"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/229.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G260" ID="E260" MIMETYPE="image/jp2" CHECKSUM="0831a617018494d63f5b7e628a393fb1" CHECKSUMTYPE="MD5" SIZE="241407" SEQ="245"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/230.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G261" ID="E261" MIMETYPE="image/jp2" CHECKSUM="6a257f3b52754bcd310e5f3dc50c5f9a" CHECKSUMTYPE="MD5" SIZE="241709" SEQ="246"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/231.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G262" ID="E262" MIMETYPE="image/jp2" CHECKSUM="467c3da6708eeb03ee8aac37541fb63d" CHECKSUMTYPE="MD5" SIZE="245726" SEQ="247"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/232.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G263" ID="E263" MIMETYPE="image/jp2" CHECKSUM="b57358b23068e77b283ba5defa2e5f10" CHECKSUMTYPE="MD5" SIZE="245728" SEQ="248"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/233.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G264" ID="E264" MIMETYPE="image/jp2" CHECKSUM="bf5c7f879cda93fbf9c0da40cf9f36cd" CHECKSUMTYPE="MD5" SIZE="243260" SEQ="249"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/234.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G265" ID="E265" MIMETYPE="image/jp2" CHECKSUM="29dfa0bf34a7a3d4d9ae44098f4e33c2" CHECKSUMTYPE="MD5" SIZE="245509" SEQ="250"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/235.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G266" ID="E266" MIMETYPE="image/jp2" CHECKSUM="a83674e086f076dad4c8b834a0fb651d" CHECKSUMTYPE="MD5" SIZE="245704" SEQ="251"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/236.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G267" ID="E267" MIMETYPE="image/jp2" CHECKSUM="7317b74a88d01e1cd4412bcecf505f66" CHECKSUMTYPE="MD5" SIZE="243149" SEQ="252"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/237.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G268" ID="E268" MIMETYPE="image/jp2" CHECKSUM="96d12dff1a27a9687b9a4d51dcb8b987" CHECKSUMTYPE="MD5" SIZE="242465" SEQ="253"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/238.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G269" ID="E269" MIMETYPE="image/jp2" CHECKSUM="efbf41dd7d96c9cc74de82dd83fbb29f" CHECKSUMTYPE="MD5" SIZE="244115" SEQ="254"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/239.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G270" ID="E270" MIMETYPE="image/jp2" CHECKSUM="8fee9be38c8d66f8d369020d28affbbb" CHECKSUMTYPE="MD5" SIZE="243182" SEQ="255"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/240.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G271" ID="E271" MIMETYPE="image/jp2" CHECKSUM="9f49d2c55f510e2a341e3e1bf414ec87" CHECKSUMTYPE="MD5" SIZE="243230" SEQ="256"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/241.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G272" ID="E272" MIMETYPE="image/jp2" CHECKSUM="e7692ae836662a8f1b6d5afecde18a8b" CHECKSUMTYPE="MD5" SIZE="243248" SEQ="257"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/242.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G273" ID="E273" MIMETYPE="image/jp2" CHECKSUM="10d5a5a6b34ff275a974a83458f71978" CHECKSUMTYPE="MD5" SIZE="241688" SEQ="258"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/243.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G274" ID="E274" MIMETYPE="image/jp2" CHECKSUM="69d8ffa06db75145d59c6db38e1a8705" CHECKSUMTYPE="MD5" SIZE="243274" SEQ="259"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/244.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G275" ID="E275" MIMETYPE="image/jp2" CHECKSUM="eb72a588878cb447ec916909731384ce" CHECKSUMTYPE="MD5" SIZE="243307" SEQ="260"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/245.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G276" ID="E276" MIMETYPE="image/jp2" CHECKSUM="7f2e8357dd7b3ce7eda7d009e1a98e9e" CHECKSUMTYPE="MD5" SIZE="243286" SEQ="261"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/246.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G277" ID="E277" MIMETYPE="image/jp2" CHECKSUM="ffa8425be374d2634a5d3ebf55ec596a" CHECKSUMTYPE="MD5" SIZE="243267" SEQ="262"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/247.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G278" ID="E278" MIMETYPE="image/jp2" CHECKSUM="d736bc1c781a408f93198a749f6e89e2" CHECKSUMTYPE="MD5" SIZE="243299" SEQ="263"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/248.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G279" ID="E279" MIMETYPE="image/jp2" CHECKSUM="887eec26e86c5f660547c4c659ed1d3d" CHECKSUMTYPE="MD5" SIZE="243250" SEQ="264"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/249.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G280" ID="E280" MIMETYPE="image/jp2" CHECKSUM="2a2364ec5ec979c5b933cea7e6730621" CHECKSUMTYPE="MD5" SIZE="245732" SEQ="265"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/250.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G281" ID="E281" MIMETYPE="image/jp2" CHECKSUM="67a433fa12de4eec4af74439d0018e3f" CHECKSUMTYPE="MD5" SIZE="249571" SEQ="266"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/251.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G282" ID="E282" MIMETYPE="image/jp2" CHECKSUM="0ca3ef145b3ac5ed2e9538c8a0aca254" CHECKSUMTYPE="MD5" SIZE="244097" SEQ="267"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/252.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G283" ID="E283" MIMETYPE="image/jp2" CHECKSUM="4c7dbbeb25815efb161d826cb4b37240" CHECKSUMTYPE="MD5" SIZE="243128" SEQ="268"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/253.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G284" ID="E284" MIMETYPE="image/jp2" CHECKSUM="b3820969c503b62630ecfe503a529bab" CHECKSUMTYPE="MD5" SIZE="243259" SEQ="269"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/254.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G285" ID="E285" MIMETYPE="image/jp2" CHECKSUM="90749ac6510e8f45748a3e7085b90b1e" CHECKSUMTYPE="MD5" SIZE="243163" SEQ="270"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/255.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G286" ID="E286" MIMETYPE="image/jp2" CHECKSUM="46a906892077bf21e2b814d329ce0869" CHECKSUMTYPE="MD5" SIZE="243257" SEQ="271"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/256.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G287" ID="E287" MIMETYPE="image/jp2" CHECKSUM="86767a75b7fe190a01b10c4cad7eda14" CHECKSUMTYPE="MD5" SIZE="243306" SEQ="272"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/257.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G288" ID="E288" MIMETYPE="image/jp2" CHECKSUM="eb8488f8a06b7f69f67d8b08254f9062" CHECKSUMTYPE="MD5" SIZE="243305" SEQ="273"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/258.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G289" ID="E289" MIMETYPE="image/jp2" CHECKSUM="1a610a9a4264e98191d144f328599f30" CHECKSUMTYPE="MD5" SIZE="245731" SEQ="274"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/259.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G290" ID="E290" MIMETYPE="image/jp2" CHECKSUM="640a84c139e2a0a652c5eeb8817de555" CHECKSUMTYPE="MD5" SIZE="243273" SEQ="275"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/260.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G291" ID="E291" MIMETYPE="image/jp2" CHECKSUM="b5c050473b084877b09bc16383bf01d6" CHECKSUMTYPE="MD5" SIZE="247352" SEQ="276"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/261.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G292" ID="E292" MIMETYPE="image/jp2" CHECKSUM="8b9988837889bfe1a8264b35cf970264" CHECKSUMTYPE="MD5" SIZE="243286" SEQ="277"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/262.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G293" ID="E293" MIMETYPE="image/jp2" CHECKSUM="74d578937e190d210206ec4b52c06fba" CHECKSUMTYPE="MD5" SIZE="247334" SEQ="278"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/263.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G294" ID="E294" MIMETYPE="image/jp2" CHECKSUM="de9a8dae8a79972ef29ff529bc276465" CHECKSUMTYPE="MD5" SIZE="245673" SEQ="279"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/264.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G295" ID="E295" MIMETYPE="image/jp2" CHECKSUM="1bb1e60d9419ddd3f9b907af2d8e0644" CHECKSUMTYPE="MD5" SIZE="244069" SEQ="280"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/265.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G296" ID="E296" MIMETYPE="image/jp2" CHECKSUM="519e292f4d7db86b6b0bc9bf7df7140b" CHECKSUMTYPE="MD5" SIZE="244867" SEQ="281"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/266.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G297" ID="E297" MIMETYPE="image/jp2" CHECKSUM="c9f95870c92f4bbbebedf3b4ad261f8b" CHECKSUMTYPE="MD5" SIZE="247341" SEQ="282"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/267.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G298" ID="E298" MIMETYPE="image/jp2" CHECKSUM="15ed6d74c5019382f4887a75fab5f738" CHECKSUMTYPE="MD5" SIZE="244901" SEQ="283"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/268.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G299" ID="E299" MIMETYPE="image/jp2" CHECKSUM="febed38c71cc25118f728229ca1ce5bf" CHECKSUMTYPE="MD5" SIZE="243307" SEQ="284"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/269.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G300" ID="E300" MIMETYPE="image/jp2" CHECKSUM="6846e533b58addf5f61ad9f8f2c4eae5" CHECKSUMTYPE="MD5" SIZE="247218" SEQ="285"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/270.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G301" ID="E301" MIMETYPE="image/jp2" CHECKSUM="866c0afc005956d182ace07b6dccfde8" CHECKSUMTYPE="MD5" SIZE="247320" SEQ="286"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/271.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G302" ID="E302" MIMETYPE="image/jp2" CHECKSUM="c87a493237335e5ffe62f970c1669027" CHECKSUMTYPE="MD5" SIZE="243210" SEQ="287"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/272.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G303" ID="E303" MIMETYPE="image/jp2" CHECKSUM="3d9c7861f6ba43145b058b545dd3ab09" CHECKSUMTYPE="MD5" SIZE="244070" SEQ="288"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/273.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G304" ID="E304" MIMETYPE="image/jp2" CHECKSUM="c3b05902d44266d37a8c9d57b61dd84b" CHECKSUMTYPE="MD5" SIZE="244062" SEQ="289"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/274.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G305" ID="E305" MIMETYPE="image/jp2" CHECKSUM="051bc33928e6406fdc13647424c361e3" CHECKSUMTYPE="MD5" SIZE="244787" SEQ="290"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/275.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G306" ID="E306" MIMETYPE="image/jp2" CHECKSUM="c05a13e0f765a226dbf1f605c2aba96e" CHECKSUMTYPE="MD5" SIZE="244119" SEQ="291"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/276.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G307" ID="E307" MIMETYPE="image/jp2" CHECKSUM="704907119860192626ebadd78ebf397f" CHECKSUMTYPE="MD5" SIZE="244109" SEQ="292"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/277.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G308" ID="E308" MIMETYPE="image/jp2" CHECKSUM="3b58e1793ca76359aa283526e9b6b5b7" CHECKSUMTYPE="MD5" SIZE="244002" SEQ="293"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/278.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G309" ID="E309" MIMETYPE="image/jp2" CHECKSUM="ca82d471dd6d60734b3b263f8f30100b" CHECKSUMTYPE="MD5" SIZE="241649" SEQ="294"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/279.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G310" ID="E310" MIMETYPE="image/jp2" CHECKSUM="12848e062be2673809dcb668d53b61a7" CHECKSUMTYPE="MD5" SIZE="244025" SEQ="295"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/280.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G311" ID="E311" MIMETYPE="image/jp2" CHECKSUM="7ec9d55ab96d07797972a260ec0fca59" CHECKSUMTYPE="MD5" SIZE="245728" SEQ="296"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/281.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G312" ID="E312" MIMETYPE="image/jp2" CHECKSUM="6b4cb73faeef775ce33d708b21579c46" CHECKSUMTYPE="MD5" SIZE="244125" SEQ="297"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/282.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G313" ID="E313" MIMETYPE="image/jp2" CHECKSUM="00aa886b2ed1f725477eaf8ead29feff" CHECKSUMTYPE="MD5" SIZE="243281" SEQ="298"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/283.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G314" ID="E314" MIMETYPE="image/jp2" CHECKSUM="a198e6771ed921544d4c50ae572df82b" CHECKSUMTYPE="MD5" SIZE="244858" SEQ="299"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/284.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G315" ID="E315" MIMETYPE="image/jp2" CHECKSUM="55302f821ab68adaebc8c77e5b07fe76" CHECKSUMTYPE="MD5" SIZE="241652" SEQ="300"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/285.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G316" ID="E316" MIMETYPE="image/jp2" CHECKSUM="6144ab67c793a96272172f5a003916e6" CHECKSUMTYPE="MD5" SIZE="241698" SEQ="301"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/286.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G317" ID="E317" MIMETYPE="image/jp2" CHECKSUM="92f62899af4bb846f25f9b2c8244688b" CHECKSUMTYPE="MD5" SIZE="247330" SEQ="302"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/287.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G318" ID="E318" MIMETYPE="image/jp2" CHECKSUM="1f81a49613695f0a6f888ed89e1fa660" CHECKSUMTYPE="MD5" SIZE="245742" SEQ="303"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/288.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G319" ID="E319" MIMETYPE="image/jp2" CHECKSUM="7be5dce0052b229d4cedc70293386e14" CHECKSUMTYPE="MD5" SIZE="247307" SEQ="304"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/289.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G320" ID="E320" MIMETYPE="image/jp2" CHECKSUM="93386b849ff595ad7f90246efe5154b0" CHECKSUMTYPE="MD5" SIZE="247277" SEQ="305"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/290.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G321" ID="E321" MIMETYPE="image/jp2" CHECKSUM="280e2cf90d7259233b3313cc0cf17b7a" CHECKSUMTYPE="MD5" SIZE="244858" SEQ="306"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/291.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G322" ID="E322" MIMETYPE="image/jp2" CHECKSUM="01d5ed2cfd30dbdd4ce5aa301bb64b02" CHECKSUMTYPE="MD5" SIZE="244837" SEQ="307"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/292.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G323" ID="E323" MIMETYPE="image/jp2" CHECKSUM="2005fd00f7d0298ccc4dd2a030b6c288" CHECKSUMTYPE="MD5" SIZE="247202" SEQ="308"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/293.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G324" ID="E324" MIMETYPE="image/jp2" CHECKSUM="2b82dac504313547c8b464752d0a8828" CHECKSUMTYPE="MD5" SIZE="244773" SEQ="309"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/294.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G325" ID="E325" MIMETYPE="image/jp2" CHECKSUM="f855eb2729dd6b3de9a677aab953a2a7" CHECKSUMTYPE="MD5" SIZE="247206" SEQ="310"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/295.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G326" ID="E326" MIMETYPE="image/jp2" CHECKSUM="60bfb360535358fb979dbac6dfbc9dac" CHECKSUMTYPE="MD5" SIZE="245718" SEQ="311"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/296.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G327" ID="E327" MIMETYPE="image/jp2" CHECKSUM="5a8173759e03de43ba52025604b5ac20" CHECKSUMTYPE="MD5" SIZE="247289" SEQ="312"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/297.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G328" ID="E328" MIMETYPE="image/jp2" CHECKSUM="b31e9d09c04caac95199c0687b58e9a1" CHECKSUMTYPE="MD5" SIZE="244838" SEQ="313"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/298.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G329" ID="E329" MIMETYPE="image/jp2" CHECKSUM="d4c78eb94da96e92a888faf92c77eba5" CHECKSUMTYPE="MD5" SIZE="1093790" SEQ="314"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/cpr.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G330" ID="E330" MIMETYPE="image/jp2" CHECKSUM="1232a2e7dee08f7ac5c0d8d89781bd25" CHECKSUMTYPE="MD5" SIZE="245730" SEQ="315"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/299.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G331" ID="E331" MIMETYPE="image/jp2" CHECKSUM="d61882c683356eac2dfbf3e7cd50d047" CHECKSUMTYPE="MD5" SIZE="245662" SEQ="316"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/300.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G332" ID="E332" MIMETYPE="image/jp2" CHECKSUM="e8da027f175ffd12d8d36e8ac92631ad" CHECKSUMTYPE="MD5" SIZE="249744" SEQ="317"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/301.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G333" ID="E333" MIMETYPE="image/jp2" CHECKSUM="790130319437f9c8ea728603215b2fae" CHECKSUMTYPE="MD5" SIZE="244843" SEQ="318"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/302.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G334" ID="E334" MIMETYPE="image/jp2" CHECKSUM="ed763cf89addca5aa7e2b5b0b15a8871" CHECKSUMTYPE="MD5" SIZE="247331" SEQ="319"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/303.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G335" ID="E335" MIMETYPE="image/jp2" CHECKSUM="a0ad924526f6caa00baf2ab358a231ca" CHECKSUMTYPE="MD5" SIZE="248155" SEQ="320"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/304.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G336" ID="E336" MIMETYPE="image/jp2" CHECKSUM="f20c30c2ff69a39397c53ccec9f46990" CHECKSUMTYPE="MD5" SIZE="247328" SEQ="321"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/305.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G337" ID="E337" MIMETYPE="image/jp2" CHECKSUM="473ef2125efc4ca70693321bf7de4574" CHECKSUMTYPE="MD5" SIZE="249791" SEQ="322"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/306.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G338" ID="E338" MIMETYPE="image/jp2" CHECKSUM="2820eb5e32c9dfcbc6308a5c97b4eae3" CHECKSUMTYPE="MD5" SIZE="248150" SEQ="323"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/307.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G339" ID="E339" MIMETYPE="image/jp2" CHECKSUM="d3f552acf75a58d60ba89d77318fb464" CHECKSUMTYPE="MD5" SIZE="249762" SEQ="324"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/308.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G340" ID="E340" MIMETYPE="image/jp2" CHECKSUM="d3c7a61704179d6060c6ab2cfaa39ded" CHECKSUMTYPE="MD5" SIZE="249587" SEQ="325"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/309.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G341" ID="E341" MIMETYPE="image/jp2" CHECKSUM="54ff15aa242423c875e661900367c200" CHECKSUMTYPE="MD5" SIZE="248141" SEQ="326"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/310.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G342" ID="E342" MIMETYPE="image/jp2" CHECKSUM="06f93b186599cb1e7f4c30dbaf574684" CHECKSUMTYPE="MD5" SIZE="248164" SEQ="327"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/311.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G343" ID="E343" MIMETYPE="image/jp2" CHECKSUM="8522b366c736af4783710448e0295493" CHECKSUMTYPE="MD5" SIZE="249783" SEQ="328"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/312.jp2"/> 
+		</METS:file> 
+		<METS:file GROUPID="G344" ID="E344" MIMETYPE="image/jp2" CHECKSUM="0a3c7e6708514b9fca2f0ff20a444814" CHECKSUMTYPE="MD5" SIZE="248093" SEQ="329"> 
+			<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="http://tokyo.fcla.edu:4100/FS00000105_00001/313.jp2"/> 
+		</METS:file> 
+	</METS:fileGrp> 
+	 
+	 
+	 
+	 
+</METS:fileSec> 
+<METS:structMap ID="STRUCT1" TYPE="JPEG" LABEL="View"> 
+	<METS:div DMDID="DMD1 DMD2" LABEL="History of women's intercollegiate athletics at Florida State University from 1905-1972" ORDER="0" TYPE="main"> 
+		<METS:div ID="D1" ORDER="1" TYPE="Main"> 
+			<METS:div ID="P1" LABEL="Page i" ORDER="1" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P16" LABEL="Main 2" ORDER="2" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E16"/> 
+			</METS:div> 
+			<METS:div ID="P2" LABEL="Page ii" ORDER="3" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P18" LABEL="Main 4" ORDER="4" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P3" LABEL="Page iii" ORDER="5" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E3"/> 
+			</METS:div> 
+			<METS:div ID="P4" LABEL="Page iv" ORDER="6" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P20" LABEL="Main 7" ORDER="7" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P5" LABEL="Page v" ORDER="8" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E5"/> 
+			</METS:div> 
+			<METS:div ID="P6" LABEL="Page vi" ORDER="9" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P22" LABEL="Main 10" ORDER="10" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P7" LABEL="Page vii" ORDER="11" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E7"/> 
+			</METS:div> 
+			<METS:div ID="P8" LABEL="Page viii" ORDER="12" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P24" LABEL="Main 13" ORDER="13" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P9" LABEL="Page ix" ORDER="14" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E9"/> 
+			</METS:div> 
+			<METS:div ID="P10" LABEL="Page x" ORDER="15" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P26" LABEL="Main 16" ORDER="16" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P11" LABEL="Page xi" ORDER="17" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E11"/> 
+			</METS:div> 
+			<METS:div ID="P12" LABEL="Page xii" ORDER="18" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P28" LABEL="Main 19" ORDER="19" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P13" LABEL="Page xiii" ORDER="20" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E13"/> 
+			</METS:div> 
+			<METS:div ID="P14" LABEL="Page xiv" ORDER="21" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P30" LABEL="Main 22" ORDER="22" TYPE="Page"> 
+				 
+			</METS:div> 
+			<METS:div ID="P15" LABEL="Page xv" ORDER="23" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E15"/> 
+			</METS:div> 
+			<METS:div ID="P32" LABEL="Main 24" ORDER="24" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E32"/> 
+			</METS:div> 
+			<METS:div ID="P34" LABEL="Main 25" ORDER="25" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E34"/> 
+			</METS:div> 
+			<METS:div ID="P36" LABEL="Main 26" ORDER="26" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E36"/> 
+			</METS:div> 
+			<METS:div ID="P38" LABEL="Main 27" ORDER="27" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E38"/> 
+			</METS:div> 
+			<METS:div ID="P40" LABEL="Main 28" ORDER="28" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E40"/> 
+			</METS:div> 
+			<METS:div ID="P42" LABEL="Main 29" ORDER="29" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E42"/> 
+			</METS:div> 
+			<METS:div ID="P44" LABEL="Main 30" ORDER="30" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E44"/> 
+			</METS:div> 
+			<METS:div ID="P46" LABEL="Main 31" ORDER="31" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E46"/> 
+			</METS:div> 
+			<METS:div ID="P48" LABEL="Main 32" ORDER="32" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E48"/> 
+			</METS:div> 
+			<METS:div ID="P50" LABEL="Main 33" ORDER="33" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E50"/> 
+			</METS:div> 
+			<METS:div ID="P52" LABEL="Main 34" ORDER="34" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E52"/> 
+			</METS:div> 
+			<METS:div ID="P54" LABEL="Main 35" ORDER="35" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E54"/> 
+			</METS:div> 
+			<METS:div ID="P56" LABEL="Main 36" ORDER="36" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E56"/> 
+			</METS:div> 
+			<METS:div ID="P58" LABEL="Main 37" ORDER="37" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E58"/> 
+			</METS:div> 
+			<METS:div ID="P60" LABEL="Main 38" ORDER="38" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E60"/> 
+			</METS:div> 
+			<METS:div ID="P62" LABEL="Main 39" ORDER="39" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E62"/> 
+			</METS:div> 
+			<METS:div ID="P64" LABEL="Main 40" ORDER="40" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E64"/> 
+			</METS:div> 
+			<METS:div ID="P66" LABEL="Main 41" ORDER="41" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E66"/> 
+			</METS:div> 
+			<METS:div ID="P68" LABEL="Main 42" ORDER="42" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E68"/> 
+			</METS:div> 
+			<METS:div ID="P70" LABEL="Main 43" ORDER="43" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E70"/> 
+			</METS:div> 
+			<METS:div ID="P72" LABEL="Main 44" ORDER="44" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E72"/> 
+			</METS:div> 
+			<METS:div ID="P74" LABEL="Main 45" ORDER="45" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E74"/> 
+			</METS:div> 
+			<METS:div ID="P76" LABEL="Main 46" ORDER="46" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E76"/> 
+			</METS:div> 
+			<METS:div ID="P78" LABEL="Main 47" ORDER="47" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E78"/> 
+			</METS:div> 
+			<METS:div ID="P80" LABEL="Main 48" ORDER="48" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E80"/> 
+			</METS:div> 
+			<METS:div ID="P82" LABEL="Main 49" ORDER="49" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E82"/> 
+			</METS:div> 
+			<METS:div ID="P84" LABEL="Main 50" ORDER="50" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E84"/> 
+			</METS:div> 
+			<METS:div ID="P86" LABEL="Main 51" ORDER="51" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E86"/> 
+			</METS:div> 
+			<METS:div ID="P88" LABEL="Main 52" ORDER="52" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E88"/> 
+			</METS:div> 
+			<METS:div ID="P90" LABEL="Main 53" ORDER="53" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E90"/> 
+			</METS:div> 
+			<METS:div ID="P92" LABEL="Main 54" ORDER="54" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E92"/> 
+			</METS:div> 
+			<METS:div ID="P94" LABEL="Main 55" ORDER="55" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E94"/> 
+			</METS:div> 
+			<METS:div ID="P96" LABEL="Main 56" ORDER="56" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E96"/> 
+			</METS:div> 
+			<METS:div ID="P98" LABEL="Main 57" ORDER="57" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E98"/> 
+			</METS:div> 
+			<METS:div ID="P100" LABEL="Main 58" ORDER="58" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E100"/> 
+			</METS:div> 
+			<METS:div ID="P102" LABEL="Main 59" ORDER="59" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E102"/> 
+			</METS:div> 
+			<METS:div ID="P104" LABEL="Main 60" ORDER="60" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E104"/> 
+			</METS:div> 
+			<METS:div ID="P106" LABEL="Main 61" ORDER="61" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E106"/> 
+			</METS:div> 
+			<METS:div ID="P108" LABEL="Main 62" ORDER="62" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E108"/> 
+			</METS:div> 
+			<METS:div ID="P110" LABEL="Main 63" ORDER="63" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E110"/> 
+			</METS:div> 
+			<METS:div ID="P112" LABEL="Main 64" ORDER="64" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E112"/> 
+			</METS:div> 
+			<METS:div ID="P114" LABEL="Main 65" ORDER="65" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E114"/> 
+			</METS:div> 
+			<METS:div ID="P116" LABEL="Main 66" ORDER="66" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E116"/> 
+			</METS:div> 
+			<METS:div ID="P118" LABEL="Main 67" ORDER="67" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E118"/> 
+			</METS:div> 
+			<METS:div ID="P120" LABEL="Main 68" ORDER="68" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E120"/> 
+			</METS:div> 
+			<METS:div ID="P122" LABEL="Main 69" ORDER="69" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E122"/> 
+			</METS:div> 
+			<METS:div ID="P124" LABEL="Main 70" ORDER="70" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E124"/> 
+			</METS:div> 
+			<METS:div ID="P126" LABEL="Main 71" ORDER="71" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E126"/> 
+			</METS:div> 
+			<METS:div ID="P128" LABEL="Main 72" ORDER="72" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E128"/> 
+			</METS:div> 
+			<METS:div ID="P130" LABEL="Main 73" ORDER="73" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E130"/> 
+			</METS:div> 
+			<METS:div ID="P132" LABEL="Main 74" ORDER="74" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E132"/> 
+			</METS:div> 
+			<METS:div ID="P134" LABEL="Main 75" ORDER="75" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E134"/> 
+			</METS:div> 
+			<METS:div ID="P136" LABEL="Main 76" ORDER="76" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E136"/> 
+			</METS:div> 
+			<METS:div ID="P138" LABEL="Main 77" ORDER="77" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E138"/> 
+			</METS:div> 
+			<METS:div ID="P140" LABEL="Main 78" ORDER="78" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E140"/> 
+			</METS:div> 
+			<METS:div ID="P142" LABEL="Main 79" ORDER="79" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E142"/> 
+			</METS:div> 
+			<METS:div ID="P144" LABEL="Main 80" ORDER="80" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E144"/> 
+			</METS:div> 
+			<METS:div ID="P146" LABEL="Main 81" ORDER="81" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E146"/> 
+			</METS:div> 
+			<METS:div ID="P148" LABEL="Main 82" ORDER="82" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E148"/> 
+			</METS:div> 
+			<METS:div ID="P150" LABEL="Main 83" ORDER="83" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E150"/> 
+			</METS:div> 
+			<METS:div ID="P152" LABEL="Main 84" ORDER="84" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E152"/> 
+			</METS:div> 
+			<METS:div ID="P154" LABEL="Main 85" ORDER="85" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E154"/> 
+			</METS:div> 
+			<METS:div ID="P156" LABEL="Main 86" ORDER="86" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E156"/> 
+			</METS:div> 
+			<METS:div ID="P158" LABEL="Main 87" ORDER="87" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E158"/> 
+			</METS:div> 
+			<METS:div ID="P160" LABEL="Main 88" ORDER="88" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E160"/> 
+			</METS:div> 
+			<METS:div ID="P162" LABEL="Main 89" ORDER="89" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E162"/> 
+			</METS:div> 
+			<METS:div ID="P164" LABEL="Main 90" ORDER="90" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E164"/> 
+			</METS:div> 
+			<METS:div ID="P166" LABEL="Main 91" ORDER="91" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E166"/> 
+			</METS:div> 
+			<METS:div ID="P168" LABEL="Main 92" ORDER="92" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E168"/> 
+			</METS:div> 
+			<METS:div ID="P170" LABEL="Main 93" ORDER="93" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E170"/> 
+			</METS:div> 
+			<METS:div ID="P172" LABEL="Main 94" ORDER="94" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E172"/> 
+			</METS:div> 
+			<METS:div ID="P174" LABEL="Main 95" ORDER="95" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E174"/> 
+			</METS:div> 
+			<METS:div ID="P176" LABEL="Main 96" ORDER="96" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E176"/> 
+			</METS:div> 
+			<METS:div ID="P178" LABEL="Main 97" ORDER="97" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E178"/> 
+			</METS:div> 
+			<METS:div ID="P180" LABEL="Main 98" ORDER="98" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E180"/> 
+			</METS:div> 
+			<METS:div ID="P182" LABEL="Main 99" ORDER="99" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E182"/> 
+			</METS:div> 
+			<METS:div ID="P184" LABEL="Main 100" ORDER="100" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E184"/> 
+			</METS:div> 
+			<METS:div ID="P186" LABEL="Main 101" ORDER="101" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E186"/> 
+			</METS:div> 
+			<METS:div ID="P188" LABEL="Main 102" ORDER="102" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E188"/> 
+			</METS:div> 
+			<METS:div ID="P190" LABEL="Main 103" ORDER="103" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E190"/> 
+			</METS:div> 
+			<METS:div ID="P192" LABEL="Main 104" ORDER="104" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E192"/> 
+			</METS:div> 
+			<METS:div ID="P194" LABEL="Main 105" ORDER="105" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E194"/> 
+			</METS:div> 
+			<METS:div ID="P196" LABEL="Main 106" ORDER="106" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E196"/> 
+			</METS:div> 
+			<METS:div ID="P198" LABEL="Main 107" ORDER="107" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E198"/> 
+			</METS:div> 
+			<METS:div ID="P200" LABEL="Main 108" ORDER="108" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E200"/> 
+			</METS:div> 
+			<METS:div ID="P202" LABEL="Main 109" ORDER="109" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E202"/> 
+			</METS:div> 
+			<METS:div ID="P204" LABEL="Main 110" ORDER="110" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E204"/> 
+			</METS:div> 
+			<METS:div ID="P206" LABEL="Main 111" ORDER="111" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E206"/> 
+			</METS:div> 
+			<METS:div ID="P208" LABEL="Main 112" ORDER="112" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E208"/> 
+			</METS:div> 
+			<METS:div ID="P210" LABEL="Main 113" ORDER="113" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E210"/> 
+			</METS:div> 
+			<METS:div ID="P212" LABEL="Main 114" ORDER="114" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E212"/> 
+			</METS:div> 
+			<METS:div ID="P214" LABEL="Main 115" ORDER="115" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E214"/> 
+			</METS:div> 
+			<METS:div ID="P216" LABEL="Main 116" ORDER="116" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E216"/> 
+			</METS:div> 
+			<METS:div ID="P218" LABEL="Main 117" ORDER="117" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E218"/> 
+			</METS:div> 
+			<METS:div ID="P220" LABEL="Main 118" ORDER="118" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E220"/> 
+			</METS:div> 
+			<METS:div ID="P222" LABEL="Main 119" ORDER="119" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E222"/> 
+			</METS:div> 
+			<METS:div ID="P224" LABEL="Main 120" ORDER="120" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E224"/> 
+			</METS:div> 
+			<METS:div ID="P226" LABEL="Main 121" ORDER="121" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E226"/> 
+			</METS:div> 
+			<METS:div ID="P228" LABEL="Main 122" ORDER="122" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E228"/> 
+			</METS:div> 
+			<METS:div ID="P230" LABEL="Main 123" ORDER="123" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E230"/> 
+			</METS:div> 
+			<METS:div ID="P232" LABEL="Main 124" ORDER="124" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E232"/> 
+			</METS:div> 
+			<METS:div ID="P234" LABEL="Main 125" ORDER="125" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E234"/> 
+			</METS:div> 
+			<METS:div ID="P236" LABEL="Main 126" ORDER="126" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E236"/> 
+			</METS:div> 
+			<METS:div ID="P238" LABEL="Main 127" ORDER="127" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E238"/> 
+			</METS:div> 
+			<METS:div ID="P240" LABEL="Main 128" ORDER="128" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E240"/> 
+			</METS:div> 
+			<METS:div ID="P242" LABEL="Main 129" ORDER="129" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E242"/> 
+			</METS:div> 
+			<METS:div ID="P244" LABEL="Main 130" ORDER="130" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E244"/> 
+			</METS:div> 
+			<METS:div ID="P246" LABEL="Main 131" ORDER="131" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E246"/> 
+			</METS:div> 
+			<METS:div ID="P248" LABEL="Main 132" ORDER="132" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E248"/> 
+			</METS:div> 
+			<METS:div ID="P250" LABEL="Main 133" ORDER="133" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E250"/> 
+			</METS:div> 
+			<METS:div ID="P252" LABEL="Main 134" ORDER="134" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E252"/> 
+			</METS:div> 
+			<METS:div ID="P254" LABEL="Main 135" ORDER="135" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E254"/> 
+			</METS:div> 
+			<METS:div ID="P256" LABEL="Main 136" ORDER="136" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E256"/> 
+			</METS:div> 
+			<METS:div ID="P258" LABEL="Main 137" ORDER="137" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E258"/> 
+			</METS:div> 
+			<METS:div ID="P260" LABEL="Main 138" ORDER="138" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E260"/> 
+			</METS:div> 
+			<METS:div ID="P262" LABEL="Main 139" ORDER="139" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E262"/> 
+			</METS:div> 
+			<METS:div ID="P264" LABEL="Main 140" ORDER="140" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E264"/> 
+			</METS:div> 
+			<METS:div ID="P266" LABEL="Main 141" ORDER="141" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E266"/> 
+			</METS:div> 
+			<METS:div ID="P268" LABEL="Main 142" ORDER="142" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E268"/> 
+			</METS:div> 
+			<METS:div ID="P270" LABEL="Main 143" ORDER="143" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E270"/> 
+			</METS:div> 
+			<METS:div ID="P272" LABEL="Main 144" ORDER="144" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E272"/> 
+			</METS:div> 
+			<METS:div ID="P274" LABEL="Main 145" ORDER="145" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E274"/> 
+			</METS:div> 
+			<METS:div ID="P276" LABEL="Main 146" ORDER="146" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E276"/> 
+			</METS:div> 
+			<METS:div ID="P278" LABEL="Main 147" ORDER="147" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E278"/> 
+			</METS:div> 
+			<METS:div ID="P280" LABEL="Main 148" ORDER="148" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E280"/> 
+			</METS:div> 
+			<METS:div ID="P282" LABEL="Main 149" ORDER="149" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E282"/> 
+			</METS:div> 
+			<METS:div ID="P284" LABEL="Main 150" ORDER="150" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E284"/> 
+			</METS:div> 
+			<METS:div ID="P286" LABEL="Main 151" ORDER="151" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E286"/> 
+			</METS:div> 
+			<METS:div ID="P288" LABEL="Main 152" ORDER="152" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E288"/> 
+			</METS:div> 
+			<METS:div ID="P290" LABEL="Main 153" ORDER="153" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E290"/> 
+			</METS:div> 
+			<METS:div ID="P292" LABEL="Main 154" ORDER="154" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E292"/> 
+			</METS:div> 
+			<METS:div ID="P294" LABEL="Main 155" ORDER="155" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E294"/> 
+			</METS:div> 
+			<METS:div ID="P296" LABEL="Main 156" ORDER="156" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E296"/> 
+			</METS:div> 
+			<METS:div ID="P298" LABEL="Main 157" ORDER="157" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E298"/> 
+			</METS:div> 
+			<METS:div ID="P300" LABEL="Main 158" ORDER="158" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E300"/> 
+			</METS:div> 
+			<METS:div ID="P302" LABEL="Main 159" ORDER="159" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E302"/> 
+			</METS:div> 
+			<METS:div ID="P304" LABEL="Main 160" ORDER="160" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E304"/> 
+			</METS:div> 
+			<METS:div ID="P306" LABEL="Main 161" ORDER="161" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E306"/> 
+			</METS:div> 
+			<METS:div ID="P308" LABEL="Main 162" ORDER="162" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E308"/> 
+			</METS:div> 
+			<METS:div ID="P310" LABEL="Main 163" ORDER="163" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E310"/> 
+			</METS:div> 
+			<METS:div ID="P312" LABEL="Main 164" ORDER="164" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E312"/> 
+			</METS:div> 
+			<METS:div ID="P314" LABEL="Main 165" ORDER="165" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E314"/> 
+			</METS:div> 
+			<METS:div ID="P316" LABEL="Main 166" ORDER="166" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E316"/> 
+			</METS:div> 
+			<METS:div ID="P318" LABEL="Main 167" ORDER="167" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E318"/> 
+			</METS:div> 
+			<METS:div ID="P320" LABEL="Main 168" ORDER="168" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E320"/> 
+			</METS:div> 
+			<METS:div ID="P322" LABEL="Main 169" ORDER="169" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E322"/> 
+			</METS:div> 
+			<METS:div ID="P324" LABEL="Main 170" ORDER="170" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E324"/> 
+			</METS:div> 
+			<METS:div ID="P326" LABEL="Main 171" ORDER="171" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E326"/> 
+			</METS:div> 
+			<METS:div ID="P328" LABEL="Main 172" ORDER="172" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E328"/> 
+			</METS:div> 
+			<METS:div ID="P330" LABEL="Main 173" ORDER="173" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E330"/> 
+			</METS:div> 
+			<METS:div ID="P331" LABEL="Main 174" ORDER="174" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E331"/> 
+			</METS:div> 
+			<METS:div ID="P332" LABEL="Main 175" ORDER="175" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E332"/> 
+			</METS:div> 
+			<METS:div ID="P333" LABEL="Main 176" ORDER="176" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E333"/> 
+			</METS:div> 
+			<METS:div ID="P334" LABEL="Main 177" ORDER="177" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E334"/> 
+			</METS:div> 
+			<METS:div ID="P335" LABEL="Main 178" ORDER="178" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E335"/> 
+			</METS:div> 
+			<METS:div ID="P336" LABEL="Main 179" ORDER="179" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E336"/> 
+			</METS:div> 
+			<METS:div ID="P337" LABEL="Main 180" ORDER="180" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E337"/> 
+			</METS:div> 
+			<METS:div ID="P338" LABEL="Main 181" ORDER="181" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E338"/> 
+			</METS:div> 
+			<METS:div ID="P339" LABEL="Main 182" ORDER="182" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E339"/> 
+			</METS:div> 
+			<METS:div ID="P340" LABEL="Main 183" ORDER="183" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E340"/> 
+			</METS:div> 
+			<METS:div ID="P341" LABEL="Main 184" ORDER="184" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E341"/> 
+			</METS:div> 
+			<METS:div ID="P342" LABEL="Main 185" ORDER="185" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E342"/> 
+			</METS:div> 
+			<METS:div ID="P343" LABEL="Main 186" ORDER="186" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E343"/> 
+			</METS:div> 
+			<METS:div ID="P344" LABEL="Main 187" ORDER="187" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E344"/> 
+			</METS:div> 
+			<METS:div ID="P17" LABEL="Page 2" ORDER="188" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E17"/> 
+			</METS:div> 
+			<METS:div ID="P19" LABEL="Page 4" ORDER="189" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E19"/> 
+			</METS:div> 
+			<METS:div ID="P21" LABEL="Page 6" ORDER="190" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E21"/> 
+			</METS:div> 
+			<METS:div ID="P23" LABEL="Page 8" ORDER="191" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E23"/> 
+			</METS:div> 
+			<METS:div ID="P25" LABEL="Page 10" ORDER="192" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E25"/> 
+			</METS:div> 
+			<METS:div ID="P27" LABEL="Page 12" ORDER="193" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E27"/> 
+			</METS:div> 
+			<METS:div ID="P29" LABEL="Page 14" ORDER="194" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E29"/> 
+			</METS:div> 
+			<METS:div ID="P31" LABEL="Page 16" ORDER="195" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E31"/> 
+			</METS:div> 
+			<METS:div ID="P33" LABEL="Page 18" ORDER="196" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E33"/> 
+			</METS:div> 
+			<METS:div ID="P35" LABEL="Page 20" ORDER="197" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E35"/> 
+			</METS:div> 
+			<METS:div ID="P37" LABEL="Page 22" ORDER="198" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E37"/> 
+			</METS:div> 
+			<METS:div ID="P39" LABEL="Page 24" ORDER="199" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E39"/> 
+			</METS:div> 
+			<METS:div ID="P41" LABEL="Page 26" ORDER="200" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E41"/> 
+			</METS:div> 
+			<METS:div ID="P43" LABEL="Page 28" ORDER="201" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E43"/> 
+			</METS:div> 
+			<METS:div ID="P45" LABEL="Page 30" ORDER="202" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E45"/> 
+			</METS:div> 
+			<METS:div ID="P47" LABEL="Page 32" ORDER="203" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E47"/> 
+			</METS:div> 
+			<METS:div ID="P49" LABEL="Page 34" ORDER="204" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E49"/> 
+			</METS:div> 
+			<METS:div ID="P51" LABEL="Page 36" ORDER="205" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E51"/> 
+			</METS:div> 
+			<METS:div ID="P53" LABEL="Page 38" ORDER="206" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E53"/> 
+			</METS:div> 
+			<METS:div ID="P55" LABEL="Page 40" ORDER="207" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E55"/> 
+			</METS:div> 
+			<METS:div ID="P57" LABEL="Page 42" ORDER="208" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E57"/> 
+			</METS:div> 
+			<METS:div ID="P59" LABEL="Page 44" ORDER="209" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E59"/> 
+			</METS:div> 
+			<METS:div ID="P61" LABEL="Page 46" ORDER="210" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E61"/> 
+			</METS:div> 
+			<METS:div ID="P63" LABEL="Page 48" ORDER="211" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E63"/> 
+			</METS:div> 
+			<METS:div ID="P65" LABEL="Page 50" ORDER="212" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E65"/> 
+			</METS:div> 
+			<METS:div ID="P67" LABEL="Page 52" ORDER="213" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E67"/> 
+			</METS:div> 
+			<METS:div ID="P69" LABEL="Page 54" ORDER="214" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E69"/> 
+			</METS:div> 
+			<METS:div ID="P71" LABEL="Page 56" ORDER="215" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E71"/> 
+			</METS:div> 
+			<METS:div ID="P73" LABEL="Page 58" ORDER="216" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E73"/> 
+			</METS:div> 
+			<METS:div ID="P75" LABEL="Page 60" ORDER="217" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E75"/> 
+			</METS:div> 
+			<METS:div ID="P77" LABEL="Page 62" ORDER="218" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E77"/> 
+			</METS:div> 
+			<METS:div ID="P79" LABEL="Page 64" ORDER="219" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E79"/> 
+			</METS:div> 
+			<METS:div ID="P81" LABEL="Page 66" ORDER="220" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E81"/> 
+			</METS:div> 
+			<METS:div ID="P83" LABEL="Page 68" ORDER="221" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E83"/> 
+			</METS:div> 
+			<METS:div ID="P85" LABEL="Page 70" ORDER="222" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E85"/> 
+			</METS:div> 
+			<METS:div ID="P87" LABEL="Page 72" ORDER="223" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E87"/> 
+			</METS:div> 
+			<METS:div ID="P89" LABEL="Page 74" ORDER="224" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E89"/> 
+			</METS:div> 
+			<METS:div ID="P91" LABEL="Page 76" ORDER="225" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E91"/> 
+			</METS:div> 
+			<METS:div ID="P93" LABEL="Page 78" ORDER="226" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E93"/> 
+			</METS:div> 
+			<METS:div ID="P95" LABEL="Page 80" ORDER="227" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E95"/> 
+			</METS:div> 
+			<METS:div ID="P97" LABEL="Page 82" ORDER="228" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E97"/> 
+			</METS:div> 
+			<METS:div ID="P99" LABEL="Page 84" ORDER="229" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E99"/> 
+			</METS:div> 
+			<METS:div ID="P101" LABEL="Page 86" ORDER="230" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E101"/> 
+			</METS:div> 
+			<METS:div ID="P103" LABEL="Page 88" ORDER="231" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E103"/> 
+			</METS:div> 
+			<METS:div ID="P105" LABEL="Page 90" ORDER="232" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E105"/> 
+			</METS:div> 
+			<METS:div ID="P107" LABEL="Page 92" ORDER="233" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E107"/> 
+			</METS:div> 
+			<METS:div ID="P109" LABEL="Page 94" ORDER="234" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E109"/> 
+			</METS:div> 
+			<METS:div ID="P111" LABEL="Page 96" ORDER="235" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E111"/> 
+			</METS:div> 
+			<METS:div ID="P113" LABEL="Page 98" ORDER="236" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E113"/> 
+			</METS:div> 
+			<METS:div ID="P115" LABEL="Page 100" ORDER="237" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E115"/> 
+			</METS:div> 
+			<METS:div ID="P117" LABEL="Page 102" ORDER="238" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E117"/> 
+			</METS:div> 
+			<METS:div ID="P119" LABEL="Page 104" ORDER="239" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E119"/> 
+			</METS:div> 
+			<METS:div ID="P121" LABEL="Page 106" ORDER="240" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E121"/> 
+			</METS:div> 
+			<METS:div ID="P123" LABEL="Page 108" ORDER="241" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E123"/> 
+			</METS:div> 
+			<METS:div ID="P125" LABEL="Page 110" ORDER="242" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E125"/> 
+			</METS:div> 
+			<METS:div ID="P127" LABEL="Page 112" ORDER="243" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E127"/> 
+			</METS:div> 
+			<METS:div ID="P129" LABEL="Page 114" ORDER="244" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E129"/> 
+			</METS:div> 
+			<METS:div ID="P131" LABEL="Page 116" ORDER="245" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E131"/> 
+			</METS:div> 
+			<METS:div ID="P133" LABEL="Page 118" ORDER="246" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E133"/> 
+			</METS:div> 
+			<METS:div ID="P135" LABEL="Page 120" ORDER="247" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E135"/> 
+			</METS:div> 
+			<METS:div ID="P137" LABEL="Page 122" ORDER="248" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E137"/> 
+			</METS:div> 
+			<METS:div ID="P139" LABEL="Page 124" ORDER="249" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E139"/> 
+			</METS:div> 
+			<METS:div ID="P141" LABEL="Page 126" ORDER="250" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E141"/> 
+			</METS:div> 
+			<METS:div ID="P143" LABEL="Page 128" ORDER="251" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E143"/> 
+			</METS:div> 
+			<METS:div ID="P145" LABEL="Page 130" ORDER="252" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E145"/> 
+			</METS:div> 
+			<METS:div ID="P147" LABEL="Page 132" ORDER="253" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E147"/> 
+			</METS:div> 
+			<METS:div ID="P149" LABEL="Page 134" ORDER="254" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E149"/> 
+			</METS:div> 
+			<METS:div ID="P151" LABEL="Page 136" ORDER="255" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E151"/> 
+			</METS:div> 
+			<METS:div ID="P153" LABEL="Page 138" ORDER="256" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E153"/> 
+			</METS:div> 
+			<METS:div ID="P155" LABEL="Page 140" ORDER="257" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E155"/> 
+			</METS:div> 
+			<METS:div ID="P157" LABEL="Page 142" ORDER="258" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E157"/> 
+			</METS:div> 
+			<METS:div ID="P159" LABEL="Page 144" ORDER="259" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E159"/> 
+			</METS:div> 
+			<METS:div ID="P161" LABEL="Page 146" ORDER="260" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E161"/> 
+			</METS:div> 
+			<METS:div ID="P163" LABEL="Page 148" ORDER="261" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E163"/> 
+			</METS:div> 
+			<METS:div ID="P165" LABEL="Page 150" ORDER="262" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E165"/> 
+			</METS:div> 
+			<METS:div ID="P167" LABEL="Page 152" ORDER="263" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E167"/> 
+			</METS:div> 
+			<METS:div ID="P169" LABEL="Page 154" ORDER="264" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E169"/> 
+			</METS:div> 
+			<METS:div ID="P171" LABEL="Page 156" ORDER="265" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E171"/> 
+			</METS:div> 
+			<METS:div ID="P173" LABEL="Page 158" ORDER="266" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E173"/> 
+			</METS:div> 
+			<METS:div ID="P175" LABEL="Page 160" ORDER="267" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E175"/> 
+			</METS:div> 
+			<METS:div ID="P177" LABEL="Page 162" ORDER="268" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E177"/> 
+			</METS:div> 
+			<METS:div ID="P179" LABEL="Page 164" ORDER="269" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E179"/> 
+			</METS:div> 
+			<METS:div ID="P181" LABEL="Page 166" ORDER="270" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E181"/> 
+			</METS:div> 
+			<METS:div ID="P183" LABEL="Page 168" ORDER="271" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E183"/> 
+			</METS:div> 
+			<METS:div ID="P185" LABEL="Page 170" ORDER="272" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E185"/> 
+			</METS:div> 
+			<METS:div ID="P187" LABEL="Page 172" ORDER="273" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E187"/> 
+			</METS:div> 
+			<METS:div ID="P189" LABEL="Page 174" ORDER="274" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E189"/> 
+			</METS:div> 
+			<METS:div ID="P191" LABEL="Page 176" ORDER="275" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E191"/> 
+			</METS:div> 
+			<METS:div ID="P193" LABEL="Page 178" ORDER="276" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E193"/> 
+			</METS:div> 
+			<METS:div ID="P195" LABEL="Page 180" ORDER="277" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E195"/> 
+			</METS:div> 
+			<METS:div ID="P197" LABEL="Page 182" ORDER="278" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E197"/> 
+			</METS:div> 
+			<METS:div ID="P199" LABEL="Page 184" ORDER="279" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E199"/> 
+			</METS:div> 
+			<METS:div ID="P201" LABEL="Page 186" ORDER="280" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E201"/> 
+			</METS:div> 
+			<METS:div ID="P203" LABEL="Page 188" ORDER="281" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E203"/> 
+			</METS:div> 
+			<METS:div ID="P205" LABEL="Page 190" ORDER="282" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E205"/> 
+			</METS:div> 
+			<METS:div ID="P207" LABEL="Page 192" ORDER="283" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E207"/> 
+			</METS:div> 
+			<METS:div ID="P209" LABEL="Page 194" ORDER="284" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E209"/> 
+			</METS:div> 
+			<METS:div ID="P211" LABEL="Page 196" ORDER="285" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E211"/> 
+			</METS:div> 
+			<METS:div ID="P213" LABEL="Page 198" ORDER="286" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E213"/> 
+			</METS:div> 
+			<METS:div ID="P215" LABEL="Page 200" ORDER="287" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E215"/> 
+			</METS:div> 
+			<METS:div ID="P217" LABEL="Page 202" ORDER="288" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E217"/> 
+			</METS:div> 
+			<METS:div ID="P219" LABEL="Page 204" ORDER="289" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E219"/> 
+			</METS:div> 
+			<METS:div ID="P221" LABEL="Page 206" ORDER="290" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E221"/> 
+			</METS:div> 
+			<METS:div ID="P223" LABEL="Page 208" ORDER="291" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E223"/> 
+			</METS:div> 
+			<METS:div ID="P225" LABEL="Page 210" ORDER="292" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E225"/> 
+			</METS:div> 
+			<METS:div ID="P227" LABEL="Page 212" ORDER="293" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E227"/> 
+			</METS:div> 
+			<METS:div ID="P229" LABEL="Page 214" ORDER="294" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E229"/> 
+			</METS:div> 
+			<METS:div ID="P231" LABEL="Page 216" ORDER="295" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E231"/> 
+			</METS:div> 
+			<METS:div ID="P233" LABEL="Page 218" ORDER="296" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E233"/> 
+			</METS:div> 
+			<METS:div ID="P235" LABEL="Page 220" ORDER="297" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E235"/> 
+			</METS:div> 
+			<METS:div ID="P237" LABEL="Page 222" ORDER="298" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E237"/> 
+			</METS:div> 
+			<METS:div ID="P239" LABEL="Page 224" ORDER="299" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E239"/> 
+			</METS:div> 
+			<METS:div ID="P241" LABEL="Page 226" ORDER="300" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E241"/> 
+			</METS:div> 
+			<METS:div ID="P243" LABEL="Page 228" ORDER="301" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E243"/> 
+			</METS:div> 
+			<METS:div ID="P245" LABEL="Page 230" ORDER="302" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E245"/> 
+			</METS:div> 
+			<METS:div ID="P247" LABEL="Page 232" ORDER="303" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E247"/> 
+			</METS:div> 
+			<METS:div ID="P249" LABEL="Page 234" ORDER="304" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E249"/> 
+			</METS:div> 
+			<METS:div ID="P251" LABEL="Page 236" ORDER="305" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E251"/> 
+			</METS:div> 
+			<METS:div ID="P253" LABEL="Page 238" ORDER="306" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E253"/> 
+			</METS:div> 
+			<METS:div ID="P255" LABEL="Page 240" ORDER="307" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E255"/> 
+			</METS:div> 
+			<METS:div ID="P257" LABEL="Page 242" ORDER="308" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E257"/> 
+			</METS:div> 
+			<METS:div ID="P259" LABEL="Page 244" ORDER="309" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E259"/> 
+			</METS:div> 
+			<METS:div ID="P261" LABEL="Page 246" ORDER="310" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E261"/> 
+			</METS:div> 
+			<METS:div ID="P263" LABEL="Page 248" ORDER="311" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E263"/> 
+			</METS:div> 
+			<METS:div ID="P265" LABEL="Page 250" ORDER="312" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E265"/> 
+			</METS:div> 
+			<METS:div ID="P267" LABEL="Page 252" ORDER="313" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E267"/> 
+			</METS:div> 
+			<METS:div ID="P269" LABEL="Page 254" ORDER="314" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E269"/> 
+			</METS:div> 
+			<METS:div ID="P271" LABEL="Page 256" ORDER="315" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E271"/> 
+			</METS:div> 
+			<METS:div ID="P273" LABEL="Page 258" ORDER="316" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E273"/> 
+			</METS:div> 
+			<METS:div ID="P275" LABEL="Page 260" ORDER="317" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E275"/> 
+			</METS:div> 
+			<METS:div ID="P277" LABEL="Page 262" ORDER="318" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E277"/> 
+			</METS:div> 
+			<METS:div ID="P279" LABEL="Page 264" ORDER="319" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E279"/> 
+			</METS:div> 
+			<METS:div ID="P281" LABEL="Page 266" ORDER="320" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E281"/> 
+			</METS:div> 
+			<METS:div ID="P283" LABEL="Page 268" ORDER="321" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E283"/> 
+			</METS:div> 
+			<METS:div ID="P285" LABEL="Page 270" ORDER="322" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E285"/> 
+			</METS:div> 
+			<METS:div ID="P287" LABEL="Page 272" ORDER="323" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E287"/> 
+			</METS:div> 
+			<METS:div ID="P289" LABEL="Page 274" ORDER="324" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E289"/> 
+			</METS:div> 
+			<METS:div ID="P291" LABEL="Page 276" ORDER="325" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E291"/> 
+			</METS:div> 
+			<METS:div ID="P293" LABEL="Page 278" ORDER="326" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E293"/> 
+			</METS:div> 
+			<METS:div ID="P295" LABEL="Page 280" ORDER="327" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E295"/> 
+			</METS:div> 
+			<METS:div ID="P297" LABEL="Page 282" ORDER="328" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E297"/> 
+			</METS:div> 
+			<METS:div ID="P299" LABEL="Page 284" ORDER="329" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E299"/> 
+			</METS:div> 
+			<METS:div ID="P301" LABEL="Page 286" ORDER="330" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E301"/> 
+			</METS:div> 
+			<METS:div ID="P303" LABEL="Page 288" ORDER="331" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E303"/> 
+			</METS:div> 
+			<METS:div ID="P305" LABEL="Page 290" ORDER="332" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E305"/> 
+			</METS:div> 
+			<METS:div ID="P307" LABEL="Page 292" ORDER="333" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E307"/> 
+			</METS:div> 
+			<METS:div ID="P309" LABEL="Page 294" ORDER="334" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E309"/> 
+			</METS:div> 
+			<METS:div ID="P311" LABEL="Page 296" ORDER="335" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E311"/> 
+			</METS:div> 
+			<METS:div ID="P313" LABEL="Page 298" ORDER="336" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E313"/> 
+			</METS:div> 
+			<METS:div ID="P315" LABEL="Page 300" ORDER="337" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E315"/> 
+			</METS:div> 
+			<METS:div ID="P317" LABEL="Page 302" ORDER="338" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E317"/> 
+			</METS:div> 
+			<METS:div ID="P319" LABEL="Page 304" ORDER="339" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E319"/> 
+			</METS:div> 
+			<METS:div ID="P321" LABEL="Page 306" ORDER="340" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E321"/> 
+			</METS:div> 
+			<METS:div ID="P323" LABEL="Page 308" ORDER="341" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E323"/> 
+			</METS:div> 
+			<METS:div ID="P325" LABEL="Page 310" ORDER="342" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E325"/> 
+			</METS:div> 
+			<METS:div ID="P327" LABEL="Page 312" ORDER="343" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E327"/> 
+			</METS:div> 
+			<METS:div ID="P329" LABEL="Page 314" ORDER="344" TYPE="Page"> 
+				 
+				 
+				 
+				 
+				<METS:fptr FILEID="E329"/> 
+			</METS:div> 
+		</METS:div> 
+	</METS:div>
+</METS:structMap>
+
+
+</METS:mets>

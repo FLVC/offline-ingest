@@ -1,0 +1,7 @@
+<manifest xmlns="info:/flvc/manifest/v1">
+    <contentModel>islandora:sp_basic_image</contentModel>
+    <collection>FSU:dir03</collection>
+    <submittingInstitution>fsu</submittingInstitution>
+    <owningInstitution>fsu</owningInstitution>
+    <objectHistory source="digitool">admin_unit="FSU01", ingest_id="ing4650", creator="creator:PSMITH", creation_date="2009-11-13 09:04:35", modified_by="super:PSMITH", modification_date="2009-11-13 09:13:33"</objectHistory>
+</manifest>

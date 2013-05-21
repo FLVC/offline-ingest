@@ -1,0 +1,302 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" TYPE="book" OBJID="SF00000044" LABEL="Chasco, queen of the Calusas">
+  <mets:metsHdr CREATEDATE="2010-07-11T15:22:55-04:00">
+    <mets:agent ROLE="OTHER" TYPE="OTHER" OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE">
+      <mets:name>DigiTool METS Maker</mets:name>
+    </mets:agent>
+  </mets:metsHdr><mets:dmdSec ID="DMD1"><mets:mdWrap MIMETYPE="text/xml" MDTYPE="MARC"><mets:xmlData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>01827fam a2200397K  4500</leader>
+  <controlfield tag="001">QFAAA1189</controlfield>
+  <controlfield tag="005">20031121140414.8</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(FCLAZ)AAA1189QF00007/06/200011/21/200320748BfamK  D0QF</subfield>
+  </datafield>
+  <controlfield tag="008">910117s1922    flua    s     00001 eng d</controlfield>
+  <controlfield tag="006">m???     d? ?     </controlfield>
+  <controlfield tag="007">cr?gn </controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(DNX)FHP C SF 2000-07-06</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(snx)FCLA url 20000901</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(snx)FIPS12101</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FDA</subfield>
+    <subfield code="c">FDA</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-us-fl</subfield>
+  </datafield>
+  <datafield tag="092" ind1=" " ind2=" ">
+    <subfield code="a">823</subfield>
+    <subfield code="b">D514c</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">DeVries, Gerben M.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Chasco, queen of the Calusas</subfield>
+    <subfield code="h">[electronic resource].</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">New Port Richey, Fla.,</subfield>
+    <subfield code="b">New Port Richey Press</subfield>
+    <subfield code="c">c1922.</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">&lt;18&gt; p.</subfield>
+    <subfield code="b">illus.</subfield>
+    <subfield code="c">23 cm.</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="a">The supposed English translation of a fictional old Castillian Spanish manuscript, found under a tree near New Port Richey, Florida.</subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2000.</subfield>
+    <subfield code="f">(Florida heritage collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically reproduced by the University of South Florida from a book in the Main Library at the University of South Florida,  Tampa.</subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">s</subfield>
+    <subfield code="b">2000</subfield>
+    <subfield code="d">flu</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Calusa Indians</subfield>
+    <subfield code="v">Fiction.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">Florida</subfield>
+    <subfield code="v">Fiction.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="7">
+    <subfield code="a">Pasco</subfield>
+    <subfield code="z">12101</subfield>
+    <subfield code="2">ceeus</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="7">
+    <subfield code="a">European Discovery and Settlement in Florida, 1492-1821</subfield>
+    <subfield code="3">fh2200</subfield>
+    <subfield code="2">fhp</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="8">
+    <subfield code="a">Literature</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="8">
+    <subfield code="a">Folklore</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">PALMM (Project)</subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">(Original)</subfield>
+    <subfield code="w">(OCoLC)22974911</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Florida heritage collection.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">fhp</subfield>
+  </datafield>
+  
+  
+<datafield tag="598" ind1=" " ind2=" "><subfield code="a">SF00000044</subfield></datafield></record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID1" MIMETYPE="image/jpeg" SEQ="1" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/cover.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID2" MIMETYPE="image/jpeg" SEQ="2" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/1.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID3" MIMETYPE="image/jpeg" SEQ="3" GROUPID="GID3">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/2.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID4" MIMETYPE="image/jpeg" SEQ="4" GROUPID="GID4">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/3.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID5" MIMETYPE="image/jpeg" SEQ="5" GROUPID="GID5">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/4.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID6" MIMETYPE="image/jpeg" SEQ="6" GROUPID="GID6">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/4b.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID7" MIMETYPE="image/jpeg" SEQ="7" GROUPID="GID7">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/5.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID8" MIMETYPE="image/jpeg" SEQ="8" GROUPID="GID8">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/6.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID9" MIMETYPE="image/jpeg" SEQ="9" GROUPID="GID9">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/7.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID10" MIMETYPE="image/jpeg" SEQ="10" GROUPID="GID10">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/8.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID11" MIMETYPE="image/jpeg" SEQ="11" GROUPID="GID11">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/9.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID12" MIMETYPE="image/jpeg" SEQ="12" GROUPID="GID12">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/10.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID13" MIMETYPE="image/jpeg" SEQ="13" GROUPID="GID13">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/11.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID14" MIMETYPE="image/jpeg" SEQ="14" GROUPID="GID14">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/12.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID15" MIMETYPE="image/jpeg" SEQ="15" GROUPID="GID15">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/13.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID16" MIMETYPE="image/jpeg" SEQ="16" GROUPID="GID16">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/14.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID17" MIMETYPE="image/jpeg" SEQ="17" GROUPID="GID17">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/14b.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID18" MIMETYPE="image/jpeg" SEQ="18" GROUPID="GID18">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/15.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID19" MIMETYPE="image/jpeg" SEQ="19" GROUPID="GID19">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/16.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID20" MIMETYPE="image/jpeg" SEQ="20" GROUPID="GID20">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/17.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID21" MIMETYPE="image/jpeg" SEQ="21" GROUPID="GID21">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/18.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID22" MIMETYPE="image/jpeg" SEQ="22" GROUPID="GID22">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/19.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID23" MIMETYPE="image/jpeg" SEQ="23" GROUPID="GID23">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/20.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID24" MIMETYPE="image/jpeg" SEQ="24" GROUPID="GID24">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/backcover.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID25" MIMETYPE="application/pdf" SEQ="25" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/file1.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID26" MIMETYPE="application/pdf" SEQ="26" GROUPID="GID7">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/file2.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID27" MIMETYPE="application/pdf" SEQ="27" GROUPID="GID9">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/file3.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID28" MIMETYPE="application/pdf" SEQ="28" GROUPID="GID24">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/SF/SF00000044/file4.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="JPEG" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Chasco, queen of the Calusas">
+      <mets:div TYPE="chapter" LABEL="Front matter">
+        <mets:div TYPE="page" LABEL="cover">
+          <mets:fptr FILEID="FID1"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="1">
+          <mets:fptr FILEID="FID2"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="2">
+          <mets:fptr FILEID="FID3"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="3">
+          <mets:fptr FILEID="FID4"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="4">
+          <mets:fptr FILEID="FID5"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="4b">
+          <mets:fptr FILEID="FID6"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Explanatory">
+        <mets:div TYPE="page" LABEL="5">
+          <mets:fptr FILEID="FID7"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="6">
+          <mets:fptr FILEID="FID8"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="A translation from the original manuscript">
+        <mets:div TYPE="page" LABEL="7">
+          <mets:fptr FILEID="FID9"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="8">
+          <mets:fptr FILEID="FID10"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="9">
+          <mets:fptr FILEID="FID11"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="10">
+          <mets:fptr FILEID="FID12"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="11">
+          <mets:fptr FILEID="FID13"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="12">
+          <mets:fptr FILEID="FID14"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="13">
+          <mets:fptr FILEID="FID15"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="14">
+          <mets:fptr FILEID="FID16"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="14b">
+          <mets:fptr FILEID="FID17"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="15">
+          <mets:fptr FILEID="FID18"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="16">
+          <mets:fptr FILEID="FID19"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="17">
+          <mets:fptr FILEID="FID20"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="18">
+          <mets:fptr FILEID="FID21"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="19">
+          <mets:fptr FILEID="FID22"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="20">
+          <mets:fptr FILEID="FID23"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Back matter">
+        <mets:div TYPE="page" LABEL="backcover">
+          <mets:fptr FILEID="FID24"/>
+        </mets:div>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structMap TYPE="PDF" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Chasco, queen of the Calusas">
+      <mets:div TYPE="chapter" LABEL="Front matter">
+        <mets:fptr FILEID="FID25"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Explanatory">
+        <mets:fptr FILEID="FID26"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="A translation from the original manuscript">
+        <mets:fptr FILEID="FID27"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Back matter">
+        <mets:fptr FILEID="FID28"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

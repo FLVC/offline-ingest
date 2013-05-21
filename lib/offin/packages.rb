@@ -57,7 +57,7 @@ class Package
 
   include Errors
 
-  # supported MIME types go here, as returned by the file command.
+  # supported MIME types go here, using the file command's returned values:
 
   GIF  = 'image/gif'
   JP2  = 'image/jp2'
@@ -102,7 +102,7 @@ class Package
 
     @valid &&= @mods.valid?
 
-    return unless @valid
+    return unless valid?
 
     marc_file = File.join(@directory_path, 'marc.xml')
 
@@ -117,28 +117,38 @@ class Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
   def name
     @directory_name
   end
 
-  # base classes should implement process with super():
+  # base classes should implement ingest with super():
 
-  def process
-    raise PackageError, 'Attempt to process an invalid package.' unless @valid
+  def ingest
+    raise PackageError, 'Attempt to ingest an invalid package.' unless valid?
   end
 
   def valid?
-    @valid
+    @valid and not errors?
   end
 
-  # A MetdataUpdater will fixup metadata according to rules you're
-  # better off not knowing, and various wildly by system.
+
+  # A MetdataUpdater mediates metadata updates according to rules you're
+  # better off not knowing, and various wildly by originating system.
+  #
+  # TODO: flesh this out
+  #
+  # updater needs to:
+  #
+  # If simple digitool package (basic, pdf, large):  expects MODS, Manifest objects.
+  #      MODS gets updated with selected manifest data:
+  #      DC gets generated with
+  # If books digitool package: expects METS with embedded manifest data (why?)
+  #      MODS
+
 
   def updater= value
     metadata_updater = value.send :new, @manifest, @mods
@@ -153,6 +163,9 @@ class Package
 
   def boilerplate ingestor
 
+    @mods.add_islandora_identifier ingestor.pid
+    @mods.add_extension_elements @manifest
+
     # somewhat order dependent
 
     ingestor.label         = @label
@@ -162,8 +175,6 @@ class Package
     ingestor.dc            = @mods.to_dc
     ingestor.mods          = @mods.to_s
 
-    # TODO: use ingestor.pid to set
-
     if @marc
       ingestor.datastream('MARCXML') do |ds|
         ds.dsLabel  = "Archived Digitool MarcXML"
@@ -172,7 +183,6 @@ class Package
       end
     end
   end
-
 
   # List all the files in the directory we haven't already accounted for. Subclasses will need to work through these.
   # Presumably these are all datafiles.
@@ -208,15 +218,13 @@ class BasicImagePackage < Package
 
     if @datafiles.length > 1
       error "The Basic Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
-      @valid = false
     end
 
     if @datafiles.length == 0
       error "The Basic Image package #{@directory_name} contains no data files."
-      @valid = false
     end
 
-    return unless @valid
+    return unless valid?
 
     @image_filename = @datafiles[0]
     path = File.join(@directory_path, @image_filename)
@@ -236,16 +244,14 @@ class BasicImagePackage < Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
-  def process
+  def ingest
     super
 
-    Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -266,10 +272,11 @@ class BasicImagePackage < Package
         ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
-
     end
 
   ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
 end
@@ -288,15 +295,13 @@ class LargeImagePackage < Package
 
     if @datafiles.length > 1
       error "The Large Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
-      @valid = false
     end
 
     if @datafiles.length == 0
       raise PackageError, "The Large Image package #{@directory_name} contains no data files."
-      @valid = false
     end
 
-    return unless @valid
+    return unless valid?
 
     @image = nil
     @image_filename = @datafiles[0]
@@ -316,17 +321,14 @@ class LargeImagePackage < Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
-
-  def process
+  def ingest
     super
 
-    Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -359,7 +361,10 @@ class LargeImagePackage < Package
         ds.mimeType = @image.mime_type
       end
     end
+
   ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
 end
@@ -371,7 +376,6 @@ class PdfPackage < Package
   def initialize config, directory, manifest
     super(config, directory, manifest)
     @content_model = PDF_CONTENT_MODEL
-
 
     if @datafiles.length > 2
       raise PackageError, "The PDF package #{@directory_name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
@@ -405,18 +409,25 @@ class PdfPackage < Package
     raise PackageError, "The PDF package #{@directory_name} doesn't contain a PDF file."  if @pdf.nil?
 
     case
-    # A full text index file was submitted, which we don't trust much:
+    # A full text index file was submitted, which we don't trust much, so cleanup and re-encode to UTF:
     when @full_text
+      @full_text_label = "Full text from index file"
       @full_text = Utils.cleanup_text(Utils.re_encode_maybe(@full_text))
       if @full_text.empty?
         warning "The full text file #{@full_text_filename} supplied in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
+    # No full text, so we generate UTF-8 using a unix utility, which we'll still cleanup:
 
-    # No full text, so we generate UTF-8 using a unix utility, which we don't trust much either:
+    # TODO:  pdf_to_text errors should not be fatal....
+
     else
+      @full_text_label = 'Full text derived from PDF'
       @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory_path, @pdf_filename)))
-      if @full_text.empty?
+      if @full_text.nil?
+        warning "Unable to generate full text from #{@pdf_filename} in package #{@directory_name}; using a single space to preserve the FULL_TEXT datastream."
+        @full_text = ' '
+      elsif @full_text.empty?
         warning "The generated full text from #{@pdf_filename} in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
@@ -424,14 +435,11 @@ class PdfPackage < Package
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
-    @valid = false
   rescue => e
     error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
-    @valid = false
   end
 
-
-  def process
+  def ingest
     super
 
     # Do image processing upfront so as to fail faster, if fail we must, before ingest is started.
@@ -439,7 +447,7 @@ class PdfPackage < Package
     thumb   = Utils.pdf_to_thumbnail @config, File.join(@directory_path, @pdf_filename)
     preview = Utils.pdf_to_preview @config, File.join(@directory_path, @pdf_filename)
 
-    Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -450,7 +458,7 @@ class PdfPackage < Package
       end
 
       ingestor.datastream('FULL_TEXT') do |ds|
-        ds.dsLabel  = 'Full Text'
+        ds.dsLabel  = @full_text_label
         ds.content  = @full_text
         ds.mimeType = TEXT
       end
@@ -467,5 +475,9 @@ class PdfPackage < Package
         ds.mimeType = JPEG
       end
     end
+
+  ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
   end
 end

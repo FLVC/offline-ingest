@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?fcla fda="yes"?>
+<?fcla dl="no"?>
+<!--  A brochure of Tropical Florida Development Corporation ( Photograph ) -->
+<METS:mets OBJID="FI07050811"
+  xmlns:METS="http://www.loc.gov/METS/"
+  xmlns:mods="http://www.loc.gov/mods/v3"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:daitss="http://www.fcla.edu/dls/md/daitss/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xsi:schemaLocation="http://www.loc.gov/METS/
+    http://www.loc.gov/standards/mets/mets.xsd 
+    http://www.loc.gov/mods/v3
+    http://www.loc.gov/mods/v3/mods-3-3.xsd
+    http://www.fcla.edu/dls/md/daitss/
+    http://www.fcla.edu/dls/md/daitss/daitss.xsd
+    http://purl.org/dc/elements/1.1/
+    http://dublincore.org/schemas/xmls/simpledc20021212.xsd
+">
+<METS:metsHdr CREATEDATE="2011-05-18T16:33:25Z" ID="FI07050811" LASTMODDATE="2011-05-18T16:33:25Z" RECORDSTATUS="NEW">
+<METS:agent ROLE="CREATOR" TYPE="ORGANIZATION"> 
+<METS:name>FIU</METS:name>
+</METS:agent>
+<METS:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER"> 
+<METS:name>SobekCM Metadata Template</METS:name>
+</METS:agent>
+<METS:agent ROLE="CREATOR" TYPE="INDIVIDUAL"> 
+<METS:name>ATHENAION\dglwrk</METS:name>
+</METS:agent>
+</METS:metsHdr>
+<METS:dmdSec ID="DMD1">
+<METS:mdWrap MDTYPE="DC"  MIMETYPE="text/xml" LABEL="Simple Dublin Core">
+<METS:xmlData>
+<dc:title>A brochure of Tropical Florida Development Corporation</dc:title>
+<dc:creator>Tropical Florida Development Corporation</dc:creator>
+<dc:subject>Land use--Florida--poinciana.</dc:subject>
+<dc:description>1 brochure; caption: &quot;All There Is&quot;; &quot;The Only American Tropics&quot;; &quot;United States 3,000,000 Sq. Miles --- Tropical Florida 6,000 Sq. Miles&quot;</dc:description>
+<dc:publisher>Unidentified</dc:publisher>
+<dc:date>Unidentified</dc:date>
+<dc:type>Photograph</dc:type>
+<dc:identifier>FI07050811</dc:identifier>
+<dc:source>Florida International University</dc:source>
+<dc:language>English</dc:language>
+<dc:coverage>Poinciana (Fla.)</dc:coverage>
+</METS:xmlData>
+</METS:mdWrap>
+</METS:dmdSec>
+<METS:amdSec>
+    <METS:digiprovMD ID="AMD_DAITSS">
+        <METS:mdWrap MDTYPE="OTHER" OTHERMDTYPE="DAITSS">
+            <METS:xmlData>
+                <daitss:daitss>
+                    <daitss:AGREEMENT_INFO ACCOUNT="FIU" PROJECT="MCA"/>
+                </daitss:daitss>
+            </METS:xmlData>
+        </METS:mdWrap>
+    </METS:digiprovMD>
+</METS:amdSec>
+<METS:fileSec> 
+<METS:fileGrp USE="archive" > 
+<METS:file GROUPID="G1" ID="TIF1" MIMETYPE="image/tiff" CHECKSUM="9268aa901ddb3209e6506b0ef76687fa" CHECKSUMTYPE="MD5" SIZE="128933184"> 
+<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI07050811_001.tif" /> 
+</METS:file> 
+<METS:file GROUPID="G2" ID="TIF2" MIMETYPE="image/tiff" CHECKSUM="0c9016ba3d692b002dc0b6a8cfbabba3" CHECKSUMTYPE="MD5" SIZE="128933880"> 
+<METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI07050811_002.tif" /> 
+</METS:file> 
+</METS:fileGrp> 
+</METS:fileSec> 
+<METS:structMap ID="STRUCT1" TYPE="physical"> 
+<METS:div DMDID="DMD1" LABEL="A brochure of Tropical Florida Development Corporation" ORDER="0" TYPE="main"> 
+<METS:div ID="PAGE1" LABEL="Front" ORDER="1" TYPE="Page"> 
+<METS:fptr FILEID="TIF1" /> 
+</METS:div> 
+<METS:div ID="PAGE2" LABEL="Back" ORDER="2" TYPE="Page"> 
+<METS:fptr FILEID="TIF2" /> 
+</METS:div> 
+</METS:div>
+</METS:structMap>
+</METS:mets>

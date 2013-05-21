@@ -1,0 +1,466 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mets="http://www.loc.gov/METS/" OBJID="NF00000184_00001" LABEL="Report for Jacksonville Beaches Chamber of Commerce">
+  <mets:metsHdr CREATEDATE="2010-12-10T16:11:19Z" ID="NF00000184_00001" LASTMODDATE="2010-12-10T16:11:19Z">
+    <mets:agent ROLE="CREATOR" TYPE="ORGANIZATION">
+      <mets:name>FCLA</mets:name>
+      <mets:note>
+        This is DigiTool METS created by FCLA from the file inventory of NF00000184_00001.
+      </mets:note>
+    </mets:agent>
+  </mets:metsHdr>
+  <mets:dmdSec ID="DMD1"><mets:mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><mets:xmlData><marc:record xmlns:marc="http://www.loc.gov/MARC21/slim"><marc:leader>     nam  22     uu 4500</marc:leader><marc:controlfield tag="001">NF00000184_00001</marc:controlfield><marc:controlfield tag="003">ufdc</marc:controlfield><marc:controlfield tag="008">      s           ||||||||||||||||||||||</marc:controlfield>
+          
+          <marc:datafield tag="852" ind1=" " ind2=" "><marc:subfield code="a">University of North Florida</marc:subfield></marc:datafield><marc:datafield tag="852" ind1=" " ind2=" "><marc:subfield code="a">UNF</marc:subfield></marc:datafield>
+          <marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">Simons, George W</marc:subfield></marc:datafield>
+          <marc:datafield tag="260" ind1=" " ind2=" "><marc:subfield code="b">George W. Simons</marc:subfield><marc:subfield code="c">1944</marc:subfield></marc:datafield>
+          
+          <marc:datafield tag="245" ind1="1" ind2="0"><marc:subfield code="a">Report for Jacksonville Beaches Chamber of Commerce</marc:subfield></marc:datafield>
+          
+        <marc:datafield tag="598" ind1=" " ind2=" "><marc:subfield code="a">NF00000184_00001</marc:subfield></marc:datafield></marc:record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file GROUPID="div1" MIMETYPE="image/jp2" ID="file-00002.jp2" SEQ="1">
+        <mets:FLocat xlink:href="00002.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div2" MIMETYPE="image/jp2" ID="file-00003.jp2" SEQ="2">
+        <mets:FLocat xlink:href="00003.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div3" MIMETYPE="image/jp2" ID="file-00004.jp2" SEQ="3">
+        <mets:FLocat xlink:href="00004.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div4" MIMETYPE="image/jp2" ID="file-00005.jp2" SEQ="4">
+        <mets:FLocat xlink:href="00005.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div5" MIMETYPE="image/jp2" ID="file-00006.jp2" SEQ="5">
+        <mets:FLocat xlink:href="00006.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div6" MIMETYPE="image/jp2" ID="file-00007.jp2" SEQ="6">
+        <mets:FLocat xlink:href="00007.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div7" MIMETYPE="image/jp2" ID="file-00008.jp2" SEQ="7">
+        <mets:FLocat xlink:href="00008.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div8" MIMETYPE="image/jp2" ID="file-00009.jp2" SEQ="8">
+        <mets:FLocat xlink:href="00009.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div9" MIMETYPE="image/jp2" ID="file-00010.jp2" SEQ="9">
+        <mets:FLocat xlink:href="00010.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div10" MIMETYPE="image/jp2" ID="file-00011.jp2" SEQ="10">
+        <mets:FLocat xlink:href="00011.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div11" MIMETYPE="image/jp2" ID="file-00012.jp2" SEQ="11">
+        <mets:FLocat xlink:href="00012.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div12" MIMETYPE="image/jp2" ID="file-00013.jp2" SEQ="12">
+        <mets:FLocat xlink:href="00013.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div13" MIMETYPE="image/jp2" ID="file-00014.jp2" SEQ="13">
+        <mets:FLocat xlink:href="00014.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div14" MIMETYPE="image/jp2" ID="file-00015.jp2" SEQ="14">
+        <mets:FLocat xlink:href="00015.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div15" MIMETYPE="image/jp2" ID="file-00016.jp2" SEQ="15">
+        <mets:FLocat xlink:href="00016.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div16" MIMETYPE="image/jp2" ID="file-00017.jp2" SEQ="16">
+        <mets:FLocat xlink:href="00017.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div17" MIMETYPE="image/jp2" ID="file-00018.jp2" SEQ="17">
+        <mets:FLocat xlink:href="00018.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div18" MIMETYPE="image/jp2" ID="file-00019.jp2" SEQ="18">
+        <mets:FLocat xlink:href="00019.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div19" MIMETYPE="image/jp2" ID="file-00020.jp2" SEQ="19">
+        <mets:FLocat xlink:href="00020.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div20" MIMETYPE="image/jp2" ID="file-00021.jp2" SEQ="20">
+        <mets:FLocat xlink:href="00021.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div21" MIMETYPE="image/jp2" ID="file-00022.jp2" SEQ="21">
+        <mets:FLocat xlink:href="00022.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div22" MIMETYPE="image/jp2" ID="file-00023.jp2" SEQ="22">
+        <mets:FLocat xlink:href="00023.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div23" MIMETYPE="image/jp2" ID="file-00024.jp2" SEQ="23">
+        <mets:FLocat xlink:href="00024.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div24" MIMETYPE="image/jp2" ID="file-00025.jp2" SEQ="24">
+        <mets:FLocat xlink:href="00025.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div25" MIMETYPE="image/jp2" ID="file-00026.jp2" SEQ="25">
+        <mets:FLocat xlink:href="00026.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div26" MIMETYPE="image/jp2" ID="file-00027.jp2" SEQ="26">
+        <mets:FLocat xlink:href="00027.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div27" MIMETYPE="image/jp2" ID="file-00028.jp2" SEQ="27">
+        <mets:FLocat xlink:href="00028.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div28" MIMETYPE="image/jp2" ID="file-00029.jp2" SEQ="28">
+        <mets:FLocat xlink:href="00029.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div29" MIMETYPE="image/jp2" ID="file-00030.jp2" SEQ="29">
+        <mets:FLocat xlink:href="00030.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div30" MIMETYPE="image/jp2" ID="file-00031.jp2" SEQ="30">
+        <mets:FLocat xlink:href="00031.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div31" MIMETYPE="image/jp2" ID="file-00032.jp2" SEQ="31">
+        <mets:FLocat xlink:href="00032.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div32" MIMETYPE="image/jp2" ID="file-00033.jp2" SEQ="32">
+        <mets:FLocat xlink:href="00033.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div33" MIMETYPE="image/jp2" ID="file-00034.jp2" SEQ="33">
+        <mets:FLocat xlink:href="00034.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div34" MIMETYPE="image/jp2" ID="file-00035.jp2" SEQ="34">
+        <mets:FLocat xlink:href="00035.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div35" MIMETYPE="image/jp2" ID="file-00036.jp2" SEQ="35">
+        <mets:FLocat xlink:href="00036.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div36" MIMETYPE="image/jp2" ID="file-00037.jp2" SEQ="36">
+        <mets:FLocat xlink:href="00037.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div37" MIMETYPE="image/jp2" ID="file-00038.jp2" SEQ="37">
+        <mets:FLocat xlink:href="00038.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div38" MIMETYPE="image/jp2" ID="file-00039.jp2" SEQ="38">
+        <mets:FLocat xlink:href="00039.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div39" MIMETYPE="image/jp2" ID="file-00040.jp2" SEQ="39">
+        <mets:FLocat xlink:href="00040.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div40" MIMETYPE="image/jp2" ID="file-00041.jp2" SEQ="40">
+        <mets:FLocat xlink:href="00041.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div41" MIMETYPE="image/jp2" ID="file-00042.jp2" SEQ="41">
+        <mets:FLocat xlink:href="00042.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div42" MIMETYPE="image/jp2" ID="file-00043.jp2" SEQ="42">
+        <mets:FLocat xlink:href="00043.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div43" MIMETYPE="image/jp2" ID="file-00044.jp2" SEQ="43">
+        <mets:FLocat xlink:href="00044.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div44" MIMETYPE="image/jp2" ID="file-00045.jp2" SEQ="44">
+        <mets:FLocat xlink:href="00045.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div45" MIMETYPE="image/jp2" ID="file-00046.jp2" SEQ="45">
+        <mets:FLocat xlink:href="00046.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div46" MIMETYPE="image/jp2" ID="file-00047.jp2" SEQ="46">
+        <mets:FLocat xlink:href="00047.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div47" MIMETYPE="image/jp2" ID="file-00048.jp2" SEQ="47">
+        <mets:FLocat xlink:href="00048.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div48" MIMETYPE="image/jp2" ID="file-00049.jp2" SEQ="48">
+        <mets:FLocat xlink:href="00049.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div49" MIMETYPE="image/jp2" ID="file-00050.jp2" SEQ="49">
+        <mets:FLocat xlink:href="00050.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div50" MIMETYPE="image/jp2" ID="file-00051.jp2" SEQ="50">
+        <mets:FLocat xlink:href="00051.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div51" MIMETYPE="image/jp2" ID="file-00052.jp2" SEQ="51">
+        <mets:FLocat xlink:href="00052.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div52" MIMETYPE="image/jp2" ID="file-00053.jp2" SEQ="52">
+        <mets:FLocat xlink:href="00053.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div53" MIMETYPE="image/jp2" ID="file-00054.jp2" SEQ="53">
+        <mets:FLocat xlink:href="00054.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div54" MIMETYPE="image/jp2" ID="file-00055.jp2" SEQ="54">
+        <mets:FLocat xlink:href="00055.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div55" MIMETYPE="image/jp2" ID="file-00056.jp2" SEQ="55">
+        <mets:FLocat xlink:href="00056.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div56" MIMETYPE="image/jp2" ID="file-00057.jp2" SEQ="56">
+        <mets:FLocat xlink:href="00057.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div57" MIMETYPE="image/jp2" ID="file-00058.jp2" SEQ="57">
+        <mets:FLocat xlink:href="00058.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div58" MIMETYPE="image/jp2" ID="file-00059.jp2" SEQ="58">
+        <mets:FLocat xlink:href="00059.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div59" MIMETYPE="image/jp2" ID="file-00060.jp2" SEQ="59">
+        <mets:FLocat xlink:href="00060.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div60" MIMETYPE="image/jp2" ID="file-00061.jp2" SEQ="60">
+        <mets:FLocat xlink:href="00061.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div61" MIMETYPE="image/jp2" ID="file-00062.jp2" SEQ="61">
+        <mets:FLocat xlink:href="00062.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div62" MIMETYPE="image/jp2" ID="file-00063.jp2" SEQ="62">
+        <mets:FLocat xlink:href="00063.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div63" MIMETYPE="image/jp2" ID="file-00064.jp2" SEQ="63">
+        <mets:FLocat xlink:href="00064.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div64" MIMETYPE="image/jp2" ID="file-00065.jp2" SEQ="64">
+        <mets:FLocat xlink:href="00065.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div65" MIMETYPE="image/jp2" ID="file-00066.jp2" SEQ="65">
+        <mets:FLocat xlink:href="00066.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div66" MIMETYPE="image/jp2" ID="file-00067.jp2" SEQ="66">
+        <mets:FLocat xlink:href="00067.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div67" MIMETYPE="image/jp2" ID="file-00068.jp2" SEQ="67">
+        <mets:FLocat xlink:href="00068.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div68" MIMETYPE="image/jp2" ID="file-00069.jp2" SEQ="68">
+        <mets:FLocat xlink:href="00069.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div69" MIMETYPE="image/jp2" ID="file-00070.jp2" SEQ="69">
+        <mets:FLocat xlink:href="00070.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div70" MIMETYPE="image/jp2" ID="file-00071.jp2" SEQ="70">
+        <mets:FLocat xlink:href="00071.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div71" MIMETYPE="image/jp2" ID="file-00072.jp2" SEQ="71">
+        <mets:FLocat xlink:href="00072.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div72" MIMETYPE="image/jp2" ID="file-00073.jp2" SEQ="72">
+        <mets:FLocat xlink:href="00073.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file GROUPID="div73" MIMETYPE="image/jp2" ID="file-00074.jp2" SEQ="73">
+        <mets:FLocat xlink:href="00074.jp2" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap>
+    <mets:div DMDID="DMD1" LABEL="Report for Jacksonville Beaches Chamber of Commerce">
+      <mets:div TYPE="Page" LABEL="Page 2">
+        <mets:fptr FILEID="file-00002.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 3">
+        <mets:fptr FILEID="file-00003.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 4">
+        <mets:fptr FILEID="file-00004.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 5">
+        <mets:fptr FILEID="file-00005.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 6">
+        <mets:fptr FILEID="file-00006.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 7">
+        <mets:fptr FILEID="file-00007.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 8">
+        <mets:fptr FILEID="file-00008.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 9">
+        <mets:fptr FILEID="file-00009.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 10">
+        <mets:fptr FILEID="file-00010.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 11">
+        <mets:fptr FILEID="file-00011.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 12">
+        <mets:fptr FILEID="file-00012.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 13">
+        <mets:fptr FILEID="file-00013.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 14">
+        <mets:fptr FILEID="file-00014.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 15">
+        <mets:fptr FILEID="file-00015.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 16">
+        <mets:fptr FILEID="file-00016.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 17">
+        <mets:fptr FILEID="file-00017.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 18">
+        <mets:fptr FILEID="file-00018.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 19">
+        <mets:fptr FILEID="file-00019.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 20">
+        <mets:fptr FILEID="file-00020.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 21">
+        <mets:fptr FILEID="file-00021.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 22">
+        <mets:fptr FILEID="file-00022.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 23">
+        <mets:fptr FILEID="file-00023.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 24">
+        <mets:fptr FILEID="file-00024.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 25">
+        <mets:fptr FILEID="file-00025.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 26">
+        <mets:fptr FILEID="file-00026.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 27">
+        <mets:fptr FILEID="file-00027.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 28">
+        <mets:fptr FILEID="file-00028.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 29">
+        <mets:fptr FILEID="file-00029.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 30">
+        <mets:fptr FILEID="file-00030.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 31">
+        <mets:fptr FILEID="file-00031.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 32">
+        <mets:fptr FILEID="file-00032.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 33">
+        <mets:fptr FILEID="file-00033.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 34">
+        <mets:fptr FILEID="file-00034.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 35">
+        <mets:fptr FILEID="file-00035.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 36">
+        <mets:fptr FILEID="file-00036.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 37">
+        <mets:fptr FILEID="file-00037.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 38">
+        <mets:fptr FILEID="file-00038.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 39">
+        <mets:fptr FILEID="file-00039.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 40">
+        <mets:fptr FILEID="file-00040.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 41">
+        <mets:fptr FILEID="file-00041.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 42">
+        <mets:fptr FILEID="file-00042.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 43">
+        <mets:fptr FILEID="file-00043.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 44">
+        <mets:fptr FILEID="file-00044.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 45">
+        <mets:fptr FILEID="file-00045.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 46">
+        <mets:fptr FILEID="file-00046.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 47">
+        <mets:fptr FILEID="file-00047.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 48">
+        <mets:fptr FILEID="file-00048.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 49">
+        <mets:fptr FILEID="file-00049.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 50">
+        <mets:fptr FILEID="file-00050.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 51">
+        <mets:fptr FILEID="file-00051.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 52">
+        <mets:fptr FILEID="file-00052.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 53">
+        <mets:fptr FILEID="file-00053.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 54">
+        <mets:fptr FILEID="file-00054.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 55">
+        <mets:fptr FILEID="file-00055.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 56">
+        <mets:fptr FILEID="file-00056.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 57">
+        <mets:fptr FILEID="file-00057.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 58">
+        <mets:fptr FILEID="file-00058.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 59">
+        <mets:fptr FILEID="file-00059.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 60">
+        <mets:fptr FILEID="file-00060.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 61">
+        <mets:fptr FILEID="file-00061.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 62">
+        <mets:fptr FILEID="file-00062.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 63">
+        <mets:fptr FILEID="file-00063.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 64">
+        <mets:fptr FILEID="file-00064.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 65">
+        <mets:fptr FILEID="file-00065.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 66">
+        <mets:fptr FILEID="file-00066.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 67">
+        <mets:fptr FILEID="file-00067.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 68">
+        <mets:fptr FILEID="file-00068.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 69">
+        <mets:fptr FILEID="file-00069.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 70">
+        <mets:fptr FILEID="file-00070.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 71">
+        <mets:fptr FILEID="file-00071.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 72">
+        <mets:fptr FILEID="file-00072.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 73">
+        <mets:fptr FILEID="file-00073.jp2"/>
+      </mets:div>
+      <mets:div TYPE="Page" LABEL="Page 74">
+        <mets:fptr FILEID="file-00074.jp2"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xlink="http://www.w3.org/1999/xlink" version="3.4" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+  <titleInfo>
+    <title>Soccer, May 1998</title>
+  </titleInfo>
+  <titleInfo type="alternative">
+    <title>Slide (May 1998)</title>
+  </titleInfo>
+  <identifier type="digitool">3350660</identifier>
+  <name>
+    <namePart>New College of Florida</namePart>
+    <role>
+      <roleTerm type="text" authority="marcrelator">creator</roleTerm>
+    </role>
+  </name>
+  <genre>slide</genre>
+  <originInfo>
+    <publisher>New College of Florida</publisher>
+  </originInfo>
+  <originInfo>
+    <dateIssued encoding="w3cdtf" keyDate="yes">1998</dateIssued>
+  </originInfo>
+  <note>1 slide; May 1998, number 11 printed on slide; Photograph by Allen Wallace.</note>
+  <subject>
+    <topic>New College (Sarasota, Fla.) -- History</topic>
+  </subject>
+  <subject>
+    <topic>Slides (Photography) -- New College (Sarasota, Fla.)</topic>
+  </subject>
+  <subject>
+    <topic>Miscellaneous Photographs -- New College (Sarasota, Fla.)</topic>
+  </subject>
+  <subject>
+    <geographic>Sarasota (Fla.)</geographic>
+  </subject>
+  <accessCondition>Before photographing or publishing quotations or excerpts from any materials, permission must be obtained from the New College Archives, and the holder of the copyright, if not New College of Florida.</accessCondition>
+</mods>

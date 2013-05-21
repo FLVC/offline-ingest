@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" TYPE="book" OBJID="CF00001551_0001_000" LABEL="The Spanish settlements within the present limits of the United States, 1513-1561: Introductory Matter">
+  <mets:metsHdr CREATEDATE="2010-06-23T16:00:47-04:00">
+    <mets:agent TYPE="OTHER" OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE" ROLE="OTHER">
+      <mets:name>DigiTool METS Maker</mets:name>
+    </mets:agent>
+  </mets:metsHdr><mets:dmdSec ID="DMD1"><mets:mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><mets:xmlData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>03540fam a2200457Ia 4500</leader>
+  <controlfield tag="001">QFAAA3200</controlfield>
+  <controlfield tag="005">20041123110305.7</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(FCLAZ)AAA3200QF00011/13/200111/23/200416221BfamIa D0QF</subfield>
+  </datafield>
+  <controlfield tag="008">760324t19111901nyuabi es     000 0 eng d</controlfield>
+  <controlfield tag="006">m??? e   d? ?     </controlfield>
+  <controlfield tag="007">cr?an </controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(DNX)FHP C CF 2001-11-13</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(snx)FCLA url 20020221xOCLC</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)49497804</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">CIN</subfield>
+    <subfield code="c">CIN</subfield>
+    <subfield code="d">OCL</subfield>
+    <subfield code="d">FTU</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-mx---</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FTUS&lt;Mickler&gt;</subfield>
+  </datafield>
+  <datafield tag="090" ind1=" " ind2=" ">
+    <subfield code="a">E123</subfield>
+    <subfield code="b">.L78 1911</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Lowery, Woodbury,</subfield>
+    <subfield code="d">1853-1906.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="4">
+    <subfield code="a">The Spanish settlements within the present limits of the United States, 1513-1561: Introductory Matter</subfield>
+    <subfield code="h">[electronic resource] /</subfield>
+    <subfield code="c">by Woodbury Lowery.</subfield>
+  </datafield>
+  <datafield tag="246" ind1="1" ind2="8">
+    <subfield code="a">Spanish settlements in the United States, 1513-1561</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">New York ;</subfield>
+    <subfield code="a">London :</subfield>
+    <subfield code="b">G.P. Putnam's sons,</subfield>
+    <subfield code="c">1911, c1901.</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">xiii, 515 p. :</subfield>
+    <subfield code="b">front., 2 maps (1 fold.), coat of arms ;</subfield>
+    <subfield code="c"> 24 cm.</subfield>
+  </datafield>
+  <datafield tag="505" ind1="0" ind2=" ">
+    <subfield code="a">Book I. Introduction -- The physical aspect of the country -- The natives and their customs -- The natives and their customs continued -- Spain at the close of the fifteenth century -- The colony of Hispaniola -- Book II. Discoverers and Adelantados -- The discovery of Florida -- More venturers along the coast.  Ponce de Leon's second patent.  Ayllon and Chicora.  The second expedition and death of Ponce de Leon.  Failure of Ayllon's Carolina colony -- The expedition of P&#xB4;anfilo de Narvaez.  Journey of Cabe&#xB8;ca de Vaca across the continent -- Hernando de Soto and the Mississippi -- The discovery of Arizona and New Mexico -- The conquest of New Mexico.  Expeditions of Alarcon, Diaz, Coronado, Cardenas, and others -- The discovery of Alta California -- Expeditions of Tristan de Luna and of Angel de Villafa~ne -- Book III.  The missions -- The royal patronage.  The first Mexican missions -- Fray Juan de Padilla, protomartyr, and his companions -- Fray Luis Cancer and his companions.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Endpapers signed by various attendees and speakers from the 1966 Symposium; "Exploration and settlements in the Spanish borderlands: their religious motivations." Signatures included are from Joseph P. Hurley, John Francis Bannon, S.J., Robert Trisco, Matthew Connolly, Rev. Maynard Geiger, O.F.M., Father Michael V. Gannon, John K. Mahon, Lewis Hanke, and John A. Harrison.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Folded map accompanied by guard sheet with descriptive letterpress.</subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2001.</subfield>
+    <subfield code="f">(Florida heritage collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically reproduced by the University of Central Florida from a book held in the Main Library at the University of Central Florida, Orlando.</subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">s</subfield>
+    <subfield code="b">2001</subfield>
+    <subfield code="d">flu</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="a">A history of Spanish colonisation of the United States from 1513-1561.</subfield>
+  </datafield>
+  <datafield tag="521" ind1=" " ind2=" ">
+    <subfield code="a">College students and adults.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">Mexico</subfield>
+    <subfield code="x">History</subfield>
+    <subfield code="y">Spanish colony, 1540-1810.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">Spain</subfield>
+    <subfield code="x">Colonies</subfield>
+    <subfield code="z">North America.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Indians of North America.</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="7">
+    <subfield code="a">European Discovery and Settlement in Florida, 1492-1821</subfield>
+    <subfield code="x">Explorers and Travelers, 1492-1700</subfield>
+    <subfield code="3">fh2225</subfield>
+    <subfield code="2">fhp</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="8">
+    <subfield code="a">History.</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="8">
+    <subfield code="a">Military history.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">PALMM (Project)</subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">Original</subfield>
+    <subfield code="w">(OCoLC)02066770</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Florida heritage collection.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">fhp</subfield>
+  </datafield>
+  
+<datafield tag="598" ind1=" " ind2=" "><subfield code="a">CF00001551_0001_000</subfield></datafield></record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID1" MIMETYPE="image/jpeg" SEQ="1" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly1.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID2" MIMETYPE="image/jpeg" SEQ="2" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly2.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID3" MIMETYPE="image/jpeg" SEQ="3" GROUPID="GID3">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly3.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID4" MIMETYPE="image/jpeg" SEQ="4" GROUPID="GID4">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly4.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID5" MIMETYPE="image/jpeg" SEQ="5" GROUPID="GID5">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly5.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID6" MIMETYPE="image/jpeg" SEQ="6" GROUPID="GID6">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly6.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID7" MIMETYPE="image/jpeg" SEQ="7" GROUPID="GID7">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly7.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID8" MIMETYPE="image/jpeg" SEQ="8" GROUPID="GID8">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly8.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID9" MIMETYPE="image/jpeg" SEQ="9" GROUPID="GID9">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly9.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID10" MIMETYPE="image/jpeg" SEQ="10" GROUPID="GID10">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly10.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID11" MIMETYPE="image/jpeg" SEQ="11" GROUPID="GID11">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/fly11.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID12" MIMETYPE="image/jpeg" SEQ="12" GROUPID="GID12">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/i.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID13" MIMETYPE="image/jpeg" SEQ="13" GROUPID="GID13">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/ii.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID14" MIMETYPE="image/jpeg" SEQ="14" GROUPID="GID14">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/iii.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID15" MIMETYPE="image/jpeg" SEQ="15" GROUPID="GID15">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/iv.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID16" MIMETYPE="image/jpeg" SEQ="16" GROUPID="GID16">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/v.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID17" MIMETYPE="image/jpeg" SEQ="17" GROUPID="GID17">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/vi.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID18" MIMETYPE="image/jpeg" SEQ="18" GROUPID="GID18">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/vii.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID19" MIMETYPE="image/jpeg" SEQ="19" GROUPID="GID19">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/viii.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID20" MIMETYPE="image/jpeg" SEQ="20" GROUPID="GID20">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/ix.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID21" MIMETYPE="image/jpeg" SEQ="21" GROUPID="GID21">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/x.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID22" MIMETYPE="image/jpeg" SEQ="22" GROUPID="GID22">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/xi.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID23" MIMETYPE="image/jpeg" SEQ="23" GROUPID="GID23">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/xii.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID24" MIMETYPE="image/jpeg" SEQ="24" GROUPID="GID24">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/xiii.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID25" MIMETYPE="image/jpeg" SEQ="25" GROUPID="GID25">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/xiv.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+    </mets:fileGrp>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID26" MIMETYPE="application/pdf" SEQ="26" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file1.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID27" MIMETYPE="application/pdf" SEQ="27" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file2.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID28" MIMETYPE="application/pdf" SEQ="28" GROUPID="GID6">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file3.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID29" MIMETYPE="application/pdf" SEQ="29" GROUPID="GID8">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file4.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID30" MIMETYPE="application/pdf" SEQ="30" GROUPID="GID10">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file5.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID31" MIMETYPE="application/pdf" SEQ="31" GROUPID="GID12">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file6.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID32" MIMETYPE="application/pdf" SEQ="32" GROUPID="GID14">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file7.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID33" MIMETYPE="application/pdf" SEQ="33" GROUPID="GID16">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file8.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID34" MIMETYPE="application/pdf" SEQ="34" GROUPID="GID22">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/CF/CF00001551/0001_000/file9.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="JPEG" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="The Spanish settlements within the present limits of the United States, 1513-1561: Introductory Matter">
+      <mets:div TYPE="chapter" LABEL="Inside Front Cover">
+        <mets:div TYPE="page" LABEL="fly1">
+          <mets:fptr FILEID="FID1"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Symposium Signatures">
+        <mets:div TYPE="page" LABEL="fly2">
+          <mets:fptr FILEID="FID2"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly3">
+          <mets:fptr FILEID="FID3"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly4">
+          <mets:fptr FILEID="FID4"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly5">
+          <mets:fptr FILEID="FID5"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Dedication">
+        <mets:div TYPE="page" LABEL="fly6">
+          <mets:fptr FILEID="FID6"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly7">
+          <mets:fptr FILEID="FID7"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Advertisement">
+        <mets:div TYPE="page" LABEL="fly8">
+          <mets:fptr FILEID="FID8"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly9">
+          <mets:fptr FILEID="FID9"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Ponce De Leon Illustration">
+        <mets:div TYPE="page" LABEL="fly10">
+          <mets:fptr FILEID="FID10"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly11">
+          <mets:fptr FILEID="FID11"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Title Page">
+        <mets:div TYPE="page" LABEL="i">
+          <mets:fptr FILEID="FID12"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="ii">
+          <mets:fptr FILEID="FID13"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Dedication">
+        <mets:div TYPE="page" LABEL="iii">
+          <mets:fptr FILEID="FID14"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="iv">
+          <mets:fptr FILEID="FID15"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Preface">
+        <mets:div TYPE="page" LABEL="v">
+          <mets:fptr FILEID="FID16"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="vi">
+          <mets:fptr FILEID="FID17"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="vii">
+          <mets:fptr FILEID="FID18"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="viii">
+          <mets:fptr FILEID="FID19"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="ix">
+          <mets:fptr FILEID="FID20"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="x">
+          <mets:fptr FILEID="FID21"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Contents">
+        <mets:div TYPE="page" LABEL="xi">
+          <mets:fptr FILEID="FID22"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xii">
+          <mets:fptr FILEID="FID23"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xiii">
+          <mets:fptr FILEID="FID24"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xiv">
+          <mets:fptr FILEID="FID25"/>
+        </mets:div>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structMap TYPE="PDF" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="The Spanish settlements within the present limits of the United States, 1513-1561: Introductory Matter">
+      <mets:div TYPE="chapter" LABEL="Inside Front Cover">
+        <mets:fptr FILEID="FID26"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Symposium Signatures">
+        <mets:fptr FILEID="FID27"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Dedication">
+        <mets:fptr FILEID="FID28"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Advertisement">
+        <mets:fptr FILEID="FID29"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Ponce De Leon Illustration">
+        <mets:fptr FILEID="FID30"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Title Page">
+        <mets:fptr FILEID="FID31"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Dedication">
+        <mets:fptr FILEID="FID32"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Preface">
+        <mets:fptr FILEID="FID33"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Contents">
+        <mets:fptr FILEID="FID34"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

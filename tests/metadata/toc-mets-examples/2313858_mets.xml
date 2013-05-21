@@ -1,0 +1,491 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" TYPE="book" OBJID="NF19770084_0003_000" LABEL="Report of the Public Education Study Committee: Funding public education in Duval County, Florida">
+  <mets:metsHdr CREATEDATE="2010-06-23T16:00:49-04:00">
+    <mets:agent TYPE="OTHER" OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE" ROLE="OTHER">
+      <mets:name>DigiTool METS Maker</mets:name>
+    </mets:agent>
+  </mets:metsHdr><mets:dmdSec ID="DMD1"><mets:mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><mets:xmlData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>02256nam a2200445Ia 4500</leader>
+  <controlfield tag="001">QFAAA1579</controlfield>
+  <controlfield tag="005">20080306170324.9</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(FCLAZ)AAA1579QF00001/20/200103/06/200824666BnamIa D0QF</subfield>
+  </datafield>
+  <controlfield tag="008">011119s1977    flu     s    l000 0 eng d</controlfield>
+  <controlfield tag="006">m        d        </controlfield>
+  <controlfield tag="007">cr un-</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)48454882 </subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(DNX)FHP C NF 2001-01-19</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(snx)FCLA url 20010605xOCLC</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(snx)FIPS12031</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FNP</subfield>
+    <subfield code="c">FNP</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FNPP</subfield>
+  </datafield>
+  <datafield tag="090" ind1=" " ind2=" ">
+    <subfield code="a">LA260.J3</subfield>
+    <subfield code="b">R46 1977a</subfield>
+  </datafield>
+  <datafield tag="098" ind1="9" ind2="7">
+    <subfield code="a">JAX22.A3:</subfield>
+    <subfield code="a">E28</subfield>
+  </datafield>
+  <datafield tag="245" ind1="0" ind2="0">
+    <subfield code="a">Report of the Public Education Study Committee: Funding public education in Duval County, Florida</subfield>
+    <subfield code="h">[electronic resource].</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Jacksonville, Fla. :</subfield>
+    <subfield code="b">The Council,</subfield>
+    <subfield code="c">1977.</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">15, 38, 36 p. ;</subfield>
+    <subfield code="c">28 cm.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Cover title.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">"April, 1977."</subfield>
+  </datafield>
+  <datafield tag="505" ind1="0" ind2="0">
+    <subfield code="t">Learning in kindergarten through grade six in the Duval County School District : a report /</subfield>
+    <subfield code="r">prepared by the Task Force on Learning (K-6) --</subfield>
+    <subfield code="t">Funding public education in Duval County, Florida : a report /</subfield>
+    <subfield code="r">prepared by the Task Force on Funding --</subfield>
+    <subfield code="t">Quality education and desegregation in the Duval County School District : a report /</subfield>
+    <subfield code="r">prepared by the Task Force on the Federal Court Order.</subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2001.</subfield>
+    <subfield code="f">(Florida heritage collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software: Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically reproduced from a book in the Main Library at the University of North Florida, Jacksonville. </subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">s</subfield>
+    <subfield code="b">2001</subfield>
+    <subfield code="d">flu</subfield>
+    <subfield code="e">n</subfield>
+    <subfield code="g">s</subfield>
+  </datafield>
+  <datafield tag="599" ind1=" " ind2=" ">
+    <subfield code="a">lsm</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Education</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Duval County.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Education</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Duval County</subfield>
+    <subfield code="x">Finance.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">School integration</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Duval County.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Education</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Jacksonville.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="7">
+    <subfield code="a">Duval</subfield>
+    <subfield code="z">12031</subfield>
+    <subfield code="2">ceeus</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="7">
+    <subfield code="a">Contemporary Florida, 1960- </subfield>
+    <subfield code="3">fh8200</subfield>
+    <subfield code="2">fhp</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Jacksonville Council on Citizen Involvement, Inc.</subfield>
+    <subfield code="b">Public Education Study Committee.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">PALMM (Project)</subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">Original</subfield>
+    <subfield code="w">(OCoLC)16147590</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Florida heritage collection.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">fhp</subfield>
+  </datafield>
+  
+<datafield tag="598" ind1=" " ind2=" "><subfield code="a">NF19770084_0003_000</subfield></datafield></record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID1" MIMETYPE="image/jpeg" SEQ="1" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/i.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID2" MIMETYPE="image/jpeg" SEQ="2" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/ii.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID3" MIMETYPE="image/jpeg" SEQ="3" GROUPID="GID3">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/1.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID4" MIMETYPE="image/jpeg" SEQ="4" GROUPID="GID4">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/2.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID5" MIMETYPE="image/jpeg" SEQ="5" GROUPID="GID5">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/3.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID6" MIMETYPE="image/jpeg" SEQ="6" GROUPID="GID6">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/3.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID7" MIMETYPE="image/jpeg" SEQ="7" GROUPID="GID7">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/4.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID8" MIMETYPE="image/jpeg" SEQ="8" GROUPID="GID8">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/5.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID9" MIMETYPE="image/jpeg" SEQ="9" GROUPID="GID9">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/6.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID10" MIMETYPE="image/jpeg" SEQ="10" GROUPID="GID10">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/7.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID11" MIMETYPE="image/jpeg" SEQ="11" GROUPID="GID11">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/8.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID12" MIMETYPE="image/jpeg" SEQ="12" GROUPID="GID12">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/9.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID13" MIMETYPE="image/jpeg" SEQ="13" GROUPID="GID13">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/10.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID14" MIMETYPE="image/jpeg" SEQ="14" GROUPID="GID14">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/11.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID15" MIMETYPE="image/jpeg" SEQ="15" GROUPID="GID15">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/12.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID16" MIMETYPE="image/jpeg" SEQ="16" GROUPID="GID16">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/13.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID17" MIMETYPE="image/jpeg" SEQ="17" GROUPID="GID17">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/14.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID18" MIMETYPE="image/jpeg" SEQ="18" GROUPID="GID18">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/15.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID19" MIMETYPE="image/jpeg" SEQ="19" GROUPID="GID19">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/15a.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID20" MIMETYPE="image/jpeg" SEQ="20" GROUPID="GID20">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/16.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID21" MIMETYPE="image/jpeg" SEQ="21" GROUPID="GID21">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/17.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID22" MIMETYPE="image/jpeg" SEQ="22" GROUPID="GID22">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/18.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID23" MIMETYPE="image/jpeg" SEQ="23" GROUPID="GID23">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/19.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID24" MIMETYPE="image/jpeg" SEQ="24" GROUPID="GID24">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/20.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID25" MIMETYPE="image/jpeg" SEQ="25" GROUPID="GID25">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/21.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID26" MIMETYPE="image/jpeg" SEQ="26" GROUPID="GID26">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/22.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID27" MIMETYPE="image/jpeg" SEQ="27" GROUPID="GID27">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/23.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID28" MIMETYPE="image/jpeg" SEQ="28" GROUPID="GID28">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/24.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID29" MIMETYPE="image/jpeg" SEQ="29" GROUPID="GID29">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/24a.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID30" MIMETYPE="image/jpeg" SEQ="30" GROUPID="GID30">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/25.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID31" MIMETYPE="image/jpeg" SEQ="31" GROUPID="GID31">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/26.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID32" MIMETYPE="image/jpeg" SEQ="32" GROUPID="GID32">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/27.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID33" MIMETYPE="image/jpeg" SEQ="33" GROUPID="GID33">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/27a.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID34" MIMETYPE="image/jpeg" SEQ="34" GROUPID="GID34">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/28.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID35" MIMETYPE="image/jpeg" SEQ="35" GROUPID="GID35">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/29.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID36" MIMETYPE="image/jpeg" SEQ="36" GROUPID="GID36">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/30.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID37" MIMETYPE="image/jpeg" SEQ="37" GROUPID="GID37">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/30a.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID38" MIMETYPE="image/jpeg" SEQ="38" GROUPID="GID38">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/31.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID39" MIMETYPE="image/jpeg" SEQ="39" GROUPID="GID39">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/32.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID40" MIMETYPE="image/jpeg" SEQ="40" GROUPID="GID40">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/32a.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID41" MIMETYPE="image/jpeg" SEQ="41" GROUPID="GID41">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/33.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID42" MIMETYPE="image/jpeg" SEQ="42" GROUPID="GID42">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/34.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID43" MIMETYPE="image/jpeg" SEQ="43" GROUPID="GID43">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/34a.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID44" MIMETYPE="image/jpeg" SEQ="44" GROUPID="GID44">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/35.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID45" MIMETYPE="image/jpeg" SEQ="45" GROUPID="GID45">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/35a.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID46" MIMETYPE="image/jpeg" SEQ="46" GROUPID="GID46">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/36.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID47" MIMETYPE="image/jpeg" SEQ="47" GROUPID="GID47">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/37.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID48" MIMETYPE="image/jpeg" SEQ="48" GROUPID="GID48">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/38.jpg" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+    </mets:fileGrp>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID49" MIMETYPE="application/pdf" SEQ="49" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/file7.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID50" MIMETYPE="application/pdf" SEQ="50" GROUPID="GID3">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/file8.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID51" MIMETYPE="application/pdf" SEQ="51" GROUPID="GID6">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/file9.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID52" MIMETYPE="application/pdf" SEQ="52" GROUPID="GID12">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/file10.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID53" MIMETYPE="application/pdf" SEQ="53" GROUPID="GID15">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/file11.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+      <mets:file ID="FID54" MIMETYPE="application/pdf" SEQ="54" GROUPID="GID19">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/NF/NF19770084/0003_000/file12.pdf" OTHERLOCTYPE="SYSTEM" LOCTYPE="OTHER"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="JPEG" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Report of the Public Education Study Committee: Funding public education in Duval County, Florida">
+      <mets:div TYPE="chapter" LABEL="Preliminaries">
+        <mets:div TYPE="page" LABEL="i">
+          <mets:fptr FILEID="FID1"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="ii">
+          <mets:fptr FILEID="FID2"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Introduction">
+        <mets:div TYPE="page" LABEL="1">
+          <mets:fptr FILEID="FID3"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="2">
+          <mets:fptr FILEID="FID4"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="3">
+          <mets:fptr FILEID="FID5"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Findings">
+        <mets:div TYPE="page" LABEL="3">
+          <mets:fptr FILEID="FID6"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="4">
+          <mets:fptr FILEID="FID7"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="5">
+          <mets:fptr FILEID="FID8"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="6">
+          <mets:fptr FILEID="FID9"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="7">
+          <mets:fptr FILEID="FID10"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="8">
+          <mets:fptr FILEID="FID11"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Conclusions">
+        <mets:div TYPE="page" LABEL="9">
+          <mets:fptr FILEID="FID12"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="10">
+          <mets:fptr FILEID="FID13"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="11">
+          <mets:fptr FILEID="FID14"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Recommendations">
+        <mets:div TYPE="page" LABEL="12">
+          <mets:fptr FILEID="FID15"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="13">
+          <mets:fptr FILEID="FID16"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="14">
+          <mets:fptr FILEID="FID17"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="15">
+          <mets:fptr FILEID="FID18"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Appendices">
+        <mets:div TYPE="page" LABEL="15a">
+          <mets:fptr FILEID="FID19"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="16">
+          <mets:fptr FILEID="FID20"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="17">
+          <mets:fptr FILEID="FID21"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="18">
+          <mets:fptr FILEID="FID22"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="19">
+          <mets:fptr FILEID="FID23"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="20">
+          <mets:fptr FILEID="FID24"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="21">
+          <mets:fptr FILEID="FID25"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="22">
+          <mets:fptr FILEID="FID26"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="23">
+          <mets:fptr FILEID="FID27"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="24">
+          <mets:fptr FILEID="FID28"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="24a">
+          <mets:fptr FILEID="FID29"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="25">
+          <mets:fptr FILEID="FID30"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="26">
+          <mets:fptr FILEID="FID31"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="27">
+          <mets:fptr FILEID="FID32"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="27a">
+          <mets:fptr FILEID="FID33"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="28">
+          <mets:fptr FILEID="FID34"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="29">
+          <mets:fptr FILEID="FID35"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="30">
+          <mets:fptr FILEID="FID36"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="30a">
+          <mets:fptr FILEID="FID37"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="31">
+          <mets:fptr FILEID="FID38"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="32">
+          <mets:fptr FILEID="FID39"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="32a">
+          <mets:fptr FILEID="FID40"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="33">
+          <mets:fptr FILEID="FID41"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="34">
+          <mets:fptr FILEID="FID42"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="34a">
+          <mets:fptr FILEID="FID43"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="35">
+          <mets:fptr FILEID="FID44"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="35a">
+          <mets:fptr FILEID="FID45"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="36">
+          <mets:fptr FILEID="FID46"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="37">
+          <mets:fptr FILEID="FID47"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="38">
+          <mets:fptr FILEID="FID48"/>
+        </mets:div>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structMap TYPE="PDF" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Report of the Public Education Study Committee: Funding public education in Duval County, Florida">
+      <mets:div TYPE="chapter" LABEL="Preliminaries">
+        <mets:fptr FILEID="FID49"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Introduction">
+        <mets:fptr FILEID="FID50"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Findings">
+        <mets:fptr FILEID="FID51"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Conclusions">
+        <mets:fptr FILEID="FID52"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Recommendations">
+        <mets:fptr FILEID="FID53"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Appendices">
+        <mets:fptr FILEID="FID54"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

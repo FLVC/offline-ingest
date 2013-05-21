@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.loc.gov/METS/" xmlns:mets="http://www.loc.gov/METS/" OBJID="NF00000093" LABEL="Facts on Annexation">
+  <metsHdr CREATEDATE="2011-01-31T16:21:39Z" ID="NF00000093" LASTMODDATE="2011-01-31T16:21:39Z">
+    <agent ROLE="CREATOR" TYPE="ORGANIZATION">
+      <name>FCLA</name>
+      <note>
+        This is DigiTool METS created by FCLA from the institution-submitted METS package NF00000093.
+      </note>
+    </agent>
+  </metsHdr>
+  <dmdSec ID="DMD1"><mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><xmlData><marc:record xmlns:marc="http://www.loc.gov/MARC21/slim"><marc:leader>     nam  22     uu 4500</marc:leader><marc:controlfield tag="008">      |           ||||||||||||||||||||||</marc:controlfield>
+          
+          <marc:datafield tag="245" ind1="1" ind2="0"><marc:subfield code="a">Facts on Annexation</marc:subfield></marc:datafield>
+          <marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">Sollee, Arthur</marc:subfield></marc:datafield>
+        <marc:datafield tag="598" ind1=" " ind2=" "><marc:subfield code="a">NF00000093</marc:subfield></marc:datafield></marc:record></xmlData></mdWrap></dmdSec>
+  <fileSec>
+    <fileGrp USE="reference">
+      <file ID="FID1" SEQ="1" GROUPID="GID1" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="1.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID3" SEQ="2" GROUPID="GID2" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="2.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID5" SEQ="3" GROUPID="GID3" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="1.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID7" SEQ="4" GROUPID="GID4" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="1.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID9" SEQ="5" GROUPID="GID5" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="1.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+    </fileGrp>
+  </fileSec>
+  <structMap>
+    <div DMDID="DMD1" LABEL="Facts on Annexation" TYPE="Chapter">
+      <div LABEL="Front Cover" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID1"/>
+        </div>
+      </div>
+      <div LABEL="Facts on Special Annexation Election, January 8, 1963" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID3"/>
+        </div>
+      </div>
+      <div LABEL="What Are The Zones Considered For Annexation" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID5"/>
+        </div>
+      </div>
+      <div LABEL="Who Can Vote?" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID7"/>
+        </div>
+      </div>
+      <div LABEL="How Will The Vote Be Determined" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID9"/>
+        </div>
+      </div>
+    </div>
+  </structMap>
+</mets>

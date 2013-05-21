@@ -1,0 +1,229 @@
+<METS:mets LABEL="Water Conditions in the Shark River Estuary of Everglades National Park - July 1966" OBJID="FI05032101" xmlns:METS="http://www.loc.gov/METS/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/version14/mets.xsd http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/simpledc20021212.xsd http://www.loc.gov/mods/v3 http://www.loc.orv/standards/mods/v3/mods-3-0.xsd" TYPE="book">
+
+  <METS:metsHdr CREATEDATE="2010-03-15T13:02:55-04:00">
+    <METS:agent OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE" ROLE="OTHER" TYPE="OTHER">
+      <METS:name>DigiTool METS Maker</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+
+  <METS:dmdSec ID="DMD1">
+    <METS:mdWrap MDTYPE="MARC" MIMETYPE="text/xml">
+      <METS:xmlData>
+
+<record xmlns="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+  <leader>     fas  2200421Ka 4500</leader>
+  <controlfield tag="001">000018580</controlfield>
+  <controlfield tag="006">m|||     d|s|</controlfield>
+  <controlfield tag="007">cr|mn</controlfield>
+  <controlfield tag="008">960511d19661966flumr m s    f0    0eng d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(IID)FI05032101</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(IID)FI04122805</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)61460539</subfield>
+  </datafield>
+  <datafield tag="035" ind1="9" ind2=" ">
+    <subfield code="a">AAB9118  QF</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FXG</subfield>
+    <subfield code="c">FXG</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FXGG</subfield>
+  </datafield>
+  <datafield tag="245" ind1="0" ind2="0">
+    <subfield code="a">Water conditions in the Shark River Estuary of Everglades National Park</subfield>
+    <subfield code="h">[electronic resource] /</subfield>
+    <subfield code="c">prepared by U.S. Geological Survey, Water Resources Division ; in cooperation with U.S. Fish &amp; Wildlife Service, Bureau of Sport Fisheries and Wildlife and National Park Service, Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Miami, Fla. :</subfield>
+    <subfield code="b">Geological Survey,</subfield>
+    <subfield code="c">1966.</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">6 v. :</subfield>
+    <subfield code="b">ill. ;</subfield>
+    <subfield code="c">28 cm.</subfield>
+  </datafield>
+  <datafield tag="362" ind1="0" ind2=" ">
+    <subfield code="a">No. 1 (July 1966)-No. 6 (December 1966).</subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="m">1966:July,1966:Oct.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2005.</subfield>
+    <subfield code="f">(Everglades online collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically reproduced by Florida International University from documents held in the Green Library at Florida International University, Miami.</subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">d</subfield>
+    <subfield code="b">1966</subfield>
+    <subfield code="c">1966</subfield>
+    <subfield code="d">flu</subfield>
+    <subfield code="e">u</subfield>
+    <subfield code="f">u</subfield>
+    <subfield code="g">s</subfield>
+  </datafield>
+  <datafield tag="599" ind1=" " ind2=" ">
+    <subfield code="a">cab</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Water quality bioassay</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Everglades National Park (Agency : U.S.)</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">United States.</subfield>
+    <subfield code="b">Bureau of Sport Fisheries and Wildlife.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">Geological Survey (U.S.).</subfield>
+    <subfield code="b">Water Resources Division.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">PALMM (Project)</subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">(Original)</subfield>
+    <subfield code="w">(OCoLC)34711217</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Everglades online collection.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">eol</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">feol</subfield>
+  </datafield>
+  
+  
+  
+  
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Serial</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Govt Publication</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Online Resource</subfield>
+  </datafield>
+  <datafield tag="598" ind1=" " ind2=" ">
+    <subfield code="a">FI05032101</subfield>
+  </datafield>
+</record>
+      </METS:xmlData>
+    </METS:mdWrap>
+  </METS:dmdSec>
+
+  <METS:fileSec>
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_cover1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID2" ID="FID2" SEQ="2" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_cover2.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID3" ID="FID3" SEQ="3" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_cover3.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID4" ID="FID4" SEQ="4" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_cover4.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID5" ID="FID5" SEQ="5" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_001.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID6" ID="FID6" SEQ="6" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_002.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID7" ID="FID7" SEQ="7" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_003.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID8" ID="FID8" SEQ="8" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_004.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID9" ID="FID9" SEQ="9" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_005.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID10" ID="FID10" SEQ="10" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/FI05032101_006.jpg" />
+      </METS:file>
+    </METS:fileGrp>
+
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID11" ID="FID11" SEQ="11" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/file1.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID12" ID="FID12" SEQ="12" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file://streams/file2.pdf" />
+      </METS:file>
+    </METS:fileGrp>
+  </METS:fileSec>
+
+  <METS:structMap LABEL="View" TYPE="PDF">
+    <METS:div DMDID="DMD1" LABEL="Water Conditions in the Shark River Estuary of Everglades National Park - July 1966">
+        <METS:div LABEL="Front Matter" TYPE="chapter">
+          <METS:div LABEL="Covers" TYPE="chapter">
+            <METS:fptr FILEID="FID11"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Body of Document" TYPE="chapter">
+          <METS:fptr FILEID="FID12"/>
+        </METS:div> 
+    </METS:div>
+  </METS:structMap>
+
+  <METS:structMap LABEL="View" TYPE="JPEG">
+    <METS:div DMDID="DMD1" LABEL="Water Conditions in the Shark River Estuary of Everglades National Park - July 1966">
+        <METS:div LABEL="Front Matter" TYPE="chapter">
+          <METS:div LABEL="Covers" TYPE="chapter">
+            <METS:div LABEL="FI05032101_cover1" TYPE="page">
+              <METS:fptr FILEID="FID1"/>
+            </METS:div>
+            <METS:div LABEL="FI05032101_cover2" TYPE="page">
+              <METS:fptr FILEID="FID2"/>
+            </METS:div>
+            <METS:div LABEL="FI05032101_cover3" TYPE="page">
+              <METS:fptr FILEID="FID3"/>
+            </METS:div>
+            <METS:div LABEL="FI05032101_cover4" TYPE="page">
+              <METS:fptr FILEID="FID4"/>
+            </METS:div>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Body of Document" TYPE="chapter">
+          <METS:div LABEL="FI05032101_001" TYPE="page">
+            <METS:fptr FILEID="FID5"/>
+          </METS:div>
+          <METS:div LABEL="FI05032101_002" TYPE="page">
+            <METS:fptr FILEID="FID6"/>
+          </METS:div>
+          <METS:div LABEL="FI05032101_003" TYPE="page">
+            <METS:fptr FILEID="FID7"/>
+          </METS:div>
+          <METS:div LABEL="FI05032101_004" TYPE="page">
+            <METS:fptr FILEID="FID8"/>
+          </METS:div>
+          <METS:div LABEL="FI05032101_005" TYPE="page">
+            <METS:fptr FILEID="FID9"/>
+          </METS:div>
+          <METS:div LABEL="FI05032101_006" TYPE="page">
+            <METS:fptr FILEID="FID10"/>
+          </METS:div>
+        </METS:div> 
+    </METS:div>
+  </METS:structMap>
+</METS:mets>

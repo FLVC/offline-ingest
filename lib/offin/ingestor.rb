@@ -27,26 +27,42 @@ class Ingestor
 
   # TODO: sanity check on config object, throw error that should stop all processing
   # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
-
-  # TODO: try to run down pid and delete if error
+  # TODO: try to run down pid and delete if error after a datastream or object save occurs...
 
 
   attr_reader :repository, :pid, :namespace, :fedora_object
 
+  # We use the yield self idiom here:
+  #
+  #  ingestor = Ingestor.new(...) do |ingestor|
+  #     ingestor.do-your-thing..
+  #  end
+  #
+  #  ingestot.warnings
+
+
   def initialize  config, namespace
     @config = config
+    @namespace = namespace
 
     @repository = Rubydora.connect :url => @config.url, :user => @config.user, :password => @config.password
-    @namespace = namespace
 
     @pid = getpid
     @fedora_object = @repository.create(@pid)
     @owner = nil
 
-
     yield self
 
     @fedora_object.save
+
+  # TODO: not sure if we should just let these percolate up, or just non-package errors, or what, exactly
+
+  rescue PackageError => e
+    error e.message
+    return self
+  rescue => e
+    error "Caught exception #{e.class} #{e.message}, backtrace follows:", e.backtrace
+    return self
   end
 
 
@@ -85,7 +101,7 @@ class Ingestor
     @fedora_object.models << ( value =~ /^info:fedora/ ?  value : "info:fedora/#{value}" )
   end
 
-  # TODO: XMLescape values here for next two
+  # TODO: XMLescape values here for next two?
 
   def label= value
     @fedora_object.label = value
@@ -112,6 +128,9 @@ class Ingestor
     @repository.itql(query).map{ |row| row[0] }
   end
 
+
+  # TODO: label below needs to be xml escaped at some point...
+
   def collection_policy_text label
     str = ''
     @config.content_models.each do |pid, name|
@@ -137,6 +156,7 @@ class Ingestor
 
 
   def create_new_collection_if_necessary collection_pid
+
     label = 'digitool collection: ' + collection_pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
     return if existing_collections.include? collection_pid
 

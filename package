@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
-Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
-Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
@@ -10,29 +10,26 @@ require 'offin/packages'
 require 'optparse'
 
 def parse_command args
-  system = []
+  server_code = []
   opts   = OptionParser.new do |opt|
-    opt.banner = "Usage: packages --flag package-directory < more package-directories >\n" +
-                 "where --flag is one of:\n"
-    opt.on("--fsu",  "use fsu7t.flca.edu for ingest") do
-      system.push 'fsu7t'
-    end
-    opt.on("--d7",   "use islandora7d.fcla.edu for ingest") do
-      system.push 'i7d'
-    end
+    opt.banner = "Usage: packages --flag package-directory < more package-directories >\n" + "where --flag is one of:\n"
+    opt.on("--fsu7t",    "use fsu7t.flca.edu for ingest")          { server_code.push 'fsu7t' }
+    opt.on("--fsu-prod", "use fsu-prod.flca.edu for ingest")       { server_code.push 'fsu-prod' }
+    opt.on("--d7",       "use islandora7d.fcla.edu for ingest")    { server_code.push 'i7d' }
+    opt.on("--alpo",     "use alasnorid.alpo.fcla.edu for ingest") { server_code.push 'alpo' }
   end
   opts.parse!(args)
-  raise "No server specified."        if system.empty?
-  raise "Too many servers specified." if system.length > 1
+  raise "No server specified."        if server_code.empty?
+  raise "Too many servers specified." if server_code.length > 1
   raise "No packages specified."      if args.empty?
 rescue => e
   STDERR.puts e, opts
-  exit
+  exit -1
 else
-  return system.pop
+  return server_code.pop
 end
 
-indent = '   '
+indent  = ' ' * 4
 config  = Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", "default", parse_command(ARGV))
 
 # if config.http_proxy
@@ -52,7 +49,7 @@ ARGV.each do |directory|
     raise PackageError, "Invalid package in #{directory}." unless package.valid?
 
     package.updater = DigitoolMetadataUpdater
-    package.process
+    package.ingest
     puts sprintf("%5.2f %s::%s => %s (%s)", Time.now - started, package.class, package.name, package.collections.join(', '), package.label)
 
   rescue PackageError => e
@@ -60,7 +57,7 @@ ARGV.each do |directory|
   rescue => e
     STDERR.puts "Caught #{e.class} - #{e.message}", e.backtrace
   ensure
-    STDERR.puts 'Errors:',   package.errors.map { |line|  indent + line },   '' if package and package.errors?
+    STDERR.puts 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package and package.errors?
     STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package and package.warnings?
   end
 

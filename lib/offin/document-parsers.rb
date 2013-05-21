@@ -1,25 +1,39 @@
+# -*- coding: utf-8 -*-
 require 'nokogiri'
 require 'ostruct'
 require 'offin/errors'
+require 'mime/types'
 
-# Boiler plate for the way I parse SAX documents:
 
-class FedoraSaxDocument < Nokogiri::XML::SAX::Document
+class SaxDocument < Nokogiri::XML::SAX::Document
 
-  include Errors
+  @@debug = false  # hmmm... wonder what this is for?
+
+  def self.debug= value
+    @@debug = value
+  end
+
+  include Errors     # We use this mixin for almost all our classes in
+                     # offline ingest; here, it also nicely overrides
+                     # the built-in sax parser methods error and
+                     # warning (even though the method signatures are
+                     # a bit different!).
 
   def initialize
-    @current_string = ''      # the actual character data content between parsed elements; subclasses will play with this (usually resetting it at the 'end_element' event)
+    @current_string = ''      # the actual character data content
+                              # between parsed elements; subclasses
+                              # will play with this (usually truncating
+                              # it at the 'end_element' event)
     super()
   end
 
-
   def characters string
-    @current_string += string.strip
+    @current_string += string.strip  # This may be a bit harsh to leading whitespace...
   end
-end
 
-class SaxDocumentAddDatastream < FedoraSaxDocument
+end # of class SaxDocument
+
+class SaxDocumentAddDatastream < SaxDocument
 
   # Handler for parsing the returned XML document from a successful addDatastream request. For example:
   #
@@ -105,10 +119,10 @@ class SaxDocumentAddDatastream < FedoraSaxDocument
     @results = OpenStruct.new(@record)
   end
 
-end
+end # of class SaxDocumentAddDatastream
 
 
-class SaxDocumentGetNextPID < FedoraSaxDocument
+class SaxDocumentGetNextPID < SaxDocument
 
   # Handler for parsing the returned XML document from a successful
   # getNextPID request to fedora; an XML document returned for a
@@ -129,26 +143,19 @@ class SaxDocumentGetNextPID < FedoraSaxDocument
 
   def initialize
     @pids     = []            # array of PIDs for content of <pid>...</pid> elements
-    @state    = nil           # two states: parsing <pid>...</pid>, or not (nil)
-
     super()
   end
 
   def start_element name, attributes = []
-    @state = 'pid'  if name == 'pid'
   end
 
   def end_element name
-    if name == 'pid'
-      @state = nil
-      @pids.push @current_string
-    end
+    @pids.push @current_string if name == 'pid'
     @current_string = ''
   end
-end
+end  # of class SaxDocumentGetNextPID
 
-
-class SaxDocumentExamineMods < FedoraSaxDocument
+class SaxDocumentExamineMods < SaxDocument
 
   # Handler for checking if a document is a simple MODS file, and for
   # extracting some information for later handling, namely the schema
@@ -185,8 +192,9 @@ class SaxDocumentExamineMods < FedoraSaxDocument
   #    puts "You can find its schema at " + sax_document.mods_schema_location \
   #         if sax_document.mods_schema_location
 
+  MODS_NAMESPACE = %r{^http://www.loc.gov/mods}i
 
-  attr_reader :mods_schema_location
+  attr_reader :mods_schema_location, :prefix
 
   def initialize
     @is_simple_mods = false
@@ -194,6 +202,7 @@ class SaxDocumentExamineMods < FedoraSaxDocument
     @declared_version = nil
     @schema_locations = {}
     @mods_schema_location = nil
+    @prefix = nil
     super()
   end
 
@@ -201,7 +210,17 @@ class SaxDocumentExamineMods < FedoraSaxDocument
     @is_simple_mods
   end
 
-  def end_element name
+
+  def find_mods_namespace namespaces
+    candidates = []
+    namespaces.each do |prefix, namespace|
+      candidates.push prefix  if namespace =~ MODS_NAMESPACE
+    end
+  end
+
+
+
+  def end_element_namespace name, prefix = nil, uri = nil
     @depth -= 1
   end
 
@@ -210,10 +229,17 @@ class SaxDocumentExamineMods < FedoraSaxDocument
 
     # We're handling the case for when <mods ...> is the first element
     # of the document.  We're also trying to locate the schema document
-    # used for this MODS document.
+    # used for this MODS document (we'll default to versoin 3.4) and
+    # get the prefix used....
 
-    if name == 'mods' and @depth == 1 and uri =~ %r{^http://www.loc.gov/mods}i
+
+
+    if name == 'mods' and @depth == 1 and uri =~ MODS_NAMESPACE
       @is_simple_mods = true
+
+      find_mods_namespace ns
+
+      @prefix = prefix  # if nil, we get to use the default namespace.
 
       attributes.each do |a|
         case
@@ -225,14 +251,20 @@ class SaxDocumentExamineMods < FedoraSaxDocument
           @declared_version = a.value
         end
       end
-      @mods_schema_location = @schema_locations[uri]
+
+      if not @schema_locations[uri]
+        warning "The MODS document does not specify a schemaLocation for '#{uri}', assuming 'http://www.loc.gov/standards/mods/v3/mods-3-4.xsd'"
+        @mods_schema_location = "http://www.loc.gov/standards/mods/v3/mods-3-4.xsd"
+      else
+        @mods_schema_location = @schema_locations[uri]
+      end
     end
 
   end
-end
+end   # of class SaxDocumentExamineMods
 
 
-class SaxDocumentExtractSparql < FedoraSaxDocument
+class SaxDocumentExtractSparql < SaxDocument
 
   # Handler for parsing the returned XML document from a successful resource query request.
   #
@@ -249,7 +281,7 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
   #      minus  $content <mulgara:is> <info:fedora/fedora-system:FedoraObject-3.0>
   #   order by  $title
   #
-  # mulgara returns an XML document provinding the object, title
+  # mulgara returns an XML document providing the object, title
   # and content model for all objects in the collection named
   # 'islandora:sp_basic_image_collection' as so:
   #
@@ -263,7 +295,7 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
   #   <results>
   #     <result>
   #       <object uri="info:fedora/islandora:475"/>
-  #       <title>A Page from Woody Guthrie's Diary:  New Years Resolutions</title>
+  #       <title>A Page from Woody Guthrie's Diary: New Years Resolutions</title>
   #       <content uri="info:fedora/islandora:sp_basic_image"/>
   #     </result>
   #       ....
@@ -309,10 +341,10 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
 
     # here we enter a result record (we have a list of all variables parsed
     # from the heading section at this point):
+
     when 'result'
       @parsing_result = true
       @current_result = {}
-      #####
       @variables.keys.each do |var|
         @current_result[var] = nil   # paranoia: make sure we'll have complete set of slots for missing data (can't happen, but...)
       end
@@ -321,6 +353,7 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
     # have it's data as an attribute (only one, I hope) or as
     # character data. In this latter case, we'll have to get it when we're
     # done with the element (see below):
+
     else
       if @parsing_result and @variables[name]
         @current_result[name] = (attributes.empty?  ? nil : attributes[0][1])
@@ -351,12 +384,12 @@ class SaxDocumentExtractSparql < FedoraSaxDocument
     @stack.pop
     @current_string = ''
   end
-end
+end   # of class SaxDocumentExtractSparql
 
 
 # ManifestSaxDocument parses out these kinds of XML files (no schema yet)
 #
-# <manifest xmlns="info:/flvc/manifest/v1">
+# <manifest xmlns="info:/flvc/manifest">
 #
 #     <contentModel>
 #         islandora:sp_basic_image
@@ -381,17 +414,11 @@ end
 # </manifest>
 #
 
-### TODO: handle object history
-
-class ManifestSaxDocument < FedoraSaxDocument
+class ManifestSaxDocument < SaxDocument
 
   @@institutions = nil
   @@content_models = nil
-  @@debug = false
 
-  def self.debug= value
-    @@debug = value
-  end
 
   attr_reader :collections, :content_model, :identifiers, :object_history, :other_logos, :label, :content_model,
               :owning_institution, :submitting_institution, :owning_user, :valid
@@ -412,7 +439,7 @@ class ManifestSaxDocument < FedoraSaxDocument
     @stack  = []     # only used for debugging
     @bogons = {}     # collect unrecognized elements
 
-    @elements = {}   # lists
+    @elements = {}   # dictionary with keys by element names (collection, contentModel), values are lists, generally of strings from XML character data
 
     [ 'collection', 'contentModel', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution' ].each do |name|
       @elements[name] = []
@@ -435,6 +462,8 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   private
 
+  # What manifests are al about:
+
   # | Manifest Element      | Required | Repeatable | Allowed Character Data                                  | Notes                                               |
   # |-----------------------+----------+------------+---------------------------------------------------------+-----------------------------------------------------|
   # | collection            | yes      | yes        | existing Islandora collection object id                 | will create collection on the fly for digitool      |
@@ -448,7 +477,7 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   # Textualize the attribute data off a stack element (ignore the :name key)
 
-  def pretty_print hash
+  def prettify hash
     text = []
     hash.keys.each do |k|
       next if k == :name  # element name
@@ -458,7 +487,7 @@ class ManifestSaxDocument < FedoraSaxDocument
   end
 
   def stack_dump
-    @stack.map { |h| h[:name] }.join(' => ') + '  ' + pretty_print(@stack[-1])
+    @stack.map { |h| h[:name] }.join(' => ') + '  ' + prettify(@stack[-1])
   end
 
   # We'll maintain a stack of elements and their attributes: each
@@ -467,22 +496,21 @@ class ManifestSaxDocument < FedoraSaxDocument
   # the attributes.
 
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
-    debug_data = { :name => name }
-    debug_data['prefix'] = prefix if prefix
-    debug_data['uri']    = uri if uri
-    debug_data['ns']     = ns unless ns.empty?
+    datum = { :name => name }
+    datum['prefix'] = prefix if prefix
+    datum['uri']    = uri if uri
+    datum['ns']     = ns unless ns.empty?
 
     hash = {}
     attributes.each do |at|
       hash[at.localname] = at.value;
-      debug_data[at.localname] = at.value
+      datum[at.localname] = at.value
     end
 
     @elements['objectHistory'].push hash if name == 'objectHistory'
 
-    @stack.push debug_data
+    @stack.push datum
     puts stack_dump if @@debug
-
   end
 
   def end_element_namespace name, prefix = nil, uri = nil
@@ -511,7 +539,7 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   def collections_ok?
     if @elements['collection'].empty?
-      @errors.push "The manifest document does not contain a collection ID. At least one is required."
+      error "The manifest document does not contain a collection ID. At least one is required."
       return
     end
 
@@ -523,19 +551,19 @@ class ManifestSaxDocument < FedoraSaxDocument
   def content_model_ok?
 
     if @elements['contentModel'].empty?
-      @errors.push "The manifest document does not contain a content model. Exactly one of #{@@content_models.join(', ')} is required."
+      error "The manifest document does not contain a content model. Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
     if @elements['contentModel'].length > 1
-      @errors.push "The manifest document contains multiple content models.  Exactly one of #{@@content_models.join(', ')} is required."
+      errors "The manifest document contains multiple content models.  Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
     content_model = @elements['contentModel'].shift
 
     unless @@content_models.include? content_model
-      @errors.push "The manifest document contains an unsupported content model, #{content_model}. Exactly one of #{@@content_models.join(', ')} is required."
+      error "The manifest document contains an unsupported content model, #{content_model}. Exactly one of #{@@content_models.join(', ')} is required."
       return
     end
 
@@ -550,7 +578,7 @@ class ManifestSaxDocument < FedoraSaxDocument
     return true if @elements['label'].empty?
 
     if @elements['label'].length > 1
-      @errors.push "The manifest document lists more than one label - at most one can be specfied."
+      error "The manifest document lists more than one label - at most one can be specfied."
       return
     end
 
@@ -564,7 +592,7 @@ class ManifestSaxDocument < FedoraSaxDocument
     return true if @elements['owningUser'].empty?
 
     if @elements['owningUser'].length > 1
-      @errors.push "The manifest document lists multiple owning users - at most, one must be present."
+      error "The manifest document lists multiple owning users - at most, one must be present."
       return
     end
 
@@ -580,19 +608,19 @@ class ManifestSaxDocument < FedoraSaxDocument
   def owning_institution_ok?
 
     if @elements['owningInstitution'].empty?
-      @errors.push "The manifest document does not list an owning institution - it must have exacly one of #{@@institutions.join(', ')}."
+      error "The manifest document does not list an owning institution - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
     if @elements['owningInstitution'].length > 1
-      @errors.push "The manifest document lists multitple owning institutions - it must have exacly one of #{@@institutions.join(', ')}."
+      error "The manifest document lists multitple owning institutions - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
     owning_institution = @elements['owningInstitution'].shift.upcase
 
     unless @@institutions.include? owning_institution
-      @errors.push "The manifest document includes an invalid owning institution '#{owning_institution}' - it must have exacly one of #{@@institutions.join(', ')}."
+      error "The manifest document includes an invalid owning institution '#{owning_institution}' - it must have exacly one of #{@@institutions.join(', ')}."
       return
     end
 
@@ -603,7 +631,7 @@ class ManifestSaxDocument < FedoraSaxDocument
 
   def submitting_institution_ok?
     if @elements['submittingInstitution'].length > 1
-      @errors.push "The manifest document lists multitple submitting institutions - it must have at most one of #{@@institutions.join(', ')}."
+      error "The manifest document lists multitple submitting institutions - it must have at most one of #{@@institutions.join(', ')}."
       return
     end
 
@@ -611,7 +639,7 @@ class ManifestSaxDocument < FedoraSaxDocument
       submitting_institution = @elements['submittingInstitution'].shift.upcase
 
       unless @@institutions.include? submitting_institution
-        @errors.push "The manifest document includes an invalid submitting institution '#{submitting_institution}' - if present, it must be one of #{@@institutions.join(', ')}."
+        error "The manifest document includes an invalid submitting institution '#{submitting_institution}' - if present, it must be one of #{@@institutions.join(', ')}."
         return
       end
 
@@ -630,11 +658,11 @@ class ManifestSaxDocument < FedoraSaxDocument
     list = []
     @elements['objectHistory'].each do |hash|
       if hash['source'].nil? or hash['source'].empty?
-        @errors.push "The manifest has an object history element that is missing the 'source' attribute."
+        error "The manifest has an object history element that is missing the 'source' attribute: #{hash.inspect}."
         return
       end
       if hash['data'].nil? or hash['data'].empty?
-        @errors.push "The manifest has an object history element that is missing data."
+        error "The manifest has an object history element that is missing data: #{hash.inspect}."
         return
       end
       list.push hash
@@ -644,11 +672,7 @@ class ManifestSaxDocument < FedoraSaxDocument
   end
 
 
-
-  # TODO: make sure that objectHistory is a list of hashes that has both "source" and non-empty "data"
-
   def end_document
-
     # optional, multivalued
 
     @identifiers = @elements['identifier']
@@ -664,9 +688,410 @@ class ManifestSaxDocument < FedoraSaxDocument
     @valid =  label_ok?                    && @valid
     @valid =  object_history_ok?           && @valid
 
-    @valid &&=  true   # if not false, force to 'true' value
+    @valid &&=  true   # if not false, force to 'true' value, instead of non-boolean that ...ok? methods are allowed to return
 
-
-    @warnings.push "There were unexpected elements in the manifest:  #{@bogons.keys.sort.join(', ')}."  unless @bogons.empty?
+    warning "There were unexpected elements in the manifest:  #{@bogons.keys.sort.join(', ')}."  unless @bogons.empty?
   end
+end   # of ManifestSaxDocument
+
+
+Struct.new('MetsFileDictionaryEntry', :sequence, :href, :mimetype, :use, :fid)
+
+# Helper class for SaxDocumentExamineMets; save fileSec information.
+
+class MetsFileDictionary
+
+  include Errors
+
+  # A simple class to keep information from a METS subtree such as
+  #
+  # <METS:fileGrp USE="index">
+  #   <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+  #     <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05030701_cover1.jpg" />
+  #   </METS:file>
+  #   ... more METS:file entries here...
+  # </METS:fileGrp>
+  #
+  # We keep an ordered list of MetsFileDictionaryEntry structs, which can
+  # returned via hash-like lookup ['FID1'] or sequentially via each.
+  #
+  # The MetsFileDictionaryEntry struct has entries (using the example above) with
+  #
+  #   dictionary.sequence => '1'                       -- we don't really use this, instead we take the sequence supplied by the structMap. TODO: maybe we'll warn if these differ...
+  #   dictionary.mimetype => 'image/jpeg'              -- might be nil - we'll fill in by MIME href extension if missing.
+  #   dictionary.href     => 'FI05030701_cover1.jpg'   -- has to be present; we check if it resolves to a file in the package cod.
+  #   dictionary.use      => 'index'                   -- we really want this to be 'index' (full text) or 'reference' (the designated format to ingest), but we may get 'archive' in some cases.
+  #   dictionary.fid      => 'FID1'                    -- this string will be present.
+  #
+  # .mimetype and .use are always lower-cased when strings -  :fid and :href will be present.
+
+  def initialize
+    @sequence = []
+    @dict = {}
+  end
+
+  def safe_type str
+    type = MIME::Types.type_for(str).shift
+    return type.content_type if type
+    warning "Can't determine MIME type for #{str.inspect}, using application/octet-stream."
+    return 'application/octet-stream'
+  rescue => e
+    warning "Exception #{e.class}, '#{e.message}' trying to find MIME type for #{str.inspect}, using application/octet-stream."
+    return 'application/octet-stream'
+  end
+
+  def []=(fid, value)
+    value.fid = fid
+    value.mimetype = safe_type(value.href) unless value.mimetype
+    @dict[fid] = value
+    @sequence.push fid
+  end
+
+  def [](fid)
+    @dict[fid]
+  end
+
+  def each
+    @sequence.each { |fid|  yield @dict[fid] }
+  end
+
+  def print
+    puts self.to_s
+    self.each { |elt| puts "#{elt.fid}: sequence=#{elt.sequence.inspect} mimetype=#{elt.mimetype.inspect} href=#{elt.href.inspect} use=#{elt.use.inspect}" }
+  end
+
 end
+
+
+# Data formats we'll manipulate in SaxDocumentExamineMods, though when we're done only MetsDivData will be present:
+
+Struct.new('MetsDivData',  :level, :title, :is_page, :fids, :files)
+Struct.new('MetsFileData', :file_id)
+
+# Helper class for SaxDocumentExamineMets: save structmap information.  When we're done with post_processing here, we will only
+# have
+
+class MetsStructMap
+
+  include Errors
+
+  attr_reader :number_files, :label
+
+  def initialize
+    @list = []
+    @dmdid_ok = false
+    @number_files = 0
+    @label = nil
+  end
+
+  def each
+    @list.each { |elt| yield elt }
+  end
+
+  # include page and sections chapters here
+
+  def add_div hash, level
+    if hash['DMDID'] and hash['DMDID'] =~ /DMD1/i
+      @dmdid_ok = true   # there is sometimes an overall LABEL in there as well
+      if hash['LABEL']
+        @label = hash['LABEL'].split(/\s+/).join(' ').strip
+      end
+    elsif @dmdid_ok
+      record = Struct::MetsDivData.new
+      record.level   = level
+      record.title   = hash['LABEL'] || ''
+      record.is_page = hash['TYPE'] && hash['TYPE'].downcase == 'page'
+      record.fids    = []
+      record.files   = []
+      @list.push record
+    end
+  end
+
+  def add_file hash, level
+    return unless @dmdid_ok
+    @number_files += 1
+    record = Struct::MetsFileData.new
+    record.file_id = hash['FILEID']
+    @list.push record
+  end
+
+  def ok?
+    @dmdid_ok  # and other sanity checks here, as well....
+  end
+
+  # post_process should be called after an entire METS document has been
+  # read (so we know we have the complete file dictionary, too).
+
+  def post_process file_dictionary
+
+    # Collapse out the MetsFileData (fptr) datum nodes
+    # from the list, assigning its fileid attributes to the previous
+    # MetsDivData node's list of file-ids (fids).
+
+    new = []
+    @list.each do | rec |
+      case rec
+      when Struct::MetsDivData
+        new.push rec
+      when Struct::MetsFileData
+        if new.empty?
+          warning "METS file data #{rec.inspect} doesn't have a parent <div> node, skipping."
+          next
+        end
+        parent = new[-1]            # grab immedidate parent, which will be a MetsDivData element
+        parent.is_page = true
+        parent.fids.push(rec.file_id)
+      end
+    end
+    @list = new
+
+    # Now we have nothing but Struct::MetsDivData; we'll first remove any record that claims to be a page
+    # but has no associated fids:
+
+    new = []
+    @list.each do |div_data|
+      if div_data.fids.empty? and div_data.is_page
+        warning "<div> element of type page, labeled '#{div_data.title}', has no associated file data, skipped."
+      else
+        new.push div_data
+      end
+    end
+    @list = new
+
+    # finally, fill in the files data from the dictionary:
+
+    @list.each do |div_data|
+      div_data.fids.each do |fid|
+        file_entry = file_dictionary[fid]
+        if not file_entry
+          warning "METS structMap FILEID #{file.inspect} was not found in the METS fileSec."
+        else
+          div_data.files.push file_entry
+        end
+      end
+    end
+  end
+
+
+  def print
+    puts self.to_s
+    @list.each  do |elt|
+      puts '. ' * elt.level + elt.inspect.gsub('#<struct Struct::MetsDivData ',  '<')
+    end
+  end
+
+end # of class MetsStructMap
+
+
+# Class for parsing out the table of contents information in a METS file:
+
+class SaxDocumentExamineMets < SaxDocument
+
+  METS_NAMESPACE = %r{^http://www.loc.gov/METS/}
+
+  include Errors
+
+  attr_reader :xml_document, :sax_document, :file_dictionary, :label, :structmaps
+
+  def initialize
+    @stack = []                                    # keeps the nested XML elements and attributes
+    @label = nil                                   # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...> or structMap label
+    @file_dictionary = MetsFileDictionary.new      # collects METS data from subtree /fileGrp/file/FLocat/
+    @structmaps = []                               # collects data from multiple METS structMaps
+    @current_structmap = nil                       # the current METS structMap we're parsing (and acts as a flag to let us know we're in a structMap)
+    super()
+  end
+
+  # Given a list of element names, return true if all of them are on
+  # the stack (first of the list argument is topmost on the stack).
+
+  def onstack? *list
+    i = -1
+    list.each do |el|
+      return false unless @stack[i]
+      return false unless @stack[i][:name] == el
+      i -= 1
+    end
+    return true
+  end
+
+  # When we've identified a 'FLocat' subtree, place it and some of its parent data into the dictionary:
+
+  def handle_file_dictionary
+
+    return unless  onstack? 'FLocat', 'file', 'fileGrp', 'fileSec'   # leftmost is towards top of stack, très confusing!
+
+    # stack  text
+    # -----  ----------
+    # [-3]   <METS:fileGrp USE="index">
+    # [-2]     <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+    # [-1]       <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05030701_cover1.jpg" />
+    #          </METS:file>
+    #   ...
+    # </METS:fileGrp>
+
+    flocat_element, file_element, file_group = @stack[-1], @stack[-2], @stack[-3]
+
+    if not file_element['ID']
+      warning "METS file element #{file_element.inspect} doesn't have an ID, skipping."
+      return
+    end
+
+    if not flocat_element['href']
+      warning "METS FLocat element #{flocat_element.inspect} doesn't have an href, skipping."
+      return
+    end
+
+    fid = file_element['ID']
+
+    data = Struct::MetsFileDictionaryEntry.new
+
+    data.sequence = file_element['SEQ']                        #
+    data.href     = flocat_element['href']                     #
+    data.mimetype = safe_downcase(file_element['MIMETYPE'])    # expected 'image/jp2' etc.
+    data.use      = safe_downcase(file_group['USE'])           # expected limited set: 'archive', 'thumbnail', 'reference', 'index'.  In general we'll only be using the last two (image, ocr)
+
+    @file_dictionary[fid] = data
+  end
+
+  # Grab the value of the LABEL attribute from the topmost mets element; a label from a DMD sec may be assigned to the structmap as well.
+
+  def handle_label
+    if text = @stack[-1]['LABEL']  # cleanup whitespace
+      @label = text.split(/\s+/).join(' ').strip
+    end
+  end
+
+  def safe_downcase text
+    return text unless text.class == String
+    return text.downcase.strip
+  end
+
+  # Textualize the atttribute data off a stack element for printing
+  # (ignore the :name key, the XML element name)
+
+  def prettify hash
+    text = []
+    hash.keys.each do |k|
+      next if k == :name  # element name
+      text.push k + ' => ' + hash[k].inspect
+    end
+    return '{ ' + text.sort.join(', ') + ' }'
+  end
+
+  def stack_dump
+    @stack.map { |h| h[:name] }.join(' => ') + '  ' + prettify(@stack[-1])
+  end
+
+  def handle_structmap_begin
+    @current_structmap = MetsStructMap.new
+  end
+
+  def handle_structmap_end
+    if not @current_structmap.ok?
+      warning "METS structMap discarded."
+    else
+      @structmaps.push @current_structmap
+    end
+    @current_structmap = nil   # also used as flag to show we're not currently in the structMap parsing state
+  end
+
+  def div_level
+    level = 0
+    @stack.reverse.each do |elt|
+      return level if (elt[:name] == 'div' and elt['DMDID'] and elt['DMDID'] =~ /DMD1/i)
+      level += 1 if (elt[:name] == 'div')
+    end
+    return level
+  end
+
+  def handle_structmap_update
+    return unless @current_structmap    # e.g, we got a <div> or <fptr> but not inside a structmap
+    level, elt = div_level, @stack[-1]
+
+    # example div records from stack:
+    #
+    #  { "ID"=>"D1", "ORDER"=>"1", "TYPE"=>"Main", :name=>"div" }
+    #  { "LABEL"=>"Page vii", "ID"=>"P7", :name=>"div", "TYPE"=>"Page" }
+    #
+    # example fptr elements from stack:
+    #
+    #  { "FILEID"=>"E7", :name=>"fptr" }
+
+    case elt[:name]
+    when 'div';    @current_structmap.add_div(elt, level)
+    when 'fptr';   @current_structmap.add_file(elt, level)
+    end
+  end
+
+  # We'll maintain a stack of elements and their attributes: each
+  # entry in the stack is a hash, with the name of the XML element
+  # keyed by the symbol :name; the remaining key/value pairs, all
+  # strings, are the XML attributes of the elements. Character data
+  # are not relevent here.
+
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
+
+    return unless uri =~ METS_NAMESPACE
+
+    hash = { :name => name }
+    attributes.each { |at|  hash[at.localname] = at.value }
+    @stack.push hash
+
+    # puts stack_dump if @@debug
+
+    case name
+    when 'structMap';     handle_structmap_begin
+    when 'fptr', 'div';   handle_structmap_update
+    when 'FLocat';        handle_file_dictionary
+    when 'mets';          handle_label
+    end
+  end
+
+  # Pop the stack when we're done, and if we've done a structMap, do
+  # some special processing.
+
+  def end_element_namespace name, prefix = nil, uri = nil
+
+    return unless uri =~ METS_NAMESPACE
+
+    handle_structmap_end if name == 'structMap'
+    @stack.pop
+    @current_string = ''
+  end
+
+  # All data has now been collected into one MetsFileDictionary object
+  # (a list of Struct::MetsFileData thangs) and one or more
+  # MetsStructMap objects (a list of Struct::MetsDivData objects).
+  #
+  # TODO: resolve some appropriate issues here: warn if sequences don't match (??)
+
+  def end_document
+
+    @structmaps.each do |structmap|
+      structmap.post_process(@file_dictionary)
+      if structmap.warnings?
+        warning "Warnings when post-processing structMap:"
+        warning structmap.warnings
+      end
+      if structmap.errors?
+        error "Errors when post-processing structMap:"
+        error structmap.errors
+      end
+    end
+
+    if @file_dictionary.warnings?
+      warning "Warnings when post-processing file section:"
+      warning @file_dictionary.warnings
+    end
+    if @file_dictionary.errors?
+      error "Errors when post-processing file section:"
+      error @file_dictionary.errors
+    end
+
+    if @@debug
+      puts "structMap count: #{@structmaps.length}"
+      @structmaps.each { |sm| sm.print }
+    end
+  end
+end  # of class SaxDocumentExamineMets

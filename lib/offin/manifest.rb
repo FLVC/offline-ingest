@@ -52,6 +52,10 @@ class Manifest
     @manifest_sax_doc.nil? ?  [] : @manifest_sax_doc.identifiers
   end
 
+  def object_history
+    @manifest_sax_doc.nil? ?  [] : @manifest_sax_doc.object_history
+  end
+
   def other_logos
     @manifest_sax_doc.nil? ?  [] : @manifest_sax_doc.other_logos
   end
@@ -66,10 +70,6 @@ class Manifest
 
   def content_model
     @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.content_model
-  end
-
-  def object_history
-    @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.object_history
   end
 
   def owning_institution

@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+$LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
+
+require 'offin'
+require 'optparse'
+
+@config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "alpo")
+
+Struct.new('MockManifest', :owning_institution, :submitting_institution, :object_history)
+
+manifest = Struct::MockManifest.new
+manifest.owning_institution = 'UF'
+manifest.object_history = [ { "data" => "admin_unit=\"NCF01\", ingest_id=\"ing12813\", creator=\"creator:SNORRIS\", creation_date=\"2012-05-16 13:57:11\", modified_by=\"creator:SNORRIS\", modification_date=\"2012-05-16 13:58:09\"", "source" => "digitool"} ]
+ARGV.each do |filename|
+  @mods = Mods.new(@config, filename)
+  @mods.add_islandora_identifier('foo:bar')
+  @mods.add_extension_elements(manifest)
+  puts "MODS file #{filename} is #{@mods.valid? ? 'valid' : 'not valid'}."
+  if @mods.errors?
+    puts 'Errors:'
+    puts @mods.errors.map { |foo| '   ' + foo }
+    next
+  end
+  if @mods.warnings?
+    puts 'Warnings:'
+    puts @mods.warnings.map { |foo| '   ' + foo }
+  end
+  # puts @mods.to_dc
+  puts @mods.to_s
+end

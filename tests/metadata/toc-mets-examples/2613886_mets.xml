@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" TYPE="book" OBJID="UF00000076" LABEL="Hymns for the watch-night.">
+  <mets:metsHdr CREATEDATE="2010-07-11T15:23:20-04:00">
+    <mets:agent ROLE="OTHER" TYPE="OTHER" OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE">
+      <mets:name>DigiTool METS Maker</mets:name>
+    </mets:agent>
+  </mets:metsHdr><mets:dmdSec ID="DMD1"><mets:mdWrap MIMETYPE="text/xml" MDTYPE="MARC"><mets:xmlData><record xmlns="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/xmlschema-instance" xsi:schemalocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/marc21slim.xsd">
+  <leader>     fam  22002415  4500</leader>
+  <controlfield tag="001">000002923</controlfield>
+  <controlfield tag="008">920207|1744||||||||||||z||||||   ||eng|d</controlfield>
+  <datafield tag="035" ind1="9" ind2=" ">
+    <subfield code="a">aaa0059  qf</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2="0">
+    <subfield code="a">wesley, charles,</subfield>
+    <subfield code="d">1707-1788.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">hymns for the watch-night.</subfield>
+  </datafield>
+  <datafield tag="260" ind1="0" ind2=" ">
+    <subfield code="a">[n.p.,</subfield>
+    <subfield code="c">1744?]</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">12 p.</subfield>
+    <subfield code="c">17 cm.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">julian's dictionary of hymnology attributes authorship to charles wesley, although some of these hymns may possibly be attributed to john wesley.--cf. julian, j. a dictionary of hymnology. 1907. p.1257.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">(c) copyright (electronic version) 1999, state university system of florida.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">methodist church</subfield>
+    <subfield code="v">hymns.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">hymns, english.</subfield>
+  </datafield>
+  <datafield tag="700" ind1="1" ind2="0">
+    <subfield code="a">wesley, john,</subfield>
+    <subfield code="d">1703-1791.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">theo</subfield>
+  </datafield>
+  
+  
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">book</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">online resource</subfield>
+  </datafield>
+<datafield tag="598" ind1=" " ind2=" "><subfield code="a">UF00000076</subfield></datafield></record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID1" MIMETYPE="image/jpeg" SEQ="1" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/1.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID2" MIMETYPE="image/jpeg" SEQ="2" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/2.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID3" MIMETYPE="image/jpeg" SEQ="3" GROUPID="GID3">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/3.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID4" MIMETYPE="image/jpeg" SEQ="4" GROUPID="GID4">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/4.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID5" MIMETYPE="image/jpeg" SEQ="5" GROUPID="GID5">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/5.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID6" MIMETYPE="image/jpeg" SEQ="6" GROUPID="GID6">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/6.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID7" MIMETYPE="image/jpeg" SEQ="7" GROUPID="GID7">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/7.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID8" MIMETYPE="image/jpeg" SEQ="8" GROUPID="GID8">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/8.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID9" MIMETYPE="image/jpeg" SEQ="9" GROUPID="GID9">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/9.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID10" MIMETYPE="image/jpeg" SEQ="10" GROUPID="GID10">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/10.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID11" MIMETYPE="image/jpeg" SEQ="11" GROUPID="GID11">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/11.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID12" MIMETYPE="image/jpeg" SEQ="12" GROUPID="GID12">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/12.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID13" MIMETYPE="application/pdf" SEQ="13" GROUPID="GID1">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/file1.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID14" MIMETYPE="application/pdf" SEQ="14" GROUPID="GID2">
+        <mets:FLocat xlink:href="http://brokert10.fcla.edu/DLData/UF/UF00000076/file2.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="JPEG" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Hymns for the watch-night.">
+      <mets:div TYPE="chapter" LABEL="Cover">
+        <mets:div TYPE="page" LABEL="1">
+          <mets:fptr FILEID="FID1"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Hymns for the watch night">
+        <mets:div TYPE="page" LABEL="2">
+          <mets:fptr FILEID="FID2"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="3">
+          <mets:fptr FILEID="FID3"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="4">
+          <mets:fptr FILEID="FID4"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="5">
+          <mets:fptr FILEID="FID5"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="6">
+          <mets:fptr FILEID="FID6"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="7">
+          <mets:fptr FILEID="FID7"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="8">
+          <mets:fptr FILEID="FID8"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="9">
+          <mets:fptr FILEID="FID9"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="10">
+          <mets:fptr FILEID="FID10"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="11">
+          <mets:fptr FILEID="FID11"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="12">
+          <mets:fptr FILEID="FID12"/>
+        </mets:div>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structMap TYPE="PDF" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Hymns for the watch-night.">
+      <mets:div TYPE="chapter" LABEL="Cover">
+        <mets:fptr FILEID="FID13"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Hymns for the watch night">
+        <mets:fptr FILEID="FID14"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>

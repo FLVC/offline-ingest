@@ -1,0 +1,924 @@
+<?xml version="1.0"?>
+<mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.loc.gov/METS/" xmlns:mets="http://www.loc.gov/METS/" OBJID="NF00000042" LABEL="History and Antiquities of St. Augustine, FLA">
+  <metsHdr CREATEDATE="2011-01-31T16:21:37Z" ID="NF00000042" LASTMODDATE="2011-01-31T16:21:37Z">
+    <agent ROLE="CREATOR" TYPE="ORGANIZATION">
+      <name>FCLA</name>
+      <note>
+        This is DigiTool METS created by FCLA from the institution-submitted METS package NF00000042.
+      </note>
+    </agent>
+  </metsHdr>
+  <dmdSec ID="DMD1"><mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><xmlData><marc:record xmlns:marc="http://www.loc.gov/MARC21/slim"><marc:leader>     nam  22     uu 4500</marc:leader><marc:controlfield tag="008">      |           ||||||||||||||||||||||</marc:controlfield>
+          
+          <marc:datafield tag="245" ind1="1" ind2="0"><marc:subfield code="a">History and Antiquities of St. Augustine, FLA</marc:subfield></marc:datafield>
+          <marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">Fairbanks, George</marc:subfield></marc:datafield>
+        <marc:datafield tag="598" ind1=" " ind2=" "><marc:subfield code="a">NF00000042</marc:subfield></marc:datafield></marc:record></xmlData></mdWrap></dmdSec>
+  <fileSec>
+    <fileGrp USE="reference">
+      <file ID="FID1" SEQ="1" GROUPID="GID1" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="cover1.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID3" SEQ="2" GROUPID="GID2" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="plate1.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID5" SEQ="3" GROUPID="GID3" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="plate2.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID7" SEQ="4" GROUPID="GID4" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="i.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID9" SEQ="5" GROUPID="GID5" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="ii.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID11" SEQ="6" GROUPID="GID6" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="iii.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID13" SEQ="7" GROUPID="GID7" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="iv.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID15" SEQ="8" GROUPID="GID8" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="v.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID17" SEQ="9" GROUPID="GID9" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="vi.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID19" SEQ="10" GROUPID="GID10" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="vii.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID21" SEQ="11" GROUPID="GID11" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="viii.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID23" SEQ="12" GROUPID="GID12" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="1.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID25" SEQ="13" GROUPID="GID13" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="2.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID27" SEQ="14" GROUPID="GID14" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="3.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID29" SEQ="15" GROUPID="GID15" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="4.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID31" SEQ="16" GROUPID="GID16" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="5.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID33" SEQ="17" GROUPID="GID17" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="6.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID35" SEQ="18" GROUPID="GID18" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="7.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID37" SEQ="19" GROUPID="GID19" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="8.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID39" SEQ="20" GROUPID="GID20" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="9.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID41" SEQ="21" GROUPID="GID21" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="10.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID43" SEQ="22" GROUPID="GID22" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="11.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID45" SEQ="23" GROUPID="GID23" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="12.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID47" SEQ="24" GROUPID="GID24" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="13.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID49" SEQ="25" GROUPID="GID25" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="14.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID51" SEQ="26" GROUPID="GID26" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="15.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID53" SEQ="27" GROUPID="GID27" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="16.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID55" SEQ="28" GROUPID="GID28" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="16a.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID57" SEQ="29" GROUPID="GID29" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="16b.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID59" SEQ="30" GROUPID="GID30" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="17.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID61" SEQ="31" GROUPID="GID31" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="18.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID63" SEQ="32" GROUPID="GID32" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="19.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID65" SEQ="33" GROUPID="GID33" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="20.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID67" SEQ="34" GROUPID="GID34" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="21.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID69" SEQ="35" GROUPID="GID35" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="22.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID71" SEQ="36" GROUPID="GID36" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="23.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID73" SEQ="37" GROUPID="GID37" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="24.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID75" SEQ="38" GROUPID="GID38" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="25.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID77" SEQ="39" GROUPID="GID39" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="26.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID79" SEQ="40" GROUPID="GID40" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="27.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID81" SEQ="41" GROUPID="GID41" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="28.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID83" SEQ="42" GROUPID="GID42" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="29.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID85" SEQ="43" GROUPID="GID43" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="30.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID87" SEQ="44" GROUPID="GID44" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="31.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID89" SEQ="45" GROUPID="GID45" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="32.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID91" SEQ="46" GROUPID="GID46" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="33.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID93" SEQ="47" GROUPID="GID47" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="34.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID95" SEQ="48" GROUPID="GID48" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="35.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID97" SEQ="49" GROUPID="GID49" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="36.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID99" SEQ="50" GROUPID="GID50" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="37.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID101" SEQ="51" GROUPID="GID51" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="38.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID103" SEQ="52" GROUPID="GID52" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="39.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID105" SEQ="53" GROUPID="GID53" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="40.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID107" SEQ="54" GROUPID="GID54" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="41.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID109" SEQ="55" GROUPID="GID55" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="42.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID111" SEQ="56" GROUPID="GID56" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="43.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID113" SEQ="57" GROUPID="GID57" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="44.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID115" SEQ="58" GROUPID="GID58" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="45.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID117" SEQ="59" GROUPID="GID59" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="46.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID119" SEQ="60" GROUPID="GID60" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="47.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID121" SEQ="61" GROUPID="GID61" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="48.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID123" SEQ="62" GROUPID="GID62" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="49.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID125" SEQ="63" GROUPID="GID63" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="50.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID127" SEQ="64" GROUPID="GID64" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="51.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID129" SEQ="65" GROUPID="GID65" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="52.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID131" SEQ="66" GROUPID="GID66" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="53.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID133" SEQ="67" GROUPID="GID67" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="54.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID135" SEQ="68" GROUPID="GID68" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="55.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID137" SEQ="69" GROUPID="GID69" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="56.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID139" SEQ="70" GROUPID="GID70" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="57.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID141" SEQ="71" GROUPID="GID71" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="58.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID143" SEQ="72" GROUPID="GID72" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="59.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID145" SEQ="73" GROUPID="GID73" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="60.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID147" SEQ="74" GROUPID="GID74" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="61.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID149" SEQ="75" GROUPID="GID75" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="62.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID151" SEQ="76" GROUPID="GID76" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="63.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID153" SEQ="77" GROUPID="GID77" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="64.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID155" SEQ="78" GROUPID="GID78" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="65.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID157" SEQ="79" GROUPID="GID79" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="66.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID159" SEQ="80" GROUPID="GID80" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="67.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID161" SEQ="81" GROUPID="GID81" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="68.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID163" SEQ="82" GROUPID="GID82" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="69.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID165" SEQ="83" GROUPID="GID83" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="70.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID167" SEQ="84" GROUPID="GID84" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="71.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID169" SEQ="85" GROUPID="GID85" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="72.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID171" SEQ="86" GROUPID="GID86" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="73.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID173" SEQ="87" GROUPID="GID87" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="74.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID175" SEQ="88" GROUPID="GID88" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="75.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID177" SEQ="89" GROUPID="GID89" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="76.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID179" SEQ="90" GROUPID="GID90" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="77.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID181" SEQ="91" GROUPID="GID91" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="78.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID183" SEQ="92" GROUPID="GID92" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="79.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID185" SEQ="93" GROUPID="GID93" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="80.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID187" SEQ="94" GROUPID="GID94" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="81.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID189" SEQ="95" GROUPID="GID95" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="82.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID191" SEQ="96" GROUPID="GID96" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="83.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID193" SEQ="97" GROUPID="GID97" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="84.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID195" SEQ="98" GROUPID="GID98" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="84a.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID197" SEQ="99" GROUPID="GID99" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="85.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID199" SEQ="100" GROUPID="GID100" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="85a.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID201" SEQ="101" GROUPID="GID101" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="86.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID203" SEQ="102" GROUPID="GID102" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="87.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID205" SEQ="103" GROUPID="GID103" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="88.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID207" SEQ="104" GROUPID="GID104" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="89.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID209" SEQ="105" GROUPID="GID105" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="90.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID211" SEQ="106" GROUPID="GID106" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="91.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID213" SEQ="107" GROUPID="GID107" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="92.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID215" SEQ="108" GROUPID="GID108" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="93a.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID217" SEQ="109" GROUPID="GID109" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="93.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID219" SEQ="110" GROUPID="GID110" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="94.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID221" SEQ="111" GROUPID="GID111" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="95.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID223" SEQ="112" GROUPID="GID112" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="96.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID225" SEQ="113" GROUPID="GID113" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="97.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID227" SEQ="114" GROUPID="GID114" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="98.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID229" SEQ="115" GROUPID="GID115" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="99.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID231" SEQ="116" GROUPID="GID116" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="100.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID233" SEQ="117" GROUPID="GID117" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="100a.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID235" SEQ="118" GROUPID="GID118" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="101.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID237" SEQ="119" GROUPID="GID119" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="101a.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID239" SEQ="120" GROUPID="GID120" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="102.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID241" SEQ="121" GROUPID="GID121" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="103.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID243" SEQ="122" GROUPID="GID122" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="104.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID245" SEQ="123" GROUPID="GID123" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="105.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID247" SEQ="124" GROUPID="GID124" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="106.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID249" SEQ="125" GROUPID="GID125" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="107.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID251" SEQ="126" GROUPID="GID126" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="108.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID253" SEQ="127" GROUPID="GID127" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="109.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID255" SEQ="128" GROUPID="GID128" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="109.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID257" SEQ="129" GROUPID="GID129" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="110.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID259" SEQ="130" GROUPID="GID130" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="111.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID261" SEQ="131" GROUPID="GID131" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="112.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID263" SEQ="132" GROUPID="GID132" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="113.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID265" SEQ="133" GROUPID="GID133" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="114.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID267" SEQ="134" GROUPID="GID134" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="115.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID269" SEQ="135" GROUPID="GID135" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="116.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID271" SEQ="136" GROUPID="GID136" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="117.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID273" SEQ="137" GROUPID="GID137" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="118.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID275" SEQ="138" GROUPID="GID138" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="119.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID277" SEQ="139" GROUPID="GID139" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="120.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID279" SEQ="140" GROUPID="GID140" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="121.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="FID281" SEQ="141" GROUPID="GID141" MIMETYPE="image/jp2">
+        <FLocat LOCTYPE="OTHER" xlink:href="122.jp2" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+    </fileGrp>
+  </fileSec>
+  <structMap>
+    <div DMDID="DMD1" LABEL="History and Antiquities of St. Augustine, FLA" TYPE="Chapter">
+      <div LABEL="Cover" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID1"/>
+        </div>
+      </div>
+      <div LABEL="Plates" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID3"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID5"/>
+        </div>
+      </div>
+      <div LABEL="Portrait of George R. Fairbanks" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID7"/>
+        </div>
+      </div>
+      <div LABEL="Title page" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID9"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID11"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID13"/>
+        </div>
+      </div>
+      <div LABEL="Preface" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID15"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID17"/>
+        </div>
+      </div>
+      <div LABEL="Contents" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID19"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID21"/>
+        </div>
+      </div>
+      <div LABEL="Introductory" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID23"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID25"/>
+        </div>
+      </div>
+      <div LABEL="First Discovery, 1512 to 1565- Juan de Leon" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID27"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID29"/>
+        </div>
+      </div>
+      <div LABEL="Ribault , Laudonniere and Menendez : Settlements of the Huguenots and Foundation of St. Augustine" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID31"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID33"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID35"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID37"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID39"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID41"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID43"/>
+        </div>
+      </div>
+      <div LABEL="The Attack on Fort Caroline" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID45"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID47"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID49"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID51"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID53"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID55"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID57"/>
+        </div>
+      </div>
+      <div LABEL="Escape of Laudonniere and others from Fort Caroline : Adventures of the Fugitives" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID59"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID61"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID63"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID65"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID67"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID69"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID71"/>
+        </div>
+      </div>
+      <div LABEL="Site of Fort Caroline afterwards called San Matteo" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID73"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID75"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID77"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID79"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID81"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID83"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID85"/>
+        </div>
+      </div>
+      <div LABEL="Melendezs Return to St. Augustine :  Shipwreck of Ribault, Massacre of part of his commandant." TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID87"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID89"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID91"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID93"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID95"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID97"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID99"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID101"/>
+        </div>
+      </div>
+      <div LABEL="Fate of Ribault and his followers : Bloody Massacre at Matanzas" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID103"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID105"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID107"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID109"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID111"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID113"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID115"/>
+        </div>
+      </div>
+      <div LABEL="Forjp2ying of St. Augustine : Disaffections and Mutinies, Approval of Menendezs acts by King of Spain" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID117"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID119"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID121"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID123"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID125"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID127"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID129"/>
+        </div>
+      </div>
+      <div LABEL="The Notable Revenge of Dominic de Gourgues: Return of Menendez, Indian Mission" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID131"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID133"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID135"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID137"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID139"/>
+        </div>
+      </div>
+      <div LABEL="Sir Francis Drakes Attack upon St. Augustine: Establishment of Missions, Massacre of Missionaries at St. Augustine" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID141"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID143"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID145"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID147"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID149"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID151"/>
+        </div>
+      </div>
+      <div LABEL="Subjection of the Appalachian Indians: Construction of the Fort, Sea Wall, etc." TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID153"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID155"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID157"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID159"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID161"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID163"/>
+        </div>
+      </div>
+      <div LABEL="Attack on ST. Augustine by Governor Moore, of South Carolina: Difficulties with the Georgians," TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID165"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID167"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID169"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID171"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID173"/>
+        </div>
+      </div>
+      <div LABEL="Siege of St. Augustine by Oglethorpe" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID175"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID177"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID179"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID181"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID183"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID185"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID187"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID189"/>
+        </div>
+      </div>
+      <div LABEL="Completion of the Castle: Descriptions of St. Augustine a Century ago, English Occupation of Florida" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID191"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID193"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID195"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID197"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID199"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID201"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID203"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID205"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID207"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID209"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID211"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID213"/>
+        </div>
+      </div>
+      <div LABEL="Recession of Florida to Spain: Erection of the Parish Church, Change of Flags" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID215"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID217"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID219"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID221"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID223"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID225"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID227"/>
+        </div>
+      </div>
+      <div LABEL="Transfer of Florida to the United States: American Occupation, Ancient Buildings, etc" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID229"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID231"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID233"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID235"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID237"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID239"/>
+        </div>
+      </div>
+      <div LABEL="Present Appearance of St. Augustine, as a given by the Author of Thanatopis, its Climate and Salubrity" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID241"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID243"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID245"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID247"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID249"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID251"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID253"/>
+        </div>
+      </div>
+      <div LABEL="St. Augustine in its Old Age" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID255"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID257"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID259"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID261"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID263"/>
+        </div>
+      </div>
+      <div LABEL="A. D. 1968 to 1881" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID265"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID267"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID269"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID271"/>
+        </div>
+      </div>
+      <div LABEL="Last pages" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="FID273"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID275"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID277"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID279"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="FID281"/>
+        </div>
+      </div>
+    </div>
+  </structMap>
+</mets>
