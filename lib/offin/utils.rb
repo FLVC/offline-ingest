@@ -51,8 +51,9 @@ class Utils
       error = stderr.read
     end
 
-    raise PackageError, "Processing #{pdf_filepath} resulted in these errors: #{error}" if not error.empty?
+    #  raise PackageError, "Processing #{pdf_filepath} resulted in these errors: #{error}" if not error.empty?
 
+    return nil unless error.empty?
     return text
   end
 

@@ -418,10 +418,16 @@ class PdfPackage < Package
         @full_text = ' '
       end
     # No full text, so we generate UTF-8 using a unix utility, which we'll still cleanup:
+
+    # TODO:  pdf_to_text errors should not be fatal....
+
     else
       @full_text_label = 'Full text derived from PDF'
       @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory_path, @pdf_filename)))
-      if @full_text.empty?
+      if @full_text.nil?
+        warning "Unable to generate full text from #{@pdf_filename} in package #{@directory_name}; using a single space to preserve the FULL_TEXT datastream."
+        @full_text = ' '
+      elsif @full_text.empty?
         warning "The generated full text from #{@pdf_filename} in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
