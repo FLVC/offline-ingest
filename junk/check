@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
+
+require 'offin/ingestor'
+require 'datyl/config'
+require 'offin/utils'
+require 'offin/manifest'
+require 'offin/mods'
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"  ; exit }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"  ; exit }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
+
+config = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", 'default')
+
+
+mods = Mods.new(config, ARGV[0])
+
+puts "Valid? #{mods.valid?}"
+
+if mods.errors?
+  puts "Errors: ", mods.errors
+end
+
+if mods.warnings?
+  puts "Warnings: ", mods.warnings
+end
+
+exit unless mods.valid?
+
+puts "----#{mods.title}----"
+
+# text = mods.to_dc
+#
+# if text.nil?
+#   puts "Errors after DC transform: ", mods.errors
+#   puts "Warnings after DC transform: ", mods.warnings
+# else
+#   puts "DC: ", text
+# end
+
+
+exit
+
+
+
+
+package_directory = ARGV[0]
+mods = Mods.new(config, File.join(package_directory, "#{File.basename(package_directory)}.xml"))
+manifest = Manifest.new(config, File.join(package_directory, 'manifest.xml'))
+
+puts '', "Manifest Errors",   "---------------",   manifest.errors
+puts '', "Manifest Warnings", "-----------------", manifest.warnings
