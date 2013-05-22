@@ -30,7 +30,7 @@ class Ingestor
   # TODO: try to run down pid and delete if error after a datastream or object save occurs...
 
 
-  attr_reader :repository, :pid, :namespace, :fedora_object
+  attr_reader :repository, :pid, :namespace, :fedora_object, :size
 
   # We use the yield self idiom here:
   #
@@ -50,6 +50,7 @@ class Ingestor
     @pid = getpid
     @fedora_object = @repository.create(@pid)
     @owner = nil
+    @size = 0
 
     yield self
 
@@ -114,6 +115,7 @@ class Ingestor
 
   def datastream name
     yield @fedora_object.datastreams[name]
+    @size += @fedora_object.datastreams[name].content.size
     @fedora_object.datastreams[name].save
   end
 
