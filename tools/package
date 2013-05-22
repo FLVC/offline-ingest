@@ -50,7 +50,7 @@ ARGV.each do |directory|
 
     package.updater = DigitoolMetadataUpdater
     package.ingest
-    puts sprintf("%5.2f %s::%s => %s (%s)", Time.now - started, package.class, package.name, package.collections.join(', '), package.label)
+    puts sprintf("%5.2f sec, %5.2f MB  %s::%s => %s (%s)", Time.now - started, package.bytes_ingested/1048576.0, package.class, package.name, package.collections.join(', '), package.label)
 
   rescue PackageError => e
     STDERR.puts e

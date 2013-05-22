@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+require 'optparse'
+
+Struct.new('Config', :number_packages)
+
+def parse_command args
+  config = Struct::Config.new
+  config.number_packages = 50
+  opts   = OptionParser.new do |opt|
+    opt.banner = "Usage: #{$0} --number N,  where N is the number of packages to randomly select from the built-in list."
+    opt.on("--num Integer", "The number of packages to ingest") { |n| config.number_packages = n.to_i }
+  end
+  opts.parse!(args)
+  return config
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+end
+
+
+
+def shellescape(str)
+  # An empty argument will be skipped, so return empty quotes.
+  return "''" if str.empty?
+
+  str = str.dup
+
+  # Process as a single byte sequence because not all shell
+  # implementations are multibyte aware.
+  str.gsub!(/([^A-Za-z0-9_\-.,:\/@\n])/n, "\\\\\\1")
+
+  # A LF cannot be escaped with a backslash because a backslash + LF
+  # combo is regarded as line continuation and simply ignored.
+  str.gsub!(/\n/, "'\n'")
+
+  return str
+end
+
+
+
+dirlist = [
+           # '/ssa/temp/islandora/digitool-migrations/large_image/result',
+           # '/ssa/temp/islandora/digitool-migrations/duh02',
+           # '/ssa/temp/islandora/digitool-migrations/fsuha',
+           '/ssa/temp/islandora/digitool-migrations/ffp50fsy50',
+          # '/ssa/temp/islandora/digitool-migrations/phj02',
+          ]
+
+config = parse_command ARGV
+files = []
+
+dirlist.each do |dir|
+  files += Dir["#{dir}/*"]
+end
+
+puts files.shuffle[0 .. config.number_packages - 1].map { |name| shellescape(name) }
+
+
+
+
+
+# Some interesting ones:
+#
+# FSDT331584 FSDT1355951 FSDT106946 FSDT330636
+
+
+# problem packages:
+#
+# FSDT107610
+# FSDT1925896
+# FSDT1926014
+# FSDT1926142
+# FSDT1926312
+# FSDT2795935
+# FSDT3164256
+# FSDT3164464
+# FSDT3164478
+# FSDT3166705
+# FSDT3171058
+# FSDT3171271
+# FSDT331579
+# FSDT347931

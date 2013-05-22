@@ -67,7 +67,7 @@ class Package
   PDF  = 'application/pdf'
   TEXT = 'text/plain'
 
-  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path
+  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path, :bytes_ingested
 
   def initialize config, directory, manifest = nil
 
@@ -79,6 +79,7 @@ class Package
     @directory_name = File.basename(directory)
     @directory_path = directory
     @datafiles      = list_other_files()
+    @bytes_ingested = 0
 
     if manifest.is_a? Manifest
       @manifest = manifest
@@ -113,7 +114,7 @@ class Package
     end
 
     @namespace   = @manifest.owning_institution.downcase
-    @collections = @manifest.collections
+    @collections = @manifest.collections.map { |pid| pid.downcase }   # remove when Liang fixes her code
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
@@ -171,7 +172,7 @@ class Package
     ingestor.label         = @label
     ingestor.owner         = @owner
     ingestor.content_model = @content_model
-    ingestor.collections   = @collections.map { |pid| pid.downcase }   # Liang doesn't read my specs...
+    ingestor.collections   = @collections
     ingestor.dc            = @mods.to_dc
     ingestor.mods          = @mods.to_s
 
@@ -257,7 +258,8 @@ class BasicImagePackage < Package
 
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @image_filename
-        ds.content  = @image.to_blob
+        ds.content  = File.open(File.join(@directory_path, @image_filename))
+        # ds.content  = @image.to_blob   # modifies the image!
         ds.mimeType = @image.mime_type
       end
 
@@ -274,6 +276,7 @@ class BasicImagePackage < Package
       end
     end
 
+    @bytes_ingested = ingestor.size
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
@@ -362,6 +365,7 @@ class LargeImagePackage < Package
       end
     end
 
+    @bytes_ingested = ingestor.size
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
@@ -476,6 +480,7 @@ class PdfPackage < Package
       end
     end
 
+    @bytes_ingested = ingestor.size
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
