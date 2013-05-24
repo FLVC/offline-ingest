@@ -337,7 +337,8 @@ class LargeImagePackage < Package
 
       ingestor.datastream('JP2') do |ds|
         ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
-        ds.content  = @image.to_blob
+        ds.content  = File.open(File.join(@directory_path, @image_filename))
+        # ds.content  = @image.to_blob   # modifies the image we just read?!
         ds.mimeType = @image.mime_type
       end
 
