@@ -38,7 +38,7 @@ class Ingestor
   #     ingestor.do-your-thing..
   #  end
   #
-  #  ingestot.warnings
+  #  puts ingestor.warnings
 
 
   def initialize  config, namespace
