@@ -67,11 +67,12 @@ class Package
   PDF  = 'application/pdf'
   TEXT = 'text/plain'
 
-  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path, :bytes_ingested
+  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path, :bytes_ingested, :pid
 
   def initialize config, directory, manifest = nil
 
     @valid          = true
+    @pid            = nil
     @config         = config
     @content_model  = nil
     @label          = nil
@@ -164,6 +165,7 @@ class Package
 
   def boilerplate ingestor
 
+    @pid = ingestor.pid
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_extension_elements @manifest
 
