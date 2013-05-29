@@ -67,8 +67,8 @@ class TableOfContents
 
   def to_json label = nil
 
-    list = []
-    list.push( { 'title' => label } )  unless label.nil? || label.empty?
+    container = {}
+    container['title'] = label  unless label.nil? || label.empty?
 
     toc = []
     seq = 1
@@ -84,9 +84,9 @@ class TableOfContents
       toc.push rec
     end
 
-    list.push( { 'table_of_contents' => toc } ) unless toc.empty?
+    container['table_of_contents'] = toc  unless toc.empty?
 
-    return JSON.pretty_generate list
+    return JSON.pretty_generate container
   end
 
   def valid?

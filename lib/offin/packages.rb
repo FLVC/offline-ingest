@@ -124,7 +124,6 @@ class Package
   end
 
   def list_collections
-    puts "We have this remapping: #{@config.remap_collections.inspect}"
     remapper = @config.remap_collections || {}
     list = []
     @manifest.collections.each do |pid|
