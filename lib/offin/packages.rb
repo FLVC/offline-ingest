@@ -115,13 +115,25 @@ class Package
     end
 
     @namespace   = @manifest.owning_institution.downcase
-    @collections = @manifest.collections.map { |pid| pid.downcase }   # remove when Liang fixes her code
+    @collections = list_collections()
 
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
   rescue => e
     error "Exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
   end
+
+  def list_collections
+    puts "We have this remapping: #{@config.remap_collections.inspect}"
+    remapper = @config.remap_collections || {}
+    list = []
+    @manifest.collections.each do |pid|
+      p = pid.downcase
+      list.push(remapper[p] || p)
+    end
+    return list
+  end
+
 
   def name
     @directory_name
