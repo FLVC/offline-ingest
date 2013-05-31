@@ -1,0 +1,604 @@
+<?xml version="1.0"?>
+<mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.loc.gov/METS/" xmlns:mets="http://www.loc.gov/METS/" OBJID="UF00024834_00001" LABEL="Fairy Mary's dream">
+  <metsHdr CREATEDATE="2011-03-15T16:50:12Z" ID="UF00024834_00001" LASTMODDATE="2011-03-15T16:50:12Z">
+    <agent ROLE="CREATOR" TYPE="ORGANIZATION">
+      <name>FCLA</name>
+      <note>
+        This is DigiTool METS created by FCLA from the institution-submitted METS package UF00024834_00001.
+      </note>
+    </agent>
+  </metsHdr>
+  <dmdSec ID="DMD1"><mdWrap MDTYPE="MARC" MIMETYPE="text/xml"><xmlData><marc:record xmlns:marc="http://www.loc.gov/MARC21/slim"><marc:leader>     nm  22     uu 4500</marc:leader><marc:controlfield tag="008">      s           ||||||||||||||||||||||</marc:controlfield>
+          <marc:datafield tag="245" ind1="1" ind2="0"><marc:subfield code="a">Fairy Mary's dream</marc:subfield></marc:datafield>
+          <marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">A. F. L.</marc:subfield></marc:datafield>
+          <marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">Fawcett, B.</marc:subfield></marc:datafield>
+          <marc:datafield tag="720" ind1=" " ind2=" "><marc:subfield code="a">Groombridge and Sons.</marc:subfield></marc:datafield>
+          <marc:datafield tag="260" ind1=" " ind2=" "><marc:subfield code="a">London :</marc:subfield><marc:subfield code="b">Groombridge and Sons,</marc:subfield><marc:subfield code="c">1870</marc:subfield></marc:datafield>
+          
+          
+          
+          
+          <marc:datafield tag="500" ind1=" " ind2=" "><marc:subfield code="a">Plates are printed in colors and are enclosed in a decorative gold border.</marc:subfield></marc:datafield>
+          <marc:datafield tag="500" ind1=" " ind2=" "><marc:subfield code="a">Preservation and Access for American and British Children's Literature, 1870-1889 (NEH PA-50860-00).</marc:subfield></marc:datafield>
+          <marc:datafield tag="655" ind1=" " ind2="7"><marc:subfield code="a">Allegories -- 1870.</marc:subfield></marc:datafield>
+          <marc:datafield tag="650" ind1="1" ind2=" "><marc:subfield code="a">Dreams</marc:subfield></marc:datafield>
+          <marc:datafield tag="650" ind1="1" ind2=" "><marc:subfield code="a">Pride and vanity</marc:subfield></marc:datafield>
+          <marc:datafield tag="650" ind1="1" ind2=" "><marc:subfield code="a">Conduct of life</marc:subfield></marc:datafield>
+          <marc:datafield tag="650" ind1="1" ind2=" "><marc:subfield code="a">Butterflies</marc:subfield></marc:datafield>
+          <marc:datafield tag="650" ind1="1" ind2=" "><marc:subfield code="a">Children</marc:subfield></marc:datafield>
+          <marc:datafield tag="650" ind1="1" ind2=" "><marc:subfield code="a">Bldn -- 1870.</marc:subfield></marc:datafield>
+          
+            
+          
+          
+            
+          
+          <marc:datafield tag="534" ind1=" " ind2=" "><marc:subfield code="e">30, 2 p., 7 leaves of plates : ill. (some col.) ; 26 cm.</marc:subfield></marc:datafield>
+          <marc:datafield tag="852" ind1=" " ind2=" "><marc:subfield code="a">&lt;a href="http://web.uflib.ufl.edu/spec/baldwin/baldwin.html"&gt;Baldwin Library of Historical Children's Literature&lt;/a&gt;in the &lt;a href="http://web.uflib.ufl.edu/spec/"&gt;Special Collections&lt;/a&gt;, &lt;a href="http://www.uflib.ufl.edu"&gt;George A. Smathers Libraries&lt;/a&gt;</marc:subfield></marc:datafield><marc:datafield tag="852" ind1=" " ind2=" "><marc:subfield code="a">UF</marc:subfield></marc:datafield>
+          <marc:datafield tag="" ind1=" " ind2=" "><marc:subfield code="a">All rights reserved, Board of Trustees of the University of Florida.</marc:subfield></marc:datafield>
+        <marc:datafield tag="598" ind1=" " ind2=" "><marc:subfield code="a">UF00024834_00001</marc:subfield></marc:datafield></marc:record></xmlData></mdWrap></dmdSec>
+  <fileSec>
+    <fileGrp USE="reference">
+      <file ID="F1" SEQ="1" GROUPID="G1" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00001.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F2" SEQ="2" GROUPID="G2" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00002.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F3" SEQ="3" GROUPID="G3" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00003.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F4" SEQ="4" GROUPID="G4" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00004.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F5" SEQ="5" GROUPID="G5" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00005.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F6" SEQ="6" GROUPID="G6" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00006.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F7" SEQ="7" GROUPID="G7" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00007.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F8" SEQ="8" GROUPID="G8" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00008.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F9" SEQ="9" GROUPID="G9" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00009.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F10" SEQ="10" GROUPID="G10" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00010.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F11" SEQ="11" GROUPID="G11" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00011.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F12" SEQ="12" GROUPID="G12" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00012.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F13" SEQ="13" GROUPID="G13" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00013.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F14" SEQ="14" GROUPID="G14" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00014.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F15" SEQ="15" GROUPID="G15" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00015.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F16" SEQ="16" GROUPID="G16" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00016.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F17" SEQ="17" GROUPID="G17" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00017.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F18" SEQ="18" GROUPID="G18" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00018.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F19" SEQ="19" GROUPID="G19" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00019.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F20" SEQ="20" GROUPID="G20" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00020.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F21" SEQ="21" GROUPID="G21" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00021.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F22" SEQ="22" GROUPID="G22" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00022.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F23" SEQ="23" GROUPID="G23" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00023.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F24" SEQ="24" GROUPID="G24" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00024.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F25" SEQ="25" GROUPID="G25" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00025.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F26" SEQ="26" GROUPID="G26" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00026.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F27" SEQ="27" GROUPID="G27" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00027.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F28" SEQ="28" GROUPID="G28" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00028.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F29" SEQ="29" GROUPID="G29" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00029.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F30" SEQ="30" GROUPID="G30" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00030.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F31" SEQ="31" GROUPID="G31" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00031.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F32" SEQ="32" GROUPID="G32" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00032.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F33" SEQ="33" GROUPID="G33" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00033.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F34" SEQ="34" GROUPID="G34" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00034.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F35" SEQ="35" GROUPID="G35" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00035.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F36" SEQ="36" GROUPID="G36" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00036.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F37" SEQ="37" GROUPID="G37" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00037.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F38" SEQ="38" GROUPID="G38" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00038.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F39" SEQ="39" GROUPID="G39" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00039.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F40" SEQ="40" GROUPID="G40" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00040.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F41" SEQ="41" GROUPID="G41" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00041.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F42" SEQ="42" GROUPID="G42" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00042.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F43" SEQ="43" GROUPID="G43" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00043.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F44" SEQ="44" GROUPID="G44" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00044.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F45" SEQ="45" GROUPID="G45" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00045.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F46" SEQ="46" GROUPID="G46" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00046.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F47" SEQ="47" GROUPID="G47" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00047.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F48" SEQ="48" GROUPID="G48" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00048.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F49" SEQ="49" GROUPID="G49" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00049.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F50" SEQ="50" GROUPID="G50" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00050.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F51" SEQ="51" GROUPID="G51" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00051.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F52" SEQ="52" GROUPID="G52" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00052.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F53" SEQ="53" GROUPID="G53" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00053.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="F54" SEQ="54" GROUPID="G54" MIMETYPE="image/jpeg">
+        <FLocat LOCTYPE="OTHER" xlink:href="00054.jpg" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+    </fileGrp>
+    <fileGrp USE="index">
+      <file ID="T1" SEQ="1" GROUPID="G1" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00001.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T2" SEQ="2" GROUPID="G2" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00002.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T3" SEQ="3" GROUPID="G3" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00003.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T4" SEQ="4" GROUPID="G4" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00004.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T5" SEQ="5" GROUPID="G5" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00005.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T6" SEQ="6" GROUPID="G6" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00006.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T7" SEQ="7" GROUPID="G7" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00007.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T8" SEQ="8" GROUPID="G8" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00008.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T9" SEQ="9" GROUPID="G9" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00009.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T10" SEQ="10" GROUPID="G10" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00010.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T11" SEQ="11" GROUPID="G11" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00011.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T12" SEQ="12" GROUPID="G12" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00012.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T13" SEQ="13" GROUPID="G13" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00013.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T14" SEQ="14" GROUPID="G14" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00014.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T15" SEQ="15" GROUPID="G15" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00015.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T16" SEQ="16" GROUPID="G16" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00016.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T17" SEQ="17" GROUPID="G17" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00017.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T18" SEQ="18" GROUPID="G18" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00018.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T19" SEQ="19" GROUPID="G19" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00019.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T20" SEQ="20" GROUPID="G20" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00020.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T21" SEQ="21" GROUPID="G21" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00021.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T22" SEQ="22" GROUPID="G22" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00022.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T23" SEQ="23" GROUPID="G23" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00023.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T24" SEQ="24" GROUPID="G24" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00024.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T25" SEQ="25" GROUPID="G25" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00025.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T26" SEQ="26" GROUPID="G26" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00026.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T27" SEQ="27" GROUPID="G27" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00027.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T28" SEQ="28" GROUPID="G28" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00028.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T29" SEQ="29" GROUPID="G29" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00029.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T30" SEQ="30" GROUPID="G30" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00030.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T31" SEQ="31" GROUPID="G31" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00031.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T32" SEQ="32" GROUPID="G32" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00032.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T33" SEQ="33" GROUPID="G33" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00033.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T34" SEQ="34" GROUPID="G34" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00034.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T35" SEQ="35" GROUPID="G35" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00035.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T36" SEQ="36" GROUPID="G36" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00036.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T37" SEQ="37" GROUPID="G37" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00037.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T38" SEQ="38" GROUPID="G38" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00038.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T39" SEQ="39" GROUPID="G39" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00039.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T40" SEQ="40" GROUPID="G40" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00040.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T41" SEQ="41" GROUPID="G41" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00041.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T42" SEQ="42" GROUPID="G42" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00042.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T43" SEQ="43" GROUPID="G43" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00043.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T44" SEQ="44" GROUPID="G44" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00044.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T45" SEQ="45" GROUPID="G45" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00045.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T46" SEQ="46" GROUPID="G46" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00046.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T47" SEQ="47" GROUPID="G47" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00047.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T48" SEQ="48" GROUPID="G48" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00048.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T49" SEQ="49" GROUPID="G49" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00049.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T50" SEQ="50" GROUPID="G50" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00050.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T51" SEQ="51" GROUPID="G51" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00051.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T52" SEQ="52" GROUPID="G52" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00052.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T53" SEQ="53" GROUPID="G53" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00053.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+      <file ID="T54" SEQ="54" GROUPID="G54" MIMETYPE="text/plain">
+        <FLocat LOCTYPE="OTHER" xlink:href="00054.txt" OTHERLOCTYPE="SYSTEM"/>
+      </file>
+    </fileGrp>
+  </fileSec>
+  <structMap>
+    <div DMDID="DMD1" LABEL="Fairy Mary's dream" TYPE="Chapter">
+      <div LABEL="Front Cover" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="F1"/>
+          <fptr FILEID="T1"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F2"/>
+          <fptr FILEID="T2"/>
+        </div>
+      </div>
+      <div TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="F3"/>
+          <fptr FILEID="T3"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F4"/>
+          <fptr FILEID="T4"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F5"/>
+          <fptr FILEID="T5"/>
+        </div>
+      </div>
+      <div LABEL="That Night, When Slumber Closed Her Eyes" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="F6"/>
+          <fptr FILEID="T6"/>
+        </div>
+      </div>
+      <div TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="F7"/>
+          <fptr FILEID="T7"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F8"/>
+          <fptr FILEID="T8"/>
+        </div>
+      </div>
+      <div LABEL="Fairy Mary's Dream" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="F9"/>
+          <fptr FILEID="T9"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F10"/>
+          <fptr FILEID="T10"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F11"/>
+          <fptr FILEID="T11"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F12"/>
+          <fptr FILEID="T12"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F13"/>
+          <fptr FILEID="T13"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F14"/>
+          <fptr FILEID="T14"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F15"/>
+          <fptr FILEID="T15"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F16"/>
+          <fptr FILEID="T16"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F17"/>
+          <fptr FILEID="T17"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F18"/>
+          <fptr FILEID="T18"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F19"/>
+          <fptr FILEID="T19"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F20"/>
+          <fptr FILEID="T20"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F21"/>
+          <fptr FILEID="T21"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F22"/>
+          <fptr FILEID="T22"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F23"/>
+          <fptr FILEID="T23"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F24"/>
+          <fptr FILEID="T24"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F25"/>
+          <fptr FILEID="T25"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F26"/>
+          <fptr FILEID="T26"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F27"/>
+          <fptr FILEID="T27"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F28"/>
+          <fptr FILEID="T28"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F29"/>
+          <fptr FILEID="T29"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F30"/>
+          <fptr FILEID="T30"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F31"/>
+          <fptr FILEID="T31"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F32"/>
+          <fptr FILEID="T32"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F33"/>
+          <fptr FILEID="T33"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F34"/>
+          <fptr FILEID="T34"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F35"/>
+          <fptr FILEID="T35"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F36"/>
+          <fptr FILEID="T36"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F37"/>
+          <fptr FILEID="T37"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F38"/>
+          <fptr FILEID="T38"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F39"/>
+          <fptr FILEID="T39"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F40"/>
+          <fptr FILEID="T40"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F41"/>
+          <fptr FILEID="T41"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F42"/>
+          <fptr FILEID="T42"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F43"/>
+          <fptr FILEID="T43"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F44"/>
+          <fptr FILEID="T44"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F45"/>
+          <fptr FILEID="T45"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F46"/>
+          <fptr FILEID="T46"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F47"/>
+          <fptr FILEID="T47"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F48"/>
+          <fptr FILEID="T48"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F49"/>
+          <fptr FILEID="T49"/>
+        </div>
+      </div>
+      <div TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="F50"/>
+          <fptr FILEID="T50"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F51"/>
+          <fptr FILEID="T51"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F52"/>
+          <fptr FILEID="T52"/>
+        </div>
+      </div>
+      <div LABEL="Back Cover" TYPE="Chapter">
+        <div TYPE="Page">
+          <fptr FILEID="F53"/>
+          <fptr FILEID="T53"/>
+        </div>
+        <div TYPE="Page">
+          <fptr FILEID="F54"/>
+          <fptr FILEID="T54"/>
+        </div>
+      </div>
+    </div>
+  </structMap>
+</mets>
