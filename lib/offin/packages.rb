@@ -57,15 +57,16 @@ class Package
 
   include Errors
 
-  # supported MIME types go here, using the file command's returned values:
+  # supported MIME types go here, using a regexp of the 'file' command's returned values (note generalization of text, for which file tends to outsmart itself)
 
-  GIF  = 'image/gif'
-  JP2  = 'image/jp2'
-  PNG  = 'image/png'
-  JPEG = 'image/jpeg'
-  TIFF = 'image/tiff'
-  PDF  = 'application/pdf'
-  TEXT = 'text/plain'
+  GIF  = %r{image/gif}
+  JP2  = %r{image/jp2}
+  PNG  = %r{image/png}
+  JPEG = %r{image/jpeg}
+  TIFF = %r{image/tiff}
+  PDF  = %r{application/pdf}
+  TEXT = %r{text/}
+
 
   attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path, :bytes_ingested, :pid
 
@@ -272,7 +273,6 @@ class BasicImagePackage < Package
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @image_filename
         ds.content  = File.open(File.join(@directory_path, @image_filename))
-        # ds.content  = @image.to_blob   # modifies the image!
         ds.mimeType = @image.mime_type
       end
 
@@ -351,7 +351,6 @@ class LargeImagePackage < Package
       ingestor.datastream('JP2') do |ds|
         ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
         ds.content  = File.open(File.join(@directory_path, @image_filename))
-        # ds.content  = @image.to_blob   # modifies the image we just read?!
         ds.mimeType = @image.mime_type
       end
 
@@ -472,25 +471,25 @@ class PdfPackage < Package
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @pdf_filename.sub(/\.pdf$/i, '')
         ds.content  = @pdf
-        ds.mimeType = PDF
+        ds.mimeType = 'application/pdf'
       end
 
       ingestor.datastream('FULL_TEXT') do |ds|
         ds.dsLabel  = @full_text_label
         ds.content  = @full_text
-        ds.mimeType = TEXT
+        ds.mimeType = 'text/plain'
       end
 
       ingestor.datastream('PREVIEW') do |ds|
         ds.dsLabel  = 'Preview'
         ds.content  = preview
-        ds.mimeType = JPEG
+        ds.mimeType = 'image/jpeg'
       end
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
         ds.content  = thumb
-        ds.mimeType = JPEG
+        ds.mimeType = 'image/jpeg'
       end
     end
 

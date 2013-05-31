@@ -53,12 +53,17 @@ class Utils
 
     #  raise PackageError, "Processing #{pdf_filepath} resulted in these errors: #{error}" if not error.empty?
 
-    return nil unless error.empty?
-    return text
+    # TODO: capture errors.  We occasionally get things like "Bad
+    # Annotation Destination" that are warnings. We'd like to add
+    # these to the generated warnings.
+
+    return text if text.length > 1000   # pretty arbitrary...
+    return nil
   end
 
 
   def Utils.cleanup_text text
+    return text unless text.class == String
     re = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\xEF\xFF]/m    # disallowed control characters and embedded deletes.
     return text.gsub(re, ' ').strip
   end
