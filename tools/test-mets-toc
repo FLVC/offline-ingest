@@ -22,6 +22,7 @@ config.schema_directory = '/usr/local/islandora/offline-ingest/lib/include/'
 
 SaxDocumentExamineMets.debug = false
 
+
 ARGV.each do |filename|
 
   STDERR.puts '', filename, ''
@@ -47,7 +48,7 @@ ARGV.each do |filename|
   STDERR.puts sprintf("Successfully parsed #{toc.pages.length} pages in %5.2f seconds.", Time.now - start)
 
   puts toc.to_json(mets.label)
-  # puts ''
-  # toc.print
+  puts ''
+  toc.print
 
 end
