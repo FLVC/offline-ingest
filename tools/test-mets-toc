@@ -7,6 +7,7 @@ Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+$LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
 
   ENV['HTTP_PROXY'] = 'http://localhost:3128/'
   ENV['http_proxy'] = 'http://localhost:3128/'
@@ -22,6 +23,7 @@ Struct.new('MockConfig', :schema_directory)
 
 config = Struct::MockConfig.new
 config.schema_directory = '/usr/local/islandora/offline-ingest/lib/include/'
+config.schema_directory = '/home/fischer/WorkProjects/offline-ingest/lib/include/'
 
 SaxDocumentExamineMets.debug = false
 
@@ -40,6 +42,8 @@ ARGV.each do |filename|
 
   next unless mets.valid?
 
+  mets.structmap.print
+
   toc  = TableOfContents.new(mets.structmap)
 
   STDERR.puts toc.valid? ? "TOC is valid" : "TOC is invalid"
@@ -51,7 +55,7 @@ ARGV.each do |filename|
   STDERR.puts sprintf("Successfully parsed #{toc.pages.length} pages in %5.2f seconds.", Time.now - start)
 
   puts toc.to_json(mets.label)
-  puts ''
+
   toc.print
 
 end

@@ -22,6 +22,8 @@ class TableOfContents
     #    <Struct:MetsDivData  :level, :title, :is_page, :fids, :files>
     # where :files is a list of
     #    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
+    #
+    # we're transforming this into a sequence of Page and Chapter structs that are slightly more uniform.
 
     @structmap.each do |div_data|
       if div_data.is_page
@@ -52,6 +54,9 @@ class TableOfContents
     cleanup_page_titles
     check_for_page_images
   end
+
+
+
 
   def each
     @sequence.each { |entry| yield entry }
@@ -132,7 +137,7 @@ class TableOfContents
     File.basename(name).sub(/\.[^\.]*/, '')
   end
 
-  # clean up page names
+  # clean up page names - we may have examples such as
 
   def cleanup_page_titles
     pages.each do |p|
@@ -141,10 +146,8 @@ class TableOfContents
     end
 
     pages.each do |p|
-      if p.title.empty?
-        if p.image_filename                    # we need to be able to make the assumption this exists
-          p.title = file_name(p.image_filename)
-        end
+      if p.title.empty? and p.image_filename
+        p.title = file_name(p.image_filename)
       end
     end
 
@@ -177,7 +180,7 @@ class Mets
 
   include Errors
 
-  attr_reader :xml_document, :sax_document, :filename, :structmap
+  attr_reader :xml_document, :sax_document, :filename, :structmap, :file_dictionary
 
   def initialize config, path
 
@@ -207,11 +210,12 @@ class Mets
     end
 
     @sax_document = create_sax_document
+    @file_dictionary = @sax_document.file_dictionary
     @structmap = select_best_structmap @sax_document.structmaps
   end
 
 
-  # not sure which should get precedence here:
+  # Top level label get
 
   def label
     @sax_document.label || @structmap.label
@@ -267,7 +271,7 @@ class Mets
 
     # sax parser errors may not be fatal, so store them to warnings.
 
-    if sax_document.warnings? or sax_document.errors?
+    if sax_document.warnings?
       warning "SAX parser warnings for '#{short_filename}':"
       warning  sax_document.warnings
     end

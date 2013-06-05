@@ -719,7 +719,7 @@ class MetsFileDictionary
   #
   #   dictionary.sequence => '1'                       -- we don't really use this, instead we take the sequence supplied by the structMap. TODO: maybe we'll warn if these differ...
   #   dictionary.mimetype => 'image/jpeg'              -- might be nil - we'll fill in by MIME href extension if missing.
-  #   dictionary.href     => 'FI05030701_cover1.jpg'   -- has to be present; we check if it resolves to a file in the package cod.
+  #   dictionary.href     => 'FI05030701_cover1.jpg'   -- has to be present; we need this so we can check if it correctly resolves to a file in the package (not done in this class).
   #   dictionary.use      => 'index'                   -- we really want this to be 'index' (full text) or 'reference' (the designated format to ingest), but we may get 'archive' in some cases.
   #   dictionary.fid      => 'FID1'                    -- this string will be present.
   #
@@ -779,7 +779,6 @@ class MetsStructMap
 
   def initialize
     @list = []
-    @dmdid_ok = false
     @number_files = 0
     @label = nil
   end
@@ -791,32 +790,25 @@ class MetsStructMap
   # include page and sections chapters here
 
   def add_div hash, level
-    if hash['DMDID'] and hash['DMDID'] =~ /DMD1/i
-      @dmdid_ok = true   # there is sometimes an overall LABEL in there as well
-      if hash['LABEL']
-        @label = hash['LABEL'].split(/\s+/).join(' ').strip
-      end
-    elsif @dmdid_ok
-      record = Struct::MetsDivData.new
-      record.level   = level
-      record.title   = hash['LABEL'] || ''
-      record.is_page = hash['TYPE'] && hash['TYPE'].downcase == 'page'
-      record.fids    = []
-      record.files   = []
-      @list.push record
+
+    if hash['DMDID'] =~ /DMD1/i and hash['LABEL']   # e.g. <METS:div DMDID="DMD1" LABEL="Lydia's roses" ORDER="0" TYPE="main">
+      @label = hash['LABEL']
     end
+
+    record = Struct::MetsDivData.new
+    record.level   = level
+    record.title   = hash['LABEL'] || ''
+    record.is_page = hash['TYPE'] && hash['TYPE'].downcase == 'page'
+    record.fids    = []
+    record.files   = []
+    @list.push record
   end
 
   def add_file hash, level
-    return unless @dmdid_ok
     @number_files += 1
     record = Struct::MetsFileData.new
     record.file_id = hash['FILEID']
     @list.push record
-  end
-
-  def ok?
-    @dmdid_ok  # and other sanity checks here, as well....
   end
 
   # post_process should be called after an entire METS document has been
@@ -858,18 +850,31 @@ class MetsStructMap
     end
     @list = new
 
-    # finally, fill in the files data from the dictionary:
+    # We now fill in the files data from the dictionary:
 
     @list.each do |div_data|
       div_data.fids.each do |fid|
         file_entry = file_dictionary[fid]
         if not file_entry
-          warning "METS structMap FILEID #{file.inspect} was not found in the METS fileSec."
+          warning "METS structMap FILEID #{fid} was not found in the METS fileSec."
         else
           div_data.files.push file_entry
         end
       end
     end
+
+
+    # We may have aribitrarily deep divs, so we'll adjust the level:
+
+    return if @list.empty?
+
+    adjustment = 1 - @list[0].level
+
+    @list.each do |entry|
+      entry.level += adjustment
+    end
+
+
   end
 
 
@@ -888,6 +893,7 @@ end # of class MetsStructMap
 class SaxDocumentExamineMets < SaxDocument
 
   METS_NAMESPACE = %r{^http://www.loc.gov/METS/}
+  VALID_FLOCAT   = %r{(fileSec:)(fileGrp:)+(file:)(FLocat)$}
 
   include Errors
 
@@ -895,7 +901,7 @@ class SaxDocumentExamineMets < SaxDocument
 
   def initialize
     @stack = []                                    # keeps the nested XML elements and attributes
-    @label = nil                                   # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...> or structMap label
+    @label = nil                                   # gets the label from top level mets, e.g. <METS:mets LABEL="The Title of This Book" ...> or, perhaps, the structMap label
     @file_dictionary = MetsFileDictionary.new      # collects METS data from subtree /fileGrp/file/FLocat/
     @structmaps = []                               # collects data from multiple METS structMaps
     @current_structmap = nil                       # the current METS structMap we're parsing (and acts as a flag to let us know we're in a structMap)
@@ -912,14 +918,35 @@ class SaxDocumentExamineMets < SaxDocument
       return false unless @stack[i][:name] == el
       i -= 1
     end
+    ####  puts onstack_again? ''
     return true
   end
+
+
+  def onstack_again? regexp
+    str = @stack.reverse.map { |elt| elt[:name] }.join(':')
+    return str
+  end
+
 
   # When we've identified a 'FLocat' subtree, place it and some of its parent data into the dictionary:
 
   def handle_file_dictionary
 
-    return unless  onstack? 'FLocat', 'file', 'fileGrp', 'fileSec'   # leftmost is towards top of stack, très confusing!
+    # Won't work for some cases:
+    # return unless  onstack? 'FLocat', 'file', 'fileGrp', 'fileSec'   # leftmost is towards top of stack, très confusing!
+    #
+    # we came up with case of multiply nested fileGrp, e.g.
+    #
+    #  mets => fileSec  {  }
+    #  mets => fileSec => fileGrp  { USE => "VIEW", VERSDATE => "2007-06-21T14:30:26.374Z" }
+    #  mets => fileSec => fileGrp => fileGrp  {  }
+    #  mets => fileSec => fileGrp => fileGrp => file  { CREATED => "2007-06-21T14:30:26.421Z", GROUPID => "pg001view", ID => "pg001m1", MIMETYPE => "image/jpeg", USE => "VIEW" }
+    #  mets => fileSec => fileGrp => fileGrp => file => FLocat  { LOCTYPE => "URL", href => "METSID-1" }
+
+    # TODO: need wild card for onstack? to make sure we're under fileSec!
+
+    return unless  onstack? 'FLocat', 'file', 'fileGrp'
 
     # stack  text
     # -----  ----------
@@ -988,21 +1015,13 @@ class SaxDocumentExamineMets < SaxDocument
   end
 
   def handle_structmap_end
-    if not @current_structmap.ok?
-      warning "METS structMap discarded."
-    else
-      @structmaps.push @current_structmap
-    end
-    @current_structmap = nil   # also used as flag to show we're not currently in the structMap parsing state
+    @structmaps.push @current_structmap
+    @current_structmap = nil             # N.B. also used as flag to show we're not currently in the structMap parsing state
   end
 
+
   def div_level
-    level = 0
-    @stack.reverse.each do |elt|
-      return level if (elt[:name] == 'div' and elt['DMDID'] and elt['DMDID'] =~ /DMD1/i)
-      level += 1 if (elt[:name] == 'div')
-    end
-    return level
+    return @stack.map { |elt| elt[:name] == 'div' }.length
   end
 
   def handle_structmap_update
@@ -1038,7 +1057,7 @@ class SaxDocumentExamineMets < SaxDocument
     attributes.each { |at|  hash[at.localname] = at.value }
     @stack.push hash
 
-    # puts stack_dump if @@debug
+    puts stack_dump if @@debug
 
     case name
     when 'structMap';     handle_structmap_begin
@@ -1095,3 +1114,51 @@ class SaxDocumentExamineMets < SaxDocument
     end
   end
 end  # of class SaxDocumentExamineMets
+
+
+# Next section is for fixing up the infamous METSID-NNN issue.
+
+
+Struct.new('StreamRef', :file_name, :file_id, :file_size_bytes)
+
+class DigitoolStreamRef < SaxDocument
+
+# for parsing out the following data, from which want file_name, file_id, and file_size_bytes
+
+# ...
+# <stream_ref>
+#   <file_name>163960_41965_pg016_utview_m1_toc14_lblAll About A Frog.jpg</file_name>
+#   <file_extension>jpg</file_extension>
+#   <mime_type>image/jpeg</mime_type>
+#   <directory_path>/exlibris4/dtl/storage/2009/02/16/file_3/163960</directory_path>
+#   <file_id>METSID-16</file_id>
+#   <storage_id>1063</storage_id>
+#   <external_type>-1</external_type>
+#   <file_size_bytes>959430</file_size_bytes>
+# </stream_ref>
+# ....
+
+  attr_reader :stream_ref
+
+  def initialize
+    @in_stream_ref = false
+    @stream_ref = Struct::StreamRef.new
+    super
+  end
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
+    @in_stream_ref = true if name == 'stream_ref'
+  end
+
+  def end_element_namespace name, prefix = nil, uri = nil
+    if @in_stream_ref
+      case
+      when name == 'file_name';         @stream_ref.file_name       = @current_string
+      when name == 'file_id';           @stream_ref.file_id         = @current_string
+      when name == 'file_size_bytes';   @stream_ref.file_size_bytes = @current_string
+      end
+    end
+    @in_stream_ref = false if name == 'stream_ref'
+    @current_string = ''
+  end
+
+end #
