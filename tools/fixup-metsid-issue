@@ -1,0 +1,75 @@
+#!/usr/bin/env ruby
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+require 'socket'
+
+case Socket.gethostname
+when /alpo/
+  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
+when /romeo-foxtrot/
+  $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
+when /islandora/
+  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+else
+  STDERR.puts "Don't know how to find the configuration file for this environment, quitting."
+  exit -1
+end
+
+require 'offin/mets'
+require 'offin/document-parsers'
+require 'datyl/config'
+
+
+def parse_digitial_entity filepath
+  sax_document = DigitoolStreamRef.new
+  Nokogiri::XML::SAX::Parser.new(sax_document).parse(File.open(filepath))
+  return sax_document.stream_ref
+end
+
+#    sax_document = SaxDocumentExamineMets.new
+#    Nokogiri::XML::SAX::Parser.new(sax_document).parse(@text)
+
+
+filename = ARGV[0]
+
+config = Datyl::Config.new(config_filename, "default", "alpo")
+mets   = Mets.new(config, filename)
+
+
+STDERR.puts mets.valid? ? "METS file #{filename} is valid" : "METS file #{filename} is invalid"
+STDERR.puts 'METS Errors: ',   mets.errors   if mets.errors?
+STDERR.puts 'METS Warnings: ', mets.warnings if mets.warnings?
+
+exit 0 unless mets.valid?
+
+
+metsid_filenames = {}
+
+Dir["#{File.expand_path(File.join(File.dirname(ARGV[0]), '../digital_entities'))}/*"].each do |filepath|
+  rec = parse_digitial_entity(filepath)
+  next unless rec.file_id =~ /^METSID/
+  metsid_filenames[rec.file_id] = rec.file_name
+end
+
+
+# metsid_filenames.keys.sort{ |a,b| a.sub("METSID-",'').to_i <=> b.sub('METSID-', '').to_i }.each do |metsid|
+#   puts metsid + '   ' + metsid_filenames[metsid]
+# end
+
+mets.file_dictionary.each do |rec|
+  next unless rec.href =~ /METSID-/
+  if not metsid_filenames[rec.href]
+    STDERR.puts "Can't get METSID mapping for #{rec.inspect}"
+  else
+    rec.href = metsid_filenames[rec.href]
+  end
+end
+
+
+mets.file_dictionary.print
