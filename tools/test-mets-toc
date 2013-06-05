@@ -8,6 +8,9 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
+  ENV['HTTP_PROXY'] = 'http://localhost:3128/'
+  ENV['http_proxy'] = 'http://localhost:3128/'
+
 require 'offin/mets'
 
 # TODO: check for image filenames (need errors, warnings, valid? on TOC)
