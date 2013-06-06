@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
