@@ -32,44 +32,49 @@ def parse_digitial_entity filepath
   return sax_document.stream_ref
 end
 
-#    sax_document = SaxDocumentExamineMets.new
-#    Nokogiri::XML::SAX::Parser.new(sax_document).parse(@text)
-
-
-filename = ARGV[0]
+mets_filename = ARGV[0]
 
 config = Datyl::Config.new(config_filename, "default", "alpo")
-mets   = Mets.new(config, filename)
+mets   = Mets.new(config, mets_filename)
 
-
-STDERR.puts mets.valid? ? "METS file #{filename} is valid" : "METS file #{filename} is invalid"
+STDERR.puts mets.valid? ? "METS file #{mets_filename} is valid" : "METS file #{mets_filename} is invalid"
 STDERR.puts 'METS Errors: ',   mets.errors   if mets.errors?
 STDERR.puts 'METS Warnings: ', mets.warnings if mets.warnings?
 
 exit 0 unless mets.valid?
 
-
 metsid_filenames = {}
+entities_directory  = File.expand_path(File.join(File.dirname(mets_filename), '../digital_entities'))
+datafiles_directory = File.expand_path(File.join(File.dirname(mets_filename), '../streams'))
 
-Dir["#{File.expand_path(File.join(File.dirname(ARGV[0]), '../digital_entities'))}/*"].each do |filepath|
-  rec = parse_digitial_entity(filepath)
-  next unless rec.file_id =~ /^METSID/
-  metsid_filenames[rec.file_id] = rec.file_name
+Dir["#{entities_directory}/*"].each do |filepath|
+  stream_record = parse_digitial_entity(filepath)
+  next unless stream_record.file_id =~ /^METSID/
+  metsid_filenames[stream_record.file_id] = stream_record.file_name    # e.g.,  "METSID-1" => "page001.jp2"
 end
-
 
 # metsid_filenames.keys.sort{ |a,b| a.sub("METSID-",'').to_i <=> b.sub('METSID-', '').to_i }.each do |metsid|
 #   puts metsid + '   ' + metsid_filenames[metsid]
 # end
 
-mets.file_dictionary.each do |rec|
-  next unless rec.href =~ /METSID-/
-  if not metsid_filenames[rec.href]
-    STDERR.puts "Can't get METSID mapping for #{rec.inspect}"
-  else
-    rec.href = metsid_filenames[rec.href]
-  end
-end
+mets.file_dictionary.each do |dictionary_entry|
 
+  href = dictionary_entry.href
+  next unless href =~ /METSID-/
+
+  image_filename = metsid_filenames[href]
+
+  if not image_filename
+    STDERR.puts "No METSID mapping for #{dictionary_entry.inspect}"
+    next
+  end
+
+  if not File.exists?  File.join(datafiles_directory, image_filename)
+    STDERR.puts "Missing file #{image_filename}"
+    next
+  end
+
+  dictionary_entry.href = image_filename
+end
 
 mets.file_dictionary.print
