@@ -893,7 +893,7 @@ end # of class MetsStructMap
 class SaxDocumentExamineMets < SaxDocument
 
   METS_NAMESPACE = %r{^http://www.loc.gov/METS/}
-  VALID_FLOCAT   = %r{(fileSec:)(fileGrp:)+(file:)(FLocat)$}
+  VALID_FLOCAT   = %r{(fileSec:)(fileGrp:)+(file:)(FLocat)$}  ## TODO: use this with new onstack?
 
   include Errors
 
