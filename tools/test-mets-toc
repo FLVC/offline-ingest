@@ -7,7 +7,7 @@ Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
-$LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
+# $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
 
   ENV['HTTP_PROXY'] = 'http://localhost:3128/'
   ENV['http_proxy'] = 'http://localhost:3128/'
@@ -23,7 +23,7 @@ Struct.new('MockConfig', :schema_directory)
 
 config = Struct::MockConfig.new
 config.schema_directory = '/usr/local/islandora/offline-ingest/lib/include/'
-config.schema_directory = '/home/fischer/WorkProjects/offline-ingest/lib/include/'
+# config.schema_directory = '/home/fischer/WorkProjects/offline-ingest/lib/include/'
 
 SaxDocumentExamineMets.debug = false
 

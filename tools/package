@@ -9,8 +9,8 @@ require 'socket'
 case Socket.gethostname
 
 when /alpo/
-  $LOAD_PATH.unshift "/user/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/user/fischer/WorkProjects/offline-ingest/config.yml"
+  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
 
 when /romeo-foxtrot/
   $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
@@ -19,6 +19,8 @@ when /romeo-foxtrot/
 when /islandorad/
   $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
   config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+
+  # TODO: move following to config
 
   ENV['HTTP_PROXY'] = 'http://localhost:3128/'  # libxml picks this up, but it's very picky about syntax!
   ENV['http_proxy'] = 'http://localhost:3128/'
@@ -57,11 +59,6 @@ end
 
 indent  = ' ' * 4
 config  = Datyl::Config.new(config_filename, "default", parse_command(ARGV))
-
-# if config.http_proxy
-#   ENV['HTTP_PROXY'] = config.http_proxy
-#   ENV['http_proxy'] = config.http_proxy
-# end
 
 factory = PackageFactory.new(config)
 
