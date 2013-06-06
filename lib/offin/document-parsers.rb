@@ -797,7 +797,7 @@ class MetsStructMap
 
     record = Struct::MetsDivData.new
     record.level   = level
-    record.title   = hash['LABEL'] || ''
+    record.title   = hash['LABEL'] || hash['TYPE'] || ''
     record.is_page = hash['TYPE'] && hash['TYPE'].downcase == 'page'
     record.fids    = []
     record.files   = []
