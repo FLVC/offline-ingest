@@ -77,7 +77,7 @@ class TableOfContents
     toc = []
     seq = 1
     @sequence.each do |entry|
-      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => seq  }
+      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => seq.to_s }
       case entry
       when Struct::Chapter
         rec['type'] = 'chapter'
