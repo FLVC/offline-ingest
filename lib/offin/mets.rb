@@ -47,6 +47,7 @@ class TableOfContents
         entry.title = div_data.title
         entry.level = div_data.level
       end
+
       @sequence.push entry
     end
 
@@ -54,8 +55,6 @@ class TableOfContents
     cleanup_page_titles
     check_for_page_images
   end
-
-
 
 
   def each
@@ -103,9 +102,9 @@ class TableOfContents
     @sequence.each do |entry|
       case entry
       when Struct::Chapter
-        indent = '++ ' * entry.level
+        indent = '* ' * entry.level
       when Struct::Page
-        indent = '-- ' * entry.level
+        indent = '- ' * entry.level
       end
       puts indent + entry.title
     end
