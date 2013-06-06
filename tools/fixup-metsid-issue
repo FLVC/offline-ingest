@@ -10,12 +10,15 @@ case Socket.gethostname
 when /alpo/
   $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
+  server = 'alpo'
 when /romeo-foxtrot/
   $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
+  server = 'alpo'
 when /islandora/
   $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
   config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+  server = 'i7d'
 else
   STDERR.puts "Don't know how to find the configuration file for this environment, quitting."
   exit -1
@@ -26,55 +29,108 @@ require 'offin/document-parsers'
 require 'datyl/config'
 
 
+def create_metsid_mapping entities_directory
+
+  metsid_filenames = {}
+
+  Dir["#{entities_directory}/*"].each do |filepath|
+    stream_record = parse_digitial_entity(filepath)
+    next unless stream_record.file_id =~ /^METSID/
+    metsid_filenames[stream_record.file_id] = stream_record.file_name    # e.g.,  "METSID-1" => "page001.jp2"
+  end
+
+  return metsid_filenames
+end
+
 def parse_digitial_entity filepath
   sax_document = DigitoolStreamRef.new
   Nokogiri::XML::SAX::Parser.new(sax_document).parse(File.open(filepath))
   return sax_document.stream_ref
 end
 
+def cross_reference_mets_dictionary datafiles_directory, mets, metsid_mapping
+  valid = true
+
+  mets.file_dictionary.each do |dictionary_entry|
+
+    href = dictionary_entry.href
+    next unless href =~ /METSID-/
+
+    image_filename = metsid_mapping[href]
+
+    if not image_filename
+      STDERR.puts "No METSID mapping for #{dictionary_entry.inspect}"
+      valid = false
+      next
+    end
+
+    if not File.exists?  File.join(datafiles_directory, image_filename)
+      STDERR.puts "Missing file #{image_filename}"
+      valid = false
+      next
+    end
+    # dictionary_entry.href = image_filename
+  end
+  return valid
+end
+
+
+def usage mess = nil
+  STDERR.puts "Usage: #{__FILE__} mets.xml"
+  STDERR.puts mess if mess
+  exit 1
+end
+
+usage if ARGV.empty?
 mets_filename = ARGV[0]
+
+usage("#{mets_filename} doesn't exist.")   unless File.exists? mets_filename
+usage("#{mets_filename} is not readable.") unless File.readable? mets_filename
+
+entities_directory  = File.expand_path(File.join(File.dirname(mets_filename), '../digital_entities'))
+datafiles_directory = File.expand_path(File.join(File.dirname(mets_filename), '../streams'))
+
+usage("expected streams directory #{datafiles_directory}, but it doesn't exist.") unless File.directory? datafiles_directory
+usage("streams directory #{datafiles_directory} is not readble.")                 unless File.readable?  datafiles_directory
+usage("streams directory #{datafiles_directory} is not writable.")                unless File.writable?  datafiles_directory
+
+usage("expected digital_entities directory #{entities_directory}, but it doesn't exist.")  unless File.directory? entities_directory
+usage("digital_entities directory #{entities_directory} is not readable.")                 unless File.readable?  entities_directory
 
 config = Datyl::Config.new(config_filename, "default", "alpo")
 mets   = Mets.new(config, mets_filename)
 
-STDERR.puts mets.valid? ? "METS file #{mets_filename} is valid" : "METS file #{mets_filename} is invalid"
 STDERR.puts 'METS Errors: ',   mets.errors   if mets.errors?
 STDERR.puts 'METS Warnings: ', mets.warnings if mets.warnings?
 
-exit 0 unless mets.valid?
-
-metsid_filenames = {}
-entities_directory  = File.expand_path(File.join(File.dirname(mets_filename), '../digital_entities'))
-datafiles_directory = File.expand_path(File.join(File.dirname(mets_filename), '../streams'))
-
-Dir["#{entities_directory}/*"].each do |filepath|
-  stream_record = parse_digitial_entity(filepath)
-  next unless stream_record.file_id =~ /^METSID/
-  metsid_filenames[stream_record.file_id] = stream_record.file_name    # e.g.,  "METSID-1" => "page001.jp2"
+unless mets.valid?
+  STDERR.puts "#{mets_filename} is invalid, quitting."
+  exit 0
 end
 
-# metsid_filenames.keys.sort{ |a,b| a.sub("METSID-",'').to_i <=> b.sub('METSID-', '').to_i }.each do |metsid|
-#   puts metsid + '   ' + metsid_filenames[metsid]
-# end
 
-mets.file_dictionary.each do |dictionary_entry|
+metsid_mapping = create_metsid_mapping entities_directory
 
-  href = dictionary_entry.href
-  next unless href =~ /METSID-/
-
-  image_filename = metsid_filenames[href]
-
-  if not image_filename
-    STDERR.puts "No METSID mapping for #{dictionary_entry.inspect}"
-    next
-  end
-
-  if not File.exists?  File.join(datafiles_directory, image_filename)
-    STDERR.puts "Missing file #{image_filename}"
-    next
-  end
-
-  dictionary_entry.href = image_filename
+unless cross_reference_mets_dictionary datafiles_directory, mets, metsid_mapping
+  STDERR.puts "Fatal errors, quitting."
+  exit  0
 end
 
-mets.file_dictionary.print
+doc = Nokogiri::XML(File.open(mets_filename))
+
+doc.xpath('//METS:FLocat', 'METS' => 'http://www.loc.gov/METS/').each do |node|
+  next unless node.attributes['href'].inspect
+
+  old_value = node.attributes['href'].value
+  next unless old_value =~ /METSID-/
+
+  node.attributes['href'].value = metsid_mapping[old_value]
+end
+
+File.rename  mets_filename, mets_filename.sub(/_mets.xml$/, '_mets.orig')
+
+
+File.open(mets_filename, 'w') do |fh|
+  fh.puts doc.to_xml
+end
+puts "Rewrote #{mets_filename}"
