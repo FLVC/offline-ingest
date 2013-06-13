@@ -29,6 +29,14 @@ require 'offin/document-parsers'
 require 'datyl/config'
 
 
+# create_metsid_mapping(dir) takes stream records from all the digitool
+# xml files found in directory dir, creating a mapping (a hash) along the
+# lines of:
+#
+#  "METSID-1" => "page001.jp2"
+#  "METSID-2" => "page002.jp2"
+#  ...
+
 def create_metsid_mapping entities_directory
 
   metsid_filenames = {}
@@ -36,17 +44,32 @@ def create_metsid_mapping entities_directory
   Dir["#{entities_directory}/*"].each do |filepath|
     stream_record = parse_digitial_entity(filepath)
     next unless stream_record.file_id =~ /^METSID/
-    metsid_filenames[stream_record.file_id] = stream_record.file_name    # e.g.,  "METSID-1" => "page001.jp2"
+    metsid_filenames[stream_record.file_id] = stream_record.file_name
   end
 
   return metsid_filenames
 end
+
+
+
+# parse_digitial_entity(filename) runs a SAX parser over a digitool
+# digitial_entities, returning an abbreviated streams data record.
 
 def parse_digitial_entity filepath
   sax_document = DigitoolStreamRef.new
   Nokogiri::XML::SAX::Parser.new(sax_document).parse(File.open(filepath))
   return sax_document.stream_ref
 end
+
+# cross_reference_mets_dictionary given a datafiles_directory where
+# images live, a mets file with href="METSID-nn", and a mapping of
+# those "METSID-nn" names to actual files, perform the following
+# checks:
+#
+#  make sure every href="METSID-nn" reference is mapped to a filename
+#  make sure every filename is actually in the directory.
+#
+# If not, return false.
 
 def cross_reference_mets_dictionary datafiles_directory, mets, metsid_mapping
   valid = true
@@ -72,6 +95,29 @@ def cross_reference_mets_dictionary datafiles_directory, mets, metsid_mapping
     # dictionary_entry.href = image_filename
   end
   return valid
+end
+
+
+# Given a mets_filename that has 'href="METSID-nn"' references, and a
+# map from METSID's to image filenames, rewrite file METS file with
+# the correct href.  The original file is saved with a '.orig'
+# extension.
+
+def fixup_mets_file mets_filename, metsid_mapping
+  doc = Nokogiri::XML(File.open(mets_filename))
+
+  doc.xpath('//METS:FLocat', 'METS' => 'http://www.loc.gov/METS/').each do |node|
+    next unless node.attributes['href']
+
+    old_value = node.attributes['href'].value
+    next unless old_value =~ /METSID-/
+
+    node.attributes['href'].value = metsid_mapping[old_value]
+  end
+
+  File.rename  mets_filename, mets_filename.sub(/_mets.xml$/, '_mets.orig')
+
+  File.open(mets_filename, 'w') { |fh|  fh.puts doc.to_xml }
 end
 
 
@@ -108,29 +154,13 @@ unless mets.valid?
   exit 0
 end
 
+metsid_mapping = create_metsid_mapping(entities_directory)
 
-metsid_mapping = create_metsid_mapping entities_directory
-
-unless cross_reference_mets_dictionary datafiles_directory, mets, metsid_mapping
+unless cross_reference_mets_dictionary(datafiles_directory, mets, metsid_mapping)
   STDERR.puts "Fatal errors, quitting."
   exit  0
 end
 
-doc = Nokogiri::XML(File.open(mets_filename))
+fixup_mets_file(mets_filename, metsid_mapping)
 
-doc.xpath('//METS:FLocat', 'METS' => 'http://www.loc.gov/METS/').each do |node|
-  next unless node.attributes['href'].inspect
-
-  old_value = node.attributes['href'].value
-  next unless old_value =~ /METSID-/
-
-  node.attributes['href'].value = metsid_mapping[old_value]
-end
-
-File.rename  mets_filename, mets_filename.sub(/_mets.xml$/, '_mets.orig')
-
-
-File.open(mets_filename, 'w') do |fh|
-  fh.puts doc.to_xml
-end
 puts "Rewrote #{mets_filename}"

@@ -2,38 +2,50 @@
 
 require 'rubygems'
 
-# For testing, remove soon:
-
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
-$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
-# $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
+require 'socket'
 
-  ENV['HTTP_PROXY'] = 'http://localhost:3128/'
+case Socket.gethostname
+
+when /alpo/
+  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
+  server = 'alpo'
+
+  ENV['HTTP_PROXY'] = 'http://localhost:3128/'  # libxml picks this up, but it's very picky about syntax!
   ENV['http_proxy'] = 'http://localhost:3128/'
 
+when /romeo-foxtrot/
+  $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/Home/fischer/WorkProjects/offline-ingest/config.yml"
+  server = 'alpo'
+
+when /islandorad/
+  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+  server = 'i7d'
+
+  ENV['HTTP_PROXY'] = 'http://localhost:3128/'  # libxml picks this up, but it's very picky about syntax!
+  ENV['http_proxy'] = 'http://localhost:3128/'
+else
+  STDERR.puts "#{$0} Doesn't know how to configure for this environment, quitting."
+  exit -1
+end
+
 require 'offin/mets'
+require 'datyl/config'
 
-# TODO: check for image filenames (need errors, warnings, valid? on TOC)
-# TODO: compare package contents to expected list of pages in TOC object
-
-# TESTING
-
-Struct.new('MockConfig', :schema_directory)
-
-config = Struct::MockConfig.new
-config.schema_directory = '/usr/local/islandora/offline-ingest/lib/include/'
-# config.schema_directory = '/home/fischer/WorkProjects/offline-ingest/lib/include/'
+config  = Datyl::Config.new(config_filename, "default", server)
 
 SaxDocumentExamineMets.debug = false
 
 
 ARGV.each do |filename|
 
-  STDERR.puts '', filename, ''
-
+  STDERR.puts filename
   start = Time.now
 
   mets = Mets.new(config, filename)
@@ -44,7 +56,7 @@ ARGV.each do |filename|
 
   next unless mets.valid?
 
-  mets.structmap.print
+  # mets.structmap.print
 
   toc  = TableOfContents.new(mets.structmap)
 
@@ -58,6 +70,5 @@ ARGV.each do |filename|
 
   puts toc.to_json(mets.label)
 
-  toc.print
-
+  # toc.print
 end
