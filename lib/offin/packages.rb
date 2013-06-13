@@ -13,6 +13,7 @@ require 'RMagick'
 BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
 LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
 PDF_CONTENT_MODEL         = "islandora:sp_pdf"
+BOOK_CONTENT_MODEL        = "islandora:bookCModel"
 
 # PackageFactory takes a directory path and checks the manifest.xml
 # file within it.  It determines what content model is being
@@ -40,9 +41,10 @@ class PackageFactory
     manifest = Utils.get_manifest @config, directory
 
     return case manifest.content_model
-           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest)
-           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest)
+           when BASIC_IMAGE_CONTENT_MODEL:  BasicImagePackage.new(@config, directory, manifest)
+           when LARGE_IMAGE_CONTENT_MODEL:  LargeImagePackage.new(@config, directory, manifest)
            when PDF_CONTENT_MODEL:          PdfPackage.new(@config, directory, manifest)
+           when BOOK_CONTENT_MODEL:         BookPackage.new(@config, directory, manifest)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
@@ -498,4 +500,10 @@ class PdfPackage < Package
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
   end
+end
+
+
+class BookPackage < Package
+
+
 end
