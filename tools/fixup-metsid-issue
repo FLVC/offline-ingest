@@ -42,7 +42,7 @@ def create_metsid_mapping entities_directory
   metsid_filenames = {}
 
   Dir["#{entities_directory}/*"].each do |filepath|
-    stream_record = parse_digitial_entity(filepath)
+    stream_record = parse_digital_entity(filepath)
     next unless stream_record.file_id =~ /^METSID/
     metsid_filenames[stream_record.file_id] = stream_record.file_name
   end
@@ -55,7 +55,7 @@ end
 # parse_digitial_entity(filename) runs a SAX parser over a digitool
 # digitial_entities, returning an abbreviated streams data record.
 
-def parse_digitial_entity filepath
+def parse_digital_entity filepath
   sax_document = DigitoolStreamRef.new
   Nokogiri::XML::SAX::Parser.new(sax_document).parse(File.open(filepath))
   return sax_document.stream_ref
@@ -115,8 +115,14 @@ def fixup_mets_file mets_filename, metsid_mapping
     node.attributes['href'].value = metsid_mapping[old_value]
   end
 
-  File.rename  mets_filename, mets_filename.sub(/_mets.xml$/, '_mets.orig')
+  original_file = mets_filename.sub(/_mets.xml$/, '_mets.orig')
+  if File.exists? original_file
+    STDERR.puts "I wanted to write the original mets file to #{original_file}, but it already exists. Giving up, not saving the fixed mets, either."
+    exit 1
+  end
 
+
+  File.rename  mets_filename, original_file
   File.open(mets_filename, 'w') { |fh|  fh.puts doc.to_xml }
 end
 
