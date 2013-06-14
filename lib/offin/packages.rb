@@ -4,6 +4,7 @@ require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
 require 'offin/errors'
+require 'offin/mets'
 require 'offin/mods'
 require 'offin/ingestor'
 require 'offin/metadata-updater'
@@ -41,10 +42,10 @@ class PackageFactory
     manifest = Utils.get_manifest @config, directory
 
     return case manifest.content_model
-           when BASIC_IMAGE_CONTENT_MODEL:  BasicImagePackage.new(@config, directory, manifest)
-           when LARGE_IMAGE_CONTENT_MODEL:  LargeImagePackage.new(@config, directory, manifest)
-           when PDF_CONTENT_MODEL:          PdfPackage.new(@config, directory, manifest)
-           when BOOK_CONTENT_MODEL:         BookPackage.new(@config, directory, manifest)
+           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest)
+           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest)
+           when PDF_CONTENT_MODEL;          PdfPackage.new(@config, directory, manifest)
+           when BOOK_CONTENT_MODEL;         BookPackage.new(@config, directory, manifest)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
@@ -141,7 +142,7 @@ class Package
     @directory_name
   end
 
-  # base classes should implement ingest with super():
+  # base classes should re-implement ingest.
 
   def ingest
     raise PackageError, 'Attempt to ingest an invalid package.' unless valid?
@@ -214,7 +215,7 @@ class Package
       raise PackageError, "Found unreadable file '#{entry}' in package" unless File.readable?(entry)
 
       filename = File.basename entry
-      next if [ '.', '..', 'manifest.xml', 'marc.xml', "#{directory_name}.xml" ].include? filename
+      next if [ '.', '..', 'manifest.xml', 'marc.xml', 'mets.xml', "#{directory_name}.xml" ].include? filename
       list.push filename
     end
 
@@ -260,14 +261,12 @@ class BasicImagePackage < Package
     end
 
   rescue PackageError => e
-    error "Exception for package #{@directory_name}: #{e.message}"
+    error "Exception for Basic Image package #{@directory_name}: #{e.message}"
   rescue => e
-    error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
+    error "Exception #{e.class} - #{e.message} for Basic Image package #{@directory_name}, backtrace follows:", e.backtrace
   end
 
   def ingest
-    super
-
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
@@ -338,13 +337,12 @@ class LargeImagePackage < Package
     end
 
   rescue PackageError => e
-    error "Exception for package #{@directory_name}: #{e.message}"
+    error "Exception for Large Image package #{@directory_name}: #{e.message}"
   rescue => e
-    error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
+    error "Exception #{e.class} - #{e.message} for Large Image package #{@directory_name}, backtrace follows:", e.backtrace
   end
 
   def ingest
-    super
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -453,13 +451,12 @@ class PdfPackage < Package
     end
 
   rescue PackageError => e
-    error "Exception for package #{@directory_name}: #{e.message}"
+    error "Exception for PDF package #{@directory_name}: #{e.message}"
   rescue => e
-    error "Exception #{e.class} - #{e.message}, backtrace follows:", e.backtrace
+    error "Exception #{e.class} - #{e.message}, for PDF package #{@directory_name} backtrace follows:", e.backtrace
   end
 
   def ingest
-    super
 
     # Do image processing upfront so as to fail faster, if fail we must, before ingest is started.
 
@@ -504,6 +501,192 @@ end
 
 
 class BookPackage < Package
+
+  attr_reader :mets, :page_filenames, :table_of_contents, :page_pids
+
+  def initialize config, directory, manifest
+    super(config, directory, manifest)
+
+    @content_model = BOOK_CONTENT_MODEL
+
+    raise PackageError, "The Book package #{@directory_name} contains no data files."  if @datafiles.empty?
+
+    handle_marc or return  # create @marc if we have a marc.xml
+    handle_mets or return  # create @mets and check its validity
+
+    create_table_of_contents or return       # creates @table_of_contents
+    reconcile_file_lists     or return       # creates @page_filenames
+    check_page_types         or return       # checks @page_filenames file types
+
+  rescue PackageError => e
+    error "Exception for Book package #{@directory_name}: #{e.message}"
+  rescue => e
+    error "Exception #{e.class} - #{e.message} for Book package #{@directory_name}, backtrace follows:", e.backtrace
+  end
+
+
+  def ingest
+
+    ingest_book
+    ingest_pages
+
+  end
+
+
+
+  private
+
+
+  # TODO: This following is (probably) a digitool-only case  and really should be pulled out into the metadata-updater class
+
+  def handle_marc
+    marc_filename = File.join(@directory_path, 'marc.xml')
+    @marc = File.read(marc_filename) if File.exists? marc_filename
+    return true
+  end
+
+  def handle_mets
+    mets_filename = File.join(@directory_path, 'mets.xml')
+
+    if File.exists? mets_filename
+      @mets =  Mets.new(@config, mets_filename)
+    else
+      raise PackageError, "The Book package #{@directory_name} doesn't contain a mets.xml file."
+    end
+
+    if not @mets.valid?
+      error "The mets.xml file in the Book package #{@directory_name} is invalid, errors follow:"
+    end
+
+    error mets.errors
+    warning mets.warnings
+
+    return valid?
+  end
+
+
+  def create_table_of_contents
+
+    @table_of_contents = TableOfContents.new(@mets.structmap)
+
+    if @table_of_contents.warnings?
+      warning "Note: the table of contents derived from the METS file #{@directory_name}/mets.xml has the following issues:"
+      warning @table_of_contents.warnings
+    end
+
+    if @table_of_contents.errors?
+      error "The table of contents derived from the METS file #{@directory_name}/mets.xml is invalid:"
+      error @table_of_contents.errors
+      return false
+    end
+
+    return true
+  end
+
+
+
+  def check_page_types
+    issues = []
+    @page_filenames.each do |file_name|
+      path = File.join(@directory_path, file_name)
+      type = Utils.mime_type(path)
+      issues.push "Page file #{file_name} is of type #{type}, not image/jp2" if not type =~ JP2
+    end
+    unless issues.empty?
+      error "The Book Package #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
+      error issues
+    end
+  end
+
+
+  def reconcile_file_lists
+
+    missing     = []
+    expected    = []
+
+    # this checks what's declared in the METS file (mets.file_dictionary) against what's in the package directory, less the metadata files (@datafiles)
+    # @mets.file_dictionary.each do |entry|
+
+    # STDERR.puts @table_of_contents.pages.map { |e| e.image_filename }, '', '', ''
+    # STDERR.puts @datafiles
+    # exit
+
+
+    @table_of_contents.pages.each do |entry|
+      expected.push entry.image_filename
+      missing.push  entry.image_filename  if @datafiles.grep(entry.image_filename).empty?
+    end
+
+    unexpected = @datafiles - expected
+
+    unless unexpected.empty?
+      warning "The Book package #{@directory_name} has the following unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
+      warning unexpected
+    end
+
+    unless missing.empty?
+      error "The Book package #{@directory_name} is missing the following required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
+      error missing
+      return false
+    end
+
+    @page_filenames = expected - missing
+  end
+
+
+  def ingest_book
+
+    # TODO: in initialization check to make sure that there are *some* page files...
+
+    first_image = File.join @directory_path, @page_filenames[0]
+    @image = Magick::Image.read(first_image).first
+
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+
+      boilerplate(ingestor)
+
+      @image.format = 'JPG'
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = 'Thumbnail'
+        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+        ds.mimeType = @image.mime_type
+      end
+
+      ingestor.datastream('DTMETS') do |ds|
+        ds.dsLabel  = 'Archived DigiTool METS'
+        ds.content  = @mets.text
+        ds.mimeType = 'text/xml'
+      end
+
+      ingestor.datastream('TOC') do |ds|
+        ds.dsLabel  = 'Table of Contents'
+        ds.content  = @table_of_contents.to_json(@mets.label)
+        ds.mimeType = 'application/json'
+      end
+
+    end
+
+    @bytes_ingested = ingestor.size
+  ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
+    @image.destroy! if @image.class == Magick::Image
+  end
+
+
+  def ingest_pages
+
+    # <rdf:RDF>
+    #   <rdf:Description rdf:about="info:fedora/fsu:167">
+    #     <fedora:isMemberOfCollection rdf:resource="info:fedora/fsu:134"/>
+    #     <fedora-model:hasModel rdf:resource="info:fedora/islandora:bookCModel"/>
+    #   </rdf:Description>
+    # </rdf:RDF>
+
+  end
+
+
 
 
 end
