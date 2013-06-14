@@ -54,6 +54,7 @@ class TableOfContents
     cleanup_chapter_titles
     cleanup_page_titles
     check_for_page_images
+    nip_it_in_the_bud
   end
 
 
@@ -114,8 +115,35 @@ class TableOfContents
 
   private
 
-  # TODO: not too sure how to approach this yet; it may be too early
-  # to do filename checks (we have to do some checking in the package)
+
+  # sometimes we have a structure like this:
+
+  # level-1
+  #   level-2
+  #   level-2
+  #     level-3
+  #     level-3
+  #   level-2
+  #
+  # where we really don't need the level-1 there, at all. I call that a bud.
+
+  def nip_it_in_the_bud
+    while has_bud?(@sequence) do
+      @sequence.shift
+      @sequence.each { |entry| entry.level -= 1 }
+    end
+  end
+
+  def has_bud? seq
+    return false unless seq.length > 1
+    return true if  seq[0].level == 1 \
+                and seq[0].class != Struct::Page \
+                and seq[1..-1].all? { |ent| ent.level > 1 }
+  end
+
+
+  # TODO: not too sure how to approach this yet.
+  # it is certainly to early to filesystem checks on the files' existance.
   #
   # So this may be a fatal error (@valid => false) but let's wait and
   # experiment for now; just issue warnings.
@@ -179,7 +207,7 @@ class Mets
 
   include Errors
 
-  attr_reader :xml_document, :sax_document, :filename, :structmap, :file_dictionary
+  attr_reader :xml_document, :sax_document, :filename, :structmap, :file_dictionary, :text
 
   def initialize config, path
 
@@ -214,7 +242,7 @@ class Mets
   end
 
 
-  # Top level label get
+  # Top level label gets precedence
 
   def label
     @sax_document.label || @structmap.label
@@ -224,7 +252,9 @@ class Mets
     @valid and not errors?
   end
 
+
   private
+
 
   def xml_syntax_errors? list
     return false if list.empty?
