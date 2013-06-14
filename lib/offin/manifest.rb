@@ -29,8 +29,6 @@ class Manifest
 
     error   @manifest_sax_doc.errors    if @manifest_sax_doc.errors?
     warning @manifest_sax_doc.warnings  if @manifest_sax_doc.warnings?
-
-
   end
 
   # valid is a boolean that tells us whether the manifest xml document is valid.  This goes beyond schema validation.
@@ -85,6 +83,5 @@ class Manifest
   def owning_user
     @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.owning_user
   end
-
 
 end

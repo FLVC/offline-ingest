@@ -7,7 +7,7 @@ require 'offin/mods'
 # from many sources, and metadata may arrive embedded in a
 # manifest.xml file, a MODS file, METS, MARC, DC, or defaults.
 
-#
+#  This whole idea may turn out to be unnecessary, we'll see...
 
 
 class MetadataUpdater
