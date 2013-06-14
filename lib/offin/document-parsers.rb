@@ -2,6 +2,7 @@
 require 'nokogiri'
 require 'ostruct'
 require 'offin/errors'
+require 'offin/utils'
 require 'mime/types'
 
 
@@ -974,7 +975,7 @@ class SaxDocumentExamineMets < SaxDocument
     data = Struct::MetsFileDictionaryEntry.new
 
     data.sequence = file_element['SEQ']                        #
-    data.href     = flocat_element['href']                     #
+    data.href     = Utils.unescape_xml(flocat_element['href']) #
     data.mimetype = safe_downcase(file_element['MIMETYPE'])    # expected 'image/jp2' etc.
     data.use      = safe_downcase(file_group['USE'])           # expected limited set: 'archive', 'thumbnail', 'reference', 'index'.  In general we'll only be using the last two (image, ocr)
 
@@ -1137,28 +1138,49 @@ class DigitoolStreamRef < SaxDocument
 #   <file_size_bytes>959430</file_size_bytes>
 # </stream_ref>
 # ....
+#
+# Yikes?! Can also have:
+#
+#   <file_name>
+#     <![CDATA[2657397_pg305_utview_m1_toc29_lblRobert Clark & Co.'s Publications.jp2]]>
+#   </file_name>
+
 
   attr_reader :stream_ref
 
   def initialize
+    @cdata = ''
     @in_stream_ref = false
     @stream_ref = Struct::StreamRef.new
     super
   end
+
+
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
     @in_stream_ref = true if name == 'stream_ref'
+  end
+
+  def cdata_block cdata
+    @cdata = cdata
+  end
+
+  def best_data
+    return @current_string if not @current_string.empty?
+    return @cdata
   end
 
   def end_element_namespace name, prefix = nil, uri = nil
     if @in_stream_ref
       case
-      when name == 'file_name';         @stream_ref.file_name       = @current_string
+      when name == 'file_name';         @stream_ref.file_name       = best_data()
       when name == 'file_id';           @stream_ref.file_id         = @current_string
       when name == 'file_size_bytes';   @stream_ref.file_size_bytes = @current_string
       end
     end
     @in_stream_ref = false if name == 'stream_ref'
+
     @current_string = ''
+    @cdata = ''
   end
 
 end #
