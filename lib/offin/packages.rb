@@ -1,5 +1,3 @@
-# TODO: pull in ingestor warnings and errors; set validity flag if errors
-
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
@@ -255,7 +253,7 @@ class BasicImagePackage < Package
       # TODO: add special support for TIFFs (not needed for digitool migration)
 
     when TIFF
-      raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
+      raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported (coming soon)."
     else
       raise PackageError, "The Basic Image package #{@directory_name} contains an unexpected file #{@datafiles[0]} with mime type #{type}."
     end
@@ -331,7 +329,7 @@ class LargeImagePackage < Package
     when JP2
       @image = Magick::Image.read(path).first
     when TIFF
-      raise PackageError, "The Large Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported."
+      raise PackageError, "The Large Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported (coming soon)."
     else
       raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles[0]} with mime type #{type}."
     end
@@ -583,14 +581,14 @@ class BookPackage < Package
     return true
   end
 
-
+  # TODO: support TIFF files
 
   def check_page_types
     issues = []
     @page_filenames.each do |file_name|
       path = File.join(@directory_path, file_name)
       type = Utils.mime_type(path)
-      issues.push "Page file #{file_name} is of type #{type}, not image/jp2" if not type =~ JP2
+      issues.push "Page file #{file_name} is of unsupported type #{type}, but must be image/jp2 or image/tiff" if not type =~ JP2 or type =~ TIFF
     end
     unless issues.empty?
       error "The Book Package #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
@@ -604,13 +602,7 @@ class BookPackage < Package
     missing     = []
     expected    = []
 
-    # this checks what's declared in the METS file (mets.file_dictionary) against what's in the package directory, less the metadata files (@datafiles)
-    # @mets.file_dictionary.each do |entry|
-
-    # STDERR.puts @table_of_contents.pages.map { |e| e.image_filename }, '', '', ''
-    # STDERR.puts @datafiles
-    # exit
-
+    # this checks what's declared in the METS file (the structmap) against what's in the package directory, less the metadata files (which we have as @datafiles)
 
     @table_of_contents.pages.each do |entry|
       expected.push entry.image_filename
@@ -636,10 +628,10 @@ class BookPackage < Package
 
   def ingest_book
 
-    # TODO: in initialization check to make sure that there are *some* page files...
+    # TODO: in initialization, do a check to make sure that there are *some* page files... we need at least one.
 
-    first_image = File.join @directory_path, @page_filenames[0]
-    @image = Magick::Image.read(first_image).first
+    first_page = File.join @directory_path, @page_filenames[0]
+    @image = Magick::Image.read(first_page).first
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -653,8 +645,8 @@ class BookPackage < Package
         ds.mimeType = @image.mime_type
       end
 
-      ingestor.datastream('DTMETS') do |ds|
-        ds.dsLabel  = 'Archived DigiTool METS'
+      ingestor.datastream('DT-METS') do |ds|
+        ds.dsLabel  = 'Archived DigiTool METS for future reference'
         ds.content  = @mets.text
         ds.mimeType = 'text/xml'
       end
@@ -677,6 +669,8 @@ class BookPackage < Package
 
   def ingest_pages
 
+    # read in the image and branch, appropriately, to TIFF or JP2K handling....
+
     # <rdf:RDF>
     #   <rdf:Description rdf:about="info:fedora/fsu:167">
     #     <fedora:isMemberOfCollection rdf:resource="info:fedora/fsu:134"/>
@@ -685,8 +679,5 @@ class BookPackage < Package
     # </rdf:RDF>
 
   end
-
-
-
 
 end
