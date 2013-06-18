@@ -743,6 +743,11 @@ class BookPackage < Package
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
+
+      ingestor.label         = @label
+      ingestor.owner         = @owner
+      ingestor.content_model = PAGE_CONTENT_MODEL
+
       # if type is JP2,  otherwise if type is TIFF...
 
       image.format = 'JPG'
@@ -750,7 +755,7 @@ class BookPackage < Package
       ingestor.datastream('JPG') do |ds|
         ds.dsLabel  = 'Medium sized JPEG'
         ds.content  = image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = image.mime_type
+        ds.mimeType = imwage.mime_type
       end
 
       ingestor.datastream('TN') do |ds|
@@ -758,6 +763,21 @@ class BookPackage < Package
         ds.content  = image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = image.mime_type
       end
+
+      ingestor.datastream('HOCR') do |ds|
+        ds.dsLabel  = 'HOCR'
+        ds.content  = Utils.hocr(@config, pathname)
+        ds.mimeType = 'text/html'
+      end
+
+      ingestor.datastream('OCR') do |ds|
+        ds.dsLabel  = 'OCR'
+        ds.content  = Utils.ocr(@config, pathname)
+        ds.mimeType = 'text/plain'
+      end
+
+
+
     end
 
     return ingestor.pid

@@ -131,7 +131,7 @@ class Ingestor
   end
 
 
-  # TODO: label below needs to be xml escaped at some point...
+  # TODO: does label below needs to be xml escaped at some point?
 
   def collection_policy_text label
     str = ''

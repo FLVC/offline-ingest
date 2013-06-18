@@ -3,6 +3,8 @@ require 'offin/exceptions'
 require 'open3'
 require 'rchardet'
 require 'stringio'
+require 'tempfile'
+require 'fileutils'
 
 class Utils
 
@@ -115,7 +117,7 @@ class Utils
   end
 
   # from molf@http://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby
-  # doesn't actually work for my STDERR cases..
+  # doesn't actually work for my STDERR cases,  which is to catch the ImageMagick library's warnings.
 
 
   def Utils.capture_stderr
@@ -126,6 +128,42 @@ class Utils
     $stderr = previous_stderr
   end
 
+
+  def Utils.tesseract config, image_filepath, hocr = nil
+
+    name = Tempfile.new('tesseract-').path
+    error = nil
+
+    cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) + ' ' + name
+
+    cmdline += ' hocr' if hocr
+
+    Open3.popen3(cmdline) do |stdin, stdout, stderr|
+      stdin.close
+      stdout.close
+      error = stderr.read
+    end
+
+    name = name + (hocr ? '.html' : '.txt')
+
+    return nil unless File.exists?(name)
+    return File.read(name)
+
+  ensure
+    FileUtils.rm_f(name)
+  end
+
+  # use tesseract to create an HOCR file
+
+  def Utils.hocr config, image_filepath
+    return Utils.tesseract(config, image_filepath, :hocr)
+  end
+
+  # use tesseract to create an OCR file
+
+  def Utils.ocr config, image_filepath
+    return Utils.tesseract(config, image_filepath)
+  end
 
 
   # from shellwords.rb:
