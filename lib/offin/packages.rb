@@ -659,7 +659,6 @@ class BookPackage < Package
         ds.content  = @table_of_contents.to_json(@mets.label)
         ds.mimeType = 'application/json'
       end
-
     end
 
     @bytes_ingested = ingestor.size
@@ -685,6 +684,20 @@ class BookPackage < Package
   end
 
 
+  def rels_int pid, image
+
+    return <<-XML.gsub(/^     /, '')
+     <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
+              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+       <rdf:Description rdf:about="info:fedora/#{pid}/JP2">
+         <width xmlns="http://islandora.ca/ontology/relsext#">#{image.cols}</width>
+         <height xmlns="http://islandora.ca/ontology/relsext#">#{image.rows}</height>
+       </rdf:Description>
+     </rdf:RDF>
+  XML
+  end
+
+
   # read in the image and branch, appropriately, to TIFF or JP2K handling....
   #
   # RELS-EXT application/rdf+xml
@@ -705,7 +718,7 @@ class BookPackage < Package
   #   </rdf:Description>
   # </rdf:RDF>
   #
-  # RELS-EXT application/rdf+xml
+  # RELS-INT application/rdf+xml
   #
   # <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
   #          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -738,13 +751,65 @@ class BookPackage < Package
 
     return
 
-    pathname = File.join(@directory_path, pagename)
-    image    = Magick::Image.read(pathname).first
+    path = File.join(@directory_path, pagename)
+    image    = Magick::Image.read(path).first
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
+      case image.mime_type
 
-      ingestor.label         = @label
+      when TIFF
+        ingestor.datastream('OBJ') do |ds|
+          ds.dsLabel  = pagename.sub(/\.(tiff|tif)$/i, '')
+          ds.content  = File.open(path)
+          ds.mimeType = image.mime_type
+        end
+
+        image.format = 'JP2'
+
+        ingestor.datastream('JP2') do |ds|
+          ds.dsLabel  = "JP2 derived from original TIFF"
+          ds.content  = image.to_blob
+          ds.mimeType = image.mime_type
+        end
+
+        ingestor.datastream('RELS-INT') do |ds|
+          ds.dsLabel  = 'RELS-INT'
+          ds.content  = rels_int(ingestor.pid, image)
+          ds.mimeType = 'application/rdf+xml'
+        end
+
+      when JP2
+        ingestor.datastream('JP2') do |ds|
+          ds.dsLabel  = pagename.sub(/\.jp2$/i, '')
+          ds.content  = File.open(path)
+          ds.mimeType = image.mime_type
+        end
+
+        ingestor.datastream('RELS-INT') do |ds|
+          ds.dsLabel  = 'RELS-INT'
+          ds.content  = rels_int(ingestor.pid, image)
+          ds.mimeType = 'application/rdf+xml'
+        end
+
+        image.format = 'TIFF'
+        image.compression = Magick::LZWCompression
+
+        ingestor.datastream('OBJ') do |ds|
+          ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
+          ds.content  = image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+          ds.mimeType = image.mime_type
+        end
+
+      else
+        raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{image.mime_type}."
+      end
+
+      ### TODO: RELS-EXT
+      ### TODO: DC
+
+
+      ingestor.label         = pagename
       ingestor.owner         = @owner
       ingestor.content_model = PAGE_CONTENT_MODEL
 
@@ -766,17 +831,21 @@ class BookPackage < Package
 
       ingestor.datastream('HOCR') do |ds|
         ds.dsLabel  = 'HOCR'
-        ds.content  = Utils.hocr(@config, pathname)
+        ds.content  = Utils.hocr(@config, path)
         ds.mimeType = 'text/html'
       end
 
       ingestor.datastream('OCR') do |ds|
         ds.dsLabel  = 'OCR'
-        ds.content  = Utils.ocr(@config, pathname)
+        ds.content  = Utils.ocr(@config, path)
         ds.mimeType = 'text/plain'
       end
 
-
+      ingestor.datastream('PDF') do |ds|
+        ds.dsLabel  = 'PDF'
+        ds.content  = Utils.image_to_pdf(@config, path)
+        ds.mimeType = 'application/pdf'
+      end
 
     end
 

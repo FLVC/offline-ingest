@@ -93,6 +93,16 @@ class Utils
   end
 
 
+  def Utils.image_to_pdf config, image_filepath
+    pdf = nil
+    Open3.popen3("#{config.image_to_pdf_command} #{Utils.shellescape(image_filepath)} pdf:-") do |stdin, stdout, stderr|
+      stdin.close
+      pdf = stdout.read
+      error = stderr.read
+    end
+    return pdf
+  end
+
 
   def Utils.pdf_to_thumbnail config, pdf_filepath
 
