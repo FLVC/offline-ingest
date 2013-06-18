@@ -13,6 +13,7 @@ BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
 LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
 PDF_CONTENT_MODEL         = "islandora:sp_pdf"
 BOOK_CONTENT_MODEL        = "islandora:bookCModel"
+PAGE_CONTENT_MODEL        = "islandora:pageCModel"
 
 # PackageFactory takes a directory path and checks the manifest.xml
 # file within it.  It determines what content model is being
@@ -581,8 +582,6 @@ class BookPackage < Package
     return true
   end
 
-  # TODO: support TIFF files
-
   def check_page_types
     issues = []
     @page_filenames.each do |file_name|
@@ -602,7 +601,12 @@ class BookPackage < Package
     missing     = []
     expected    = []
 
-    # this checks what's declared in the METS file (the structmap) against what's in the package directory, less the metadata files (which we have as @datafiles)
+    # this checks what's declared in the METS file (the structmap
+    # part) against what's in the package directory, less the metadata
+    # files (which we have as @datafiles).  Entry is a Struct::Page
+    # with slots :title, :level, :image_filename, :image_mimetype,
+    # :text_filename, :text_mimetype
+
 
     @table_of_contents.pages.each do |entry|
       expected.push entry.image_filename
@@ -627,7 +631,6 @@ class BookPackage < Package
 
 
   def ingest_book
-
     # TODO: in initialization, do a check to make sure that there are *some* page files... we need at least one.
 
     first_page = File.join @directory_path, @page_filenames[0]
@@ -668,16 +671,100 @@ class BookPackage < Package
 
 
   def ingest_pages
-
-    # read in the image and branch, appropriately, to TIFF or JP2K handling....
-
-    # <rdf:RDF>
-    #   <rdf:Description rdf:about="info:fedora/fsu:167">
-    #     <fedora:isMemberOfCollection rdf:resource="info:fedora/fsu:134"/>
-    #     <fedora-model:hasModel rdf:resource="info:fedora/islandora:bookCModel"/>
-    #   </rdf:Description>
-    # </rdf:RDF>
-
+    sequence = 0
+    @page_filenames.each do |pagename|
+      begin
+        sequence += 1
+        @page_pids.push ingest_page(pagename, sequence)
+      rescue PackageError => e
+        warning "Error ingesting page #{pagename} for Book package #{@directory_name}: #{e.message}"
+      rescue => e
+        warning "Exception #{e.class} when ingesting page #{pagename} for Book package #{@directory_name}:", e.message, e.backtrace
+      end
+    end
   end
 
+
+  # read in the image and branch, appropriately, to TIFF or JP2K handling....
+  #
+  # RELS-EXT application/rdf+xml
+  #
+  # <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+  #                xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+  #                xmlns:islandora="http://islandora.ca/ontology/relsext#"
+  #                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  #   <rdf:Description rdf:about="info:fedora/islandora:1286">
+  #     <islandora:isPageOf rdf:resource="info:fedora/islandora:1285"></islandora:isPageOf>
+  #     <islandora:isSequenceNumber>1</islandora:isSequenceNumber>
+  #     <islandora:isPageNumber>1</islandora:isPageNumber>
+  #     <islandora:isSection>1</islandora:isSection>
+  #     <fedora:isMemberOf rdf:resource="info:fedora/islandora:1285"></fedora:isMemberOf>
+  #     <fedora-model:hasModel rdf:resource="info:fedora/islandora:pageCModel"></fedora-model:hasModel>
+  #     <islandora:hasLanguage>eng</islandora:hasLanguage>
+  #     <islandora:preprocess>false</islandora:preprocess>
+  #   </rdf:Description>
+  # </rdf:RDF>
+  #
+  # RELS-EXT application/rdf+xml
+  #
+  # <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
+  #          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  #   <rdf:Description rdf:about="info:fedora/islandora:1286/JP2">
+  #     <width xmlns="http://islandora.ca/ontology/relsext#">2516</width>
+  #     <height xmlns="http://islandora.ca/ontology/relsext#">3260</height>
+  #   </rdf:Description>
+  # </rdf:RDF>
+  #
+  # DC text/xml
+  #
+  # <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+  #            xmlns:dc="http://purl.org/dc/elements/1.1/"
+  #            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  #            xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+  #   <dc:title>hdtv-000001.tiff</dc:title>
+  #   <dc:identifier>islandora:1286</dc:identifier>
+  # </oai_dc:dc>
+  #
+  # HOCR text/html    tesseract image tempfile.html
+  # OCR  text/plain   tesseract image tempfile.txt
+  #
+  # PDF               imagemagick convert (from tiff?), use -compress LZW
+  # JPG  image/jpeg - medium size (use large_jpg_geometry)
+  # OBJ  image/tiff - if derived form JP2K, same size?  as JP2K but make compressed
+  # TN   image/jpeg
+
+
+  def ingest_page pagename, sequence
+
+    return
+
+    pathname = File.join(@directory_path, pagename)
+    image    = Magick::Image.read(pathname).first
+
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+
+      # if type is JP2,  otherwise if type is TIFF...
+
+      image.format = 'JPG'
+
+      ingestor.datastream('JPG') do |ds|
+        ds.dsLabel  = 'Medium sized JPEG'
+        ds.content  = image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+        ds.mimeType = image.mime_type
+      end
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = 'Thumbnail'
+        ds.content  = image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+        ds.mimeType = image.mime_type
+      end
+    end
+
+    return ingestor.pid
+
+  ensure
+    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
+    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
+    image.destroy! if image.class == Magick::Image
+  end
 end
