@@ -138,13 +138,30 @@ class Utils
     $stderr = previous_stderr
   end
 
+  # expects image or pathname, image must be a format understood by tesseract (no jp2)
 
-  def Utils.tesseract config, image_filepath, hocr = nil
+  def Utils.tesseract config, image_or_filename, hocr = nil
 
-    name = Tempfile.new('tesseract-').path
+    tempfiles = []
+
+    image_filepath =   case image_or_filename
+                       when String
+                         image_or_filename
+                       when Magick::Image
+                         temp_image_filename = Tempfile.new('image-magick-').path
+                         image_or_filename.write temp_image_filename
+                         tempfiles.push temp_image_filename
+                         temp_image_filename
+                       else
+                         return ' '
+                       end
+
+    base_filename = Tempfile.new('tesseract-').path
+    tempfiles.push base_filename
+
     error = nil
 
-    cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) + ' ' + name
+    cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) + ' ' + base_filename
 
     cmdline += ' hocr' if hocr
 
@@ -154,19 +171,22 @@ class Utils
       error = stderr.read
     end
 
-    name = name + (hocr ? '.html' : '.txt')
+    text_filename = base_filename + (hocr ? '.html' : '.txt')
+    tempfiles.push text_filename
 
-    return nil unless File.exists?(name)
-    return File.read(name)
+    return ' ' unless File.exists?(text_filename)
+    return ' ' if File.stat(text_filename).size == 0
+
+    return File.read(text_filename)
 
   ensure
-    FileUtils.rm_f(name)
+    FileUtils.rm_f(tempfiles)
   end
 
-  # use tesseract to create an HOCR file
+  # use tesseract to create an HOCR file; strip out the DOCTYPE to avoid hitting w3c for the DTD:
 
   def Utils.hocr config, image_filepath
-    return Utils.tesseract(config, image_filepath, :hocr)
+    return Utils.tesseract(config, image_filepath, :hocr).gsub(/<!DOCTYPE\s+html.*?>\s+/mi, '')
   end
 
   # use tesseract to create an OCR file

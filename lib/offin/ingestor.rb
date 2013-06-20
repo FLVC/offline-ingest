@@ -98,8 +98,12 @@ class Ingestor
     ds.mimeType = 'text/xml'
   end
 
+  def fixup_pid pid
+    return pid =~ /^info:fedora/ ?  pid : "info:fedora/#{pid}"
+  end
+
   def content_model= value
-    @fedora_object.models << ( value =~ /^info:fedora/ ?  value : "info:fedora/#{value}" )
+    @fedora_object.models << fixup_pid(value)
   end
 
   # TODO: XMLescape values here for next two?
@@ -119,6 +123,9 @@ class Ingestor
     @fedora_object.datastreams[name].save
   end
 
+  # def add_relationship predicate, object
+  #   @fedora_object.add_relationship predicate, object
+  # end
 
   # dealing with collections for this object to be ingested into
 

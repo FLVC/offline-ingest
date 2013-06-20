@@ -507,6 +507,7 @@ class BookPackage < Package
     super(config, directory, manifest)
 
     @content_model = BOOK_CONTENT_MODEL
+    @page_pids = []
 
     raise PackageError, "The Book package #{@directory_name} contains no data files."  if @datafiles.empty?
 
@@ -674,7 +675,10 @@ class BookPackage < Package
     @page_filenames.each do |pagename|
       begin
         sequence += 1
-        @page_pids.push ingest_page(pagename, sequence)
+        pid = ingest_page(pagename, sequence)
+        @page_pids.push pid
+        puts "#{pid} - #{sequence} - #{pagename}"
+
       rescue PackageError => e
         warning "Error ingesting page #{pagename} for Book package #{@directory_name}: #{e.message}"
       rescue => e
@@ -684,18 +688,183 @@ class BookPackage < Package
   end
 
 
+  # Islandora out of the box only supports TIFF submissions, so this is th canonical processing islandora would do:
+
+  def handle_tiff_page ingestor, image, path
+
+    ingestor.datastream('OBJ') do |ds|
+      ds.dsLabel  = 'Original TIFF ' + paht.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
+      ds.content  = File.open(path)
+      ds.mimeType = image.mime_type
+    end
+
+    ingestor.datastream('HOCR') do |ds|
+      ds.dsLabel  = 'HOCR'
+      ds.content  = Utils.hocr(@config, path)
+      ds.mimeType = 'text/html'
+    end
+
+    ingestor.datastream('OCR') do |ds|
+      ds.dsLabel  = 'OCR'
+      ds.content  = Utils.ocr(@config, path)
+      ds.mimeType = 'text/plain'
+    end
+
+    image.format = 'JP2'
+
+    ingestor.datastream('JP2') do |ds|
+      ds.dsLabel  = "JP2 derived from original TIFF"
+      ds.content  = image.to_blob
+      ds.mimeType = image.mime_type
+    end
+
+    ingestor.datastream('RELS-INT') do |ds|
+      ds.dsLabel  = 'RELS-INT'
+      ds.content  = rels_int(ingestor.pid, image)
+      ds.mimeType = 'application/rdf+xml'
+    end
+
+    # this case we shrink it to 'MEDIUM'
+
+    image.format = 'JPG'
+
+    ingestor.datastream('JPG') do |ds|
+      ds.dsLabel  = 'Medium sized JPEG'
+      ds.content  = image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+      ds.mimeType = image.mime_type
+    end
+  end
+
+
+  def handle_jpeg_page  ingestor, image, path
+
+    ingestor.datastream('JPG') do |ds|
+      ds.dsLabel  = 'Original JPEG ' +  + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
+      ds.content  = File.open(path)
+      ds.mimeType = image.mime_type
+    end
+
+    ingestor.datastream('HOCR') do |ds|
+      ds.dsLabel  = 'HOCR'
+      ds.content  = Utils.hocr(@config, path)
+      ds.mimeType = 'text/html'
+    end
+
+    ingestor.datastream('OCR') do |ds|
+      ds.dsLabel  = 'OCR'
+      ds.content  = Utils.ocr(@config, path)
+      ds.mimeType = 'text/plain'
+    end
+
+    image.format = 'JP2'
+
+    ingestor.datastream('JP2') do |ds|
+      ds.dsLabel  = 'JPEG 2000 derived from original JPEG image'
+      ds.content  = image.to_blob
+      ds.mimeType = image.mime_type
+    end
+
+    ingestor.datastream('RELS-INT') do |ds|
+      ds.dsLabel  = 'RELS-INT'
+      ds.content  = rels_int(ingestor.pid, image)
+      ds.mimeType = 'application/rdf+xml'
+    end
+
+    image.format = 'TIFF'
+    image.compression = Magick::LZWCompression
+
+    ingestor.datastream('OBJ') do |ds|
+      ds.dsLabel  = 'Reduced TIFF Derived from original JPEG Image'
+      ds.content  = image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+      ds.mimeType = image.mime_type
+    end
+  end
+
+
+
+  def handle_jp2k_page ingestor, image, path
+
+    ingestor.datastream('JP2') do |ds|
+      ds.dsLabel  = 'Original JP2 ' + path.sub(/^.*\//, '').sub(/\.jp2$/i, '')
+      ds.content  = File.open(path)
+      ds.mimeType = image.mime_type
+    end
+
+    ingestor.datastream('RELS-INT') do |ds|
+      ds.dsLabel  = 'RELS-INT'
+      ds.content  = rels_int(ingestor.pid, image)
+      ds.mimeType = 'application/rdf+xml'
+    end
+
+    image.format = 'TIFF'
+    image.compression = Magick::LZWCompression
+
+    ingestor.datastream('OBJ') do |ds|
+      ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
+      ds.content  = image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+      ds.mimeType = image.mime_type
+    end
+
+
+    ingestor.datastream('HOCR') do |ds|
+      ds.dsLabel  = 'HOCR'
+      ds.content  = Utils.hocr(@config, image)
+      ds.mimeType = 'text/html'
+    end
+
+    ingestor.datastream('OCR') do |ds|
+      ds.dsLabel  = 'OCR'
+      ds.content  = Utils.ocr(@config, image)
+      ds.mimeType = 'text/plain'
+    end
+
+    image.format = 'JPG'
+
+    ingestor.datastream('JPG') do |ds|
+      ds.dsLabel  = 'Medium sized JPEG'
+      ds.content  = image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+      ds.mimeType = image.mime_type
+    end
+
+  end
+
+
   def rels_int pid, image
 
     return <<-XML.gsub(/^     /, '')
-     <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
+    <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
               xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
        <rdf:Description rdf:about="info:fedora/#{pid}/JP2">
-         <width xmlns="http://islandora.ca/ontology/relsext#">#{image.cols}</width>
+         <width xmlns="http://islandora.ca/ontology/relsext#">#{image.columns}</width>
          <height xmlns="http://islandora.ca/ontology/relsext#">#{image.rows}</height>
        </rdf:Description>
      </rdf:RDF>
   XML
   end
+
+
+  def rels_ext pid, sequence
+
+
+    return <<-XML.gsub(/^    /, '')
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{pid}">
+        <islandora:isPageOf rdf:resource="info:fedora/#{@pid}"></islandora:isPageOf>
+        <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
+        <islandora:isPageNumber>#{sequence}</islandora:isPageNumber>
+        <islandora:isSection>1</islandora:isSection>
+        <fedora:isMemberOf rdf:resource="info:fedora/#{@pid}"></fedora:isMemberOf>
+        <fedora-model:hasModel rdf:resource="info:fedora/islandora:pageCModel"></fedora-model:hasModel>
+        <islandora:hasLanguage>eng</islandora:hasLanguage>
+        <islandora:preprocess>false</islandora:preprocess>
+      </rdf:Description>
+    </rdf:RDF>
+  XML
+  end
+
 
 
   # read in the image and branch, appropriately, to TIFF or JP2K handling....
@@ -749,79 +918,26 @@ class BookPackage < Package
 
   def ingest_page pagename, sequence
 
-    return
-
-    path = File.join(@directory_path, pagename)
-    image    = Magick::Image.read(path).first
+    path  = File.join(@directory_path, pagename)
+    image = Magick::Image.read(path).first
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
-      case image.mime_type
-
-      when TIFF
-        ingestor.datastream('OBJ') do |ds|
-          ds.dsLabel  = pagename.sub(/\.(tiff|tif)$/i, '')
-          ds.content  = File.open(path)
-          ds.mimeType = image.mime_type
-        end
-
-        image.format = 'JP2'
-
-        ingestor.datastream('JP2') do |ds|
-          ds.dsLabel  = "JP2 derived from original TIFF"
-          ds.content  = image.to_blob
-          ds.mimeType = image.mime_type
-        end
-
-        ingestor.datastream('RELS-INT') do |ds|
-          ds.dsLabel  = 'RELS-INT'
-          ds.content  = rels_int(ingestor.pid, image)
-          ds.mimeType = 'application/rdf+xml'
-        end
-
-      when JP2
-        ingestor.datastream('JP2') do |ds|
-          ds.dsLabel  = pagename.sub(/\.jp2$/i, '')
-          ds.content  = File.open(path)
-          ds.mimeType = image.mime_type
-        end
-
-        ingestor.datastream('RELS-INT') do |ds|
-          ds.dsLabel  = 'RELS-INT'
-          ds.content  = rels_int(ingestor.pid, image)
-          ds.mimeType = 'application/rdf+xml'
-        end
-
-        image.format = 'TIFF'
-        image.compression = Magick::LZWCompression
-
-        ingestor.datastream('OBJ') do |ds|
-          ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
-          ds.content  = image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-          ds.mimeType = image.mime_type
-        end
-
-      else
-        raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{image.mime_type}."
-      end
-
-      ### TODO: RELS-EXT
       ### TODO: DC
-
 
       ingestor.label         = pagename
       ingestor.owner         = @owner
       ingestor.content_model = PAGE_CONTENT_MODEL
 
-      # if type is JP2,  otherwise if type is TIFF...
+      case image.mime_type
+      when TIFF;  handle_tiff_page(ingestor, image, path)
+      when JP2;   handle_jp2k_page(ingestor, image, path)
+      when JPEG;  handle_jpeg_page(ingestor, image, path)
+      else
+        raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{image.mime_type}."
+      end
 
       image.format = 'JPG'
-
-      ingestor.datastream('JPG') do |ds|
-        ds.dsLabel  = 'Medium sized JPEG'
-        ds.content  = image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = imwage.mime_type
-      end
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
@@ -829,22 +945,16 @@ class BookPackage < Package
         ds.mimeType = image.mime_type
       end
 
-      ingestor.datastream('HOCR') do |ds|
-        ds.dsLabel  = 'HOCR'
-        ds.content  = Utils.hocr(@config, path)
-        ds.mimeType = 'text/html'
-      end
-
-      ingestor.datastream('OCR') do |ds|
-        ds.dsLabel  = 'OCR'
-        ds.content  = Utils.ocr(@config, path)
-        ds.mimeType = 'text/plain'
-      end
-
       ingestor.datastream('PDF') do |ds|
         ds.dsLabel  = 'PDF'
         ds.content  = Utils.image_to_pdf(@config, path)
         ds.mimeType = 'application/pdf'
+      end
+
+      ingestor.datastream('RELS-EXT') do |ds|
+        ds.dsLabel  = 'Relationships'
+        ds.content  = rels_ext(ingestor.pid, sequence)
+        ds.mimeType = 'application/rdf+xml'
       end
 
     end
