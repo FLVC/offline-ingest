@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+require 'rubygems'
+require 'socket'
+
+case Socket.gethostname
+
+when /alpo/
+  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
+when /romeo-foxtrot/
+  $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/Home/fischer/WorkProjects/offline-ingest/config.yml"
+when /islandorad/
+  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+when /islandorat/, /islandorap/
+  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+else
+  STDERR.puts "#{$0} Doesn't know how to configure for this environment, quitting."
+  exit -1
+end
+
+require 'optparse'
+require 'rubydora'
+require 'datyl/config'
+
+include Rubydora
+
+def parse_command args
+  server_code = []
+  opts   = OptionParser.new do |opt|
+    opt.banner = "Usage: flag --server-flag pid < more pids >\n" + "where --flag is one of:\n"
+    opt.on("--fsu7t",    "delete from server fsu7t.flca.edu ")         { server_code.push 'fsu7t' }
+    opt.on("--fsu-prod", "delete from server fsu-prod.flca.edu")       { server_code.push 'fsu-prod' }
+    opt.on("--d7",       "delete from server islandora7d.fcla.edu")    { server_code.push 'i7d' }
+    opt.on("--alpo",     "delete from server alasnorid.alpo.fcla.edu") { server_code.push 'alpo' }
+  end
+  opts.parse!(args)
+  raise "No server specified."        if server_code.empty?
+  raise "Too many servers specified." if server_code.length > 1
+  raise "No packages specified."      if args.empty?
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+else
+  return server_code.pop
+end
+
+
+config  = Datyl::Config.new(config_filename, 'default', parse_command(ARGV))
+repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+
+ARGV.each do |pid|
+  begin
+    pid = "info:fedora/#{pid}" unless pid =~ /^info:fedora/
+    DigitalObject.find_or_initialize(pid, repository).delete
+  rescue => e
+    STDERR.puts "Couldn't delete #{pid}, #{e.message}"
+  end
+end
