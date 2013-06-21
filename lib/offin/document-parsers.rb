@@ -975,7 +975,7 @@ class SaxDocumentExamineMets < SaxDocument
     data = Struct::MetsFileDictionaryEntry.new
 
     data.sequence = file_element['SEQ']                        #
-    data.href     = Utils.unescape_xml(flocat_element['href']) #
+    data.href     = Utils.xml_unescape(flocat_element['href']) #
     data.mimetype = safe_downcase(file_element['MIMETYPE'])    # expected 'image/jp2' etc.
     data.use      = safe_downcase(file_group['USE'])           # expected limited set: 'archive', 'thumbnail', 'reference', 'index'.  In general we'll only be using the last two (image, ocr)
 

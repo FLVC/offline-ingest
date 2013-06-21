@@ -14,9 +14,14 @@ class Utils
     exit 1
   end
 
-  def Utils.unescape_xml str
+  def Utils.xml_unescape str
     return str.gsub('&lt;', '<').gsub('&gt;', '>').gsub('&amp;', '&').gsub('&apos;', "'").gsub(/\&\#([0-9]+);/) { |i| $1.to_i.chr }
   end
+
+  def Utils.xml_escape str
+    return str.gsub('&', '&amp;').gsub("'", '&apos;').gsub('<', '&lt;').gsub('>', '&gt;')
+  end
+
 
   def Utils.get_manifest config, directory
 

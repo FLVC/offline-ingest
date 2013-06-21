@@ -662,6 +662,10 @@ class BookPackage < Package
       end
     end
 
+    ##### REMOVE ME
+    STDERR.puts "Book: #{@pid} #{name} =>  #{@collections.inspect}"
+
+
     @bytes_ingested = ingestor.size
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
@@ -677,7 +681,9 @@ class BookPackage < Package
         sequence += 1
         pid = ingest_page(pagename, sequence)
         @page_pids.push pid
-        puts "#{pid} - #{sequence} - #{pagename}"
+
+        ##### REMOVE ME
+        STDERR.puts "Page: #{pid} - #{sequence} - #{pagename}"
 
       rescue PackageError => e
         warning "Error ingesting page #{pagename} for Book package #{@directory_name}: #{e.message}"
@@ -805,7 +811,6 @@ class BookPackage < Package
       ds.mimeType = image.mime_type
     end
 
-
     ingestor.datastream('HOCR') do |ds|
       ds.dsLabel  = 'HOCR'
       ds.content  = Utils.hocr(@config, image)
@@ -829,12 +834,12 @@ class BookPackage < Package
   end
 
 
-  def rels_int pid, image
+  def rels_int page_pid, image
 
     return <<-XML.gsub(/^     /, '')
     <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
               xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-       <rdf:Description rdf:about="info:fedora/#{pid}/JP2">
+       <rdf:Description rdf:about="info:fedora/#{page_pid}/JP2">
          <width xmlns="http://islandora.ca/ontology/relsext#">#{image.columns}</width>
          <height xmlns="http://islandora.ca/ontology/relsext#">#{image.rows}</height>
        </rdf:Description>
@@ -843,21 +848,20 @@ class BookPackage < Package
   end
 
 
-  def rels_ext pid, sequence
-
+  def rels_ext page_pid, sequence
 
     return <<-XML.gsub(/^    /, '')
     <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
              xmlns:fedora-model="info:fedora/fedora-system:def/model#"
              xmlns:islandora="http://islandora.ca/ontology/relsext#"
              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-      <rdf:Description rdf:about="info:fedora/#{pid}">
+      <rdf:Description rdf:about="info:fedora/#{page_pid}">
+        <fedora:isMemberOf rdf:resource="info:fedora/#{@pid}"></fedora:isMemberOf>
+        <fedora-model:hasModel rdf:resource="info:fedora/islandora:pageCModel"></fedora-model:hasModel>
         <islandora:isPageOf rdf:resource="info:fedora/#{@pid}"></islandora:isPageOf>
         <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
         <islandora:isPageNumber>#{sequence}</islandora:isPageNumber>
         <islandora:isSection>1</islandora:isSection>
-        <fedora:isMemberOf rdf:resource="info:fedora/#{@pid}"></fedora:isMemberOf>
-        <fedora-model:hasModel rdf:resource="info:fedora/islandora:pageCModel"></fedora-model:hasModel>
         <islandora:hasLanguage>eng</islandora:hasLanguage>
         <islandora:preprocess>false</islandora:preprocess>
       </rdf:Description>
@@ -866,54 +870,20 @@ class BookPackage < Package
   end
 
 
-
-  # read in the image and branch, appropriately, to TIFF or JP2K handling....
-  #
-  # RELS-EXT application/rdf+xml
-  #
-  # <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
-  #                xmlns:fedora-model="info:fedora/fedora-system:def/model#"
-  #                xmlns:islandora="http://islandora.ca/ontology/relsext#"
-  #                xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  #   <rdf:Description rdf:about="info:fedora/islandora:1286">
-  #     <islandora:isPageOf rdf:resource="info:fedora/islandora:1285"></islandora:isPageOf>
-  #     <islandora:isSequenceNumber>1</islandora:isSequenceNumber>
-  #     <islandora:isPageNumber>1</islandora:isPageNumber>
-  #     <islandora:isSection>1</islandora:isSection>
-  #     <fedora:isMemberOf rdf:resource="info:fedora/islandora:1285"></fedora:isMemberOf>
-  #     <fedora-model:hasModel rdf:resource="info:fedora/islandora:pageCModel"></fedora-model:hasModel>
-  #     <islandora:hasLanguage>eng</islandora:hasLanguage>
-  #     <islandora:preprocess>false</islandora:preprocess>
-  #   </rdf:Description>
-  # </rdf:RDF>
-  #
-  # RELS-INT application/rdf+xml
-  #
-  # <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
-  #          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  #   <rdf:Description rdf:about="info:fedora/islandora:1286/JP2">
-  #     <width xmlns="http://islandora.ca/ontology/relsext#">2516</width>
-  #     <height xmlns="http://islandora.ca/ontology/relsext#">3260</height>
-  #   </rdf:Description>
-  # </rdf:RDF>
-  #
   # DC text/xml
-  #
-  # <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-  #            xmlns:dc="http://purl.org/dc/elements/1.1/"
-  #            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  #            xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-  #   <dc:title>hdtv-000001.tiff</dc:title>
-  #   <dc:identifier>islandora:1286</dc:identifier>
-  # </oai_dc:dc>
-  #
-  # HOCR text/html    tesseract image tempfile.html
-  # OCR  text/plain   tesseract image tempfile.txt
-  #
-  # PDF               imagemagick convert (from tiff?), use -compress LZW
-  # JPG  image/jpeg - medium size (use large_jpg_geometry)
-  # OBJ  image/tiff - if derived form JP2K, same size?  as JP2K but make compressed
-  # TN   image/jpeg
+
+  def dc page_pid, pagename
+    return <<-XML.gsub(/^    /, '')
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+               xmlns:dc="http://purl.org/dc/elements/1.1/"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+      <dc:title>#{Utils.xml_escape(pagename)}</dc:title>
+      <dc:identifier>#{page_pid}</dc:identifier>
+    </oai_dc:dc>
+  XML
+  end
+
 
 
   def ingest_page pagename, sequence
@@ -928,6 +898,7 @@ class BookPackage < Package
       ingestor.label         = pagename
       ingestor.owner         = @owner
       ingestor.content_model = PAGE_CONTENT_MODEL
+      ingestor.dc            = dc(ingestor.pid, pagename)
 
       case image.mime_type
       when TIFF;  handle_tiff_page(ingestor, image, path)
