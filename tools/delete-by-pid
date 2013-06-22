@@ -44,7 +44,7 @@ def parse_command args
   opts.parse!(args)
   raise "No server specified."        if server_code.empty?
   raise "Too many servers specified." if server_code.length > 1
-  raise "No packages specified."      if args.empty?
+  raise "No PIDs specified."          if args.empty?
 rescue => e
   STDERR.puts e, opts
   exit -1

@@ -6,6 +6,8 @@
 # Won't repeat two concurrent requests, so this is safe to use from live tailed log.
 #
 
+$LOAD_PATH.unshift File.dirname(__FILE__)
+
 require 'cgi'
 require 'resource-index'
 require 'fedora-config'
@@ -20,7 +22,16 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
 
 CONFIG_FILE = "config.yml"
 
-@ri = ResourceIndex.new Fedora::Config.new(CONFIG_FILE)
+config = {}
+
+config['fedora-address']  = 'fsu7t.fcla.edu:8080'
+config['scheme']          = 'http'
+config['fedora-username'] = 'fedoraAdmin'
+config['fedora-password'] = 'foobar'
+
+
+
+@ri = ResourceIndex.new config
 
 def it_might_be_a_mulgara_command line
   return line =~ /fedora\/risearch/
