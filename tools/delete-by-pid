@@ -35,7 +35,7 @@ include Rubydora
 def parse_command args
   server_code = []
   opts   = OptionParser.new do |opt|
-    opt.banner = "Usage: flag --server-flag pid < more pids >\n" + "where --flag is one of:\n"
+    opt.banner = "Usage: #{__FILE__.gsub(/.*\//, '')} --server-flag  pid <more pids ...>\n" + "where --server-flag is one of:\n"
     opt.on("--fsu7t",    "delete from server fsu7t.flca.edu ")         { server_code.push 'fsu7t' }
     opt.on("--fsu-prod", "delete from server fsu-prod.flca.edu")       { server_code.push 'fsu-prod' }
     opt.on("--d7",       "delete from server islandora7d.fcla.edu")    { server_code.push 'i7d' }
