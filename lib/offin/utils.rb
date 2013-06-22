@@ -5,6 +5,7 @@ require 'rchardet'
 require 'stringio'
 require 'tempfile'
 require 'fileutils'
+require 'RMagick'
 
 class Utils
 
@@ -179,10 +180,13 @@ class Utils
     text_filename = base_filename + (hocr ? '.html' : '.txt')
     tempfiles.push text_filename
 
-    return ' ' unless File.exists?(text_filename)
-    return ' ' if File.stat(text_filename).size == 0
+    foo = '...'
 
-    return File.read(text_filename)
+    return foo unless File.exists?(text_filename)
+
+    return foo if (text = File.read(text_filename).strip).length == 0
+
+    return text
 
   ensure
     FileUtils.rm_f(tempfiles)

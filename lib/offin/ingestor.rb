@@ -21,6 +21,7 @@ module Rubydora
   end
 end
 
+
 class Ingestor
 
   include Errors
@@ -56,13 +57,13 @@ class Ingestor
 
     @fedora_object.save
 
-  # TODO: not sure if we should just let these percolate up, or just non-package errors, or what, exactly
+    # TODO: not sure if we should just let these percolate up, or just non-package errors, or what, exactly
 
   rescue PackageError => e
     error e.message
     return self
   rescue => e
-    error "Caught exception #{e.class} #{e.message}, backtrace follows:", e.backtrace
+    error "Caught exception while processing pid #{@pid} - #{e.class} #{e.message}, backtrace follows:", e.backtrace
     return self
   end
 

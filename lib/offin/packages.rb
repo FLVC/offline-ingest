@@ -710,11 +710,19 @@ class BookPackage < Package
       ds.mimeType = 'text/html'
     end
 
-    ingestor.datastream('OCR') do |ds|
-      ds.dsLabel  = 'OCR'
-      ds.content  = Utils.ocr(@config, path)
-      ds.mimeType = 'text/plain'
+    if (text = Utils.ocr(@config, image))
+      ingestor.datastream('OCR') do |ds|
+        ds.dsLabel  = 'OCR'
+        ds.content  = text
+        ds.mimeType = 'text/plain'
+      end
     end
+
+    # ingestor.datastream('OCR') do |ds|
+    #   ds.dsLabel  = 'OCR'
+    #   ds.content  = Utils.ocr(@config, path)
+    #   ds.mimeType = 'text/plain'
+    # end
 
     image.format = 'JP2'
 
@@ -756,11 +764,19 @@ class BookPackage < Package
       ds.mimeType = 'text/html'
     end
 
-    ingestor.datastream('OCR') do |ds|
-      ds.dsLabel  = 'OCR'
-      ds.content  = Utils.ocr(@config, path)
-      ds.mimeType = 'text/plain'
+    if (text = Utils.ocr(@config, image))
+      ingestor.datastream('OCR') do |ds|
+        ds.dsLabel  = 'OCR'
+        ds.content  = text
+        ds.mimeType = 'text/plain'
+      end
     end
+
+    # ingestor.datastream('OCR') do |ds|
+    #   ds.dsLabel  = 'OCR'
+    #   ds.content  = Utils.ocr(@config, path)
+    #   ds.mimeType = 'text/plain'
+    # end
 
     image.format = 'JP2'
 
@@ -817,11 +833,21 @@ class BookPackage < Package
       ds.mimeType = 'text/html'
     end
 
-    ingestor.datastream('OCR') do |ds|
-      ds.dsLabel  = 'OCR'
-      ds.content  = Utils.ocr(@config, image)
-      ds.mimeType = 'text/plain'
+    if (text = Utils.ocr(@config, image))
+      ingestor.datastream('OCR') do |ds|
+        ds.dsLabel  = 'OCR'
+        ds.content  = text
+        ds.mimeType = 'text/plain'
+      end
     end
+
+    # if (text = Utils.ocr(@config, image))
+    #   ingestor.datastream('OCR') do |ds|
+    #     ds.dsLabel  = 'OCR'
+    #     ds.content  = text
+    #     ds.mimeType = 'text/plain'
+    #   end
+    # end
 
     image.format = 'JPG'
 
@@ -893,8 +919,6 @@ class BookPackage < Package
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
-      ### TODO: DC
-
       ingestor.label         = pagename
       ingestor.owner         = @owner
       ingestor.content_model = PAGE_CONTENT_MODEL
@@ -932,6 +956,8 @@ class BookPackage < Package
 
     return ingestor.pid
 
+  rescue => e
+    error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{message}.", e.backtrace
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
