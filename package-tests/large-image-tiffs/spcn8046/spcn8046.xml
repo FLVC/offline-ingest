@@ -1,0 +1,35 @@
+<mods xmlns="http://www.loc.gov/mods/v3"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      version="3.4"
+      xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+   <extension>
+      <owningInstitution>FSU</owningInstitution>
+   </extension>
+   <titleInfo>
+      <title>Edmund D. Lewandowski and Rudolf A. Jegart</title>
+   </titleInfo>
+   <identifier type="IID">spcn8046</identifier>
+   <originInfo>
+      <dateIssued>1950-1959</dateIssued>
+   </originInfo>
+   <physicalDescription>
+      <extent>8 x 10 in.</extent>
+   </physicalDescription>
+   <abstract>Head of the Art Department, Professor Edmund D. Lewandowski (1949-54) and Professor Rudolf A. Jegart (1951-) are pictured sitting at a desk in an office.</abstract>
+   <subject>
+      <topic>Academics</topic>
+   </subject>
+   <subject>
+      <topic> Florida State University--Art Dept.</topic>
+   </subject>
+   <accessCondition>Use of this item is provided for non-commercial, personal, educational, and research use only. For information about the copyright and reproduction rights for this item, please contact Special Collections, Florida State University Libraries, Tallahassee, Florida. </accessCondition>
+   <location>
+      <physicalLocation>Florida State University</physicalLocation>
+      <holdingSimple>
+         <copyInformation>
+            <subLocation>Florida State University Mounted Photographs</subLocation>
+         </copyInformation>
+      </holdingSimple>
+   </location>
+</mods>

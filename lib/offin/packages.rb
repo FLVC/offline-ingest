@@ -100,7 +100,7 @@ class Package
 
     @mods = Utils.get_mods @config, @directory_path
 
-    if @mods.errors?
+    if not @mods.valid?
       error "The package #{@directory_name} doesn't have a valid MODS file."
       error @mods.errors
     end
@@ -182,6 +182,8 @@ class Package
     @pid = ingestor.pid
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_extension_elements @manifest
+
+    # TODO: need to check that @mods is valid after adding manifest!
 
     # somewhat order dependent
 
@@ -397,7 +399,7 @@ class LargeImagePackage < Package
   def ingest_tiff ingestor
 
     ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Original TIFF ' + @image_filename.sub(/\.jp2$/i, '')
+      ds.dsLabel  = 'Original TIFF ' + @image_filename.sub(/\.(tiff|tiff)$/i, '')
       ds.content  = File.open(File.join(@directory_path, @image_filename))
       ds.mimeType = @image.mime_type
     end
