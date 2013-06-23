@@ -362,8 +362,8 @@ class LargeImagePackage < Package
       boilerplate(ingestor)
 
       case @image.format
-      when 'TIFF';   ingest_tiff
-      when 'JP2';    ingest_jp2
+      when 'TIFF';   ingest_tiff ingestor
+      when 'JP2';    ingest_jp2 ingestor
       else
         raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with iamge format #{@image.format}."
       end
@@ -394,7 +394,7 @@ class LargeImagePackage < Package
 
   private
 
-  def ingest_tiff
+  def ingest_tiff ingestor
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Original TIFF ' + @image_filename.sub(/\.jp2$/i, '')
@@ -412,7 +412,7 @@ class LargeImagePackage < Package
   end
 
 
-  def ingest_jp2
+  def ingest_jp2 ingestor
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
