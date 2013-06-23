@@ -327,10 +327,8 @@ class LargeImagePackage < Package
     # TODO: add basic support for TIFFs (not needed for digitool migration)
 
     case type
-    when JP2
+    when JP2, TIFF
       @image = Magick::Image.read(path).first
-    when TIFF
-      raise PackageError, "The Large Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported (coming soon)."
     else
       raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles[0]} with mime type #{type}."
     end
@@ -343,23 +341,31 @@ class LargeImagePackage < Package
 
   def ingest
 
+    # We have two cases: a source JP2 or the more generically-supported TIFF.
+
+    # JP2-submitted (implemented)
+    #
+    #  OBJ    reduced sized TIFF from JP2
+    #  JP2    original source
+    #  JPG    medium image derived from JP2
+    #  TN     thumnail derived from JP2
+    #
+    # TIFF-submitted
+    #
+    #  OBJ    original TIFF
+    #  JP2    derived from TIFF
+    #  JPG    medium image derived from TIFF
+    #  TN     thumnail derived from TIFF
+
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
-      ingestor.datastream('JP2') do |ds|
-        ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
-        ds.content  = File.open(File.join(@directory_path, @image_filename))
-        ds.mimeType = @image.mime_type
-      end
-
-      @image.format = 'TIFF'
-      @image.compression = Magick::LZWCompression
-
-      ingestor.datastream('OBJ') do |ds|
-        ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
-        ds.content  = @image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = @image.mime_type
+      case @image.format
+      when 'TIFF';   ingest_tiff
+      when 'JP2';    ingest_jp2
+      else
+        raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with iamge format #{@image.format}."
       end
 
       @image.format = 'JPG'
@@ -375,14 +381,55 @@ class LargeImagePackage < Package
         ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
         ds.mimeType = @image.mime_type
       end
+
+      @bytes_ingested = ingestor.size
     end
 
-    @bytes_ingested = ingestor.size
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
+
+
+  private
+
+  def ingest_tiff
+
+    ingestor.datastream('OBJ') do |ds|
+      ds.dsLabel  = 'Original TIFF ' + @image_filename.sub(/\.jp2$/i, '')
+      ds.content  = File.open(File.join(@directory_path, @image_filename))
+      ds.mimeType = @image.mime_type
+    end
+
+    @image.format = 'JP2'
+
+    ingestor.datastream('JP2') do |ds|
+      ds.dsLabel  = 'JPEG 2000 derived from original TIFF image'
+      ds.content  = @image.to_blob
+      ds.mimeType = @image.mime_type
+    end
+  end
+
+
+  def ingest_jp2
+
+    ingestor.datastream('JP2') do |ds|
+      ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
+      ds.content  = File.open(File.join(@directory_path, @image_filename))
+      ds.mimeType = @image.mime_type
+    end
+
+    @image.format = 'TIFF'
+    @image.compression = Magick::LZWCompression
+
+    ingestor.datastream('OBJ') do |ds|
+      ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
+      ds.content  = @image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+      ds.mimeType = @image.mime_type
+    end
+  end
+
 end
 
 class PdfPackage < Package
@@ -602,11 +649,16 @@ class BookPackage < Package
     missing     = []
     expected    = []
 
-    # this checks what's declared in the METS file (the structmap
-    # part) against what's in the package directory, less the metadata
-    # files (which we have as @datafiles).  Entry is a Struct::Page
-    # with slots :title, :level, :image_filename, :image_mimetype,
-    # :text_filename, :text_mimetype
+    # This checks the filenames in the list @datafiles (what's in the
+    # package directory, less the metadata files) against the
+    # filenames declared in the METS file table of contents (a
+    # structmap).  While datafiles is a simple list of filenames, the
+    # table of contents provies a Struct::Page with slots :title,
+    # :level, :image_filename, :image_mimetype, :text_filename,
+    # :text_mimetype.
+
+
+    # TODO: handle text files somehow.
 
 
     @table_of_contents.pages.each do |entry|
@@ -841,13 +893,12 @@ class BookPackage < Package
       end
     end
 
-    # if (text = Utils.ocr(@config, image))
+
     #   ingestor.datastream('OCR') do |ds|
     #     ds.dsLabel  = 'OCR'
-    #     ds.content  = text
+    #     ds.content  = Utils.ocr(@config, image)
     #     ds.mimeType = 'text/plain'
     #   end
-    # end
 
     image.format = 'JPG'
 
@@ -859,6 +910,7 @@ class BookPackage < Package
 
   end
 
+  # RELS-INT, application/rdf+xml
 
   def rels_int page_pid, image
 
@@ -873,6 +925,7 @@ class BookPackage < Package
   XML
   end
 
+  # RELS-EXT, application/rdf+xml
 
   def rels_ext page_pid, sequence
 
@@ -899,6 +952,7 @@ class BookPackage < Package
   # DC text/xml
 
   def dc page_pid, pagename
+
     return <<-XML.gsub(/^    /, '')
     <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
                xmlns:dc="http://purl.org/dc/elements/1.1/"
