@@ -180,11 +180,13 @@ class Utils
     text_filename = base_filename + (hocr ? '.html' : '.txt')
     tempfiles.push text_filename
 
-    foo = '...'
+    # foo = "..."
+    # return foo unless File.exists?(text_filename)
+    # return foo if (text = File.read(text_filename).strip).length == 0
 
-    return foo unless File.exists?(text_filename)
+    return unless File.exists?(text_filename)
 
-    return foo if (text = File.read(text_filename).strip).length == 0
+    return if (text = File.read(text_filename).strip).length == 0
 
     return text
 
