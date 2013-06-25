@@ -451,6 +451,7 @@ class ManifestSaxDocument < SaxDocument
     @collections = []
     @identifiers = []
     @other_logos = []
+    @object_history = []
 
     @label = nil
     @content_model = nil

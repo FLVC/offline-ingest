@@ -86,17 +86,19 @@ class Ingestor
   end
 
   def dc= value
-    ds = @fedora_object.datastreams['DC']
-    ds.dsLabel  = "Dublin Core Record"
-    ds.content  = value
-    ds.mimeType = 'text/xml'
+    datastream('DC') do |ds|
+      ds.dsLabel  = "Dublin Core Record"
+      ds.content  = value
+      ds.mimeType = 'text/xml'
+    end
   end
 
   def mods= value
-    ds = @fedora_object.datastreams['MODS']
-    ds.dsLabel  = "MODS Record"
-    ds.content  = value
-    ds.mimeType = 'text/xml'
+    datastream('MODS') do |ds|
+      ds.dsLabel  = "MODS Record"
+      ds.content  = value
+      ds.mimeType = 'text/xml'
+    end
   end
 
   def fixup_pid pid
