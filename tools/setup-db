@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+require 'socket'
+
+case Socket.gethostname
+
+when /alpo/
+  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
+
+when /romeo-foxtrot/
+  $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/Home/fischer/WorkProjects/offline-ingest/config.yml"
+
+when /islandorad/
+  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+
+  # TODO: move following to config
+
+  ENV['HTTP_PROXY'] = 'http://localhost:3128/'  # libxml picks this up, but it's very picky about syntax!
+  ENV['http_proxy'] = 'http://localhost:3128/'
+
+when /islandorat/, /islandorap/
+  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
+
+else
+  STDERR.puts "#{$0} Doesn't know how to configure for this environment, quitting."
+  exit -1
+end
+
+require 'datyl/config'
+require 'offin/packages'
+require 'offin/db'
+
+config  = Datyl::Config.new(config_filename, "default")
+
+DataBase.create config
+DataBase.setup  config
+
+
+rec = DataBase::IslandoraPackage.new(
+                                  :title => "Field flowers: a small bunch of the most fragrant of blossoms gathered from the broad acres of Eugene Field's farm of love",
+                                  :content_type => 'islandora:bookCModel',
+                                  :package_name => 'FSDT188782',
+                                  :islandora_pid => 'fsu:1219'
+                                  )
+
+rec.warning "This is a test", "It is only a test", [ "one", "two" ]
+rec.error [ "three", "four" ]
+
+rec.warning_messages.each { |m| puts m.text }
+
+
+rec.save
