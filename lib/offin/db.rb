@@ -3,19 +3,19 @@ require 'dm-migrations'
 
 module DataBase
 
-  # need purl, size
-
   class IslandoraPackage
     include DataMapper::Resource
 
-    property  :id,            Serial
-    property  :package_name,  String,    :required => true, :index => true
-    property  :islandora_pid, String,    :required => true, :index => true
-    property  :success,       Boolean,   :default => true,  :index => true
-    property  :content_type,  String
-    property  :title,         String,    :length => 255,    :index => true
-    property  :started,       DateTime
-    property  :finished,      DateTime
+    property  :id,                Serial
+    property  :package_name,      String,      :required => true, :index => true
+    property  :islandora_pid,     String,      :required => true, :index => true
+    property  :title,             String,      :length => 255,    :index => true
+    property  :purl,              String
+    property  :success,           Boolean
+    property  :content_type,      String
+    property  :started,           DateTime
+    property  :finished,          DateTime
+    property  :bytes,             Integer,     :min => 0, :max => 2**48, :default => 0
 
     has n,  :warning_messages
     has n,  :error_messages
@@ -27,14 +27,12 @@ module DataBase
       end
     end
 
-
     def error *messages
       return unless messages or messages.empty?
       messages.flatten.each do |str|
         self.error_messages << ErrorMessage.new(:text => str)
       end
     end
-
   end
 
   class WarningMessage
@@ -56,15 +54,6 @@ module DataBase
   end
 
   def self.setup config
-    self.common config
-  end
-
-  def self.create config
-    self.common config
-    DataMapper.auto_migrate!
-  end
-
-  def self.common config
     DataMapper::Logger.new($stdout, :debug)
     DataMapper.setup(:default, config.database)
 
@@ -72,4 +61,8 @@ module DataBase
     DataMapper.finalize
   end
 
+  def self.create config
+    self.setup config
+    DataMapper.auto_migrate!
+  end
 end
