@@ -85,37 +85,12 @@ class Package
     @datafiles      = list_other_files()
     @bytes_ingested = 0
 
-    if manifest.is_a? Manifest
-      @manifest = manifest
-    else
-      @manifest = Utils.get_manifest @config, @directory_path
-    end
 
-    if @manifest.errors?
-      error "The package #{@directory_name} doesn't have a valid manifest file."
-      error @manifest.errors
-    end
-
-    @valid &&= @manifest.valid?
-
-    @mods = Utils.get_mods @config, @directory_path
-
-    if not @mods.valid?
-      error "The package #{@directory_name} doesn't have a valid MODS file."
-      error @mods.errors
-    end
-
-    @valid &&= @mods.valid?
+    handle_manifest(manifest) or return    # sets up @manifest
+    handle_mods or return                  # sets up @mods
+    handle_marc or return                  # sets up @marc
 
     return unless valid?
-
-    marc_file = File.join(@directory_path, 'marc.xml')
-
-    if File.exists?(marc_file)
-      @marc = File.read(marc_file)
-    else
-      @marc = nil
-    end
 
     @namespace   = @manifest.owning_institution.downcase
     @collections = list_collections()
@@ -168,7 +143,7 @@ class Package
 
   def updater= value
     metadata_updater = value.send :new, @manifest, @mods
-    @label = metadata_updater.get_label @directory_name        # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
+    @label = metadata_updater.get_label @directory_name     # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
     @owner = metadata_updater.get_owner
     # metadata_updater.identifiers
   end
@@ -180,8 +155,9 @@ class Package
   def boilerplate ingestor
 
     @pid = ingestor.pid
+    @mods.add_iid_identifier @directory_name  if @mods.iids.empty?
     @mods.add_islandora_identifier ingestor.pid
-    @mods.add_extension_elements @manifest
+    @mods.add_flvc_extension_elements @manifest
 
     # TODO: need to check that @mods is valid after adding manifest!
 
@@ -203,6 +179,8 @@ class Package
     end
   end
 
+  private
+
   # List all the files in the directory we haven't already accounted for. Subclasses will need to work through these.
   # Presumably these are all datafiles.
 
@@ -222,7 +200,67 @@ class Package
 
     return list
   end
+
+
+  # set up @manifest
+
+  def handle_manifest manifest
+
+    if manifest.is_a? Manifest
+      @manifest = manifest
+    else
+      @manifest = Utils.get_manifest @config, @directory_path
+    end
+
+    if @manifest.errors?
+      error "The package #{@directory_name} doesn't have a valid manifest file."
+      error @manifest.errors
+    end
+
+    return (@valid &&= @manifest.valid?)
+  end
+
+
+  def handle_marc
+    marc_file = File.join(@directory_path, 'marc.xml')
+    @marc = File.read(marc_file) if File.exists?(marc_file)
+    return true
+  end
+
+
+  def handle_mods
+    @mods = Utils.get_mods @config, @directory_path
+
+    if not @mods.valid?
+      error "The package #{@directory_name} doesn't have a valid MODS file."
+      error @mods.errors
+      return (@valid = false)
+    end
+
+    # Because we get a segv fault when trying to add an IID to MODS at this point, we defer.
+
+    iids = @mods.iids
+
+    if iids.length == 1  and iids.first != @directory_name
+      error "The MODS file in package #{@directory_name} declares an IID of #{iids.first} which doesn't match the package name."
+      @valid = false
+    end
+
+    if iids.length > 1
+      error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
+      @valid = false
+    end
+
+    if @mods.purls.empty?
+      error "The MODS file in package #{@directory_name} does not have a PURL declaration: at least one is required."
+      @valid = false
+    end
+
+    return @valid
+  end
+
 end # of Package base class
+
 
 
 
@@ -245,7 +283,7 @@ class BasicImagePackage < Package
 
     return unless valid?
 
-    @image_filename = @datafiles[0]
+    @image_filename = @datafiles.first
     path = File.join(@directory_path, @image_filename)
     type = Utils.mime_type(path)
 
@@ -256,9 +294,9 @@ class BasicImagePackage < Package
       # TODO: add special support for TIFFs (not needed for digitool migration)
 
     when TIFF
-      raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles[0]}, which is currently unsupported (coming soon)."
+      raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles.first}, which is currently unsupported (coming soon)."
     else
-      raise PackageError, "The Basic Image package #{@directory_name} contains an unexpected file #{@datafiles[0]} with mime type #{type}."
+      raise PackageError, "The Basic Image package #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{type}."
     end
 
   rescue PackageError => e
@@ -322,7 +360,7 @@ class LargeImagePackage < Package
     return unless valid?
 
     @image = nil
-    @image_filename = @datafiles[0]
+    @image_filename = @datafiles.first
     path = File.join(@directory_path, @image_filename)
     type = Utils.mime_type(path)
 
@@ -332,7 +370,7 @@ class LargeImagePackage < Package
     when JP2, TIFF
       @image = Magick::Image.read(path).first
     else
-      raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles[0]} with mime type #{type}."
+      raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
     end
 
   rescue PackageError => e
@@ -483,8 +521,6 @@ class PdfPackage < Package
         @full_text = ' '
       end
     # No full text, so we generate UTF-8 using a unix utility, which we'll still cleanup:
-
-    # TODO:  pdf_to_text errors should not be fatal....
 
     else
       @full_text_label = 'Full text derived from PDF'
@@ -688,7 +724,7 @@ class BookPackage < Package
   def ingest_book
     # TODO: in initialization, do a check to make sure that there are *some* page files... we need at least one.
 
-    first_page = File.join @directory_path, @page_filenames[0]
+    first_page = File.join @directory_path, @page_filenames.first
     @image = Magick::Image.read(first_page).first
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
@@ -717,7 +753,7 @@ class BookPackage < Package
     end
 
     ##### REMOVE ME
-    STDERR.puts "Book: #{@pid} #{name} =>  #{@collections.inspect}"
+    # STDERR.puts "Book: #{@pid} #{name} =>  #{@collections.inspect}"
 
 
     @bytes_ingested = ingestor.size
@@ -737,7 +773,7 @@ class BookPackage < Package
         @page_pids.push pid
 
         ##### REMOVE ME
-        STDERR.puts "Page: #{pid} - #{sequence} - #{pagename}"
+        # STDERR.puts "Page: #{pid} - #{sequence} - #{pagename}"
 
       rescue PackageError => e
         warning "Error ingesting page #{pagename} for Book package #{@directory_name}: #{e.message}"
@@ -748,20 +784,26 @@ class BookPackage < Package
   end
 
 
-  # Islandora out of the box only supports TIFF submissions, so this is th canonical processing islandora would do:
+  # Islandora out of the box only supports TIFF submissions, so this is the canonical processing islandora would do:
 
   def handle_tiff_page ingestor, image, path
 
+    image_name = path.sub(/^.*\//, '')
+
     ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Original TIFF ' + paht.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
+      ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
       ds.content  = File.open(path)
       ds.mimeType = image.mime_type
     end
 
-    ingestor.datastream('HOCR') do |ds|
-      ds.dsLabel  = 'HOCR'
-      ds.content  = Utils.hocr(@config, path)
-      ds.mimeType = 'text/html'
+    if (text = Utils.hocr(@config, image))
+      ingestor.datastream('HOCR') do |ds|
+        ds.dsLabel  = 'HOCR'
+        ds.content  = text
+        ds.mimeType = 'text/html'
+      end
+    else
+      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     if (text = Utils.ocr(@config, image))
@@ -770,13 +812,9 @@ class BookPackage < Package
         ds.content  = text
         ds.mimeType = 'text/plain'
       end
+    else
+      warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
     end
-
-    # ingestor.datastream('OCR') do |ds|
-    #   ds.dsLabel  = 'OCR'
-    #   ds.content  = Utils.ocr(@config, path)
-    #   ds.mimeType = 'text/plain'
-    # end
 
     image.format = 'JP2'
 
@@ -806,16 +844,22 @@ class BookPackage < Package
 
   def handle_jpeg_page  ingestor, image, path
 
+    image_name = path.sub(/^.*\//, '')
+
     ingestor.datastream('JPG') do |ds|
       ds.dsLabel  = 'Original JPEG ' +  + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
       ds.content  = File.open(path)
       ds.mimeType = image.mime_type
     end
 
-    ingestor.datastream('HOCR') do |ds|
-      ds.dsLabel  = 'HOCR'
-      ds.content  = Utils.hocr(@config, path)
-      ds.mimeType = 'text/html'
+    if (text = Utils.hocr(@config, image))
+      ingestor.datastream('HOCR') do |ds|
+        ds.dsLabel  = 'HOCR'
+        ds.content  = text
+        ds.mimeType = 'text/html'
+      end
+    else
+      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     if (text = Utils.ocr(@config, image))
@@ -824,13 +868,9 @@ class BookPackage < Package
         ds.content  = text
         ds.mimeType = 'text/plain'
       end
+    else
+      warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
     end
-
-    # ingestor.datastream('OCR') do |ds|
-    #   ds.dsLabel  = 'OCR'
-    #   ds.content  = Utils.ocr(@config, path)
-    #   ds.mimeType = 'text/plain'
-    # end
 
     image.format = 'JP2'
 
@@ -859,6 +899,7 @@ class BookPackage < Package
 
 
   def handle_jp2k_page ingestor, image, path
+    image_name = path.sub(/^.*\//, '')
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'Original JP2 ' + path.sub(/^.*\//, '').sub(/\.jp2$/i, '')
@@ -881,10 +922,14 @@ class BookPackage < Package
       ds.mimeType = image.mime_type
     end
 
-    ingestor.datastream('HOCR') do |ds|
-      ds.dsLabel  = 'HOCR'
-      ds.content  = Utils.hocr(@config, image)
-      ds.mimeType = 'text/html'
+    if (text = Utils.hocr(@config, image))
+      ingestor.datastream('HOCR') do |ds|
+        ds.dsLabel  = 'HOCR'
+        ds.content  = text
+        ds.mimeType = 'text/html'
+      end
+    else
+      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     if (text = Utils.ocr(@config, image))
@@ -893,14 +938,9 @@ class BookPackage < Package
         ds.content  = text
         ds.mimeType = 'text/plain'
       end
+    else
+      warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
     end
-
-
-    #   ingestor.datastream('OCR') do |ds|
-    #     ds.dsLabel  = 'OCR'
-    #     ds.content  = Utils.ocr(@config, image)
-    #     ds.mimeType = 'text/plain'
-    #   end
 
     image.format = 'JPG'
 
