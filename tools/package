@@ -38,6 +38,8 @@ end
 
 require 'offin/packages'
 require 'optparse'
+# require 'offin/db'
+
 
 def parse_command args
   server_code = []
@@ -61,7 +63,6 @@ end
 
 indent  = ' ' * 4
 config  = Datyl::Config.new(config_filename, "default", parse_command(ARGV))
-
 factory = PackageFactory.new(config)
 
 $stdout.sync = true
@@ -75,8 +76,10 @@ ARGV.each do |directory|
 
     package.updater = DigitoolMetadataUpdater
     package.ingest
+
+    finished = Time.now
     puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => collection %s, "%s"',
-                 Time.now - started,
+                 finished - started,
                  package.bytes_ingested/1048576.0,
                  package.class,
                  package.name,
@@ -87,9 +90,12 @@ ARGV.each do |directory|
   rescue PackageError => e
     STDERR.puts e
   rescue => e
-    STDERR.puts "Caught #{e.class} - #{e.message}", e.backtrace
+    STDERR.puts "Caught unexpected fatal error #{e.class} - #{e.message}", e.backtrace
+    exit -1
   ensure
-    STDERR.puts 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package and package.errors?
-    STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package and package.warnings?
+    if package
+      STDERR.puts 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
+      STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
+    end
   end
 end
