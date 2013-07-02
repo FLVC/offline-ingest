@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xlink="http://www.w3.org/1999/xlink" version="3.4" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+  <titleInfo>
+    <title>FSU vs. University of Tampa (11/25/50)</title>
+  </titleInfo>
+  <identifier type="digitool">2312742
+</identifier>
+  <name>
+    <namePart>Florida State University</namePart>
+    <role>
+      <roleTerm type="text" authority="marcrelator">creator</roleTerm>
+    </role>
+  </name>
+  <originInfo>
+    <dateIssued keyDate="yes">November 25, 1950</dateIssued>
+  </originInfo>
+  <physicalDescription>
+    <note>PDF</note>
+  </physicalDescription>
+  <accessCondition>Florida State University asserts copyright for this object. All requests for permission to publish, broadcast or otherwise reproduce from this item must be submitted in writing to the copyright owner unless otherwise stated.</accessCondition>
+</mods>

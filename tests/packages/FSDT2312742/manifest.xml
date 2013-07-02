@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="info:/flvc/manifest/v1">
+    <contentModel>islandora:sp_pdf</contentModel>
+    <collection>FSU:ffp50</collection>
+    <submittingInstitution>FSU</submittingInstitution>
+    <owningInstitution>FSU</owningInstitution>
+    <objectHistory source="digitool">admin_unit="FSU01", ingest_id="ing6623", creator="creator:PSMITH", creation_date="2010-06-29 13:57:02", modified_by="super:TWEATHER", modification_date="2010-07-19 08:48:49"</objectHistory>
+</manifest>

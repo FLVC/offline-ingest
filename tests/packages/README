@@ -1,0 +1,12 @@
+FSDT2312742 caused 
+Invalid package in /ssa/temp/islandora/digitool-migrations/fsu_pc/ffp50_pdf/FSDT2312742.
+Errors:
+    Exception NoMethodError - private method `gsub' called for nil:NilClass, backtrace follows:
+    /usr/local/islandora/offline-ingest/lib/offin/utils.rb:63:in `cleanup_text'
+    /usr/local/islandora/offline-ingest/lib/offin/packages.rb:444:in `initialize'
+    /usr/local/islandora/offline-ingest/lib/offin/packages.rb:45:in `new'
+    /usr/local/islandora/offline-ingest/lib/offin/packages.rb:45:in `new_package'
+    tools/package:47
+    tools/package:44:in `each'
+    tools/package:44
+
