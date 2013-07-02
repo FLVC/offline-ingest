@@ -22,7 +22,7 @@ class Mods
   # *) Make sure it's a valid MODS document, first and foremost.
   # *) transform to DC
   # *) get title (label)
-  # ---- NEEDS ----
+  # *) get PURLs, IIDs
   # *) insert extension elements (see manifest.rb for what could go in there)
   # ---- TODO for non-digitool ----
   # *) insert new title
@@ -30,6 +30,8 @@ class Mods
   # *) get extension elements
 
   MANIFEST_NAMESPACE = 'info:/flvc/manifest/v1'
+  MODS_NAMESPACE = 'http://www.loc.gov/mods/v3'
+
 
   include Errors
 
@@ -118,50 +120,119 @@ class Mods
     @valid and not errors?
   end
 
-  def add_islandora_identifier str
+  def purls
+    return @xml_document.xpath("//mods:location[translate(@displayLabel, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"PURL\"]/mods:url", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s }
+  rescue => e
+    return []
+    # no-op   TODO: better than this
+  end
 
+  def iids
+    return @xml_document.xpath("//mods:identifier[translate(@type, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"IID\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s }
+  rescue => e
+    return []
+    # no-op   TODO: better than this
+  end
+
+
+  def add_islandora_identifier str
     ident = Nokogiri::XML::Node.new("#{format_prefix}identifier", @xml_document)
-    ident.content = str                                               # TODO: XML escape
+    ident.content = str
     ident['type'] = 'fedora'
 
-    @xml_document.children[0].add_child(ident)
-    ident.before "\n"
+    @xml_document.root.add_child(ident)
     ident.after "\n"
 
   rescue => e
     error "Can't add islandora identifier '#{str}' to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
   end
 
-  # TODO: this assumes no extension elements present. We'll need it
-  # smarter, adding to an existing extension in the mods document if
-  # necessary.
+
+  def add_iid_identifier str
+    ident = Nokogiri::XML::Node.new("#{format_prefix}identifier", @xml_document)
+    ident.content = str
+    ident['type'] = 'IID'
+    @xml_document.root.add_child(ident)
+    ident.after "\n"
+
+  rescue => e
+    error "Can't add islandora identifier '#{str}' to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
+  end
+
+
+  # For our extension data, we need MODS to be of the form
+  #
+  #  <?xml version="1.0" encoding="UTF-8"?>
+  #   <mods xmlns="http://www.loc.gov/mods/v3" xmlns:flvc="info:/flvc/manifest/v1" ...
+  #   ....
+  #   <extension>
+  #     <flvc:flvc>
+  #       <flvc:owningInstitution>UF</flvc:owningInstitution>
+  #       ....
+  #     </flvc:flvc>
+  #   </extension>
+  #
+  # What get_prefix_for_flvc_extension does is to check the root
+  # element namespace, looking for what prefix is being used for the
+  # "info:/flvc/manifest/v1" namespace, and returning it ("flvc" in
+  # the above example).  If the "info:/flvc/manifest/v1" namespace is
+  # not present, it is added to the document root with the prefix
+  # "flvc" and that string is returned.
+
+  def get_prefix_for_flvc_extension
+    @xml_document.namespaces.each do |prefix, namespace|
+      return prefix.sub(/^xmlns:/, '') if namespace == MANIFEST_NAMESPACE
+    end
+
+    @xml_document.root.add_namespace('flvc', MANIFEST_NAMESPACE)
+    return 'flvc'
+  end
+
 
   # From the manifest, add owningInstitution, submittingInstitution
   # (defaults to owningInstitution) and optionally one or more
   # objectHistory elements.
 
-  def add_extension_elements manifest
+  def add_flvc_extension_elements manifest
 
-    extension = Nokogiri::XML::Node.new("#{format_prefix}extension", @xml_document)
-    extension.add_namespace("man", MANIFEST_NAMESPACE)
+    flvc_prefix = get_prefix_for_flvc_extension
 
-    extension << "\n  "
-    extension << "<man:owningInstitution>#{manifest.owning_institution}</man:owningInstitution>"
-    extension << "\n  "
-    extension << "<man:submittingInstitution>#{manifest.submitting_institution || manifest.owning_institution}</man:submittingInstitution>"
+    str = <<-XML.gsub(/^        /, '')
+        <#{format_prefix}extension>
+          <#{flvc_prefix}:flvc>
+             <#{flvc_prefix}:owningInstitution>#{manifest.owning_institution}</#{flvc_prefix}:owningInstitution>
+             <#{flvc_prefix}:submittingInstitution>#{manifest.submitting_institution || manifest.owning_institution}</#{flvc_prefix}:submittingInstitution>
+    XML
 
     manifest.object_history.each do |record|
-      extension << "\n  "
-      extension << "<man:objectHistory source=\"#{record['source']}\">#{record['data']}</man:objectHistory>"
+      str += "     <#{flvc_prefix}:objectHistory source=\"#{record['source']}\">#{record['data']}</#{flvc_prefix}:objectHistory>\n"
     end
-    extension << "\n"
 
-    @xml_document.children[0].add_child(extension)
-    extension.after "\n"
+    str += <<-XML.gsub(/^        /, '')
+          </#{flvc_prefix}:flvc>
+        </#{format_prefix}extension>
+    XML
+
+    @xml_document.root.add_child(str)
 
   rescue => e
     error "Can't add extension elements to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
   end
+
+
+  def flvc_extensions?
+    not @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE).empty?
+  rescue =>e
+    return false
+  end
+
+
+  # This next is a work in progress...
+
+  def flvc_extensions
+    return @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE).children.map { |xt| xt.to_s.strip }.select { |str| not str.empty? }
+  end
+
 
   private
 
