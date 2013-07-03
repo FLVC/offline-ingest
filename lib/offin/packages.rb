@@ -673,7 +673,7 @@ class BookPackage < Package
     @page_filenames.each do |file_name|
       path = File.join(@directory_path, file_name)
       type = Utils.mime_type(path)
-      issues.push "Page file #{file_name} is of unsupported type #{type}, but must be image/jp2 or image/tiff" if not type =~ JP2 or type =~ TIFF
+      issues.push "Page file #{file_name} is of unsupported type #{type}, but must be image/jp2 or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
     end
     unless issues.empty?
       error "The Book Package #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
@@ -847,7 +847,7 @@ class BookPackage < Package
     image_name = path.sub(/^.*\//, '')
 
     ingestor.datastream('JPG') do |ds|
-      ds.dsLabel  = 'Original JPEG ' +  + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
+      ds.dsLabel  = 'Original JPEG ' + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
       ds.content  = File.open(path)
       ds.mimeType = image.mime_type
     end
