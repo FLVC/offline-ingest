@@ -10,15 +10,15 @@ require 'socket'
 
 case Socket.gethostname
 
-when /alpo/
+when /alpo/i
   $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
 
-when /romeo-foxtrot/
-  $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/Home/fischer/WorkProjects/offline-ingest/config.yml"
+when /romeo-foxtrot/i, /FLVC-rfischer/i
+  $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
 
-when /islandorad/
+when /islandorad/i
   $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
   config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
 
@@ -43,14 +43,15 @@ require 'offin/db'
 config  = Datyl::Config.new(config_filename, "default")
 
 DataBase.create config
-DataBase.setup  config
+# DataBase.setup  config
 
 
 rec = DataBase::IslandoraPackage.new(
-                                  :title => "Field flowers: a small bunch of the most fragrant of blossoms gathered from the broad acres of Eugene Field's farm of love",
-                                  :content_type => 'islandora:bookCModel',
-                                  :package_name => 'FSDT188782',
-                                  :islandora_pid => 'fsu:1219'
+                                     :title => "Field flowers: a small bunch of the most fragrant of blossoms gathered from the broad acres of Eugene Field's farm of love",
+                                     :content_type => 'islandora:bookCModel',
+                                     :package_name => 'FSDT188782',
+                                     :islandora_pid => 'fsu:1219',
+                                     :bytes => 2 ** 48 -1
                                   )
 
 rec.warning "This is a test", "It is only a test", [ "one", "two" ]
