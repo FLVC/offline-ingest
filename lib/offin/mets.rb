@@ -167,12 +167,14 @@ class TableOfContents
   # clean up page names - we may have examples such as
 
   def cleanup_page_titles
-    pages.each do |p|
-      new_title = p.title.sub(/^page\s*/i, '').strip
-      p.title = new_title
-    end
+
+    # pages.each do |p|
+    #   new_title = p.title.sub(/^page\s*/i, '').strip
+    #   p.title = new_title
+    # end
 
     pages.each do |p|
+      p.title.strip!
       if p.title.empty? and p.image_filename
         p.title = file_name(p.image_filename)
       end
