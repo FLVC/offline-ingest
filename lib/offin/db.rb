@@ -3,43 +3,90 @@ require 'dm-migrations'
 
 module DataBase
 
+
+  class IslandoraSite
+    include DataMapper::Resource
+
+    property  :id,          Serial
+    property  :hostname,    String,   :required => true, :index => true, :unique => true;
+
+    has n, :islandora_packages
+
+    before :update do
+      self.hostname.downcase!
+    end
+
+    before :save do
+      self.hostname.downcase!
+    end
+
+  end
+
+
   class IslandoraPackage
     include DataMapper::Resource
 
     property  :id,                Serial
+
     property  :package_name,      String,      :required => true, :index => true
-    property  :islandora_pid,     String,      :required => true, :index => true
+    property  :success,           Boolean,     :required => true, :index => true, :default => false
+    property  :time_started,      Integer,     :min => 0, :max => 2**48, :required => true, :index => true
+    property  :time_finished,     Integer,     :min => 0, :max => 2**48, :required => true, :index => true
+
+    property  :bytes_ingested,    Integer,     :min => 0, :max => 2**48, :default => 0, :index => true
+
+    # NULL means inapplicable for these (e.g., it was never ingested, or there was no content_type declared, etc)
+
+    property  :islandora_pid,     String,      :index => true
     property  :title,             String,      :length => 255,    :index => true
-    property  :purl,              String
-    property  :success,           Boolean
-    property  :content_type,      String
-    property  :started,           DateTime
-    property  :finished,          DateTime
-    property  :bytes,             Integer,     :min => 0, :max => 2**48, :default => 0
+    property  :content_type,      String,      :index => true
+
 
     has n,  :warning_messages
     has n,  :error_messages
+    has n,  :purls
 
-    def warning *messages
+    belongs_to  :islandora_site
+
+    def add_warnings *messages
       return unless messages or messages.empty?
       messages.flatten.each do |str|
-        self.warning_messages << WarningMessage.new(:text => str)
+        self.warning_messages << WarningMessage.new(:warning => str)
       end
     end
 
-    def error *messages
+    def get_warnings
+      self.warning_messages.map { |rec| rec.warning }
+    end
+
+    def add_errors *messages
       return unless messages or messages.empty?
       messages.flatten.each do |str|
-        self.error_messages << ErrorMessage.new(:text => str)
+        self.error_messages << ErrorMessage.new(:error => str)
       end
+    end
+
+    def get_errors
+      self.error_messages.map { |rec| rec.error }
+    end
+
+    def add_purls *urls
+      return unless urls or urls.empty?
+      urls.flatten.each do |str|
+        self.purls << Purl.new(:purl => str)
+      end
+    end
+
+    def get_purls
+      self.purls.map { |rec| rec.purl }
     end
   end
 
   class WarningMessage
     include DataMapper::Resource
 
-    property    :id,      Serial
-    property    :text,    Text,  :required => true
+    property    :id,         Serial
+    property    :warning,    Text,  :required => true
 
     belongs_to  :islandora_package
   end
@@ -47,8 +94,17 @@ module DataBase
   class ErrorMessage
     include DataMapper::Resource
 
+    property    :id,       Serial
+    property    :error,    Text,  :required => true
+
+    belongs_to  :islandora_package
+  end
+
+  class Purl
+    include DataMapper::Resource
+
     property    :id,      Serial
-    property    :text,    Text,  :required => true
+    property    :purl,    Text,  :required => true
 
     belongs_to  :islandora_package
   end

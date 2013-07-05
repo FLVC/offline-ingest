@@ -15,8 +15,8 @@ when /alpo/
   config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
 
 when /romeo-foxtrot/
-  $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/Home/fischer/WorkProjects/offline-ingest/config.yml"
+  $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
 
 when /islandorad/, /islandorat/, /islandorap/
 

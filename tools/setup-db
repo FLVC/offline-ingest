@@ -10,24 +10,15 @@ require 'socket'
 
 case Socket.gethostname
 
-when /alpo/
+when /alpo/i
   $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
 
-when /romeo-foxtrot/
-  $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/Home/fischer/WorkProjects/offline-ingest/config.yml"
+when /romeo-foxtrot/i, /FLVC-rfischer/i
+  $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
+  config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
 
-when /islandorad/
-  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
-  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
-
-  # TODO: move following to config
-
-  ENV['HTTP_PROXY'] = 'http://localhost:3128/'  # libxml picks this up, but it's very picky about syntax!
-  ENV['http_proxy'] = 'http://localhost:3128/'
-
-when /islandorat/, /islandorap/
+when /islandorad/i, /islandorat/i, /islandorap/i
   $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
   config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
 
@@ -43,20 +34,34 @@ require 'offin/db'
 config  = Datyl::Config.new(config_filename, "default")
 
 DataBase.create config
-DataBase.setup  config
+# DataBase.setup  config
 
+
+site = DataBase::IslandoraSite.first_or_create(:hostname => 'fsu7t.fcla.edu')
 
 rec = DataBase::IslandoraPackage.new(
-                                  :title => "Field flowers: a small bunch of the most fragrant of blossoms gathered from the broad acres of Eugene Field's farm of love",
-                                  :content_type => 'islandora:bookCModel',
-                                  :package_name => 'FSDT188782',
-                                  :islandora_pid => 'fsu:1219'
+#                                    :title => "Field flowers: a small bunch of the most fragrant of blossoms gathered from the broad acres of Eugene Field's farm of love",
+                                     :package_name   => 'FSDT188782',
+#                                    :islandora_pid  => 'fsu:1219',
+                                     :time_started   => Time.now.to_i - 1,
+                                     :time_finished  => Time.now.to_i + 1,
+                                     :bytes_ingested => 2 ** 48 -1,
+                                     :islandora_site => site
                                   )
 
-rec.warning "This is a test", "It is only a test", [ "one", "two" ]
-rec.error [ "three", "four" ]
+rec.add_warnings "This is a test", "It is only a test", [ "one", "two" ]
+rec.add_errors [ "three", "four" ]
+rec.add_purls "http://purl.flvc.org/dt/123", "http://purl.flvc.org/dt/456"
 
-rec.warning_messages.each { |m| puts m.text }
+
+puts 'Warnings: ' + rec.get_warnings.join(', ')
+puts 'Errors: ' + rec.get_errors.join(', ')
+puts 'Purls: ' + rec.get_purls.join(', ')
+
+puts "Saved?  #{rec.save}"
+puts rec.errors.map { |e| e.to_s }
 
 
-rec.save
+packages = DataBase::IslandoraPackage.all(:islandora_site => site)
+
+packages.each { |p| puts 'got (site '  + p.islandora_site.hostname + ') ' + p.get_warnings.join('; ') }
