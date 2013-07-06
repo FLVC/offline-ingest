@@ -87,7 +87,7 @@ ARGV.each do |directory|
   rescue PackageError => e
     STDERR.puts e
   rescue => e
-    STDERR.puts "Caught unexpected fatal error #{e.class} - #{e.message}", e.backtrace
+    STDERR.puts "Caught unexpected fatal error #{e.class} - #{e.message}", e.backtrace, '', "Please correct the error and retry."
     exit -1
   ensure
     if package
