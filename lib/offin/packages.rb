@@ -70,7 +70,7 @@ class Package
   TEXT = %r{text/}
 
 
-  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path, :bytes_ingested, :pid
+  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path, :bytes_ingested, :pid, :purls, :iid
 
   def initialize config, directory, manifest = nil
 
@@ -101,12 +101,18 @@ class Package
     error "Exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
   end
 
+
   def list_collections
     remapper = @config.remap_collections || {}
     list = []
     @manifest.collections.each do |pid|
-      p = pid.downcase
-      list.push(remapper[p] || p)
+      pid.downcase!
+      if new_pid = remapper[pid].downcase
+        warning "Remapping manifest collection #{pid} to #{new_pid}, by configuration, for package #{@directory_name}."
+        list.push new_pid
+      else
+        list.push pid
+      end
     end
     return list
   end
@@ -155,7 +161,10 @@ class Package
   def boilerplate ingestor
 
     @pid = ingestor.pid
-    @mods.add_iid_identifier @directory_name  if @mods.iids.empty?
+    if @iid.nil?
+      @iid = @directory_name
+      @mods.add_iid_identifier @iid
+    end
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
 
@@ -237,21 +246,22 @@ class Package
       return (@valid = false)
     end
 
-    # Because we get a segv fault when trying to add an IID to MODS at this point, we defer.
+    # Because we get a segv fault when trying to add an IID to MODS at this point, we defer inserting it into the MODS XML until later
 
     iids = @mods.iids
 
     if iids.length == 1  and iids.first != @directory_name
       error "The MODS file in package #{@directory_name} declares an IID of #{iids.first} which doesn't match the package name."
       @valid = false
-    end
-
-    if iids.length > 1
+    elsif iids.length > 1
       error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
       @valid = false
     end
 
-    if @mods.purls.empty?
+
+    @purls  = @mods.purls
+
+    if @purls.empty?
       error "The MODS file in package #{@directory_name} does not have a PURL declaration: at least one is required."
       @valid = false
     end

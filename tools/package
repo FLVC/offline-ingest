@@ -10,15 +10,17 @@ require 'socket'
 
 case Socket.gethostname
 
-when /alpo/
+when /alpo/i
+
   $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
 
-when /romeo-foxtrot/
+when /romeo-foxtrot/i, /flvc-rfischer.local/i
+
   $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
 
-when /islandorad/, /islandorat/, /islandorap/
+when /islandorad/i, /islandorat/i, /islandorap/i
 
   $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
   config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
@@ -29,14 +31,17 @@ when /islandorad/, /islandorat/, /islandorap/
   # ENV['http_proxy'] = 'http://localhost:3128/'
 
 else
-  STDERR.puts "#{$0} Doesn't know how to configure for this environment, quitting."
+  STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
   exit -1
 end
 
 require 'offin/packages'
 require 'optparse'
-# require 'offin/db'
+require 'offin/db'
 
+def record_to_database package, status, start_time, finish_time
+
+end
 
 def parse_command args
   server_code = []
@@ -62,10 +67,17 @@ indent  = ' ' * 4
 config  = Datyl::Config.new(config_filename, "default", parse_command(ARGV))
 factory = PackageFactory.new(config)
 
+unless DataBase.setup(config)
+  STDERR.puts "Fatal error: check that database is up and reachable."
+  exit 1
+end
+
+
 $stdout.sync = true
 
 ARGV.each do |directory|
   begin
+    success = false
     started = Time.now
     package = factory.new_package(directory)
 
@@ -75,24 +87,25 @@ ARGV.each do |directory|
     package.ingest
 
     finished = Time.now
-    puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => collection %s, "%s"',
-                 finished - started,
-                 package.bytes_ingested/1048576.0,
-                 package.class,
-                 package.name,
-                 package.pid,
-                 package.collections.join(', '),
-                 package.label)
-
+    success = true
   rescue PackageError => e
     STDERR.puts e
   rescue => e
     STDERR.puts "Caught unexpected fatal error #{e.class} - #{e.message}", e.backtrace, '', "Please correct the error and retry."
-    exit -1
+    exit 1
   ensure
     if package
+      puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => collection %s, "%s"',
+                   finished - started,
+                   package.bytes_ingested/1048576.0,
+                   package.class,
+                   package.name,
+                   package.pid,
+                   package.collections.join(', '),
+                   package.label)
       STDERR.puts 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
       STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
+      record_to_database(package, success && package.valid?, started, finished)
     end
   end
 end

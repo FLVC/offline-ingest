@@ -34,34 +34,31 @@ require 'offin/db'
 config  = Datyl::Config.new(config_filename, "default")
 
 DataBase.create config
-# DataBase.setup  config
+DataBase.setup  config
 
 
 site = DataBase::IslandoraSite.first_or_create(:hostname => 'fsu7t.fcla.edu')
 
 rec = DataBase::IslandoraPackage.new(
-#                                    :title => "Field flowers: a small bunch of the most fragrant of blossoms gathered from the broad acres of Eugene Field's farm of love",
+                                     :title => "Field flowers: a small bunch of the most fragrant of blossoms gathered from the broad acres of Eugene Field's farm of love",
                                      :package_name   => 'FSDT188782',
-#                                    :islandora_pid  => 'fsu:1219',
+                                     :islandora_pid  => 'fsu:1219',
                                      :time_started   => Time.now.to_i - 1,
                                      :time_finished  => Time.now.to_i + 1,
                                      :bytes_ingested => 2 ** 48 -1,
-                                     :islandora_site => site
+                                     :islandora_site => site,
                                   )
 
-rec.add_warnings "This is a test", "It is only a test", [ "one", "two" ]
-rec.add_errors [ "three", "four" ]
-rec.add_purls "http://purl.flvc.org/dt/123", "http://purl.flvc.org/dt/456"
+rec.add_warnings    'bad user'
+rec.add_purls       'http://purl.flvc.org/dt/123', 'http://purl.flvc.org/dt/456'
+rec.add_collections 'info:fedora/digitool:offline'
 
 
-puts 'Warnings: ' + rec.get_warnings.join(', ')
-puts 'Errors: ' + rec.get_errors.join(', ')
-puts 'Purls: ' + rec.get_purls.join(', ')
+# puts 'Warnings: ' + rec.get_warnings.join(', ')
+# puts 'Errors: ' + rec.get_errors.join(', ')
+# puts 'Purls: ' + rec.get_purls.join(', ')
+# puts 'Collections: ' + rec.get_collections.join(', ')
 
-puts "Saved?  #{rec.save}"
-puts rec.errors.map { |e| e.to_s }
+puts rec.errors.map { |e| e.to_s } unless rec.save
 
-
-packages = DataBase::IslandoraPackage.all(:islandora_site => site)
-
-packages.each { |p| puts 'got (site '  + p.islandora_site.hostname + ') ' + p.get_warnings.join('; ') }
+DataBase.dump

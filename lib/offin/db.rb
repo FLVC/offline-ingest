@@ -1,8 +1,10 @@
 require 'data_mapper'
 require 'dm-migrations'
+require 'time'
 
 module DataBase
 
+  FEDORA_INFO_REGEXP = /^info:fedora\//i
 
   class IslandoraSite
     include DataMapper::Resource
@@ -45,6 +47,7 @@ module DataBase
     has n,  :warning_messages
     has n,  :error_messages
     has n,  :purls
+    has n,  :islandora_collections
 
     belongs_to  :islandora_site
 
@@ -80,6 +83,41 @@ module DataBase
     def get_purls
       self.purls.map { |rec| rec.purl }
     end
+
+    def add_collections *collections
+      return unless collections or collections.empty?
+      collections.flatten.each do |str|
+        self.islandora_collections << IslandoraCollection.new(:collection_code => str.sub(FEDORA_INFO_REGEXP, ''))
+      end
+    end
+
+    def get_collections
+      self.islandora_collections.map { |rec| rec.collection_code }
+    end
+  end
+
+
+  class IslandoraCollection
+    include DataMapper::Resource
+
+    property    :id,                Serial
+    property    :collection_code,   String,  :required => true
+
+    belongs_to  :islandora_package
+
+
+    after :create do
+      self.collection_code.sub!(FEDORA_INFO_REGEXP, '')
+    end
+
+    before :update do
+      self.collection_code.sub!(FEDORA_INFO_REGEXP, '')
+    end
+
+    before :save do
+      self.collection_code.sub!(FEDORA_INFO_REGEXP, '')
+    end
+
   end
 
   class WarningMessage
@@ -104,21 +142,54 @@ module DataBase
     include DataMapper::Resource
 
     property    :id,      Serial
-    property    :purl,    Text,  :required => true
+    property    :purl,    String,  :required => true
 
     belongs_to  :islandora_package
   end
 
   def self.setup config
-    DataMapper::Logger.new($stdout, :debug)
+    DataMapper::Logger.new($stderr, :debug)
     DataMapper.setup(:default, config.database)
 
     repository(:default).adapter.resource_naming_convention = DataMapper::NamingConventions::Resource::UnderscoredAndPluralizedWithoutModule
     DataMapper.finalize
+
+    return true
+  rescue => e
+    STDERR.puts "Cant' connect to database: #{e.class}: #{e.message}"
+    return false
   end
 
   def self.create config
     self.setup config
     DataMapper.auto_migrate!
   end
+
+
+  def self.dump
+    packages = DataBase::IslandoraPackage.all(:order => [ :time_started.desc ])
+    packages.each do |p|
+
+
+      puts "#{Time.at(p.time_started).to_s.sub(/\s+[-+]\d+$/, '')} #{p.package_name} => #{p.islandora_site.hostname}:(#{p.get_collections.join(', ')}) #{p.success ? 'succeeded' : 'failed'}"
+
+      errors   = p.get_errors.map   { |m| ' * ' + m }
+      warnings = p.get_warnings.map { |m| ' * ' + m }
+
+      puts "Errors: ",   errors   unless errors.empty?
+      puts "Warnings: ", warnings unless warnings.empty?
+
+    end
+    # puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => collection %s, "%s"',
+    #              finished - started,
+    #              package.bytes_ingested/1048576.0,
+    #              package.class,
+    #              package.name,
+    #              package.pid,
+    #              package.collections.join(', '),
+    #              package.label)
+
+  end
+
+
 end

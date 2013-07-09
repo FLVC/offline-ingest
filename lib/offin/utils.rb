@@ -1,11 +1,12 @@
 require 'iconv'
 require 'offin/exceptions'
 require 'open3'
-require 'rchardet'
 require 'stringio'
 require 'tempfile'
 require 'fileutils'
 require 'RMagick'
+
+
 
 class Utils
 
@@ -19,7 +20,7 @@ class Utils
     return str.gsub('&lt;', '<').gsub('&gt;', '>').gsub('&amp;', '&').gsub('&apos;', "'").gsub(/\&\#([0-9]+);/) { |i| $1.to_i.chr }
   end
 
-  # attribute data would include &quot;
+  # Escaping attribute data would include &quot;
 
   def Utils.xml_escape str
     return str.gsub('&', '&amp;').gsub("'", '&apos;').gsub('<', '&lt;').gsub('>', '&gt;')
@@ -74,31 +75,53 @@ class Utils
     return nil
   end
 
+  if RUBY_VERSION < "1.9.0"
+    CLEANUP_REGEXP = eval '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\xEF\xFF]/m'    # disallowed control characters and embedded deletes.
+  else
+    CLEANUP_REGEXP = eval '/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u00EF\u00FF]/m'
+  end
 
   def Utils.cleanup_text text
     return text unless text.class == String
-    re = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\xEF\xFF]/m    # disallowed control characters and embedded deletes.
-    return text.gsub(re, ' ').strip
+    return text.gsub(CLEANUP_REGEXP, ' ').strip
   end
 
+
+  # TODO: need spec tests here
 
   # TODO: get warning, error messages from here to calling program:
 
-  def Utils.re_encode_maybe text
-    detector = CharDet.detect(text)
+  if RUBY_VERSION < "1.9.0"
+    require 'rchardet'
 
-    return text if ['utf-8', 'ascii'].include? detector['encoding'].downcase
+    def Utils.re_encode_maybe text
+      detector = CharDet.detect(text)
 
-    if detector['confidence'] > 0.66
-      STDERR.puts "Attempting to convert from #{detector['encoding']} (confidence #{detector['confidence']})."
-      converter = Iconv.new('UTF-8', detector['encoding'])
-      return converter.iconv(text)
+      return text if ['utf-8', 'ascii'].include? detector['encoding'].downcase
+
+      if detector['confidence'] > 0.66
+        ## STDERR.puts "Attempting to convert from #{detector['encoding']} (confidence #{detector['confidence']})."
+        converter = Iconv.new('UTF-8', detector['encoding'])
+        return converter.iconv(text)
+      end
+
+    rescue => e
+      ##  STDERR.puts "Error converting with #{detector.inspect}}, returning original text"
+      return text
     end
 
-  rescue => e
-    STDERR.puts "Error converting with #{detector.inspect}}, returning original text"
-    return text
+  else
+
+    def Utils.re_encode_maybe text
+      return text.force_encoding("UTF-8")
+    rescue => e
+      return text
+    end
+
   end
+
+
+
 
 
   def Utils.image_to_pdf config, image_filepath
