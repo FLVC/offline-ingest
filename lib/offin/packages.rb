@@ -70,20 +70,23 @@ class Package
   TEXT = %r{text/}
 
 
-  attr_reader :manifest, :mods, :marc, :config, :content_model, :namespace, :collections, :label, :owner, :directory_name, :directory_path, :bytes_ingested, :pid, :purls, :iid
+  attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
+  attr_reader :directory_path, :iid, :label, :manifest, :marc, :mods, :namespace, :owner, :pid, :purls
 
   def initialize config, directory, manifest = nil
 
-    @valid          = true
-    @pid            = nil
-    @config         = config
-    @content_model  = nil
-    @label          = nil
-    @owner          = nil
-    @directory_name = File.basename(directory)
-    @directory_path = directory
-    @datafiles      = list_other_files()
-    @bytes_ingested = 0
+    @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
+    @collections       = []
+    @valid             = true
+    @pid               = nil
+    @config            = config
+    @content_model     = nil
+    @label             = nil
+    @owner             = nil
+    @directory_name    = File.basename(directory)
+    @directory_path    = directory
+    @datafiles         = list_other_files()
+    @bytes_ingested    = 0
 
 
     handle_manifest(manifest) or return    # sets up @manifest
@@ -105,11 +108,12 @@ class Package
   def list_collections
     remapper = @config.remap_collections || {}
     list = []
+
     @manifest.collections.each do |pid|
       pid.downcase!
-      if new_pid = remapper[pid].downcase
+      if new_pid = remapper[pid]
         warning "Remapping manifest collection #{pid} to #{new_pid}, by configuration, for package #{@directory_name}."
-        list.push new_pid
+        list.push new_pid.downcase
       else
         list.push pid
       end
@@ -140,12 +144,8 @@ class Package
   #
   # updater needs to:
   #
-  # If simple digitool package (basic, pdf, large):  expects MODS, Manifest objects.
-  #      MODS gets updated with selected manifest data:
-  #      DC gets generated with
-  # If books digitool package: expects METS with embedded manifest data (why?)
-  #      MODS
-
+  # supply label, supply islandora owner, run specialized checks.
+  #  TODO:  digitool will want to check for a PURL.
 
   def updater= value
     metadata_updater = value.send :new, @manifest, @mods
@@ -596,13 +596,12 @@ end
 
 class BookPackage < Package
 
-  attr_reader :mets, :page_filenames, :table_of_contents, :page_pids
+  attr_reader :mets, :page_filenames, :table_of_contents
 
   def initialize config, directory, manifest
     super(config, directory, manifest)
 
     @content_model = BOOK_CONTENT_MODEL
-    @page_pids = []
 
     raise PackageError, "The Book package #{@directory_name} contains no data files."  if @datafiles.empty?
 
@@ -679,16 +678,26 @@ class BookPackage < Package
   end
 
   def check_page_types
+
+    if @page_filenames.empty?
+      error  "The Book Package #{directory_name} does not appear to have any page image files."
+      return
+    end
+
     issues = []
     @page_filenames.each do |file_name|
       path = File.join(@directory_path, file_name)
       type = Utils.mime_type(path)
       issues.push "Page file #{file_name} is of unsupported type #{type}, but must be image/jp2 or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
     end
+
     unless issues.empty?
       error "The Book Package #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
       error issues
+      return
     end
+
+    return true
   end
 
 
@@ -780,7 +789,7 @@ class BookPackage < Package
       begin
         sequence += 1
         pid = ingest_page(pagename, sequence)
-        @page_pids.push pid
+        @component_objects.push pid
 
         ##### REMOVE ME
         # STDERR.puts "Page: #{pid} - #{sequence} - #{pagename}"

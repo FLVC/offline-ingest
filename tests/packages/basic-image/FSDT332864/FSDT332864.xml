@@ -53,6 +53,9 @@
     <recordChangeDate encoding="iso8601">20091112140143.0</recordChangeDate>
     <recordIdentifier>002592197</recordIdentifier>
     <recordOrigin>Converted from MARCXML to MODS version 3.4 using MARC21slim2MODS3-4.xsl
-				(Revision 1.85 2013/03/07)</recordOrigin>
+	(Revision 1.85 2013/03/07)</recordOrigin>
   </recordInfo>
+  <location displayLabel="purl">
+    <url displayLabel="Electronic Resource" usage="primary display">http://ufdc.ufl.edu/AA00013901/00001</url>
+  </location>
 </mods>

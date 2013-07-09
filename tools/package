@@ -39,14 +39,37 @@ require 'offin/packages'
 require 'optparse'
 require 'offin/db'
 
-def record_to_database package, status, start_time, finish_time
+def record_to_database site, package, status, start_time, finish_time
+
+  site = DataBase::IslandoraSite.first_or_create(:hostname => site)
+  rec  = DataBase::IslandoraPackage.new(:title          => package.label,
+                                        :package_name   => package.name,
+                                        :islandora_pid  => package.pid,
+                                        :time_started   => start_time.to_i,
+                                        :time_finished  => finish_time.to_i,
+                                        :bytes_ingested => package.bytes_ingested,
+                                        :iid            => package.iid,
+                                        :success        => status,
+                                        :content_model  => package.content_model,
+                                        :islandora_site => site)
+
+  rec.add_warnings     package.warnings
+  rec.add_errors       package.errors
+  rec.add_purls        package.purls
+  rec.add_collections  package.collections
+  rec.add_components   package.component_objects
+
+  if not rec.save
+    STDERR.puts "Unable to save to database:", rec.errors.map { |err| err.to_s }
+    exit 1
+  end
 
 end
 
 def parse_command args
   server_code = []
   opts   = OptionParser.new do |opt|
-    opt.banner = "Usage: package --flag package-directory < more package-directories >\n" + "where --flag is one of:\n"
+    opt.banner = "Usage: package --flag package-directory package-directories\n" + "where --flag is one of:\n"
     opt.on("--fsu7t",    "use fsu7t.flca.edu for ingest")          { server_code.push 'fsu7t' }
     opt.on("--fsu-prod", "use fsu-prod.flca.edu for ingest")       { server_code.push 'fsu-prod' }
     opt.on("--d7",       "use islandora7d.fcla.edu for ingest")    { server_code.push 'i7d' }
@@ -77,8 +100,10 @@ $stdout.sync = true
 
 ARGV.each do |directory|
   begin
-    success = false
-    started = Time.now
+    success  = false
+    started  = Time.now
+    finished = Time.now # for error condition
+
     package = factory.new_package(directory)
 
     raise PackageError, "Invalid package in #{directory}." unless package.valid?
@@ -95,17 +120,17 @@ ARGV.each do |directory|
     exit 1
   ensure
     if package
-      puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => collection %s, "%s"',
+      puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => %s, "%s"',
                    finished - started,
                    package.bytes_ingested/1048576.0,
                    package.class,
                    package.name,
-                   package.pid,
-                   package.collections.join(', '),
+                   package.pid || 'no pid',
+                   package.collections.empty? ?  'no collections' : 'collection: ' + package.collections.join(', '),
                    package.label)
       STDERR.puts 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
       STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
-      record_to_database(package, success && package.valid?, started, finished)
+      record_to_database(config.site, package, success && package.valid?, started, finished)
     end
   end
 end

@@ -34,4 +34,7 @@
     <geographic>Sarasota (Fla.)</geographic>
   </subject>
   <accessCondition>Before photographing or publishing quotations or excerpts from any materials, permission must be obtained from the New College Archives, and the holder of the copyright, if not New College of Florida.</accessCondition>
+  <location displayLabel="purl">
+    <url displayLabel="Electronic Resource" usage="primary display">http://ufdc.ufl.edu/AA00013901/00007</url>
+  </location>
 </mods>

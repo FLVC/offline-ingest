@@ -4,6 +4,8 @@ require 'time'
 
 module DataBase
 
+  @@debug = false
+
   FEDORA_INFO_REGEXP = /^info:fedora\//i
 
   class IslandoraSite
@@ -39,15 +41,16 @@ module DataBase
 
     # NULL means inapplicable for these (e.g., it was never ingested, or there was no content_type declared, etc)
 
+    property  :iid,               String,      :index => true
     property  :islandora_pid,     String,      :index => true
     property  :title,             String,      :length => 255,    :index => true
-    property  :content_type,      String,      :index => true
-
+    property  :content_model,     String,      :length => 255,    :index => true
 
     has n,  :warning_messages
     has n,  :error_messages
     has n,  :purls
     has n,  :islandora_collections
+    has n,  :component_objects
 
     belongs_to  :islandora_site
 
@@ -93,6 +96,18 @@ module DataBase
 
     def get_collections
       self.islandora_collections.map { |rec| rec.collection_code }
+    end
+
+
+    def add_components *pids
+      return unless pids or pids.empty?
+      pids.flatten.each do |str|
+        self.component_objects << ComponentObject.new(:pid => str.sub(FEDORA_INFO_REGEXP, ''))
+      end
+    end
+
+    def get_components
+      self.component_objects.map { |rec| rec.pid }
     end
   end
 
@@ -142,13 +157,28 @@ module DataBase
     include DataMapper::Resource
 
     property    :id,      Serial
-    property    :purl,    String,  :required => true
+    property    :purl,    String,  :length => 128, :required => true
 
     belongs_to  :islandora_package
   end
 
+  class ComponentObject
+    include DataMapper::Resource
+
+    property    :id,      Serial
+    property    :pid,     String,  :required => true
+
+    belongs_to  :islandora_package
+  end
+
+  # Set to TRUE before setup if you want this:
+
+  def self.debug= bool
+    @@debug = bool
+  end
+
   def self.setup config
-    DataMapper::Logger.new($stderr, :debug)
+    DataMapper::Logger.new($stderr, :debug)  if @@debug
     DataMapper.setup(:default, config.database)
 
     repository(:default).adapter.resource_naming_convention = DataMapper::NamingConventions::Resource::UnderscoredAndPluralizedWithoutModule
@@ -179,17 +209,10 @@ module DataBase
       puts "Errors: ",   errors   unless errors.empty?
       puts "Warnings: ", warnings unless warnings.empty?
 
+      puts ''
     end
-    # puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => collection %s, "%s"',
-    #              finished - started,
-    #              package.bytes_ingested/1048576.0,
-    #              package.class,
-    #              package.name,
-    #              package.pid,
-    #              package.collections.join(', '),
-    #              package.label)
-
   end
+
 
 
 end

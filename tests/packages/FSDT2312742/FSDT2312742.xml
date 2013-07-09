@@ -18,4 +18,7 @@
     <note>PDF</note>
   </physicalDescription>
   <accessCondition>Florida State University asserts copyright for this object. All requests for permission to publish, broadcast or otherwise reproduce from this item must be submitted in writing to the copyright owner unless otherwise stated.</accessCondition>
+  <location displayLabel="purl">
+    <url displayLabel="Electronic Resource" usage="primary display">http://ufdc.ufl.edu/AA00013901/00042</url>
+  </location>
 </mods>
