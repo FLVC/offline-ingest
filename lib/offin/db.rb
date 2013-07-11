@@ -186,8 +186,7 @@ module DataBase
 
     return true
   rescue => e
-    STDERR.puts "Cant' connect to database: #{e.class}: #{e.message}"
-    return false
+    raise SystemError, "Cant' connect to database: #{e.class}: #{e.message}"
   end
 
   def self.create config

@@ -90,11 +90,12 @@ indent  = ' ' * 4
 config  = Datyl::Config.new(config_filename, "default", parse_command(ARGV))
 factory = PackageFactory.new(config)
 
-unless DataBase.setup(config)
-  STDERR.puts "Fatal error: check that database is up and reachable."
+begin
+  DataBase.setup(config)
+rescue => e
+  STDERR.puts e
   exit 1
 end
-
 
 $stdout.sync = true
 
@@ -113,10 +114,13 @@ ARGV.each do |directory|
 
     finished = Time.now
     success = true
+  rescue SystemError => e
+    STDERR.puts e
+    exit 1
   rescue PackageError => e
     STDERR.puts e
   rescue => e
-    STDERR.puts "Caught unexpected fatal error #{e.class} - #{e.message}", e.backtrace, '', "Please correct the error and retry."
+    STDERR.puts "Caught unexpected error #{e.class} - #{e.message}", e.backtrace, '', "Please correct the error and retry."
     exit 1
   ensure
     if package

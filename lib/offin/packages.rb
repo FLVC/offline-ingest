@@ -98,10 +98,12 @@ class Package
     @namespace   = @manifest.owning_institution.downcase
     @collections = list_collections()
 
+  rescue SystemError => e
+    raise
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
   rescue => e
-    error "Exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
+    error "Unhandled exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
   end
 
 
@@ -168,9 +170,9 @@ class Package
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
 
-    # TODO: need to check that @mods is valid after adding manifest!
+    # TODO: need to check that @mods is valid after adding manifest?
 
-    # somewhat order dependent
+    # Somewhat order dependent:
 
     ingestor.label         = @label
     ingestor.owner         = @owner
@@ -620,10 +622,8 @@ class BookPackage < Package
 
 
   def ingest
-
     ingest_book
     ingest_pages
-
   end
 
 
@@ -741,7 +741,6 @@ class BookPackage < Package
 
 
   def ingest_book
-    # TODO: in initialization, do a check to make sure that there are *some* page files... we need at least one.
 
     first_page = File.join @directory_path, @page_filenames.first
     @image = Magick::Image.read(first_page).first
