@@ -179,14 +179,16 @@ module DataBase
 
   def self.setup config
     DataMapper::Logger.new($stderr, :debug)  if @@debug
-    DataMapper.setup(:default, config.database)
+    dm = DataMapper.setup(:default, config.database)
 
     repository(:default).adapter.resource_naming_convention = DataMapper::NamingConventions::Resource::UnderscoredAndPluralizedWithoutModule
     DataMapper.finalize
 
-    return true
+    # ping database
+
+    return dm.select('select 1 + 1') == [ 2 ]
   rescue => e
-    raise SystemError, "Cant' connect to database: #{e.class}: #{e.message}"
+    raise SystemError, "Fatal error: can't connect to database: #{e.class}: #{e.message}"
   end
 
   def self.create config

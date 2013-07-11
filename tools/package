@@ -37,7 +37,11 @@ end
 
 require 'offin/packages'
 require 'optparse'
-require 'offin/db'
+
+Utils.silence_warnings do   # csv constant redefinition deep in datamapper
+  require 'offin/db'
+end
+
 
 def record_to_database site, package, status, start_time, finish_time
 
@@ -66,38 +70,45 @@ def record_to_database site, package, status, start_time, finish_time
 
 end
 
+Struct.new('Options', :server_code, :test_mode)
+
 def parse_command args
-  server_code = []
+  command_options = Struct::Options.new(nil, nil)
   opts   = OptionParser.new do |opt|
-    opt.banner = "Usage: package --flag package-directory package-directories\n" + "where --flag is one of:\n"
-    opt.on("--fsu7t",    "use fsu7t.flca.edu for ingest")          { server_code.push 'fsu7t' }
-    opt.on("--fsu-prod", "use fsu-prod.flca.edu for ingest")       { server_code.push 'fsu-prod' }
-    opt.on("--d7",       "use islandora7d.fcla.edu for ingest")    { server_code.push 'i7d' }
-    opt.on("--alpo",     "use alasnorid.alpo.fcla.edu for ingest") { server_code.push 'alpo' }
+    opt.banner = "Usage: package [ --test-mode ] --server-flag package-directory package-directories\n" + "where --flag is one of:\n"
+    opt.on("--fsu7t",      "use fsu7t.flca.edu for ingest")                 { command_options.server_code = 'fsu7t' }
+    opt.on("--fsu-prod",   "use fsu-prod.flca.edu for ingest")              { command_options.server_code = 'fsu-prod' }
+    opt.on("--d7",         "use islandora7d.fcla.edu for ingest")           { command_options.server_code = 'i7d' }
+    opt.on("--alpo",       "use alasnorid.alpo.fcla.edu for ingest")        { command_options.server_code = 'alpo' }
+    opt.on("--test-mode",  "run basic checks on package without ingesting") { command_options.test_mode = true }
   end
   opts.parse!(args)
-  raise "No server specified."        if server_code.empty?
-  raise "Too many servers specified." if server_code.length > 1
+  raise "No server specified."        if command_options.server_code.nil? and not command_options.test_mode
   raise "No packages specified."      if args.empty?
 rescue => e
   STDERR.puts e, opts
   exit -1
 else
-  return server_code.pop
+  return command_options
 end
 
-indent  = ' ' * 4
-config  = Datyl::Config.new(config_filename, "default", parse_command(ARGV))
+
+command_options = parse_command(ARGV)
+config  = Datyl::Config.new(config_filename, "default")
+config[:test_mode] = true if command_options.test_mode
+
+
 factory = PackageFactory.new(config)
 
 begin
-  DataBase.setup(config)
+  DataBase.setup(config) unless config.test_mode
 rescue => e
   STDERR.puts e
   exit 1
 end
 
 $stdout.sync = true
+indent = ' ' * 4
 
 ARGV.each do |directory|
   begin
@@ -115,7 +126,7 @@ ARGV.each do |directory|
     finished = Time.now
     success = true
   rescue SystemError => e
-    STDERR.puts e
+    STDERR.puts "Fatal system error: #{e.message}"
     exit 1
   rescue PackageError => e
     STDERR.puts e
@@ -124,6 +135,8 @@ ARGV.each do |directory|
     exit 1
   ensure
     if package
+      STDERR.puts 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
+      STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
       puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => %s, "%s"',
                    finished - started,
                    package.bytes_ingested/1048576.0,
@@ -132,9 +145,9 @@ ARGV.each do |directory|
                    package.pid || 'no pid',
                    package.collections.empty? ?  'no collections' : 'collection: ' + package.collections.join(', '),
                    package.label)
-      STDERR.puts 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
-      STDERR.puts 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
-      record_to_database(config.site, package, success && package.valid?, started, finished)
+      unless config.test_mode
+        record_to_database(config.site, package, success && package.valid?, started, finished)
+      end
     end
   end
 end

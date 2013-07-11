@@ -29,7 +29,10 @@ end
 
 require 'datyl/config'
 require 'offin/packages'
-require 'offin/db'
 
-DataBase.setup Datyl::Config.new(config_filename, "default")
+Utils.silence_warnings do   # csv constant redefinition deep in datamapper
+  require 'offin/db'
+end
+
+DataBase.setup Datyl::Config.new(config_filename, "default", "i7d")
 DataBase.dump

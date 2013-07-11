@@ -75,6 +75,7 @@ class Package
 
   def initialize config, directory, manifest = nil
 
+    @bytes_ingested    = 0
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
     @valid             = true
@@ -86,7 +87,6 @@ class Package
     @directory_name    = File.basename(directory)
     @directory_path    = directory
     @datafiles         = list_other_files()
-    @bytes_ingested    = 0
 
 
     handle_manifest(manifest) or return    # sets up @manifest
@@ -318,6 +318,9 @@ class BasicImagePackage < Package
   end
 
   def ingest
+
+    return if @config.test_mode
+
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
@@ -392,6 +395,8 @@ class LargeImagePackage < Package
   end
 
   def ingest
+
+    return if @config.test_mode
 
     # We have two cases: a source JP2 or the more generically-supported TIFF.
 
@@ -553,6 +558,7 @@ class PdfPackage < Package
   end
 
   def ingest
+    return if @config.test_mode
 
     # Do image processing upfront so as to fail faster, if fail we must, before ingest is started.
 
@@ -622,6 +628,7 @@ class BookPackage < Package
 
 
   def ingest
+    return if @config.test_mode
     ingest_book
     ingest_pages
   end
@@ -1071,7 +1078,7 @@ class BookPackage < Package
     return ingestor.pid
 
   rescue => e
-    error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{message}.", e.backtrace
+    error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{e.message}.", e.backtrace
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?

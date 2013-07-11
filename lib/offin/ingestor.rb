@@ -44,13 +44,13 @@ class Ingestor
 
   def initialize  config, namespace
 
+    @owner         = nil
+    @size          = 0
     @config        = config
     @namespace     = namespace
     @repository    = connect @config
     @pid           = getpid
     @fedora_object = @repository.create(@pid)
-    @owner         = nil
-    @size          = 0
 
     yield self
 
@@ -69,21 +69,22 @@ class Ingestor
   end
 
 
-  def connect
-    repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
-    repository.ping
-    return repository
-  rescue => e
-    raise SystemError, e.message # ick
+  def connect config
+    Utils.field_system_error("For repository '#{@config.url}'")   do
+      repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+      repository.ping
+      return repository
+    end
   end
 
 
-
   def getpid
-    sax_document = SaxDocumentGetNextPID.new
-    pid_doc = @repository.next_pid(:namespace => @namespace)
-    Nokogiri::XML::SAX::Parser.new(sax_document).parse(pid_doc)
-    return sax_document.pids.shift
+    Utils.field_system_error("Unable to request a new PID from the fedora repository '#{@config.url}'")   do
+      pid_doc = @repository.next_pid(:namespace => @namespace)
+      sax_document = SaxDocumentGetNextPID.new
+      Nokogiri::XML::SAX::Parser.new(sax_document).parse(pid_doc)
+      return sax_document.pids.shift
+    end
   end
 
   def collections= value

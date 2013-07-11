@@ -27,6 +27,22 @@ class Utils
   end
 
 
+  def Utils.silence_warnings(&block)
+    warn_level = $VERBOSE
+    $VERBOSE = nil
+    result = block.call
+    $VERBOSE = warn_level
+    result
+  end
+
+  def Utils.field_system_error message = ''
+    yield
+  rescue => e
+    raise SystemError,  message + ': ' + e.message # ick
+  end
+
+
+
   def Utils.get_manifest config, directory
 
     manifest_filename = File.join(directory, 'manifest.xml')
