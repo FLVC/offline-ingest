@@ -43,15 +43,14 @@ class Ingestor
 
 
   def initialize  config, namespace
-    @config = config
-    @namespace = namespace
 
-    @repository = Rubydora.connect :url => @config.url, :user => @config.user, :password => @config.password
-
-    @pid = getpid
+    @config        = config
+    @namespace     = namespace
+    @repository    = connect @config
+    @pid           = getpid
     @fedora_object = @repository.create(@pid)
-    @owner = nil
-    @size = 0
+    @owner         = nil
+    @size          = 0
 
     yield self
 
@@ -59,6 +58,8 @@ class Ingestor
 
     # TODO: not sure if we should just let these percolate up, or just non-package errors, or what, exactly
 
+  rescue SystemError => e
+    raise e
   rescue PackageError => e
     error e.message
     return self
@@ -68,7 +69,15 @@ class Ingestor
   end
 
 
-  # TODO: check pid, repository are properly returned here...
+  def connect
+    repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+    repository.ping
+    return repository
+  rescue => e
+    raise SystemError, e.message # ick
+  end
+
+
 
   def getpid
     sax_document = SaxDocumentGetNextPID.new

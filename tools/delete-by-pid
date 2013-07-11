@@ -53,7 +53,7 @@ else
 end
 
 
-config  = Datyl::Config.new(config_filename, 'default', parse_command(ARGV))
+config = Datyl::Config.new(config_filename, 'default', parse_command(ARGV))
 repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
 
 ARGV.each do |pid|
