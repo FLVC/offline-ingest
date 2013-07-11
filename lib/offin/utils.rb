@@ -69,9 +69,9 @@ class Utils
 
     # TODO: capture errors.  We occasionally get things like "Bad
     # Annotation Destination" that are warnings. We'd like to add
-    # these to the generated warnings.
+    # these to the generated warnings, perhaps.
 
-    return text if text.length > 1000   # pretty arbitrary...
+    return text if text.length > 50   # pretty arbitrary...
     return nil
   end
 
