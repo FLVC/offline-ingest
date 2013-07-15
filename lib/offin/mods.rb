@@ -124,16 +124,23 @@ class Mods
     return @xml_document.xpath("//mods:location[translate(@displayLabel, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"PURL\"]/mods:url", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s }
   rescue => e
     return []
-    # no-op   TODO: better than this
   end
+
+  # There really should only be one:
 
   def iids
     return @xml_document.xpath("//mods:identifier[translate(@type, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"IID\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s }
   rescue => e
     return []
-    # no-op   TODO: better than this
   end
 
+  # There really should only be one:
+
+  def digitool_ids
+    return @xml_document.xpath("//mods:identifier[translate(@type, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"DIGITOOL\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s }.uniq
+  rescue => e
+    return []
+  end
 
   def add_islandora_identifier str
     ident = Nokogiri::XML::Node.new("#{format_prefix}identifier", @xml_document)

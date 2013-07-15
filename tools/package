@@ -1,54 +1,57 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'offin/packages'
-require 'offin/ingest-tools'
+require 'socket'
 
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
-command_options = parse_command(ARGV)
-config  = Datyl::Config.new(config_filename, "default")
-config[:test_mode] = true if command_options.test_mode
+$LOAD_PATH.unshift case Socket.gethostname
+                   when /alpo/i;                                "/home/fischer/WorkProjects/offline-ingest/lib/"
+                   when /romeo-foxtrot|flvc-rfischer.local/i;   "/Users/fischer/WorkProjects/offline-ingest/lib/"
+                   when /islandora[dtp]/i;                      "/usr/local/islandora/offline-ingest/lib/"
+                   else
+                     STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
+                     exit -1
+                   end
+
+require 'offin/ingest-support'
+
+config  = parse_command_line ARGV
+
+setup_database(config)
 
 factory = PackageFactory.new(config)
 
-begin
-  DataBase.setup(config) unless config.test_mode
-rescue => e
-  STDERR.puts e
-  exit 1
-end
-
-$stdout.sync = true
-indent = ' ' * 4
+$stdout.sync, indent = true, ' ' * 4
 
 ARGV.each do |directory|
   begin
-    success  = false
-    started  = Time.now
-    finished = Time.now # for error condition
+    completed, started, finished  = false, Time.now, Time.now
 
-    package = factory.new_package(directory)
+    package = factory.new_package(directory, DigitoolMetadataChecker)
 
     raise PackageError, "Invalid package in #{directory}." unless package.valid?
 
-    package.updater = DigitoolMetadataUpdater
     package.ingest
 
-    finished = Time.now
-    success = true
+    completed, finished = true, Time.now
+
+  rescue PackageError => e
+    STDERR.puts e
+
   rescue SystemError => e
     STDERR.puts "Fatal system error: #{e.message}"
     exit 1
-  rescue PackageError => e
-    STDERR.puts e
+
   rescue => e
     STDERR.puts "Caught unexpected error #{e.class} - #{e.message}", e.backtrace, '', "Please correct the error and retry."
     exit 1
+
   ensure
     if package
+
       puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => %s, "%s"',
                    finished - started,
                    package.bytes_ingested/1048576.0,
@@ -57,11 +60,13 @@ ARGV.each do |directory|
                    package.pid || 'no pid',
                    package.collections.empty? ?  'no collections' : 'collection: ' + package.collections.join(', '),
                    package.label)
+
       puts indent + 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
+
       puts indent + 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
 
       unless config.test_mode
-        record_to_database(config.site, package, success && package.valid?, started, finished)
+        record_to_database(config.site, package, completed && package.valid?, started, finished)
       end
     end
   end

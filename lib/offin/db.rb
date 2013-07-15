@@ -41,7 +41,7 @@ module DataBase
 
     # NULL means inapplicable for these (e.g., it was never ingested, or there was no content_type declared, etc)
 
-    property  :iid,               String,      :index => true
+    property  :digitool_id,       String,      :index => true
     property  :islandora_pid,     String,      :index => true
     property  :title,             String,      :length => 255,    :index => true
     property  :content_model,     String,      :length => 255,    :index => true
@@ -53,6 +53,10 @@ module DataBase
     has n,  :component_objects
 
     belongs_to  :islandora_site
+
+    def iid
+      self.package_name
+    end
 
     def add_warnings *messages
       return unless messages or messages.empty?
@@ -206,6 +210,8 @@ module DataBase
 
       errors   = p.get_errors.map   { |m| ' * ' + m }
       warnings = p.get_warnings.map { |m| ' * ' + m }
+
+      puts "Purls: " +  p.get_purls.join(', ')
 
       puts "Errors: ",   errors   unless errors.empty?
       puts "Warnings: ", warnings unless warnings.empty?

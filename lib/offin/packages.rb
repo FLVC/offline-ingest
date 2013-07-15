@@ -5,8 +5,8 @@ require 'offin/errors'
 require 'offin/mets'
 require 'offin/mods'
 require 'offin/ingestor'
-require 'offin/metadata-updater'
-require 'datyl/config'
+require 'offin/metadata-checkers'
+require 'offin/config'
 require 'RMagick'
 
 BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
@@ -33,7 +33,8 @@ class PackageFactory
     raise SystemError, "#{e.class}: #{e.message}"
   end
 
-  def new_package directory
+  def new_package directory, updator
+
     raise PackageError, "Package directory '#{directory}' doesn't exist."            unless File.exists? directory
     raise PackageError, "Package directory '#{directory}' isn't really a directory." unless File.directory? directory
     raise PackageError, "Package directory '#{directory}' isn't readable."           unless File.readable? directory
@@ -41,15 +42,18 @@ class PackageFactory
     manifest = Utils.get_manifest @config, directory
 
     return case manifest.content_model
-           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest)
-           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest)
-           when PDF_CONTENT_MODEL;          PdfPackage.new(@config, directory, manifest)
-           when BOOK_CONTENT_MODEL;         BookPackage.new(@config, directory, manifest)
+           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest, updator)
+           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest, updator)
+           when PDF_CONTENT_MODEL;          PdfPackage.new(@config, directory, manifest, updator)
+           when BOOK_CONTENT_MODEL;         BookPackage.new(@config, directory, manifest, updator)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
   end
 end
+
+
+# TODO: @valid is used redundantly, use valid? throughout based on error array empty or not.
 
 
 # Package serves as a base class, but it could serve to do a basic
@@ -71,9 +75,9 @@ class Package
 
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
-  attr_reader :directory_path, :iid, :label, :manifest, :marc, :mods, :namespace, :owner, :pid, :purls
+  attr_reader :directory_path, :iid, :label, :manifest, :marc, :mods, :namespace, :owner, :pid, :purls, :updator
 
-  def initialize config, directory, manifest = nil
+  def initialize config, directory, manifest, updator_class
 
     @bytes_ingested    = 0
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
@@ -89,14 +93,16 @@ class Package
     @datafiles         = list_other_files()
 
 
-    handle_manifest(manifest) or return    # sets up @manifest
-    handle_mods or return                  # sets up @mods
-    handle_marc or return                  # sets up @marc
+    handle_manifest(manifest) or return         # sets up @manifest
+    handle_mods or return                       # sets up @mods
+    handle_marc or return                       # sets up @marc
+
+    handle_updator(updator_class) or return     # does system-specific checks, e.g. digtitool
 
     return unless valid?
 
     @namespace   = @manifest.owning_institution.downcase
-    @collections = list_collections()
+    @collections = list_collections(@manifest)
 
   rescue SystemError => e
     raise
@@ -107,11 +113,11 @@ class Package
   end
 
 
-  def list_collections
+  def list_collections manifest
     remapper = @config.remap_collections || {}
     list = []
 
-    @manifest.collections.each do |pid|
+    manifest.collections.each do |pid|
       pid.downcase!
       if new_pid = remapper[pid]
         warning "Remapping manifest collection #{pid} to #{new_pid}, by configuration, for package #{@directory_name}."
@@ -136,24 +142,6 @@ class Package
 
   def valid?
     @valid and not errors?
-  end
-
-
-  # A MetdataUpdater mediates metadata updates according to rules you're
-  # better off not knowing, and various wildly by originating system.
-  #
-  # TODO: flesh this out
-  #
-  # updater needs to:
-  #
-  # supply label, supply islandora owner, run specialized checks.
-  #  TODO:  digitool will want to check for a PURL.
-
-  def updater= value
-    metadata_updater = value.send :new, @manifest, @mods
-    @label = metadata_updater.get_label @directory_name     # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
-    @owner = metadata_updater.get_owner
-    # metadata_updater.identifiers
   end
 
   # Used by all subclassess.  Note that a MetadataUpdater call will
@@ -260,7 +248,6 @@ class Package
       @valid = false
     end
 
-
     @purls  = @mods.purls
 
     if @purls.empty?
@@ -271,6 +258,36 @@ class Package
     return @valid
   end
 
+  # A MetdataChecker mediates metadata checks according to rules you're
+  # better off not knowing, and various wildly by originating system.
+  #
+  # updater needs to:
+  #
+  # supply label, supply islandora owner, run specialized checks.
+
+  def handle_updator updator_class
+
+    updator = updator_class.send :new, @manifest, @mods, nil
+
+    @label = updator.get_label @directory_name     # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
+    @owner = updator.get_owner
+
+    updator.load_check
+
+    if updator.errors?
+      error updator.errors
+      @valid = false
+    end
+
+    warning updator.warnings
+
+    return @valid
+  end
+
+
+
+
+
 end # of Package base class
 
 
@@ -280,8 +297,8 @@ class BasicImagePackage < Package
 
   # At this point we know we have a manifest, mods and maybe a marc file.
 
-  def initialize config, directory, manifest
-    super(config, directory, manifest)
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
 
     @content_model = BASIC_IMAGE_CONTENT_MODEL
 
@@ -359,8 +376,8 @@ class LargeImagePackage < Package
 
   attr_reader :image
 
-  def initialize config, directory, manifest
-    super(config, directory, manifest)
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
 
     @content_model = LARGE_IMAGE_CONTENT_MODEL
 
@@ -378,8 +395,6 @@ class LargeImagePackage < Package
     @image_filename = @datafiles.first
     path = File.join(@directory_path, @image_filename)
     type = Utils.mime_type(path)
-
-    # TODO: add basic support for TIFFs (not needed for digitool migration)
 
     case type
     when JP2, TIFF
@@ -493,8 +508,8 @@ class PdfPackage < Package
 
   # At this point we know we have a manifest, mods and maybe a marc file.
 
-  def initialize config, directory, manifest
-    super(config, directory, manifest)
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
     @content_model = PDF_CONTENT_MODEL
 
     if @datafiles.length > 2
@@ -606,8 +621,8 @@ class BookPackage < Package
 
   attr_reader :mets, :page_filenames, :table_of_contents
 
-  def initialize config, directory, manifest
-    super(config, directory, manifest)
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
 
     @content_model = BOOK_CONTENT_MODEL
 
