@@ -15,4 +15,4 @@ $LOAD_PATH.unshift case Socket.gethostname
 require 'offin/ingest-support'
 
 DataBase.debug = true
-DataBase.create get_config("islandora7d")
+DataBase.create get_config(appropriate_server)

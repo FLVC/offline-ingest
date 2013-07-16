@@ -21,6 +21,22 @@ def get_config_filename
   end
 end
 
+# This is very config-specific and may need to be changed: give the
+# hostname, return the section name of the config.yml file that deals
+# with that host.
+
+def appropriate_server
+  case Socket.gethostname
+  when /alpo/i;                            "alpo"
+  when /islandorad/i;                      "islandora7d"
+  when /islandorat/i;                      "fsu7t"
+  when /islandorap/i;                      "fsu7prod"
+  else
+    STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
+    exit -1
+  end
+end
+
 
 def record_to_database site, package, status, start_time, finish_time
 

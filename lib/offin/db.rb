@@ -205,8 +205,7 @@ module DataBase
     packages = DataBase::IslandoraPackage.all(:order => [ :time_started.desc ])
     packages.each do |p|
 
-
-      puts "#{Time.at(p.time_started).to_s.sub(/\s+[-+]\d+$/, '')} #{p.package_name} => #{p.islandora_site.hostname}:(#{p.get_collections.join(', ')}) #{p.success ? 'succeeded' : 'failed'}"
+      puts "[#{Time.at(p.time_started).to_s.sub(/\s+-\d{4}/, '')}] #{p.package_name} => #{p.islandora_site.hostname}:(#{p.get_collections.join(', ')}) #{p.success ? 'succeeded' : 'failed'}"
 
       errors   = p.get_errors.map   { |m| ' * ' + m }
       warnings = p.get_warnings.map { |m| ' * ' + m }
@@ -219,7 +218,4 @@ module DataBase
       puts ''
     end
   end
-
-
-
 end
