@@ -647,6 +647,7 @@ class BookPackage < Package
   def ingest
     return if @config.test_mode
     ingest_book
+    sleep 60
     ingest_pages
   end
 
