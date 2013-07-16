@@ -3,7 +3,7 @@
 $LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
 
 require 'offin/ingestor'
-require 'datyl/config'
+require 'offin/config'
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/mods'

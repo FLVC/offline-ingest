@@ -29,7 +29,7 @@ else
 end
 
 require 'offin/mets'
-require 'datyl/config'
+require 'offin/config'
 
 config  = Datyl::Config.new(config_filename, "default")
 

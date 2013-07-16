@@ -28,7 +28,7 @@ end
 
 require 'offin/mets'
 require 'offin/document-parsers'
-require 'datyl/config'
+require 'offin/config'
 
 
 # create_metsid_mapping(dir) takes stream records from all the digitool

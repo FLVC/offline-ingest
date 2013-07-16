@@ -22,7 +22,7 @@ config  = parse_command_line ARGV
 
 setup_database(config)
 
-factory = PackageFactory.new(config)
+factory = PackageFactory.new(config, DigitoolMetadataChecker)
 
 $stdout.sync, indent = true, ' ' * 4
 
@@ -30,7 +30,7 @@ ARGV.each do |directory|
   begin
     completed, started, finished  = false, Time.now, Time.now
 
-    package = factory.new_package(directory, DigitoolMetadataChecker)
+    package = factory.new_package(directory)
 
     raise PackageError, "Invalid package in #{directory}." unless package.valid?
 

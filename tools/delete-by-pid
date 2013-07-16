@@ -28,7 +28,7 @@ end
 
 require 'optparse'
 require 'rubydora'
-require 'datyl/config'
+require 'offin/config'
 
 include Rubydora
 

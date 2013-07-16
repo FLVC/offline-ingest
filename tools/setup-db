@@ -27,7 +27,7 @@ else
   exit -1
 end
 
-require 'datyl/config'
+require 'offin/config'
 require 'offin/packages'
 require 'offin/db'
 

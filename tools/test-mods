@@ -42,5 +42,6 @@ ARGV.each do |filename|
 
   STDERR.puts "PURLS: " + @mods.purls.join('   ')
   STDERR.puts "IIDS: "  + @mods.iids.join('   ')
+  STDERR.puts "DIGITOOL IDS: "  + @mods.digitool_ids.join('   ')
   puts @mods.to_s
 end
