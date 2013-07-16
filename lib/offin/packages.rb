@@ -23,17 +23,12 @@ class PackageFactory
 
   attr_reader :config
 
-  def initialize config, *additional_sections
-    if config.is_a? Datyl::Config
-      @config = config
-    else # a string naming a file:
-      @config = Datyl::Config.new(config, 'default', *additional_sections)
-    end
-  rescue => e
-    raise SystemError, "#{e.class}: #{e.message}"
+  def initialize config, updator_class
+    @config = config
+    @updator_class = updator_class
   end
 
-  def new_package directory, updator
+  def new_package directory
 
     raise PackageError, "Package directory '#{directory}' doesn't exist."            unless File.exists? directory
     raise PackageError, "Package directory '#{directory}' isn't really a directory." unless File.directory? directory
@@ -42,10 +37,10 @@ class PackageFactory
     manifest = Utils.get_manifest @config, directory
 
     return case manifest.content_model
-           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest, updator)
-           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest, updator)
-           when PDF_CONTENT_MODEL;          PdfPackage.new(@config, directory, manifest, updator)
-           when BOOK_CONTENT_MODEL;         BookPackage.new(@config, directory, manifest, updator)
+           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest, @updator_class)
+           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest, @updator_class)
+           when PDF_CONTENT_MODEL;          PdfPackage.new(@config, directory, manifest, @updator_class)
+           when BOOK_CONTENT_MODEL;         BookPackage.new(@config, directory, manifest, @updator_class)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end

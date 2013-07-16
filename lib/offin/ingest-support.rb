@@ -1,3 +1,6 @@
+# TODO: rename as script-support
+
+
 require 'socket'
 require 'optparse'
 require 'offin/utils'
@@ -9,9 +12,9 @@ Utils.silence_warnings { require 'offin/db' }   # csv constant redefinition deep
 def get_config_filename
 
   return case Socket.gethostname
-  when /alpo/i;                                      "/home/fischer/WorkProjects/offline-ingest/config.yml"
-  when /romeo-foxtrot/i, /flvc-rfischer.local/i;     "/Users/fischer/WorkProjects/offline-ingest/config.yml"
-  when /islandorad/i, /islandorat/i, /islandorap/i;  "/usr/local/islandora/offline-ingest/config.yml"
+  when /alpo/i;                                 "/home/fischer/WorkProjects/offline-ingest/config.yml"
+  when /romeo-foxtrot|flvc-rfischer.local/i;    "/Users/fischer/WorkProjects/offline-ingest/config.yml"
+  when /islandora[dtp]/i;                       "/usr/local/islandora/offline-ingest/config.yml"
   else
     STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
     exit -1
