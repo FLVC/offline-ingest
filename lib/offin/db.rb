@@ -205,12 +205,12 @@ module DataBase
     packages = DataBase::IslandoraPackage.all(:order => [ :time_started.desc ])
     packages.each do |p|
 
-      puts "[#{Time.at(p.time_started).to_s.sub(/\s+-\d{4}/, '')}] #{p.package_name} => #{p.islandora_site.hostname}:(#{p.get_collections.join(', ')}) #{p.success ? 'succeeded' : 'failed'}"
+      puts "[#{Time.at(p.time_started).to_s.sub(/\s+-\d{4}/, '')}] #{p.package_name} => #{p.islandora_pid or 'n/a'} #{p.islandora_site.hostname}//#{p.get_collections.join(',')} #{p.success ? 'succeeded' : 'failed'}"
 
       errors   = p.get_errors.map   { |m| ' * ' + m }
       warnings = p.get_warnings.map { |m| ' * ' + m }
 
-      puts "Purls: " +  p.get_purls.join(', ')
+      puts "Purls: " +  p.get_purls.join(', ')  + ';  DigiTool ID: ' + p.digitool_id
 
       puts "Errors: ",   errors   unless errors.empty?
       puts "Warnings: ", warnings unless warnings.empty?
