@@ -75,11 +75,13 @@ class Package
 
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
-  attr_reader :directory_path, :iid, :label, :manifest, :marc, :mods, :namespace, :owner, :pid, :purls, :updator
+  attr_reader :directory_path, :iid, :label, :manifest, :marc, :mods, :namespace, :owner, :pid, :purls
 
   def initialize config, directory, manifest, updator_class
 
     @bytes_ingested    = 0
+    @iid               = nil
+    @digitool_id       = nil   # blech
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
     @valid             = true
@@ -176,6 +178,11 @@ class Package
         ds.mimeType = 'text/xml'
       end
     end
+  end
+
+
+  def digitool_id
+    @mods.digitool_ids.first
   end
 
   private
