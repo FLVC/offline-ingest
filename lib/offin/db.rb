@@ -210,7 +210,7 @@ module DataBase
       errors   = p.get_errors.map   { |m| ' * ' + m }
       warnings = p.get_warnings.map { |m| ' * ' + m }
 
-      puts "Purls: " +  p.get_purls.join(', ')  + ';  DigiTool ID: ' + p.digitool_id
+      puts "Purls: #{p.get_purls.join(', ')};  DigiTool ID: #{p.digitool_id}"
 
       puts "Errors: ",   errors   unless errors.empty?
       puts "Warnings: ", warnings unless warnings.empty?

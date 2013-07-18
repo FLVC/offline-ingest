@@ -21,7 +21,7 @@ def get_config_filename
   end
 end
 
-# This is very config-specific and may need to be changed: give the
+# This is very config-specific and may need to be changed: given the
 # hostname, return the section name of the config.yml file that deals
 # with that host.
 
@@ -59,6 +59,7 @@ def record_to_database site, package, status, start_time, finish_time
   rec.add_components   package.component_objects
 
   if not rec.save
+    STDERR.puts rec.errors.inspect
     STDERR.puts "Unable to save to database:", rec.errors.map { |err| err.to_s }
     exit 1
   end

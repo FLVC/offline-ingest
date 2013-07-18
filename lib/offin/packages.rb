@@ -175,9 +175,8 @@ class Package
     end
   end
 
-
   def digitool_id
-    @mods.digitool_ids.first
+    @mods.nil? ? nil : @mods.digitool_ids.first
   end
 
   private
