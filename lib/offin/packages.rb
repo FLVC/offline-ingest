@@ -79,6 +79,7 @@ class Package
     @digitool_id       = nil   # blech
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
+    @purls             = []
     @valid             = true
     @pid               = nil
     @config            = config

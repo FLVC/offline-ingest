@@ -59,7 +59,6 @@ def record_to_database site, package, status, start_time, finish_time
   rec.add_components   package.component_objects
 
   if not rec.save
-    STDERR.puts rec.errors.inspect
     STDERR.puts "Unable to save to database:", rec.errors.map { |err| err.to_s }
     exit 1
   end
