@@ -41,7 +41,7 @@ module DataBase
 
     # NULL means inapplicable for these (e.g., it was never ingested, or there was no content_type declared, etc)
 
-    property  :digitool_id,       String,      :index => true
+    property  :digitool_id,       Integer,     :min => 0, :max => 2**48, :index => true
     property  :islandora_pid,     String,      :index => true
     property  :title,             String,      :length => 255,    :index => true
     property  :content_model,     String,      :length => 255,    :index => true

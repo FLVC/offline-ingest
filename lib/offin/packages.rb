@@ -58,7 +58,7 @@ class Package
 
   include Errors
 
-  # supported MIME types go here, using a regexp of the 'file' command's returned values (note generalization of text, for which file tends to outsmart itself)
+  # supported MIME types go here, using a regexp for the 'file' command's returned values (note very general text type recognition, for which file tends to outsmart itself)
 
   GIF  = %r{image/gif}
   JP2  = %r{image/jp2}
@@ -76,7 +76,6 @@ class Package
 
     @bytes_ingested    = 0
     @iid               = nil
-    @digitool_id       = nil   # blech
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
     @purls             = []
@@ -111,20 +110,29 @@ class Package
   end
 
 
-  def list_collections manifest
-    remapper = @config.remap_collections || {}
-    list = []
+  # An array (possibly empty) of this package's islandora pid concatenated with any component_objects.
 
-    manifest.collections.each do |pid|
-      pid.downcase!
-      if new_pid = remapper[pid]
-        warning "Remapping manifest collection #{pid} to #{new_pid}, by configuration, for package #{@directory_name}."
-        list.push new_pid.downcase
-      else
-        list.push pid
+  def pids
+    return [] unless @pid
+    return ([ @pid ] + @component_objects.clone)
+  end
+
+
+  # Attempt to delete this package (and all its component objects) from islandora.
+
+  def delete_from_islandora
+    return if pids.empty?
+    repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+    pids.each do |p|
+      begin
+        p = "info:fedora/#{p}" unless p =~ /^info:fedora/
+        Rubydora::DigitalObject.find_or_initialize(p, repository).delete
+      rescue RestClient::ResourceNotFound => e
+        # don't care
+      rescue => e
+        warning "Could not delete pid #{p} from package #{name}: #{e.class} #{e.message}"
       end
     end
-    return list
   end
 
 
@@ -176,11 +184,34 @@ class Package
     end
   end
 
+
+  # This is optional - only DigiTool derived MODS files will have it.
+
   def digitool_id
-    @mods.nil? ? nil : @mods.digitool_ids.first
+    return nil if @mods.nil?
+    return @mods.digitool_ids.first
   end
 
   private
+
+  # Get a list of all collections this package should be a member of; will check the config file for a list of remappings.
+  # TODO: more docs, example fragments of of yaml
+
+  def list_collections manifest
+    remapper = @config.remap_collections || {}
+    list = []
+
+    manifest.collections.each do |pid|
+      pid.downcase!
+      if new_pid = remapper[pid]
+        warning "Remapping manifest collection #{pid} to #{new_pid}, by configuration, for package #{@directory_name}."
+        list.push new_pid.downcase
+      else
+        list.push pid
+      end
+    end
+    return list
+  end
 
   # List all the files in the directory we haven't already accounted for. Subclasses will need to work through these.
   # Presumably these are all datafiles.
@@ -248,6 +279,8 @@ class Package
     elsif iids.length > 1
       error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
       @valid = false
+    elsif iids.length == 1
+      @iid = iids.first
     end
 
     @purls  = @mods.purls
@@ -638,23 +671,19 @@ class BookPackage < Package
     check_page_types         or return       # checks @page_filenames file types
 
   rescue PackageError => e
-    error "Exception for Book package #{@directory_name}: #{e.message}"
+    error "Error processing Book package #{@directory_name}: #{e.message}"
   rescue => e
     error "Exception #{e.class} - #{e.message} for Book package #{@directory_name}, backtrace follows:", e.backtrace
   end
 
-
   def ingest
     return if @config.test_mode
     ingest_book
-    sleep 60
+    sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
     ingest_pages
   end
 
-
-
   private
-
 
   # TODO: This following is (probably) a digitool-only case  and really should be pulled out into the metadata-updater class
 
@@ -810,19 +839,9 @@ class BookPackage < Package
   def ingest_pages
     sequence = 0
     @page_filenames.each do |pagename|
-      begin
-        sequence += 1
-        pid = ingest_page(pagename, sequence)
-        @component_objects.push pid
-
-        ##### REMOVE ME
-        # STDERR.puts "Page: #{pid} - #{sequence} - #{pagename}"
-
-      rescue PackageError => e
-        warning "Error ingesting page #{pagename} for Book package #{@directory_name}: #{e.message}"
-      rescue => e
-        warning "Exception #{e.class} when ingesting page #{pagename} for Book package #{@directory_name}:", e.message, e.backtrace
-      end
+      sequence += 1
+      pid = ingest_page(pagename, sequence)
+      @component_objects.push pid
     end
   end
 
@@ -832,21 +851,12 @@ class BookPackage < Package
   def handle_tiff_page ingestor, image, path
 
     image_name = path.sub(/^.*\//, '')
+    ocr_fail   = false
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
       ds.content  = File.open(path)
       ds.mimeType = image.mime_type
-    end
-
-    if (text = Utils.hocr(@config, image))
-      ingestor.datastream('HOCR') do |ds|
-        ds.dsLabel  = 'HOCR'
-        ds.content  = text
-        ds.mimeType = 'text/html'
-      end
-    else
-      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     if (text = Utils.ocr(@config, image))
@@ -856,7 +866,18 @@ class BookPackage < Package
         ds.mimeType = 'text/plain'
       end
     else
+      ocr_fail = true
       warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
+    end
+
+    if not ocr_fail and (text = Utils.hocr(@config, image))
+      ingestor.datastream('HOCR') do |ds|
+        ds.dsLabel  = 'HOCR'
+        ds.content  = text
+        ds.mimeType = 'text/html'
+      end
+    else
+      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     image.format = 'JP2'
@@ -887,22 +908,13 @@ class BookPackage < Package
 
   def handle_jpeg_page  ingestor, image, path
 
+    ocr_fail   = false
     image_name = path.sub(/^.*\//, '')
 
     ingestor.datastream('JPG') do |ds|
       ds.dsLabel  = 'Original JPEG ' + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
       ds.content  = File.open(path)
       ds.mimeType = image.mime_type
-    end
-
-    if (text = Utils.hocr(@config, image))
-      ingestor.datastream('HOCR') do |ds|
-        ds.dsLabel  = 'HOCR'
-        ds.content  = text
-        ds.mimeType = 'text/html'
-      end
-    else
-      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     if (text = Utils.ocr(@config, image))
@@ -912,7 +924,18 @@ class BookPackage < Package
         ds.mimeType = 'text/plain'
       end
     else
+      ocr_fail = true
       warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
+    end
+
+    if not ocr_fail and (text = Utils.hocr(@config, image))
+      ingestor.datastream('HOCR') do |ds|
+        ds.dsLabel  = 'HOCR'
+        ds.content  = text
+        ds.mimeType = 'text/html'
+      end
+    else
+      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     image.format = 'JP2'
@@ -943,6 +966,7 @@ class BookPackage < Package
 
   def handle_jp2k_page ingestor, image, path
     image_name = path.sub(/^.*\//, '')
+    ocr_fail   = false
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'Original JP2 ' + path.sub(/^.*\//, '').sub(/\.jp2$/i, '')
@@ -965,16 +989,6 @@ class BookPackage < Package
       ds.mimeType = image.mime_type
     end
 
-    if (text = Utils.hocr(@config, image))
-      ingestor.datastream('HOCR') do |ds|
-        ds.dsLabel  = 'HOCR'
-        ds.content  = text
-        ds.mimeType = 'text/html'
-      end
-    else
-      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
-    end
-
     if (text = Utils.ocr(@config, image))
       ingestor.datastream('OCR') do |ds|
         ds.dsLabel  = 'OCR'
@@ -982,7 +996,18 @@ class BookPackage < Package
         ds.mimeType = 'text/plain'
       end
     else
-      warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
+      ocr_fail = true
+      warning "The OCR datastream for (a TIFF derived from image #{image_name}) was skipped because no data was produced."
+    end
+
+    if not ocr_fail and (text = Utils.hocr(@config, image))
+      ingestor.datastream('HOCR') do |ds|
+        ds.dsLabel  = 'HOCR'
+        ds.content  = text
+        ds.mimeType = 'text/html'
+      end
+    else
+      warning "The HOCR datastream for image (a TIFF derived from #{image_name}) was skipped because no data was produced."
     end
 
     image.format = 'JPG'
@@ -1050,7 +1075,6 @@ class BookPackage < Package
   end
 
 
-
   def ingest_page pagename, sequence
 
     path  = File.join(@directory_path, pagename)
@@ -1097,6 +1121,7 @@ class BookPackage < Package
 
   rescue => e
     error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{e.message}.", e.backtrace
+    raise e
   ensure
     warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
     error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?

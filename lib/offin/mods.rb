@@ -137,7 +137,7 @@ class Mods
   # There really should only be one:
 
   def digitool_ids
-    return @xml_document.xpath("//mods:identifier[translate(@type, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"DIGITOOL\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s }.uniq
+    return @xml_document.xpath("//mods:identifier[translate(@type, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"DIGITOOL\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s.strip }.uniq
   rescue => e
     return []
   end

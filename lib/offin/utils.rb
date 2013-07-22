@@ -1,14 +1,16 @@
+require 'RMagick'
+require 'fileutils'
 require 'iconv'
 require 'offin/exceptions'
 require 'open3'
 require 'stringio'
 require 'tempfile'
-require 'fileutils'
-require 'RMagick'
-
+require 'timeout'
 
 
 class Utils
+
+  TESSERACT_TIMEOUT = 60 # tesseract can waste a lot of time on certain kinds of images
 
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
@@ -195,45 +197,38 @@ class Utils
                        when String
                          image_or_filename
                        when Magick::Image
-                         temp_image_filename = Tempfile.new('image-magick-').path
+                         tempfiles.push  temp_image_filename = Tempfile.new('image-magick-').path
                          image_or_filename.write temp_image_filename
-                         tempfiles.push temp_image_filename
                          temp_image_filename
                        else
-                         return ' '
+                         return
                        end
 
-    base_filename = Tempfile.new('tesseract-').path
-    tempfiles.push base_filename
+    tempfiles.push base_filename = Tempfile.new('tesseract-').path
+    tempfiles.push text_filename = base_filename + (hocr ? '.html' : '.txt')
 
     error = nil
 
-    cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) + ' ' + base_filename
+    cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (hocr ? ' hocr' : '')
 
-    cmdline += ' hocr' if hocr
-
-    Open3.popen3(cmdline) do |stdin, stdout, stderr|
-      stdin.close
-      stdout.close
-      error = stderr.read
+    Timeout.timeout(TESSERACT_TIMEOUT) do
+      Open3.popen3(cmdline) do |stdin, stdout, stderr|
+        stdin.close
+        stdout.close
+        error = stderr.read
+      end
     end
 
-    text_filename = base_filename + (hocr ? '.html' : '.txt')
-    tempfiles.push text_filename
-
-    # foo = "..."
-    # return foo unless File.exists?(text_filename)
-    # return foo if (text = File.read(text_filename).strip).length == 0
-
     return unless File.exists?(text_filename)
-
-    return if (text = File.read(text_filename).strip).length == 0
-
+    return if (text = File.read(text_filename).strip).empty?
     return text
 
+  rescue Timeout::Error => e
+    return
   ensure
     FileUtils.rm_f(tempfiles)
   end
+
 
   # use tesseract to create an HOCR file; strip out the DOCTYPE to avoid hitting w3c for the DTD:
 

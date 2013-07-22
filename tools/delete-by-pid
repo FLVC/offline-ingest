@@ -6,54 +6,49 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
 require 'rubygems'
 require 'socket'
-
-case Socket.gethostname
-
-when /alpo/
-  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
-when /romeo-foxtrot/
-  $LOAD_PATH.unshift "/Home/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/Home/fischer/WorkProjects/offline-ingest/config.yml"
-when /islandorad/
-  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
-  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
-when /islandorat/, /islandorap/
-  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
-  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
-else
-  STDERR.puts "#{$0} Doesn't know how to configure for this environment, quitting."
-  exit -1
-end
-
 require 'optparse'
+
+$LOAD_PATH.unshift case Socket.gethostname
+                   when /alpo/i;                                "/home/fischer/WorkProjects/offline-ingest/lib/"
+                   when /romeo-foxtrot|flvc-rfischer.local/i;   "/Users/fischer/WorkProjects/offline-ingest/lib/"
+                   when /islandora[dtp]/i;                      "/usr/local/islandora/offline-ingest/lib/"
+                   else
+                     STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
+                     exit -1
+                   end
+
+require 'offin/ingest-support'
 require 'rubydora'
-require 'offin/config'
 
 include Rubydora
 
-def parse_command args
-  server_code = []
+
+def parse_command_line args
+  server_id = nil
+  server_sections = get_config_server_sections
+
   opts   = OptionParser.new do |opt|
-    opt.banner = "Usage: #{__FILE__.gsub(/.*\//, '')} --server-flag  pid <more pids ...>\n" + "where --server-flag is one of:\n"
-    opt.on("--fsu7t",    "delete from server fsu7t.flca.edu ")         { server_code.push 'fsu7t' }
-    opt.on("--fsu-prod", "delete from server fsu-prod.flca.edu")       { server_code.push 'fsu-prod' }
-    opt.on("--d7",       "delete from server islandora7d.fcla.edu")    { server_code.push 'i7d' }
-    opt.on("--alpo",     "delete from server alasnorid.alpo.fcla.edu") { server_code.push 'alpo' }
+    opt.banner = "Usage: delete-by-pid --server ID pid pid..."
+    opt.on("--server ID",   String,  "delete from server by id of #{server_sections.join(', ')}.")  { |sid| server_id = sid }
   end
+
   opts.parse!(args)
-  raise "No server specified."        if server_code.empty?
-  raise "Too many servers specified." if server_code.length > 1
-  raise "No PIDs specified."          if args.empty?
+
+  raise "No server ID supplied." unless server_id
+  raise "Invalid server ID; use one of #{server_sections.join(', ')}" unless server_sections.include? server_id
+  raise "No pids specified." if args.empty?
+
+  config = Datyl::Config.new(get_config_filename, "default", server_id)
+
 rescue => e
   STDERR.puts e, opts
   exit -1
 else
-  return server_code.pop
+  return config
 end
 
 
-config = Datyl::Config.new(config_filename, 'default', parse_command(ARGV))
+config = parse_command_line(ARGV)
 repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
 
 ARGV.each do |pid|
@@ -61,6 +56,6 @@ ARGV.each do |pid|
     pid = "info:fedora/#{pid}" unless pid =~ /^info:fedora/
     DigitalObject.find_or_initialize(pid, repository).delete
   rescue => e
-    STDERR.puts "Couldn't delete #{pid}, #{e.message}"
+    STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
   end
 end

@@ -43,8 +43,9 @@ class DigitoolMetadataChecker < MetadataChecker
 
   def load_check
     digitool_ids = @mods.digitool_ids
-    error "No DigiTool ID" if digitool_ids.empty?
-    error "Too many DigiTool IDs: #{digitool_ids.join(', ')}" if digitool_ids.length > 1
+    error "No DigiTool ID present in MODS file." if digitool_ids.empty?
+    error "Too many DigiTool IDs present in MODS file: #{digitool_ids.join(', ')}." if digitool_ids.length > 1
+    error "The Digitool ID #{digitool_ids.first} from the MODS file is not numeric." if digitool_ids.first =~ /[^\d]/
   end
 
   def get_owner

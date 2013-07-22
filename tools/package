@@ -61,13 +61,13 @@ ARGV.each do |directory|
                    package.collections.empty? ?  'no collections' : 'collection: ' + package.collections.join(', '),
                    package.label)
 
+      package.delete_from_islandora if not package.valid?
+
       puts indent + 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
 
       puts indent + 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
 
-      unless config.test_mode
-        record_to_database(config.site, package, completed && package.valid?, started, finished)
-      end
+      record_to_database(config.site, package, completed && package.valid?, started, finished) unless config.test_mode
     end
   end
 end
