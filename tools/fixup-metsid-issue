@@ -12,15 +12,12 @@ case Socket.gethostname
 when /alpo/
   $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
-  server = 'alpo'
 when /romeo-foxtrot/
   $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
-  server = 'alpo'
 when /islandora/
   $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
   config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
-  server = 'i7d'
 else
   STDERR.puts "Don't know how to find the configuration file for this environment, quitting."
   exit -1
@@ -123,7 +120,6 @@ def fixup_mets_file mets_filename, metsid_mapping
     exit 1
   end
 
-
   File.rename  mets_filename, original_file
   File.open(mets_filename, 'w') { |fh|  fh.puts doc.to_xml }
 end
@@ -151,7 +147,7 @@ usage("streams directory #{datafiles_directory} is not writable.")              
 usage("expected digital_entities directory #{entities_directory}, but it doesn't exist.")  unless File.directory? entities_directory
 usage("digital_entities directory #{entities_directory} is not readable.")                 unless File.readable?  entities_directory
 
-config = Datyl::Config.new(config_filename, "default", "alpo")
+config = Datyl::Config.new(config_filename, "default")
 mets   = Mets.new(config, mets_filename)
 
 STDERR.puts 'METS Errors: ',   mets.errors   if mets.errors?

@@ -164,41 +164,55 @@ class TableOfContents
     File.basename(name).sub(/\.[^\.]*/, '')
   end
 
-  # clean up page names - we may have examples such as
+
+
+  # clean up page titles - the sequence of names must be uniq
 
   def cleanup_page_titles
 
-    # pages.each do |p|
-    #   new_title = p.title.sub(/^page\s*/i, '').strip
-    #   p.title = new_title
-    # end
+    # First, if there isn't a title for a page, try to use the image filename first, and if it doesn't exist, use the sequence number instead
 
+    sequence = 1
     pages.each do |p|
       p.title.strip!
-      if p.title.empty? and p.image_filename
-        p.title = file_name(p.image_filename)
+      case
+      when (p.title.empty? and p.image_filename);          p.title = file_name(p.image_filename)
+      when (p.title.empty?);                               p.title = sequence.to_s
       end
-    end
-
-    seen = {}
-    sequence = 1
-    problems = []
-    pages.each do |p|
-      if p.title.empty?
-        p.title = sequence.to_s
-      end
-      if seen[p.title]
-        p.title += " (#{sequence})"
-        problems.push p.title
-      end
-      seen[p.title] = true
       sequence += 1
     end
 
-    if not problems.empty?
-      warning "Some page labels were not unique; the sequence number was appended: '" + problems.join("', '") + "'."
+    # Now every page must have a unique name, so let's generate a hash of the number of occurrences of each title:
+
+    occurrence = {}
+    pages.each  { |p| occurrence[p.title] = occurrence.fetch(p.title, 0) + 1 }
+
+    # remove unique ones, reset others so we can use it as a counter
+
+    occurrence.keys.each do |page_title|
+      if occurrence[page_title] == 1
+        occurrence.delete(page_title)
+      else
+        occurrence[page_title] = 0
+      end
+    end
+
+    # increment counter for repeated page titles and append to the title
+
+    issues = []
+    pages.each do |p|
+      next unless occurrence[p.title]
+      occurrence[p.title] += 1
+      p.title += " (#{occurrence[p.title]})"
+      issues.push p.title
+    end
+
+    if not issues.empty?
+      warning "Some page labels were not unique; a number was appended: '" + issues.join("', '") + "'."
     end
   end
+
+
 
   def cleanup_chapter_titles
     chapters.each { |c| c.title = 'Chapter' if (not c.title or c.title.empty?) }

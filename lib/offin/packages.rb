@@ -867,7 +867,7 @@ class BookPackage < Package
       end
     else
       ocr_fail = true
-      warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
+      warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
     if not ocr_fail and (text = Utils.hocr(@config, image))
@@ -876,8 +876,6 @@ class BookPackage < Package
         ds.content  = text
         ds.mimeType = 'text/html'
       end
-    else
-      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     image.format = 'JP2'
@@ -925,7 +923,7 @@ class BookPackage < Package
       end
     else
       ocr_fail = true
-      warning "The OCR datastream for image #{image_name} was skipped because no data was produced."
+      warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
     if not ocr_fail and (text = Utils.hocr(@config, image))
@@ -934,8 +932,6 @@ class BookPackage < Package
         ds.content  = text
         ds.mimeType = 'text/html'
       end
-    else
-      warning "The HOCR datastream for image #{image_name} was skipped because no data was produced."
     end
 
     image.format = 'JP2'
@@ -997,7 +993,7 @@ class BookPackage < Package
       end
     else
       ocr_fail = true
-      warning "The OCR datastream for (a TIFF derived from image #{image_name}) was skipped because no data was produced."
+      warning "The OCR and HOCR datastreams for the TIFF dereived from, image #{image_name} were skipped because no data were produced."
     end
 
     if not ocr_fail and (text = Utils.hocr(@config, image))
@@ -1006,8 +1002,6 @@ class BookPackage < Package
         ds.content  = text
         ds.mimeType = 'text/html'
       end
-    else
-      warning "The HOCR datastream for image (a TIFF derived from #{image_name}) was skipped because no data was produced."
     end
 
     image.format = 'JPG'
