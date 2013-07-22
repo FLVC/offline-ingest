@@ -89,7 +89,6 @@ class Package
     @directory_path    = directory
     @datafiles         = list_other_files()
 
-
     handle_manifest(manifest) or return         # sets up @manifest
     handle_mods or return                       # sets up @mods
     handle_marc or return                       # sets up @marc
@@ -203,11 +202,17 @@ class Package
 
     manifest.collections.each do |pid|
       pid.downcase!
-      if new_pid = remapper[pid]
+      case remapper[pid]
+      when NilClass
+        next
+      when String
+        new_pid = remapper[pid].downcase
+        list.push new_pid
         warning "Remapping manifest collection #{pid} to #{new_pid}, by configuration, for package #{@directory_name}."
-        list.push new_pid.downcase
-      else
-        list.push pid
+      when Array
+        new_pids = remapper[pid].map { |p| p.downcase }
+        list += new_pids
+        warning "Remapping manifest collection #{pid} to multiple pids #{new_pids.join(', ')}, by configuration, for package #{@directory_name}."
       end
     end
     return list
