@@ -202,9 +202,10 @@ class Package
 
     manifest.collections.each do |pid|
       pid.downcase!
+
       case remapper[pid]
       when NilClass
-        next
+        list.push pid
       when String
         new_pid = remapper[pid].downcase
         list.push new_pid
@@ -215,6 +216,7 @@ class Package
         warning "Remapping, by configuration directive, the manifest-specified collection #{pid} to these collections: #{new_pids.join(', ')}, for package #{@directory_name}."
       end
     end
+
     return list
   end
 
