@@ -118,7 +118,7 @@ def package_ingest_parse_command_line args
     config = Datyl::Config.new(get_config_filename, "default", command_options.server_id)
     config[:test_mode] = true
   when (command_options.test_mode)
-    config = Datyl::Config.new(get_config_filename)
+    config = Datyl::Config.new(get_config_filename, "default")
     config[:test_mode] = true
   else
     config = Datyl::Config.new(get_config_filename, "default", command_options.server_id)
