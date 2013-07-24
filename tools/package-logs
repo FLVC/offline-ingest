@@ -20,5 +20,7 @@ $LOAD_PATH.unshift case Socket.gethostname
 require 'offin/ingest-support'
 
 DataBase.debug = false
-DataBase.setup(get_config(appropriate_server))
+srv = appropriate_server()
+puts "Using DB for " + srv
+DataBase.setup(get_config(srv))
 DataBase.dump

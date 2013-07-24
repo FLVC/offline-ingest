@@ -72,7 +72,7 @@ rescue => e
 end
 
 
-def package_usage
+def package_ingest_usage
 
   return <<-EOF.gsub(/^    /, '')
     Usage:  package [ --test-mode | --server ID ]  package-directories*
@@ -94,13 +94,12 @@ end
 
 Struct.new('Options', :server_id, :test_mode)
 
-def parse_command_line args
+def package_ingest_parse_command_line args
   command_options = Struct::Options.new(nil, nil)
   server_sections = get_config_server_sections
 
-
   opts   = OptionParser.new do |opt|
-    opt.banner = package_usage
+    opt.banner = package_ingest_usage
     opt.on("--server ID",   String,  "ingest to server id #{server_sections.join(', ')}.")  { |sid| command_options.server_id = sid }
     opt.on("--test-mode",  "run basic checks on package without ingesting") { command_options.test_mode = true }
   end
@@ -114,9 +113,12 @@ def parse_command_line args
 
   raise SystemError, "No packages specified." if args.empty?
 
-
-  if command_options.test_mode
-    config = Datyl::Config.new(get_config_filename, "default")
+  case
+  when (command_options.test_mode and command_options.server_id)
+    config = Datyl::Config.new(get_config_filename, "default", command_options.server_id)
+    config[:test_mode] = true
+  when (command_options.test_mode)
+    config = Datyl::Config.new(get_config_filename)
     config[:test_mode] = true
   else
     config = Datyl::Config.new(get_config_filename, "default", command_options.server_id)

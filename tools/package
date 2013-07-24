@@ -18,7 +18,7 @@ $LOAD_PATH.unshift case Socket.gethostname
 
 require 'offin/ingest-support'
 
-config  = parse_command_line ARGV
+config  = package_ingest_parse_command_line ARGV
 
 setup_database(config)
 

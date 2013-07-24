@@ -208,11 +208,11 @@ class Package
       when String
         new_pid = remapper[pid].downcase
         list.push new_pid
-        warning "Remapping manifest collection #{pid} to #{new_pid}, by configuration, for package #{@directory_name}."
+        warning "Remapping, by configuration directive, the manifest-specified collection #{pid} to #{new_pid} for package #{@directory_name}."
       when Array
         new_pids = remapper[pid].map { |p| p.downcase }
         list += new_pids
-        warning "Remapping manifest collection #{pid} to multiple pids #{new_pids.join(', ')}, by configuration, for package #{@directory_name}."
+        warning "Remapping, by configuration directive, the manifest-specified collection #{pid} to these collections: #{new_pids.join(', ')}, for package #{@directory_name}."
       end
     end
     return list
@@ -1025,7 +1025,7 @@ class BookPackage < Package
 
     return <<-XML.gsub(/^     /, '')
     <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
-              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
        <rdf:Description rdf:about="info:fedora/#{page_pid}/JP2">
          <width xmlns="http://islandora.ca/ontology/relsext#">#{image.columns}</width>
          <height xmlns="http://islandora.ca/ontology/relsext#">#{image.rows}</height>

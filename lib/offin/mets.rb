@@ -116,8 +116,8 @@ class TableOfContents
   private
 
 
-  # sometimes we have a structure like this:
-
+  # sometimes we have a TOC structure like this:
+  #
   # level-1
   #   level-2
   #   level-2
@@ -166,11 +166,13 @@ class TableOfContents
 
 
 
-  # clean up page titles - the sequence of names must be uniq
+  # Clean up page titles - the sequence of pages titles must exist and
+  # be unique for the IA book reader to treat table of contents
+  # correctly. Here we'll make that so.
 
   def cleanup_page_titles
 
-    # First, if there isn't a title for a page, try to use the image filename first, and if it doesn't exist, use the sequence number instead
+    # First, if there isn't a title for a page, try to use the image filename first, and if that doesn't exist, use the sequence number instead
 
     sequence = 1
     pages.each do |p|
@@ -187,7 +189,7 @@ class TableOfContents
     occurrence = {}
     pages.each  { |p| occurrence[p.title] = occurrence.fetch(p.title, 0) + 1 }
 
-    # remove unique ones, reset others so we can use it as a counter
+    # Remove unique titles and reset the values of the remainder to zero so we can use it as a counter.
 
     occurrence.keys.each do |page_title|
       if occurrence[page_title] == 1
@@ -197,7 +199,7 @@ class TableOfContents
       end
     end
 
-    # increment counter for repeated page titles and append to the title
+    # Increment counter for repeated page titles and append " (counter)" to the title
 
     issues = []
     pages.each do |p|
@@ -208,7 +210,7 @@ class TableOfContents
     end
 
     if not issues.empty?
-      warning "Some page labels were not unique; a number was appended: '" + issues.join("', '") + "'."
+      warning "Not all page labels were unique; a parenthesized number was appended for the following page labels: '" + issues.join("', '") + "'."
     end
   end
 
