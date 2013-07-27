@@ -1000,7 +1000,7 @@ class BookPackage < Package
       end
     else
       ocr_fail = true
-      warning "The OCR and HOCR datastreams for the TIFF dereived from, image #{image_name} were skipped because no data were produced."
+      warning "The OCR and HOCR datastreams for the TIFF derived from image #{image_name} were skipped because no data were produced."
     end
 
     if not ocr_fail and (text = Utils.hocr(@config, image))
