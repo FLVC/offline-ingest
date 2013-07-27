@@ -370,6 +370,8 @@ class BasicImagePackage < Package
       raise PackageError, "The Basic Image package #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{type}."
     end
 
+  rescue Magick::ImageMagickError => e
+    error "Image processing error for Basic Image package #{@directory_name}: #{e.class}, #{e.message}"
   rescue PackageError => e
     error "Exception for Basic Image package #{@directory_name}: #{e.message}"
   rescue => e
@@ -445,6 +447,8 @@ class LargeImagePackage < Package
       raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
     end
 
+  rescue Magick::ImageMagickError => e
+    error "Image processing error for Large Image package #{@directory_name}: #{e.class}, #{e.message}"
   rescue PackageError => e
     error "Exception for Large Image package #{@directory_name}: #{e.message}"
   rescue => e
