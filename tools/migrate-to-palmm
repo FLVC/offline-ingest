@@ -253,8 +253,6 @@ end
 #### mappings.keys.sort.each { |k|  puts "#{k} => #{mappings[k].inspect}" }
 
 
-mappings.keys.sort.each do |coll|
-  data = mappings[coll]
-  ### create_new_collection_maybe(repo, data[:destination_collection], data[:destination_title], data[:destination_parent])
-  puts "#{data[:destination_collection]} =>  #{data[:destination_parent] || 'YIKES! YIKES! YIKES!' }   \t'#{data[:destination_title]}'"
+mappings.values.sort { |a,b| (a[:destination_parent] || '') <=> (b[:destination_parent] || '') }.each do |data|
+  puts "#{data[:destination_parent] || 'YIKES! YIKES! YIKES!' }//#{data[:destination_collection]}      \t'#{data[:destination_title]}'"
 end
