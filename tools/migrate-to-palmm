@@ -90,6 +90,7 @@ end
 def get_fsu_to_palmm_mapping
 
   return {
+
     "fsu:specialcol" => { :destination_collection => "palmm:specialcol",  	:original_collection => "fsu:specialcol",	:destination_title => "FSU: Special Collections and Archives" },
     "fsu:hpmain" => { :destination_collection => "palmm:hpmain",	        :original_collection => "fsu:hpmain",	:destination_title => "FSU: Heritage Protocol and University Archives" },
     "fsu:civilwarmain" => { :destination_collection => "palmm:civilwarmain",	:original_collection => "fsu:civilwarmain",	:destination_title => "FSU: Civil War Era Collections" },
@@ -137,6 +138,25 @@ def get_fsu_to_palmm_mapping
   }
 end
 
+def check_for_complete_information repo, namespace
+
+  namespace.sub! /:+$/, ''
+
+  described_collections = get_fsu_to_palmm_mapping.keys
+  existing_collections = all_existing_collections(repo).select { |elt| elt =~ /^#{namespace}:/ }
+
+  # puts "#{described_collections.count} described collections"
+  # puts "#{existing_collections.count} existing #{namespace} collections"
+
+  missing =  existing_collections - described_collections - [ "#{namespace}:root" ]
+
+  return if missing.empty?
+
+  STDERR.puts "Our data is missing the following collections:  " + missing.join(',  ')
+  exit -1
+end
+
+
 
 # get the collection policy from the old collection, create a new one in the palmm namespace
 
@@ -147,9 +167,91 @@ def create_new_collection_policy_from_existing repo, collection
 end
 
 
+def update_mappings mappings, parents
+
+  # we start with the hash 'mappings': typical key/value pairs look, for example, like this
+  #
+  #  "fsu:aas50" => {
+  #                   :destination_collection => "palmm:aas50",
+  #                   :destination_title => "FSU: Artist Series"
+  #                   :original_collection => "fsu:aas50",
+  #                 },
+  #
+  # 'mappings' data is supplied to us by the institution
+  #
+  # 'parents'  is a simpler hash: one slot might be  "fsu:spccollection" => "fsu:root", for example.
+
+
+
+  # First up: add original collection's parent collection on the origin sight - missing is an error!
+  #
+  # The above mapping example added :original_parent
+  #
+  #  "fsu:aas50" => {
+  #                   :destination_collection => "palmm:aas50",
+  #                   :destination_title => "FSU: Artist Series"
+  #                   :original_collection => "fsu:aas50",
+  #                   :original_parent => "fsu:artoncampusmain"
+  #                 },
+
+  errors = []
+  mappings.each do |original_collection, data|
+    parent = parents[original_collection]
+    unless parent
+      errors.push "Can't find the parent collection for #{original_collection} on the source site"  unless parent
+      next
+    end
+    data[:original_parent] = parent
+  end
+  unless errors.empty?
+    STDERR.puts errors
+    exit 1
+  end
+
+  # Now use the mapping data to fill in the name of the destination parent, for example:
+  #
+  #  "fsu:aas50" => {
+  #                   :destination_collection => "palmm:aas50",
+  #                   :destination_title => "FSU: Artist Series"
+  #                   :original_collection => "fsu:aas50",
+  #                   :original_parent => "fsu:artoncampusmain"
+  #                   :destination_parent => "palmm:artonfsucampusmain"
+  #                 },
+  #
+  # If we're missing a destination_parent we assumme it's 'palmm:root'
+
+  warnings = []
+  mappings.each do |original_collection, data|
+    parent_collection = data[:original_parent]
+    if mappings[parent_collection]
+      destination_parent = mappings[parent_collection][:destination_collection]
+    else
+      destination_parent = 'palmm:root'
+      warnings.push "Could not find PALMM collection corresponding to #{parent_collection} (the parent collection for #{original_collection}) - assuming palmm:root"
+    end
+    data[:destination_parent] = destination_parent
+  end
+  STDERR.puts warnings if not warnings.empty?
+
+
+  return mappings
+end
+
+
 def create_new_collection_maybe repo, collection, collection_title, parent_collection
 
-  return if all_existing_collections.include? collection
+  if all_existing_collections(repo).include? collection
+    puts "Collection #{collection} already exists, skipping"
+    return
+  else
+    puts "Creating collection #{collection},  '#{collection_title}',  in #{parent_collection}"
+  end
+
+  ######
+  return
+
+  collection = "info:fedora/#{collection}" unless collection =~ /^info:fedora/
+  parent_collection = "info:fedora/#{parent_collection}" unless parent_collection =~ /^info:fedora/
 
   collection_object = repo.create(collection)
 
@@ -175,7 +277,7 @@ def create_new_collection_maybe repo, collection, collection_title, parent_colle
 
   30.times do
     sleep 0.5
-    return if all_existing_collections.include? collection
+    return if all_existing_collections(repo).include? collection
   end
   raise "Could not create collection #{collection}"
 end
@@ -183,76 +285,13 @@ end
 
 
 
-repo = get_repository 'fsu7prod'
 
-
-parents  = parent_records(repo, 'fsu:')
-mappings = get_fsu_to_palmm_mapping
-
-
-# mappings: key/value pairs look, for example, like this
-
-#  "fsu:aas50" => {
-#                   :destination_collection => "palmm:aas50",
-#                   :destination_title => "FSU: Artist Series"
-#                   :original_collection => "fsu:aas50",
-#                 },
-
-
-# Add original collection's parent - missing is an error!
-
-errors = []
-mappings.each do |original_collection, data|
-  parent = parents[original_collection]
-  unless parent
-    errors.push "Can't find the parent collection for #{original_collection} on the FSU site"  unless parent
-    next
-  end
-  data[:original_parent] = parent
-end
-unless errors.empty?
-  STDERR.puts errors
-  ### exit 1
-end
-
-
-
-# above mapping example added :original_parent
-#
-#  "fsu:aas50" => {
-#                   :destination_collection => "palmm:aas50",
-#                   :destination_title => "FSU: Artist Series"
-#                   :original_collection => "fsu:aas50",
-#                   :original_parent => "fsu:artoncampusmain"
-#                 },
-
-
-# use the data to find the name of the destination parent:
-
-errors = []
-mappings.each do |original_collection, data|
-  parent_collection = data[:original_parent]
-  emsg = "The parent collection for #{original_collection} is #{parent_collection}, but there's no information about the corresponding PALMM collection for #{parent_collection} - what should it be? "
-  unless mappings[parent_collection]
-    errors.push '1: ' + emsg
-    next
-  end
-  destination_parent = mappings[parent_collection][:destination_collection]
-  unless destination_parent
-    errors.push '2: ' + emsg
-    next
-  end
-  data[:destination_parent] = destination_parent
-end
-unless errors.empty?
-  STDERR.puts errors
-####  exit 1
-end
-
-#### parents.keys.sort.each  { |k|  puts "#{k} => #{parents[k]}" }
-#### mappings.keys.sort.each { |k|  puts "#{k} => #{mappings[k].inspect}" }
+repo = get_repository('fsu7prod')
+check_for_complete_information(repo, 'fsu')
+mappings = update_mappings(get_fsu_to_palmm_mapping(), parent_records(repo, 'fsu'))
 
 
 mappings.values.sort { |a,b| (a[:destination_parent] || '') <=> (b[:destination_parent] || '') }.each do |data|
-  puts "#{data[:destination_parent] || 'YIKES! YIKES! YIKES!' }//#{data[:destination_collection]}      \t'#{data[:destination_title]}'"
+  puts sprintf("%-50s %s", "#{data[:destination_parent] || 'YIKES! YIKES! YIKES!' }//#{data[:destination_collection]}", data[:destination_title])
+  #### create_new_collection_maybe repo, data[:destination_collection], data[:destination_title], data[:destination_parent]
 end
