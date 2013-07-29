@@ -2,6 +2,7 @@ require 'data_mapper'
 require 'dm-migrations'
 require 'time'
 
+
 module DataBase
 
   @@debug = false
@@ -33,11 +34,10 @@ module DataBase
     property  :id,                Serial
 
     property  :package_name,      String,      :required => true, :index => true
+    property  :time_started,      DateTime,    :required => true, :index => true
+    property  :time_finished,     DateTime,    :required => true, :index => true
     property  :success,           Boolean,     :required => true, :index => true, :default => false
-    property  :time_started,      Integer,     :min => 0, :max => 2**48, :required => true, :index => true
-    property  :time_finished,     Integer,     :min => 0, :max => 2**48, :required => true, :index => true
-
-    property  :bytes_ingested,    Integer,     :min => 0, :max => 2**48, :default => 0, :index => true
+    property  :bytes_ingested,    Integer,     :default => 0, :index => true, :min => 0, :max => 2**48
 
     # NULL means inapplicable for these (e.g., it was never ingested, or there was no content_type declared, etc)
 
@@ -198,6 +198,8 @@ module DataBase
   def self.create config
     self.setup config
     DataMapper.auto_migrate!
+    DataMapper.repository(:default).adapter.execute("ALTER TABLE islandora_packages ALTER time_started TYPE timestamp with time zone")
+    DataMapper.repository(:default).adapter.execute("ALTER TABLE islandora_packages ALTER time_finished TYPE timestamp with time zone")
   end
 
 
@@ -205,7 +207,7 @@ module DataBase
     packages = DataBase::IslandoraPackage.all(:order => [ :time_started.desc ])
     packages.each do |p|
 
-      puts "[#{Time.at(p.time_started).to_s.sub(/\s+-\d{4}/, '')}] #{p.package_name} => #{p.islandora_pid or 'n/a'} #{p.islandora_site.hostname}//#{p.get_collections.join(',')} #{p.success ? 'succeeded' : 'failed'}"
+      puts "[#{p.time_started.strftime('%c')}] #{p.package_name} => #{p.islandora_pid or 'n/a'} #{p.islandora_site.hostname}//#{p.get_collections.join(',')} #{p.success ? 'succeeded' : 'failed'}"
 
       errors   = p.get_errors.map   { |m| ' * ' + m }
       warnings = p.get_warnings.map { |m| ' * ' + m }
