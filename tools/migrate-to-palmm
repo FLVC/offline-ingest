@@ -1,9 +1,12 @@
 #!/usr/bin/env ruby
 
 # TODO: owner?
+# TODO: distinguish between destination repos and source repos
 
-# Doesn't handle case where there are multiple PALMM destination collections for one site's collection
+# Doesn't handle case where there are multiple PALMM destination collections for one site's collection.
 
+require 'rubygems'
+require 'restclient'
 require 'socket'
 
 $LOAD_PATH.unshift case Socket.gethostname
@@ -90,51 +93,51 @@ end
 def get_fsu_to_palmm_mapping
 
   return {
-
-    "fsu:specialcol" => { :destination_collection => "palmm:specialcol",  	:original_collection => "fsu:specialcol",	:destination_title => "FSU: Special Collections and Archives" },
-    "fsu:hpmain" => { :destination_collection => "palmm:hpmain",	        :original_collection => "fsu:hpmain",	:destination_title => "FSU: Heritage Protocol and University Archives" },
-    "fsu:civilwarmain" => { :destination_collection => "palmm:civilwarmain",	:original_collection => "fsu:civilwarmain",	:destination_title => "FSU: Civil War Era Collections" },
-    "fsu:sayrecircus" => { :destination_collection => "palmm:sayrecircus",	    :original_collection => "fsu:sayrecircus",	:destination_title => "FSU: Harrison Sayre Circus Collection" },
-    "fsu:diraccol" => { :destination_collection => "palmm:diraccol",	    :original_collection => "fsu:diraccol",	:destination_title => "FSU: Paul A.M. Dirac Collection" },
-    "fsu:fsulivesmain" => { :destination_collection => "palmm:fsulivesmain",	:original_collection => "fsu:fsulivesmain",	:destination_title => "FSU: FSU Lives: Portal to the Past, Prologue to the Future" },
-    "fsu:fsy50" => { :destination_collection => "palmm:fsy50",   	    :original_collection => "fsu:fsy50",	:destination_title => "FSU: Yearbooks" },
-    "fsu:fsr50" => { :destination_collection => "palmm:fsr50",	        :original_collection => "fsu:fsr50",	:destination_title => "FSU: President's Report" },
-    "fsu:fce06" => { :destination_collection => "palmm:fce06",	        :original_collection => "fsu:fce06",	:destination_title => "FSU: Commencement" },
-    "fsu:colgradschpubsmain" => { :destination_collection => "palmm:colgradschpubsmain",	:original_collection => "fsu:colgradschpubsmain",	:destination_title => "FSU: College and Graduate School Publications" },
-    "fsu:acadlifemain" => { :destination_collection => "palmm:acadlifemain",	:original_collection => "fsu:acadlifemain",	:destination_title => "FSU: Academic Life" },
-    "fsu:stucamplifemain" => { :destination_collection => "palmm:stucamplifemain",	:original_collection => "fsu:stucamplifemain",	:destination_title => "FSU: Student and Campus Life" },
-    "fsu:artoncampusmain" => { :destination_collection => "palmm:artoncampusmain",	:original_collection => "fsu:artoncampusmain",	:destination_title => "FSU: Art on Campus" },
-    "fsu:alp55" => { :destination_collection => "palmm:alp55",	:original_collection => "fsu:alp55",	:destination_title => "FSU: School of Library Training and Service" },
-    "fsu:apa55" => { :destination_collection => "palmm:apa55",	:original_collection => "fsu:apa55",	:destination_title => "FSU: School of Public Administration" },
-    "fsu:asb50" => { :destination_collection => "palmm:asb50",	:original_collection => "fsu:asb50",	:destination_title => "FSU: School of Business" },
-    "fsu:asj50" => { :destination_collection => "palmm:asj50",	:original_collection => "fsu:asj50",	:destination_title => "FSU: School of Journalism" },
-    "fsu:asw55" => { :destination_collection => "palmm:asw55",	:original_collection => "fsu:asw55",	:destination_title => "FSU: School of Social Welfare" },
-    "fsu:ave52" => { :destination_collection => "palmm:ave52",	:original_collection => "fsu:ave52",	:destination_title => "FSU: School of Education" },
-    "fsu:avn50" => { :destination_collection => "palmm:avn50",	:original_collection => "fsu:avn50",	:destination_title => "FSU: School of Nursing" },
-    "fsu:afs50" => { :destination_collection => "palmm:afs50",	:original_collection => "fsu:afs50",	:destination_title => "FSU: College of Arts and Sciences" },
-    "fsu:fgb04" => { :destination_collection => "palmm:fgb04",	:original_collection => "fsu:fgb04",	:destination_title => "FSU: Graduate Bulletin" },
-    "fsu:fub05" => { :destination_collection => "palmm:fub05",	:original_collection => "fsu:fub05",	:destination_title => "FSU: Undergraduate Bulletin" },
-    "fsu:fhe55" => { :destination_collection => "palmm:fhe55",	:original_collection => "fsu:fhe55",	:destination_title => "FSU: School of Home Economics" },
-    "fsu:acw50" => { :destination_collection => "palmm:acw50",	:original_collection => "fsu:acw50",	:destination_title => "FSU: Conferences and Workshops" },
-    "fsu:aes50" => { :destination_collection => "palmm:aes50",	:original_collection => "fsu:aes50",	:destination_title => "FSU: Examination Schedules" },
-    "fsu:ave50" => { :destination_collection => "palmm:ave50",	:original_collection => "fsu:ave50",	:destination_title => "FSU: Enrollment" },
-    "fsu:afl55" => { :destination_collection => "palmm:afl55",	:original_collection => "fsu:afl55",	:destination_title => "FSU: Lecture Programs" },
-    "fsu:flc50" => { :destination_collection => "palmm:flc50",	:original_collection => "fsu:flc50",	:destination_title => "FSU: Class Schedules" },
-    "fsu:avc50" => { :destination_collection => "palmm:avc50",	:original_collection => "fsu:avc50",	:destination_title => "FSU: Flying High Circus" },
-    "fsu:afg50" => { :destination_collection => "palmm:afg50",	:original_collection => "fsu:afg50",	:destination_title => "FSU: Gymkana" },
-    "fsu:avh50" => { :destination_collection => "palmm:avh50",	:original_collection => "fsu:avh50",	:destination_title => "FSU: Homecoming" },
-    "fsu:avm50" => { :destination_collection => "palmm:avm50",	:original_collection => "fsu:avm50",	:destination_title => "FSU: Marching Chiefs" },
-    "fsu:football50" => { :destination_collection => "palmm:football50",	:original_collection => "fsu:football50",	:destination_title => "FSU: Football" },
-    "fsu:fsp50" => { :destination_collection => "palmm:fsp50",	:original_collection => "fsu:fsp50",	:destination_title => "FSU: Pow Wow Student Handbooks" },
-    "fsu:fsi07" => { :destination_collection => "palmm:fsi07",	:original_collection => "fsu:fsi07",	:destination_title => "FSU: Investiture Ceremonies" },
-    "fsu:avp51" => { :destination_collection => "palmm:avp51",	:original_collection => "fsu:avp51",	:destination_title => "FSU: Panhellenic Rushing Rules" },
-    "fsu:aas50" => { :destination_collection => "palmm:aas50",	:original_collection => "fsu:aas50",	:destination_title => "FSU: Artist Series" },
-    "fsu:avf50" => { :destination_collection => "palmm:avf50",	:original_collection => "fsu:avf50",	:destination_title => "FSU: Art Gallery" },
-    "fsu:amp55" => { :destination_collection => "palmm:amp55",	:original_collection => "fsu:amp55",	:destination_title => "FSU: Musical Performances" },
-    "fsu:avd50" => { :destination_collection => "palmm:avd50",	:original_collection => "fsu:avd50",	:destination_title => "FSU: Theater and Dance Performances" },
-    "fsu:cwhb" => { :destination_collection => "palmm:cwhb",	:original_collection => "fsu:cwhb",	:destination_title => "FSU: Captain Hugh Black Papers" },
-    "fsu:cwm" => { :destination_collection => "palmm:cwm",	:original_collection => "fsu:cwm",	:destination_title => "FSU: Confederate Money" },
-    "fsu:spc12" => { :destination_collection => "palmm:spc12",	:original_collection => "fsu:spc12",	:destination_title => "FSU: Photographs" },
+    "fsu:aas50" => { :original_collection => "fsu:aas50", :destination_collection =>"palmm:aas50", :destination_title => "FSU Artist Series" },
+    "fsu:acadlifemain" => { :original_collection => "fsu:acadlifemain", :destination_collection =>"palmm:acadlifemain", :destination_title => "FSU Academic Life" },
+    "fsu:acw50" => { :original_collection => "fsu:acw50", :destination_collection =>"palmm:acw50", :destination_title => "FSU Conferences and Workshops" },
+    "fsu:aes50" => { :original_collection => "fsu:aes50", :destination_collection =>"palmm:aes50", :destination_title => "FSU Examinations Schedules" },
+    "fsu:afg50" => { :original_collection => "fsu:afg50", :destination_collection =>"palmm:afg50", :destination_title => "FSU Gymkana" },
+    "fsu:afl55" => { :original_collection => "fsu:afl55", :destination_collection =>"palmm:afl55", :destination_title => "FSU Lecture Programs" },
+    "fsu:afs50" => { :original_collection => "fsu:afs50", :destination_collection =>"palmm:afs50", :destination_title => "FSU College of Arts and Science" },
+    "fsu:alp55" => { :original_collection => "fsu:alp55", :destination_collection =>"palmm:alp55", :destination_title => "FSU School of Library Training and Service" },
+    "fsu:amp55" => { :original_collection => "fsu:amp55", :destination_collection =>"palmm:amp55", :destination_title => "FSU Musical Performances" },
+    "fsu:apa55" => { :original_collection => "fsu:apa55", :destination_collection =>"palmm:apa55", :destination_title => "FSU School of Public Administration" },
+    "fsu:artoncampusmain" => { :original_collection => "fsu:artoncampusmain", :destination_collection =>"palmm:artoncampus", :destination_title => "FSU Art on Campus" },
+    "fsu:asb50" => { :original_collection => "fsu:asb50", :destination_collection =>"palmm:asb50", :destination_title => "FSU School of Business" },
+    "fsu:asj50" => { :original_collection => "fsu:asj50", :destination_collection =>"palmm:asj50", :destination_title => "FSU School of Journalism" },
+    "fsu:asw55" => { :original_collection => "fsu:asw55", :destination_collection =>"palmm:asw55", :destination_title => "FSU School of Social Welfare" },
+    "fsu:avc50" => { :original_collection => "fsu:avc50", :destination_collection =>"palmm:avc50", :destination_title => "FSU Flying High Circus" },
+    "fsu:avd50" => { :original_collection => "fsu:avd50", :destination_collection =>"palmm:avd50", :destination_title => "FSU Theater and Dance Performances" },
+    "fsu:ave50" => { :original_collection => "fsu:ave50", :destination_collection =>"palmm:ave50", :destination_title => "FSU Enrollment" },
+    "fsu:ave52" => { :original_collection => "fsu:ave52", :destination_collection =>"palmm:ave52", :destination_title => "FSU School of Education" },
+    "fsu:avf50" => { :original_collection => "fsu:avf50", :destination_collection =>"palmm:avf50", :destination_title => "FSU Art Gallery" },
+    "fsu:avh50" => { :original_collection => "fsu:avh50", :destination_collection =>"palmm:avh50", :destination_title => "FSU Homecoming" },
+    "fsu:avm50" => { :original_collection => "fsu:avm50", :destination_collection =>"palmm:avm50", :destination_title => "FSU Marching Chiefs" },
+    "fsu:avn50" => { :original_collection => "fsu:avn50", :destination_collection =>"palmm:avn50", :destination_title => "FSU School of Nursing" },
+    "fsu:avp51" => { :original_collection => "fsu:avp51", :destination_collection =>"palmm:avp51", :destination_title => "FSU Panhellenic Rushing Rules" },
+    "fsu:civilwarmain" => { :original_collection => "fsu:civilwarmain", :destination_collection =>"palmm:civilwarmain", :destination_title => "FSU Civil War Era Collections" },
+    "fsu:colgradschpubsmain" => { :original_collection => "fsu:colgradschpubsmain", :destination_collection =>"palmm:colgradschpubsmain", :destination_title => "FSU College and Graduate School Publications" },
+    "fsu:cwhb" => { :original_collection => "fsu:cwhb", :destination_collection =>"palmm:fhp", :destination_title => "Florida Heritage Collection" },
+    "fsu:cwm" => { :original_collection => "fsu:cwm", :destination_collection =>"palmm:cwm", :destination_title => "FSU Confederate Money Collection" },
+    "fsu:diraccol" => { :original_collection => "fsu:diraccol", :destination_collection =>"palmm:diraccol", :destination_title => "FSU's Paul A.M. Dirac Collection" },
+    "fsu:fce06" => { :original_collection => "fsu:fce06", :destination_collection =>"palmm:fce06", :destination_title => "FSU Commencements" },
+    "fsu:fgb04" => { :original_collection => "fsu:fgb04", :destination_collection =>"palmm:fgb04", :destination_title => "FSU Graduate Bulletin" },
+    "fsu:fhe55" => { :original_collection => "fsu:fhe55", :destination_collection =>"palmm:fhe55", :destination_title => "FSU School of Home Economics" },
+    "fsu:flc50" => { :original_collection => "fsu:flc50", :destination_collection =>"palmm:flc50", :destination_title => "FSU Class Schedules" },
+    "fsu:football50" => { :original_collection => "fsu:football50", :destination_collection =>"palmm:football50", :destination_title => "FSU Football" },
+    "fsu:fsi07" => { :original_collection => "fsu:fsi07", :destination_collection =>"palmm:fsi07", :destination_title => "FSU Investiture Ceremonies" },
+    "fsu:fsp50" => { :original_collection => "fsu:fsp50", :destination_collection =>"palmm:fsp50", :destination_title => "FSU Pow Wow Student Handbooks" },
+    "fsu:fsr50" => { :original_collection => "fsu:fsr50", :destination_collection =>"palmm:fsr50", :destination_title => "FSU President's Reports" },
+    "fsu:fsulivesmain" => { :original_collection => "fsu:fsulivesmain", :destination_collection =>"palmm:fsulivesmain", :destination_title => "FSU Lives" },
+    "fsu:fsy50" => { :original_collection => "fsu:fsy50", :destination_collection =>"palmm:fsy50", :destination_title => "FSU Yearbooks" },
+    "fsu:fub05" => { :original_collection => "fsu:fub05", :destination_collection =>"palmm:fub05", :destination_title => "FSU Undergraduate Bulletin" },
+    "fsu:hpmain" => { :original_collection => "fsu:hpmain", :destination_collection =>"palmm:hpmain", :destination_title => "FSU Heritage Protocol and University Archives" },
+    "fsu:sayrecircus" => { :original_collection => "fsu:sayrecircus", :destination_collection =>"palmm:sayrecircus", :destination_title => "Harrison Sayre Circus (FSU)" },
+    "fsu:spc11" => { :original_collection => "fsu:spc11", :destination_collection =>"palmm:spc11", :destination_title => "FSU Sayre Circus Posters" },
+    "fsu:spc12" => { :original_collection => "fsu:spc12", :destination_collection =>"palmm:spc12", :destination_title => "FSU Sayre Circus Photos" },
+    "fsu:specialcol" => { :original_collection => "fsu:specialcol", :destination_collection =>"palmm:fsuspecialcol", :destination_title => "FSU Special Collections and Archives" },
+    "fsu:stucamplifemain" => { :original_collection => "fsu:stucamplifemain", :destination_collection =>"palmm:stucamplifemain", :destination_title => "FSU Student and Campus Life" },
   }
 end
 
@@ -162,9 +165,33 @@ end
 
 def create_new_collection_policy_from_existing repo, collection
   dob = Rubydora::DigitalObject.new(collection, repo)
-  ds = Rubydora::Datastream.new(dob, 'COLLECTION_POLICY').content
-  return ds.gsub(/namespace="([^"])+"/, 'namespace="palmm"')
+  ds = Rubydora::Datastream.new(dob, 'COLLECTION_POLICY')
+  return ds.content.gsub(/namespace="([^"])+"/, 'namespace="palmm"')
+rescue => e
+  STDERR.puts "Can't get COLLECTION_POLICY for collection #{collection}"
+  return
 end
+
+def get_desc_text repo, collection
+  dob = Rubydora::DigitalObject.find(collection, repo)
+  ds = Rubydora::Datastream.new(dob, 'DESC-TEXT')
+  rec = { :content => ds.content, :label => ds.label, :type => ds.mimeType }
+  return rec
+rescue => e
+  STDERR.puts "Can't get DESC-TEXT for collection #{collection}, #{e.message}"
+  return { :content => nil, :label => nil, :type => nil }
+end
+
+def get_banner repo, collection
+  dob = Rubydora::DigitalObject.find(collection, repo)
+  ds = Rubydora::Datastream.new(dob, 'BANNER')
+  rec =  { :content => ds.content, :label => ds.label, :type => ds.mimeType }
+  return rec
+rescue => e
+  STDERR.puts "Can't get DESC-TEXT for collection #{collection}, #{e.message}"
+  return { :content => nil, :label => nil, :type => nil }
+end
+
 
 
 def update_mappings mappings, parents
@@ -179,8 +206,9 @@ def update_mappings mappings, parents
   #
   # 'mappings' data is supplied to us by the institution
   #
-  # 'parents'  is a simpler hash: one slot might be  "fsu:spccollection" => "fsu:root", for example.
-
+  # 'parents'  is a simpler hash we create: one slot might be  "fsu:spccollection" => "fsu:root", for example.
+  #
+  # Note, we don't have to support multiple collection parents, so we don't.
 
 
   # First up: add original collection's parent collection on the origin sight - missing is an error!
@@ -233,12 +261,30 @@ def update_mappings mappings, parents
   end
   STDERR.puts warnings if not warnings.empty?
 
-
   return mappings
 end
 
 
-def create_new_collection_maybe repo, collection, collection_title, parent_collection
+### TODO: when we setup source and destination repos, use the fedora interface instead of web interface.
+
+def get_thumbnail base_url, collection
+  url = base_url.sub(/\/+$/, '') + "/islandora/object/#{collection.sub(/^info:fedora\//, '')}/datastream/TN/view"
+  repsonse = RestClient.get url
+  image = repsonse.body
+  type  = repsonse.headers[:content_type]
+
+  return image, type
+rescue => e
+  STDERR.puts e, 'Fatal error, exiting'
+  exit 1
+end
+
+
+
+# create a new collection on the destination repo....
+
+def create_new_collection_maybe repo, collection, collection_title, parent_collection, source_base_url, source_collection
+
 
   if all_existing_collections(repo).include? collection
     puts "Collection #{collection} already exists, skipping"
@@ -247,11 +293,17 @@ def create_new_collection_maybe repo, collection, collection_title, parent_colle
     puts "Creating collection #{collection},  '#{collection_title}',  in #{parent_collection}"
   end
 
-  ######
-  return
-
   collection = "info:fedora/#{collection}" unless collection =~ /^info:fedora/
   parent_collection = "info:fedora/#{parent_collection}" unless parent_collection =~ /^info:fedora/
+
+  # get all the datastream data we need first, before we create a the
+  # destination collection, so on error we don't need to clean up.
+
+  thumbnail_image, thumbnail_type = get_thumbnail(source_base_url, source_collection)
+  collection_policy = create_new_collection_policy_from_existing(repo, source_collection)
+
+  desc_info = get_desc_text(repo, source_collection)
+  banner_info = get_banner(repo, source_collection)
 
   collection_object = repo.create(collection)
 
@@ -260,14 +312,29 @@ def create_new_collection_maybe repo, collection, collection_title, parent_colle
   collection_object.label   = collection_title
   collection_object.ownerId = OWNER
 
+  if banner_info[:content]
+    ds = collection_object.datastreams['BANNER']
+    ds.dsLabel  = banner_info[:label]
+    ds.content  = banner_info[:content]
+    ds.mimeType = banner_info[:type]
+  end
+
+
+  if desc_info[:content]
+    ds = collection_object.datastreams['DESC-TEXT']
+    ds.dsLabel  = desc_info[:label]
+    ds.content  = desc_info[:content]
+    ds.mimeType = desc_info[:type]
+  end
+
   ds = collection_object.datastreams['TN']
   ds.dsLabel  = "Thumbnail"
-  ds.content  = File.read('/etc/drupal7/all/modules/islandora/images/folder.png')
-  ds.mimeType = 'image/png'
+  ds.content  = thumbnail_image
+  ds.mimeType = thumbnail_type
 
   ds = collection_object.datastreams['COLLECTION_POLICY']
   ds.dsLabel      = "Collection Policy"
-  ds.content      = create_new_collection_policy_from_existing(repo, collection)
+  ds.content      = collection_policy
   ds.mimeType     = 'text/xml'
   ds.controlGroup = 'X'
 
@@ -275,23 +342,24 @@ def create_new_collection_maybe repo, collection, collection_title, parent_colle
 
   # we'll wait up to 15 seconds for the collection to be created
 
-  30.times do
-    sleep 0.5
-    return if all_existing_collections(repo).include? collection
-  end
-  raise "Could not create collection #{collection}"
+  # for some reason we're not getting these showing up in a timely manner....
+
+  # 30.times do
+  #   sleep 0.5
+  #   return if all_existing_collections(repo).include? collection
+  # end
+  # raise "Could not create collection #{collection}"
+
 end
-
-
-
-
 
 repo = get_repository('fsu7prod')
 check_for_complete_information(repo, 'fsu')
 mappings = update_mappings(get_fsu_to_palmm_mapping(), parent_records(repo, 'fsu'))
 
 
-mappings.values.sort { |a,b| (a[:destination_parent] || '') <=> (b[:destination_parent] || '') }.each do |data|
-  puts sprintf("%-50s %s", "#{data[:destination_parent] || 'YIKES! YIKES! YIKES!' }//#{data[:destination_collection]}", data[:destination_title])
-  #### create_new_collection_maybe repo, data[:destination_collection], data[:destination_title], data[:destination_parent]
+source_url = 'http://fsu.digital.flvc.org/'
+
+mappings.values.sort { |a,b| a[:destination_parent]  <=> b[:destination_parent] }.each do |data|
+  # puts sprintf("%-50s %s", "#{data[:destination_parent]}//#{data[:destination_collection]}", data[:destination_title])
+  create_new_collection_maybe repo, data[:destination_collection], data[:destination_title], data[:destination_parent], source_url, data[:original_collection]
 end
