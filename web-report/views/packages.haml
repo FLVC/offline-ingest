@@ -1,0 +1,18 @@
+!!! 5
+%html{ :lang => "en" }
+
+  %head
+
+    %meta{ :charset => "utf-8" }
+    %link{ :rel => "stylesheet", :href => "/std.css",  :type => "text/css"  }
+    %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
+
+    %title Ingested Packages
+
+  %body
+
+    %h1 Ingested Packages for #{@hostname}
+
+    - @packages.each do |p|
+      #{p.time_started.strftime('%c')} - #{p.package_name} -  #{p.islandora_pid or 'n/a'} - #{p.islandora_site.hostname}//#{p.get_collections.join(',')} - #{p.success ? 'succeeded' : 'failed'}
+      <br>
