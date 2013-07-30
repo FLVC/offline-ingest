@@ -438,10 +438,13 @@ class LargeImagePackage < Package
     @image = nil
     @image_filename = @datafiles.first
     path = File.join(@directory_path, @image_filename)
-    type = Utils.mime_type(path)
+    @type = Utils.mime_type(path)   # we need to record the original type since @image may be returned in either TIFF or JP2K
 
-    case type
-    when JP2, TIFF
+
+    case @type
+    when JP2
+      @image = Utils.careful_with_that_jp2(@config, path)   # this may return a JP2K, or, if ImageMagick bombs and kakadu succeeds, a TIFF
+    when TIFF
       @image = Magick::Image.read(path).first
     else
       raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
@@ -479,11 +482,11 @@ class LargeImagePackage < Package
 
       boilerplate(ingestor)
 
-      case @image.format
-      when 'TIFF';   ingest_tiff ingestor
-      when 'JP2';    ingest_jp2 ingestor
+      case @type
+      when TIFF;   ingest_tiff ingestor
+      when JP2;    ingest_jp2 ingestor
       else
-        raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with iamge format #{@image.format}."
+        raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with image format #{@image.format}."
       end
 
       @image.format = 'JPG'
@@ -517,7 +520,7 @@ class LargeImagePackage < Package
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Original TIFF ' + @image_filename.sub(/\.(tiff|tiff)$/i, '')
       ds.content  = File.open(File.join(@directory_path, @image_filename))
-      ds.mimeType = @image.mime_type
+      ds.mimeType = 'image/tiff'
     end
 
     @image.format = 'JP2'
@@ -525,7 +528,7 @@ class LargeImagePackage < Package
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'JPEG 2000 derived from original TIFF image'
       ds.content  = @image.to_blob
-      ds.mimeType = @image.mime_type
+      ds.mimeType = 'image/jp2'
     end
   end
 
@@ -535,7 +538,7 @@ class LargeImagePackage < Package
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
       ds.content  = File.open(File.join(@directory_path, @image_filename))
-      ds.mimeType = @image.mime_type
+      ds.mimeType = 'image/jp2'
     end
 
     @image.format = 'TIFF'
@@ -544,7 +547,7 @@ class LargeImagePackage < Package
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
       ds.content  = @image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-      ds.mimeType = @image.mime_type
+      ds.mimeType = 'image/tiff'
     end
   end
 

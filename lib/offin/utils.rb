@@ -28,11 +28,13 @@ class Utils
     return str.gsub('&', '&amp;').gsub("'", '&apos;').gsub('<', '&lt;').gsub('>', '&gt;')
   end
 
+  # This is mostly to silence the "require 'datamapper'" that causes the annoying warning "CSV constant redefined".
 
   def Utils.silence_warnings(&block)
     warn_level = $VERBOSE
     $VERBOSE = nil
     result = block.call
+  ensure
     $VERBOSE = warn_level
     result
   end
@@ -41,6 +43,22 @@ class Utils
     yield
   rescue => e
     raise SystemError,  message + ': ' + e.message # ick
+  end
+
+
+  def Utils.silence_streams(*streams)
+
+    on_hold = streams.collect { |stream| stream.dup }
+    streams.each do |stream|
+      stream.reopen('/dev/null')
+      stream.sync = true
+    end
+    yield
+
+  ensure
+    streams.each_with_index do |stream, i|
+      stream.reopen(on_hold[i])
+    end
   end
 
 
@@ -70,7 +88,38 @@ class Utils
   end
 
 
-  # TODO: get path to pdftext from config file...
+  # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
+  # Kakadu only produces uncomressed TIFFs, so we don't want to use it indiscriminately.
+
+  def Utils.careful_with_that_jp2 config, jp2k_filepath
+    Utils.silence_streams(STDERR) do
+      return Magick::Image.read(jp2k_filepath).first
+    end
+  rescue Magick::ImageMagickError => e
+    return Utils.kakadu_jp2k_to_tiff(config, jp2k_filepath, "ImageMagick: #{e.message}")
+  end
+
+  def Utils.kakadu_jp2k_to_tiff config, jp2k_filepath, previous_error_message = ''
+    temp_image_filename = Tempfile.new('image-kakadu-').path + '.tiff'
+    text  = ''
+    error = ''
+
+    Open3.popen3("#{config.kakadu_expand_command} -i #{Utils.shellescape(jp2k_filepath)} -o #{temp_image_filename}") do |stdin, stdout, stderr|
+      stdin.close
+      text  = stdout.read
+      error = stderr.read
+    end
+    error.strip!
+
+    message = " #{previous_error_message}; " if not previous_error_message.empty?
+
+    raise PackageError, "Image processing error: could not process JP2 image #{jp2k_filepath.sub(/.*\//, '')}:#{message}#{error.gsub("\n", ' ')}" unless error.empty?
+
+    return Magick::Image.read(temp_image_filename).first
+  ensure
+    FileUtils.rm_f(temp_image_filename)
+  end
+
 
   def Utils.pdf_to_text config, pdf_filepath
 
@@ -139,9 +188,6 @@ class Utils
   end
 
 
-
-
-
   def Utils.image_to_pdf config, image_filepath
     pdf = nil
     Open3.popen3("#{config.image_to_pdf_command} #{Utils.shellescape(image_filepath)} pdf:-") do |stdin, stdout, stderr|
@@ -175,17 +221,6 @@ class Utils
     return image
   end
 
-  # from molf@http://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby
-  # doesn't actually work for my STDERR cases,  which is to catch the ImageMagick library's warnings.
-
-
-  def Utils.capture_stderr
-    previous_stderr, $stderr = $stderr, StringIO.new
-    yield
-    $stderr.string
-  ensure
-    $stderr = previous_stderr
-  end
 
   # expects image or pathname, image must be a format understood by tesseract (no jp2)
 

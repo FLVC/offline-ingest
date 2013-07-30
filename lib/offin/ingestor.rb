@@ -63,6 +63,9 @@ class Ingestor
   rescue PackageError => e
     error e.message
     return self
+  rescue Errno::ENOENT => e
+    error "Caught exception while processing pid #{@pid} - #{e.class} #{e.message}"
+    return self
   rescue => e
     error "Caught exception while processing pid #{@pid} - #{e.class} #{e.message}, backtrace follows:", e.backtrace
     return self

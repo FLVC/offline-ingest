@@ -26,7 +26,11 @@ factory = PackageFactory.new(config, DigitoolMetadataChecker)
 
 $stdout.sync, indent = true, ' ' * 4
 
-ARGV.each do |directory|
+list = ARGV.sort
+
+puts "Processing #{list.count} package#{list.count == 1 ? '' : 's'}:\n" + list.join("\n")
+
+list.each do |directory|
   begin
     completed, started, finished  = false, Time.now, Time.now
 
@@ -42,11 +46,11 @@ ARGV.each do |directory|
     STDERR.puts e
 
   rescue SystemError => e
-    STDERR.puts "Fatal system error: #{e.message}"
+    STDERR.puts "Gracefully exiting from fatal system error: #{e.message}"
     exit 1
 
   rescue => e
-    STDERR.puts "Caught unexpected error #{e.class} - #{e.message}", e.backtrace, '', "Please correct the error and retry."
+    STDERR.puts "Caught completely unexpected error #{e.class} - #{e.message}", e.backtrace, '', "Please correct the error and retry."
     exit 1
 
   ensure
