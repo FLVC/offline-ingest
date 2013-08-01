@@ -1,6 +1,6 @@
 # TODO: rename as script-support
 
-
+require 'fileutils'
 require 'socket'
 require 'optparse'
 require 'offin/utils'
@@ -75,8 +75,8 @@ end
 def package_ingest_usage
 
   return <<-EOF.gsub(/^    /, '')
-    Usage:  package [ --test-mode | --server ID ]  package-directories*
-    the options can be abbreviated as -t and -s, respectively.
+    Usage:  package [ --test-mode | --server ID ] [ --dump-directory dir ]  package-directories*
+    the options can be abbreviated as -t, -s and -d, respectively.
     EOF
 end
 
@@ -92,16 +92,17 @@ def get_config *sections
 end
 
 
-Struct.new('Options', :server_id, :test_mode)
+Struct.new('Options', :server_id, :test_mode, :dump_directory)
 
 def package_ingest_parse_command_line args
-  command_options = Struct::Options.new(nil, nil)
+  command_options = Struct::Options.new(nil, nil, nil)
   server_sections = get_config_server_sections
 
   opts   = OptionParser.new do |opt|
     opt.banner = package_ingest_usage
-    opt.on("--server ID",   String,  "ingest to server id #{server_sections.join(', ')}.")  { |sid| command_options.server_id = sid }
-    opt.on("--test-mode",  "run basic checks on package without ingesting") { command_options.test_mode = true }
+    opt.on("--server ID", String,          "ingest to server ID - one of #{server_sections.join(', ')}")   { |sid| command_options.server_id = sid }
+    opt.on("--test-mode",                  "run basic checks on package without ingesting")                { command_options.test_mode = true }
+    opt.on("--dump-directory DIR", String, "optionally, move failed packages to directory DIR")            { |dir| command_options.dump_directory = dir.sub(/\/+$/, '') }
   end
 
   opts.parse!(args)
@@ -111,7 +112,6 @@ def package_ingest_parse_command_line args
     raise SystemError, "Bad server ID: use one of #{server_sections.join(', ')}" unless server_sections.include? command_options.server_id
   end
 
-  raise SystemError, "No packages specified." if args.empty?
 
   case
   when (command_options.test_mode and command_options.server_id)
@@ -124,9 +124,37 @@ def package_ingest_parse_command_line args
     config = Datyl::Config.new(get_config_filename, "default", command_options.server_id)
   end
 
+  if command_options.dump_directory
+    raise SystemError, "The directory #{command_options.dump_directory} isn't really a directory" unless File.directory? command_options.dump_directory
+    raise SystemError, "Can't write to directory #{command_options.dump_directory}"               unless File.writable? command_options.dump_directory
+    config[:dump_directory] = command_options.dump_directory
+  end
+
+
+  raise SystemError, "No packages specified." if args.empty?
+
 rescue => e
   STDERR.puts e, opts
   exit -1
 else
   return config
+end
+
+
+def get_move_target source, dest
+  short_name = source.sub(/\/+/, '').sub(/^.*\//, '')
+  i = 0
+  target = File.join(dest, short_name)
+  while File.exists? target
+    target = File.join(dest, short_name) + " (#{i += 1})"
+  end
+  return target
+end
+
+
+def move_to_dump_directory_maybe package_directory, destination
+  return unless destination
+  FileUtils.mv package_directory, get_move_target(package_directory, destination)
+rescue => e
+  raise SystemError, "Could not move package #{package_directory} to #{destination}: #{e.class} #{e.message}"
 end

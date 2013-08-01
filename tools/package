@@ -72,6 +72,8 @@ list.each do |directory|
       puts indent + 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
 
       record_to_database(config.site, package, completed && package.valid?, started, finished) unless config.test_mode
+
+      move_to_dump_directory_maybe(directory, config.dump_directory) if not package.valid?
     end
   end
 end

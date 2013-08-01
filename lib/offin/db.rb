@@ -102,7 +102,6 @@ module DataBase
       self.islandora_collections.map { |rec| rec.collection_code }
     end
 
-
     def add_components *pids
       return unless pids or pids.empty?
       pids.flatten.each do |str|
@@ -113,7 +112,43 @@ module DataBase
     def get_components
       self.component_objects.map { |rec| rec.pid }
     end
-  end
+
+    # display support
+
+    def islandora_link_base path, text, css = ''
+      "<a #{css} href=\"http://#{self.islandora_site.hostname}/islandora/object/#{path}\">#{text}</a>"
+    end
+
+    # provide a link to the islandora page, if possible, otherwise just the package name
+
+    def islandora_link css = ''
+      return self.package_name unless self.success and self.islandora_pid
+      return islandora_link_base(self.islandora_pid, self.package_name, css)
+    end
+
+    def islandora_collection_links css = ''
+      collections = self.get_collections
+      return collections unless self.success and self.islandora_pid
+      return collections.map { |pid| islandora_link_base(pid, pid, css) }
+    end
+
+    # provide a 'drill-down' url with text 'success', 'warning', 'error' depending;  assumes a relative link
+
+    def admin_status_url css = ''
+      url = "<a #{css} href=\"#{self['id']}\">"
+
+      return url + case
+                   when (not get_errors.empty?);     'errors</a>'
+                   when (not get_warnings.empty?);   'warnings</a>'
+                   else;                             'success</a>'
+                   end
+    end
+
+
+
+  end # of class IslandoraPackage
+
+
 
 
   class IslandoraCollection

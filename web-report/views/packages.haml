@@ -4,17 +4,26 @@
   %head
 
     %meta{ :charset => "utf-8" }
-    %link{ :rel => "stylesheet", :href => "/std.css",  :type => "text/css"  }
+    %link{ :rel => "stylesheet", :href => "/site.css",  :type => "text/css"  }
     %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
 
-    %title Ingested Packages
+    %title Batch Ingest Report
 
   %body
 
-    %h1 Ingested Packages for #{@hostname}
+    %h1 Batch Ingest Report for #{@hostname}
 
-    - @packages.each do |p|
-      #{p.time_started.strftime('%c')} - #{p.package_name} -
-      #{p.islandora_pid or 'n/a'} - #{p.islandora_site.hostname}//#{p.get_collections.join(',')} -
-      #{p.success ? 'succeeded' : 'failed'}
-      <br>
+    %table
+      %thead
+        %tr
+          %th Date
+          %th Status
+          %th Package
+          %th Title
+      %tbody
+      - @packages.each do |p|
+        %tr
+          %td #{p.time_started.strftime('%F %T')}
+          %td #{p.admin_status_url}
+          %td #{p.islandora_link}
+          %td #{p.title or ''}
