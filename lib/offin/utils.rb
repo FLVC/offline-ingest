@@ -1,3 +1,4 @@
+require 'rubydora'
 require 'RMagick'
 require 'fileutils'
 require 'iconv'
@@ -6,6 +7,22 @@ require 'open3'
 require 'stringio'
 require 'tempfile'
 require 'timeout'
+
+# Extend RI mixins to include itql queries:
+
+module Rubydora
+  module ResourceIndex
+    def itql query
+      if CSV.const_defined? :Reader
+        FasterCSV.parse(self.risearch(query, :lang => 'itql'), :headers => true)
+      else
+        CSV.parse(self.risearch(query, :lang => 'itql'), :headers => true)
+      end
+    end
+  end
+end
+
+
 
 
 class Utils
@@ -61,7 +78,36 @@ class Utils
     end
   end
 
+  def Utils.pretty_elapsed elapsed
+    hours, elapsed = elapsed / 3600, elapsed % 3600
+    minutes, elapsed  = elapsed / 60, elapsed % 60
+    seconds = elapsed
 
+    texts = []
+    texts.push  "#{hours} hour#{ hours == 1 ? '' : 's'}"       if hours > 0
+    texts.push  "#{minutes} minute#{ minutes == 1 ? '' : 's'}" if minutes > 0
+    texts.push  "#{seconds} second#{ seconds == 1 ? '' : 's'}" if seconds > 0
+
+    return texts.join(', ')
+  end
+
+
+  # return a mapping from short islandpora pids (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles
+
+  def Utils.get_collection_names config
+    query = "select $object $title from <#ri> " +
+             "where $object <fedora-model:label> $title " +
+               "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
+
+    repository = ::Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+    repository.ping
+
+    hash = {}
+    repository.itql(query).each do |x|
+      hash[x[0].sub('info:fedora/', '')] = x[1]
+    end
+    return hash
+  end
 
   def Utils.get_manifest config, directory
 

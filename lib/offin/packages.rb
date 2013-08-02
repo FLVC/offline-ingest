@@ -36,6 +36,9 @@ class PackageFactory
 
     manifest = Utils.get_manifest @config, directory
 
+
+
+
     return case manifest.content_model
            when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest, @updator_class)
            when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest, @updator_class)
@@ -49,7 +52,6 @@ end
 
 
 # TODO: @valid is used redundantly, use valid? throughout based on error array empty or not.
-
 
 # Package serves as a base class, but it could serve to do a basic
 # check on a directory's well-formedness as a package.
@@ -407,8 +409,8 @@ class BasicImagePackage < Package
 
     @bytes_ingested = ingestor.size
   ensure
-    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
-    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
 end
@@ -507,8 +509,8 @@ class LargeImagePackage < Package
     end
 
   ensure
-    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
-    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
 
@@ -660,8 +662,8 @@ class PdfPackage < Package
 
     @bytes_ingested = ingestor.size
   ensure
-    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
-    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
   end
 end
 
@@ -841,11 +843,11 @@ class BookPackage < Package
     ##### REMOVE ME
     # STDERR.puts "Book: #{@pid} #{name} =>  #{@collections.inspect}"
 
+    @bytes_ingested += ingestor.size
 
-    @bytes_ingested = ingestor.size
   ensure
-    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
-    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
   end
 
@@ -1125,14 +1127,15 @@ class BookPackage < Package
 
     end
 
+    @bytes_ingested += ingestor.size
     return ingestor.pid
 
   rescue => e
     error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{e.message}.", e.backtrace
     raise e
   ensure
-    warning "Ingest warnings:", ingestor.warnings if ingestor and ingestor.warnings?
-    error   "Ingest errors:",   ingestor.errors   if ingestor and ingestor.errors?
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
     image.destroy! if image.class == Magick::Image
   end
 end

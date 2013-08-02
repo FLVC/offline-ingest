@@ -47,7 +47,7 @@ def record_to_database site, package, status, start_time, finish_time
                                         :time_started   => start_time,
                                         :time_finished  => finish_time,
                                         :bytes_ingested => package.bytes_ingested,
-                                        :digitool_id    => package.digitool_id.to_i,
+                                        :digitool_id    => (package.digitool_id ? package.digitool_id.to_i : nil),
                                         :success        => status,
                                         :content_model  => package.content_model,
                                         :islandora_site => site)

@@ -24,7 +24,6 @@ module DataBase
     before :save do
       self.hostname.downcase!
     end
-
   end
 
 
@@ -58,6 +57,17 @@ module DataBase
       self.package_name
     end
 
+    def content_model_title
+      return case self.content_model
+             when  "islandora:sp_basic_image";        "Basic Image"
+             when  "islandora:sp_large_image_cmodel"; "Large Image"
+             when  "islandora:sp_pdf";                "PDF"
+             when  "islandora:bookCModel";            "Book"
+             when  "islandora:pageCModel";            "Page"
+             else;                                     self.content_model
+             end
+    end
+
     def add_warnings *messages
       return unless messages or messages.empty?
       messages.flatten.each do |str|
@@ -69,6 +79,10 @@ module DataBase
       self.warning_messages.map { |rec| rec.warning }
     end
 
+    def warnings?
+      not self.warning_messages.empty?
+    end
+
     def add_errors *messages
       return unless messages or messages.empty?
       messages.flatten.each do |str|
@@ -78,6 +92,10 @@ module DataBase
 
     def get_errors
       self.error_messages.map { |rec| rec.error }
+    end
+
+    def errors?
+      not self.error_messages.empty?
     end
 
     def add_purls *urls
@@ -119,36 +137,44 @@ module DataBase
       "<a #{css} href=\"http://#{self.islandora_site.hostname}/islandora/object/#{path}\">#{text}</a>"
     end
 
-    # provide a link to the islandora page, if possible, otherwise just the package name
-
-    def islandora_link css = ''
-      return self.package_name unless self.success and self.islandora_pid
-      return islandora_link_base(self.islandora_pid, self.package_name, css)
+    def islandora_thumbnail_link  css = ''
+      return if not self.success
+      return "<img #{css} src=\"http://#{self.islandora_site.hostname}/islandora/object/#{self.islandora_pid}/datastream/TN/view\">"
     end
 
-    def islandora_collection_links css = ''
+    # provide a link to the islandora page, if possible, otherwise just the package name
+
+    def islandora_description_link text, css = ''
+      return self.package_name unless self.success and self.islandora_pid
+      return islandora_link_base(self.islandora_pid + '#tabs-2', text, css)
+    end
+
+    def islandora_summary_link text, css = ''
+      return self.package_name unless self.success and self.islandora_pid
+      return islandora_link_base(self.islandora_pid, text, css)
+    end
+
+    def digitool_link text, css = ''
+      return unless self.digitool_id
+      return "<a #{css} href=\"http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{self.digitool_id}\">#{text}</a>"
+    end
+
+    def islandora_collection_links title_mapping = {},  css = ''
       collections = self.get_collections
-      return collections unless self.success and self.islandora_pid
-      return collections.map { |pid| islandora_link_base(pid, pid, css) }
+      return collections.map { |pid| islandora_link_base(pid, title_mapping[pid] ? title_mapping[pid] + " (#{pid})" : pid, css) }
     end
 
     # provide a 'drill-down' url with text 'success', 'warning', 'error' depending;  assumes a relative link
 
     def admin_status_url css = ''
       url = "<a #{css} href=\"#{self['id']}\">"
-
       return url + case
-                   when (not get_errors.empty?);     'errors</a>'
-                   when (not get_warnings.empty?);   'warnings</a>'
+                   when (not get_errors.empty?);     'error</a>'
+                   when (not get_warnings.empty?);   'warning</a>'
                    else;                             'success</a>'
                    end
     end
-
-
-
   end # of class IslandoraPackage
-
-
 
 
   class IslandoraCollection
@@ -236,7 +262,6 @@ module DataBase
     DataMapper.repository(:default).adapter.execute("ALTER TABLE islandora_packages ALTER time_started TYPE timestamp with time zone")
     DataMapper.repository(:default).adapter.execute("ALTER TABLE islandora_packages ALTER time_finished TYPE timestamp with time zone")
   end
-
 
   def self.dump
     packages = DataBase::IslandoraPackage.all(:order => [ :time_started.desc ])

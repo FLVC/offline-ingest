@@ -43,6 +43,7 @@ list.each do |directory|
     completed, finished = true, Time.now
 
   rescue PackageError => e
+    @package_error = true     # this is mostly to handle errors from package, like a missing manifest, that don't produce a package at all.
     STDERR.puts e
 
   rescue SystemError => e
@@ -54,6 +55,7 @@ list.each do |directory|
     exit 1
 
   ensure
+
     if package
 
       puts sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => %s, "%s"',
@@ -73,7 +75,10 @@ list.each do |directory|
 
       record_to_database(config.site, package, completed && package.valid?, started, finished) unless config.test_mode
 
-      move_to_dump_directory_maybe(directory, config.dump_directory) if not package.valid?
     end
+
+    move_to_dump_directory_maybe(directory, config.dump_directory) if (package and not package.valid?) or (not package and @package_error)
+
+
   end
 end

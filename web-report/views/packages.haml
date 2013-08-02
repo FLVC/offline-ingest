@@ -6,24 +6,33 @@
     %meta{ :charset => "utf-8" }
     %link{ :rel => "stylesheet", :href => "/site.css",  :type => "text/css"  }
     %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
+    %script{:type => "text/javascript", :src  => "/jquery-1.4.js"}
 
-    %title Batch Ingest Report
+    :javascript
+      $(document).ready(function() {
+      $('.packages tbody tr:odd').addClass('odd');
+      $('.packages tbody tr:even').addClass('even');
+      });
+
+    %title Ingest Report
 
   %body
 
-    %h1 Batch Ingest Report for #{@hostname}
+    %h1 Ingest Report for #{@hostname}
 
-    %table
+    %table{ :class => "packages" }
       %thead
         %tr
           %th Date
           %th Status
           %th Package
+          %th Digitool
           %th Title
       %tbody
-      - @packages.each do |p|
-        %tr
-          %td #{p.time_started.strftime('%F %T')}
-          %td #{p.admin_status_url}
-          %td #{p.islandora_link}
-          %td #{p.title or ''}
+        - @packages.each do |p|
+          %tr
+            %td #{p.time_started.strftime('%F %T')}
+            %td #{p.admin_status_url}
+            %td #{p.islandora_description_link(p.package_name + ' &rArr;', 'target="islandora"')}
+            %td #{p.digitool_link("#{p.digitool_id} &rArr;", 'target="digitool"') or ''}
+            %td #{p.title or ''}
