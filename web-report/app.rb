@@ -44,6 +44,14 @@ helpers do
   def list_collection_links config, package
     return package.islandora_collection_links(Utils.get_collection_names(config))
   end
+
+  def list_datastream_links package
+    links = []
+    Utils.get_datastream_names(config, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
+      links.push "<a href=\"http://#{@hostname}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
+    end
+    return links
+  end
 end
 
 
