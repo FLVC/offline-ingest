@@ -30,14 +30,14 @@
     Processing Time: #{@elapsed}
     %br
 
-    MB Ingested: #{sprintf("%5.2f", @package.bytes_ingested/(1024.0*1024.0))}
+    Raw Ingest Size: #{sprintf("%5.2f MB", @package.bytes_ingested/(1024.0*1024.0))}
     %br
 
     Content Type: #{@package.content_model_title}
     %br
 
     - unless @components.empty?
-      Component Objects: #{@components.join(', ')}
+      Component Objects (#{@components.length}): #{@components.join(', ')}
       %br
 
     Purls: #{@purls.join(', ')}

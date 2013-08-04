@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
 
+# TODO: package factory will not create a package object if there is a
+# missing manifest; thus it doesn't get reported as others.  there is
+# a work around below, but it doesn't get logged to the db.  Make the
+# package factory return a generic bad package with error array
+# populated.
+
+
 require 'rubygems'
 require 'socket'
 

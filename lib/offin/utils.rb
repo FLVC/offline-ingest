@@ -88,6 +88,7 @@ class Utils
     texts.push  "#{minutes} minute#{ minutes == 1 ? '' : 's'}" if minutes > 0
     texts.push  "#{seconds} second#{ seconds == 1 ? '' : 's'}" if seconds > 0
 
+    return '0 seconds' if texts.empty?
     return texts.join(', ')
   end
 

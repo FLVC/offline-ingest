@@ -211,11 +211,11 @@ class Package
       when String
         new_pid = remapper[pid].downcase
         list.push new_pid
-        warning "Remapping, by configuration directive, the manifest-specified collection #{pid} to #{new_pid} for package #{@directory_name}."
+        warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collection #{new_pid}"
       when Array
         new_pids = remapper[pid].map { |p| p.downcase }
         list += new_pids
-        warning "Remapping, by configuration directive, the manifest-specified collection #{pid} to these collections: #{new_pids.join(', ')}, for package #{@directory_name}."
+        warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collections #{new_pids.join(', ')}"
       end
     end
 
@@ -327,10 +327,6 @@ class Package
 
     return @valid
   end
-
-
-
-
 
 end # of Package base class
 
@@ -784,9 +780,7 @@ class BookPackage < Package
     # :level, :image_filename, :image_mimetype, :text_filename,
     # :text_mimetype.
 
-
     # TODO: handle text files somehow.
-
 
     @table_of_contents.pages.each do |entry|
       expected.push entry.image_filename
@@ -796,13 +790,13 @@ class BookPackage < Package
     unexpected = @datafiles - expected
 
     unless unexpected.empty?
-      warning "The Book package #{@directory_name} has the following unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
-      warning unexpected
+      warning "The Book package #{@directory_name} has the following unexpected #{unexpected.count} #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
+      warning unexpected.map { |name| ' - ' + name }
     end
 
     unless missing.empty?
-      error "The Book package #{@directory_name} is missing the following required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
-      error missing
+      error "The Book package #{@directory_name} is missing the following #{missing.count} required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
+      error missing.map { |name| ' - ' + name }
       return false
     end
 
@@ -839,9 +833,6 @@ class BookPackage < Package
         ds.mimeType = 'application/json'
       end
     end
-
-    ##### REMOVE ME
-    # STDERR.puts "Book: #{@pid} #{name} =>  #{@collections.inspect}"
 
     @bytes_ingested += ingestor.size
 

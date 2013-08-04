@@ -210,7 +210,7 @@ class TableOfContents
     end
 
     if not issues.empty?
-      warning "Not all page labels were unique; a parenthesized number was appended for the following page labels: '" + issues.join("', '") + "'."
+      warning "Not all page labels were unique; a parenthesized number was appended for these labels: '" + issues.join("', '") + "'."
     end
   end
 

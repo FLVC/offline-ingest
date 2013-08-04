@@ -40,6 +40,10 @@ helpers do
   def get_elapsed_time package
     return Utils.pretty_elapsed(package.time_finished.strftime('%s').to_i - package.time_started.strftime('%s').to_i)
   end
+
+  def list_collection_links config, package
+    return package.islandora_collection_links(Utils.get_collection_names(config))
+  end
 end
 
 
@@ -72,7 +76,7 @@ end
 
 get '/packages/:id' do
   @package     = DataBase::IslandoraPackage.first(:id => params[:id], :islandora_site => @site)
-  @collections = @package.islandora_collection_links(Utils.get_collection_names(@config))
+  @collections = list_collection_links(@config, @package)
   @elapsed     = get_elapsed_time(@package)
   @components  = list_component_links(@package)
   @purls       = list_purl_links(@package)
