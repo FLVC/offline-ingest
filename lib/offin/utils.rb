@@ -22,9 +22,6 @@ module Rubydora
   end
 end
 
-
-
-
 class Utils
 
   TESSERACT_TIMEOUT = 60 # tesseract can waste a lot of time on certain kinds of images
@@ -80,8 +77,7 @@ class Utils
 
   def Utils.pretty_elapsed elapsed
     hours, elapsed = elapsed / 3600, elapsed % 3600
-    minutes, elapsed  = elapsed / 60, elapsed % 60
-    seconds = elapsed
+    minutes, seconds  = elapsed / 60, elapsed % 60
 
     texts = []
     texts.push  "#{hours} hour#{ hours == 1 ? '' : 's'}"       if hours > 0
