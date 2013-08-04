@@ -1,0 +1,60 @@
+!!! 5
+%html{ :lang => "en" }
+
+  %head
+
+    %meta{ :charset => "utf-8" }
+    %link{ :rel => "stylesheet", :href => "/site.css",  :type => "text/css"  }
+    %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
+
+    %title Ingest Report for Package #{@package.package_name}
+
+  %body
+
+    %h1 Ingest  #{@package.success ? 'Success' : 'Failure' } Report for Package #{@package.package_name} on #{@hostname}
+
+    #{@package.islandora_description_link(@package.package_name + ": #{@package.title} &rArr;", 'target="islandora"')}
+    %br
+
+    - if @package.digitool_id
+      #{@package.digitool_link("DigiTool ID #{@package.digitool_id} &rArr;", 'target="digitool"')}
+      %br
+
+    - if @package.success
+      #{@package.islandora_summary_link(@package.islandora_thumbnail_link, 'target="islandora"')}
+      %br
+
+    Ingest Date:  #{@package.time_started.strftime('%F %T')}
+    %br
+
+    Processing Time: #{@elapsed}
+    %br
+
+    MB Ingested: #{sprintf("%5.2f", @package.bytes_ingested/(1024.0*1024.0))}
+    %br
+
+    Content Type: #{@package.content_model_title}
+    %br
+
+    - unless @components.empty?
+      Component Objects: #{@components.join(', ')}
+      %br
+
+    Purls: #{@purls.join(', ')}
+    %br
+
+    Islandora Collections: #{@collections.join(', ')}
+    %br
+
+
+    - if @package.errors?
+      %h2 Errors
+      - @package.get_errors.each do |err|
+        #{err}
+        %br
+
+    - if @package.warnings?
+      %h2 Warnings
+      - @package.get_warnings.each do |warn|
+        #{warn}
+        %br
