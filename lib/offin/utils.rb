@@ -104,7 +104,21 @@ class Utils
       hash[x[0].sub('info:fedora/', '')] = x[1]
     end
     return hash
+  rescue => e
+    return {}
   end
+
+
+  # TODO: call restclient, get xml, parse with xpath, turn to hash, return
+
+  def Utils.get_datastream_names config, pid
+    url = config.url.sub(/\/+$/, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml"
+
+  rescue => e
+    return {}
+  end
+
+
 
   def Utils.get_manifest config, directory
 
