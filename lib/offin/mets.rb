@@ -152,7 +152,7 @@ class TableOfContents
 
     issues = []
     pages.each do |p|
-      issues.push  "#{p.title} does not have an associated image file." unless p.image_filename
+      issues.push  "The METS file does specify an associated image file for page #{p.title}." unless p.image_filename
     end
 
     warning issues unless issues.empty?
@@ -210,7 +210,7 @@ class TableOfContents
     end
 
     if not issues.empty?
-      warning "Not all page labels were unique; a parenthesized number was appended for these labels: '" + issues.join("', '") + "'."
+      warning "Not all page labels in the METS file were unique; a parenthesized number was appended for these labels: '" + issues.join("', '") + "'."
     end
   end
 
@@ -319,14 +319,14 @@ class Mets
     # sax parser errors may not be fatal, so store them to warnings.
 
     if sax_document.warnings?
-      warning "SAX parser warnings for '#{short_filename}':"
+      warning "The SAX parser produced the following warnings for '#{short_filename}':"
       warning  sax_document.warnings
     end
 
     # SAX errors just treated as warnings (for now).
 
     if sax_document.errors?
-      warning "SAX parser errors for '#{short_filename}':"
+      warning "The SAX parser produced the following errors for '#{short_filename}':"
       warning  sax_document.errors
     end
 
@@ -352,7 +352,7 @@ class Mets
 
     if scores.values.uniq == scores.values
       max = scores.values.max
-      warning "Multiple structMaps found in METS file '#{short_filename}', discarding the shortest (least number of files)."
+      warning "Multiple structMaps found in METS file, discarding the shortest (least number of files)."
       scores.each { |sm,num| return sm if num == max }
     end
 
@@ -384,11 +384,11 @@ class Mets
 
     if scores.values.uniq == scores.values
       max = scores.values.max
-      warning "Multiple structMaps found in METS file '#{short_filename}', selecting the most likely."
+      warning "Multiple structMaps found in METS file, selecting the most likely."
       scores.each { |sm,num| return sm if num == max }
     end
 
-    error "Can't determine best of multiple structMaps found in METS file '#{short_filename}'."
+    error "Can't determine which of the multiple METS structMaps should be used."
     @valid = false
     return
   end
