@@ -13,15 +13,24 @@
 
     %h1 Ingest  #{@package.success ? 'Success' : 'Failure' } Report for Package #{@package.package_name} on #{@hostname}
 
-    #{@package.islandora_description_link(@package.package_name + ": #{@package.title} &rArr;", 'target="islandora"')}
+    - if @on_islandora == :present
+      Title: #{@package.islandora_description_link(@package.package_name + ": #{@package.title} &rArr;", 'target="islandora"')}
+    - else
+      Title: #{@package.title}
     %br
 
     - if @package.digitool_id
-      #{@package.digitool_link("DigiTool ID #{@package.digitool_id} &rArr;", 'target="digitool"')}
+      DigiTool ID: #{@package.digitool_link("#{@package.digitool_id} &rArr;", 'target="digitool"')}
       %br
 
     - if @package.success
-      #{@package.islandora_summary_link(@package.islandora_thumbnail_link, 'target="islandora"')}
+      - case @on_islandora
+      - when :present
+        #{@package.islandora_summary_link(@package.islandora_thumbnail_link, 'target="islandora"')}
+      - when :missing
+        Package is no longer present on islandora.
+      - when :error
+        Islandora cannot be reached at the moment - can't access datastreams for display.
       %br
 
     Ingest Date:  #{@package.time_started.strftime('%F %T')}
@@ -40,11 +49,18 @@
       Component Objects (#{@components.length}): #{@components.join(', ')}
       %br
 
-    Purls: #{@purls.join(', ')}
-    %br
+    - unless @purls.empty?
+      Purls: #{@purls.join(', ')}
+      %br
 
-    Islandora Collections: #{@collections.join(', ')}
-    %br
+    - unless @collections.empty?
+      Islandora Collections: #{@collections.join(', ')}
+      %br
+
+    - if @package.success and @on_islandora == :present
+      Datastreams: #{@datastreams.join(', ')}
+      %br
+
 
 
     - if @package.errors?

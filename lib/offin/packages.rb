@@ -790,7 +790,7 @@ class BookPackage < Package
     unexpected = @datafiles - expected
 
     unless unexpected.empty?
-      warning "The Book package #{@directory_name} has the following unexpected #{unexpected.count} #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
+      warning "The Book package #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
       warning unexpected.map { |name| ' - ' + name }
     end
 

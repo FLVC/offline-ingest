@@ -23,11 +23,15 @@ h2 {
 }
 
 fieldset {
-    margin: 20px;
+    font: italic bold 1.0em georgia, sans-serif;
+    text-align: left;
+    padding: 0.5em 1em 0.5em 1em;
+    color: white;
+    background-color: #636363;
+
     width: 50%;
     border: solid;
     border-width: 1px;
-    background: #ecc;
 }
 
 legend {
@@ -71,11 +75,8 @@ a:hover, a:active {
     color: #944;
 }
 
-.state-area { border-spacing:0;  padding: 3px;  }
-
-.state-area:hover { background-color:white; color:red }
-
 table {
+    width: 100%;
     border: solid;
     border-collapse: collapse;
     border-width: 1px;
@@ -86,11 +87,6 @@ td {
     padding: 0.25em 1em 0.25em 1em;
 }
 
-td.tight {
-    padding: 0.25em 0.5em 0 0.5em;
-    text-align: left;
-    vertical-align: bottom;
-}
 
 th {
     font: italic bold 1.0em georgia, sans-serif;

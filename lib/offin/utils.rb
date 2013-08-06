@@ -7,6 +7,8 @@ require 'open3'
 require 'stringio'
 require 'tempfile'
 require 'timeout'
+require 'rest_client'
+require 'nokogiri'
 
 # Extend RI mixins to include itql queries:
 
@@ -89,6 +91,16 @@ class Utils
   end
 
 
+  def Utils.quickly
+    Timeout.timeout(2) do
+      yield
+    end
+  rescue Timeout::Error => e
+    raise 'timed out after 2 seconds'
+  end
+
+
+
   # return a mapping from short islandpora pids (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles
 
   def Utils.get_collection_names config
@@ -97,7 +109,10 @@ class Utils
                "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
 
     repository = ::Rubydora.connect :url => config.url, :user => config.user, :password => config.password
-    repository.ping
+
+    quickly do
+      repository.ping
+    end
 
     hash = {}
     repository.itql(query).each do |x|
@@ -108,17 +123,61 @@ class Utils
     return {}
   end
 
+# get_datastream_names(config, islandora_pid) => hash
+#
+# parse XML for dsid/label pairs, as from the example document:
+#
+# <?xml version="1.0" encoding="UTF-8"?>
+# <objectDatastreams xmlns="http://www.fedora.info/definitions/1/0/access/"
+#                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#                    xsi:schemaLocation="http://www.fedora.info/definitions/1/0/access/
+#                                        http://www.fedora-commons.org/definitions/1/0/listDatastreams.xsd"
+#                    pid="fsu:1775" baseURL="http://islandorad.fcla.edu:8080/fedora/">
+#   <datastream dsid="DC" label="Dublin Core Record" mimeType="text/xml"/>
+#   <datastream dsid="RELS-EXT" label="Relationships" mimeType="application/rdf+xml"/>
+#   <datastream dsid="MODS" label="MODS Record" mimeType="text/xml"/>
+#   <datastream dsid="MARCXML" label="Archived Digitool MarcXML" mimeType="text/xml"/>
+#   <datastream dsid="TN" label="Thumbnail" mimeType="image/jpeg"/>
+#   <datastream dsid="DT-METS" label="Archived DigiTool METS for future reference" mimeType="text/xml"/>
+#   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
+# </objectDatastreams>
 
-  # TODO: call restclient, get xml, parse with xpath, turn to hash, return
 
-  def Utils.get_datastream_names config, pid
-    url = config.url.sub(/\/+$/, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml"
+# TODO: quick timeout here
+
+  def Utils.get_datastream_names fedora_url, pid
+    doc = quickly do
+      RestClient.get(fedora_url.sub(/\/+$/, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
+    end
+    xml = Nokogiri::XML(doc)
+
+    hash = {}
+    xml.xpath('//xmlns:objectDatastreams/xmlns:datastream', 'xmlns' => 'http://www.fedora.info/definitions/1/0/access/').each do |ds|
+      hash[ds.attributes['dsid'].to_s] =  ds.attributes['label'].to_s
+    end
+    return hash
 
   rescue => e
     return {}
   end
 
+  # TODO: timeout
 
+  def Utils.ping_islandora_for_object islandora_site, pid
+    return :missing unless pid
+    response = quickly do
+      RestClient.head "http://#{islandora_site}/islandora/object/#{pid}/"
+    end
+    if (response.code > 199 and response.code < 400)
+      return :present
+    else
+      return :error
+    end
+  rescue RestClient::ResourceNotFound => e
+    return :missing
+  rescue => e
+    return :error
+  end
 
   def Utils.get_manifest config, directory
 
@@ -146,7 +205,7 @@ class Utils
 
 
   # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
-  # Kakadu only produces uncomressed TIFFs, so we don't want to use it indiscriminately.
+  # Kakadu only produces uncomressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
 
   def Utils.careful_with_that_jp2 config, jp2k_filepath
     Utils.silence_streams(STDERR) do
@@ -257,7 +316,6 @@ class Utils
 
 
   def Utils.pdf_to_thumbnail config, pdf_filepath
-
     image = nil
     Open3.popen3("#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
       stdin.close

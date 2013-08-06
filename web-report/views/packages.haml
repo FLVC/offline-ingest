@@ -20,7 +20,21 @@
 
     %h1 Ingest Report for #{@hostname}
 
-    %table{ :class => "packages" }
+
+    %form{ :method => 'get' }
+      %fieldset
+        %label{ :for => 'date' } Date:
+        %input{ :name => 'date', :type => 'text', :value => "" }
+
+        %label{ :for => 'title' } Title:
+        %input{ :name => 'title', :type => 'text', :value => "" }
+        %input{ :type => 'submit', :value => 'search' }
+
+    %br
+    %br
+    %br
+
+    %table{ :class => 'packages' }
       %thead
         %tr
           %th Date
