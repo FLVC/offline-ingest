@@ -39,7 +39,7 @@ class PackagePaginator
   # SITE is required and is the value returned from DataBase::IslandoraSite.first(:hostname => '...')
   # Note that BEFORE_ID and AFTER_ID are derived from user input and must be sanitized.
 
-  attr_reader :packages, :comment
+  attr_reader :packages, :count
 
   def initialize site, before_id = nil, after_id = nil
     @site      = site

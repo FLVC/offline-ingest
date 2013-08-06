@@ -6,8 +6,6 @@ require 'offin/paginator'
 
 
 
-
-
 configure do
   $KCODE = 'UTF8'
   set :logging,      :true        # temporarily true - set to false and start it up explicitly later with our own logging
@@ -26,6 +24,9 @@ configure do
   when "islandora-admin7d.fcla.edu"
     DataBase.debug = true
     DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d'))
+  when "fsu-admin.sacred.net"
+    DataBase.debug = true
+    DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod'))
   else
     # how do we error out sensibly here?
   end
@@ -106,6 +107,10 @@ before do
     @hostname = 'islandora7d.fcla.edu'
     @site = DataBase::IslandoraSite.first(:hostname => @hostname)
     @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d')
+  when "fsu-admin.sacred.net"
+    @hostname = 'fsu.digital.flvc.org'
+    @site = DataBase::IslandoraSite.first(:hostname => @hostname)
+    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod')
   else
     halt 500, "Don't know how to configure for server #{ENV['SERVER_NAME']}"
   end

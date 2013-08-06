@@ -18,7 +18,7 @@
 
   %body
 
-    %h1 Ingest Report for #{@hostname}
+    %h1 Ingest Report for #{@hostname}: #{@paginator.count} Digital Objects
 
 
     %form{ :method => 'get' }
@@ -28,7 +28,7 @@
 
         %label{ :for => 'title' } Title:
         %input{ :name => 'title', :type => 'text', :value => "" }
-        %input{ :type => 'submit', :value => 'search' }
+        %input{ :type => 'submit', :value => "doesn't search yet" }
 
 
     - if @paginator.is_first_page?
@@ -61,9 +61,9 @@
       %thead
         %tr
           %th{ :style => "width:12%;" } Date
-          %th{ :style => "width:12%;" } Status
-          %th{ :style => "width:12%;" } Package
-          %th{ :style => "width:12%;" } Digitool
+          %th{ :style => "width:10%;" } Status
+          %th{ :style => "width:13%;" } Package
+          %th{ :style => "width:13%;" } Digitool
           %th{ :style => "width:52%;" } Title
       %tbody
         - @packages.each do |p|
