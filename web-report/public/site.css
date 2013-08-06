@@ -31,6 +31,7 @@ fieldset {
 
     width: 50%;
     border: solid;
+    border-color: black;
     border-width: 1px;
 }
 
@@ -105,13 +106,12 @@ tr.border {
 }
 
 
-
 tr.even {
-    background-color: #bdbdbd;
+    background-color: #63636;
 }
 
 tr.odd {
-    background-color: #63636;
+    background-color: #bdbdbd;
 
 }
 

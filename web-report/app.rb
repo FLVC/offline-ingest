@@ -2,6 +2,11 @@ require 'rubydora'
 require 'offin/db'
 require 'offin/config'
 require 'offin/utils'
+require 'offin/paginator'
+
+
+
+
 
 configure do
   $KCODE = 'UTF8'
@@ -28,6 +33,8 @@ end
 
 
 helpers do
+  PACKAGES_PER_PAGE = 15
+
   def list_component_links package
     return package.get_components.map { |pid| "<a href=\"http://#{@hostname}/islandora/object/#{pid}\">#{pid}</a>" }
   end
@@ -55,6 +62,42 @@ helpers do
   def check_if_present config, package
     return Utils.ping_islandora_for_object(config.site, package.islandora_pid)
   end
+
+  # At most one of before_id, after_id should be set.
+
+  def get_page_worth_of_packages before_id, after_id
+
+    if before_id
+      pid = before_id.to_i
+      ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} AND \"id\" > #{pid} ORDER BY \"id\" ASC LIMIT #{PACKAGES_PER_PAGE}")
+    elsif after_id
+      pid = after_id.to_i
+      ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} AND \"id\" < #{pid} ORDER BY \"id\" DESC LIMIT #{PACKAGES_PER_PAGE}")
+    else
+      ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} ORDER BY \"id\" DESC LIMIT #{PACKAGES_PER_PAGE}")
+    end
+
+    return [] if ids.empty?
+    return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
+  end
+
+
+  def get_page_limits packages
+    return nil, nil if packages.empty?
+    min = repository(:default).adapter.select("SELECT min(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
+    max = repository(:default).adapter.select("SELECT max(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
+
+    return [] if min.empty?
+    min, max = min[0], max[0]
+
+    before = packages.first[:id]
+    after  = packages.last[:id]
+
+    after = packages.last[:id] > min ? packages.last[:id] : nil
+    before = packages.first[:id] < max ? packages.first[:id] : nil
+
+    return before, after
+  end
 end
 
 before do
@@ -74,43 +117,13 @@ get '/' do
   haml :index
 end
 
-get '/packages' do
-  redirect '/packages/'
+get '/packages/' do
+  redirect '/packages'
 end
 
-# get '/:partition/data/' do |partition|
-#   silo = get_silo(partition)
-
-#   page   = params[:page].nil?   ?   1   : safe_number(params[:page])
-#   search = (params[:search].nil? or params[:search] == '') ?  nil : params[:search]
-
-#   count      = silo.package_count(search)
-#   packages   = silo.package_names_by_page(page, PACKAGES_PER_PAGE, search)
-#   packages_1 = packages[0 .. (PACKAGES_PER_PAGE + 1)/2 - 1]
-#   packages_2 = packages[(PACKAGES_PER_PAGE + 1)/2 .. packages.count - 1]
-
-#   if (packages_2.nil? or packages_2.empty?) and (packages_1.nil? or packages_1.empty?)
-#     erb_page = :'packages-none-up'
-#   elsif (packages_2.nil? or packages_2.empty?)
-#     erb_page = :'packages-one-up'
-#   else
-#     erb_page = :'packages-two-up'
-#   end
-
-#   erb erb_page, :locals => {
-#     :packages_1      => packages_1,
-#     :packages_2      => packages_2,
-#     :hostname        => hostname,
-#     :silo            => silo,
-#     :package_count   => count,
-#     :page            => page,
-#     :search          => search,
-#     :number_of_pages => count/PACKAGES_PER_PAGE + (count % PACKAGES_PER_PAGE == 0 ? 0 : 1),
-#     :revision        => REVISION }
-# end
-
-get '/packages/' do
-  @packages = DataBase::IslandoraPackage.all(:order => [ :time_started.desc ], :islandora_site => @site)
+get '/packages' do
+  @paginator = PackagePaginator.new(@site, params[:before], params[:after])
+  @packages  = @paginator.packages
   haml :packages
 end
 
@@ -121,11 +134,7 @@ get '/packages/:id' do
   @components   = list_component_links(@package)
   @purls        = list_purl_links(@package)
   @datastreams  = list_datastream_links(@config, @package)
-
   @on_islandora = check_if_present(@config, @package)   # one of :present, :missing, :error
-
-
-
   haml :package
 end
 

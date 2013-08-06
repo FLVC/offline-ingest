@@ -7,15 +7,14 @@
 
 require 'offin/db'
 
-class Paginator
+class PackagePaginator
 
-  PACKAGES_PER_PAGE = 15
+  PACKAGES_PER_PAGE = 20
 
-  # Think of a page as descending list of numeric ids (they are in
-  # fact the surrogate auto-incremented keys produced for a package
+  # Think of a page as descending list of numeric IDs (those IDs are
+  # in fact the surrogate auto-incremented keys produced for a package
   # table, created when a package starts to get ingested, so this
   # arrangement gives us a reverse chronological browsable list).
-
 
   # There are three ways to initialize an object in the paginator class.
   #
@@ -40,14 +39,17 @@ class Paginator
   # SITE is required and is the value returned from DataBase::IslandoraSite.first(:hostname => '...')
   # Note that BEFORE_ID and AFTER_ID are derived from user input and must be sanitized.
 
-  attr_reader :packages
+  attr_reader :packages, :comment
 
   def initialize site, before_id = nil, after_id = nil
     @site      = site
-    @before_id = before_id
-    @after_id  = after_id
 
-    @before_id, @after_id = (( before_id and after_id) ? [ nil, nil ] : [ before_id.to_i, after_id.to_i ])
+    case
+    when (before_id and after_id);   @before_id, @after_id = nil, nil
+    when (before_id);                @before_id, @after_id = before_id.to_i, nil
+    when (after_id);                 @before_id, @after_id = nil, after_id.to_i
+    else;                            @before_id, @after_id = nil, nil
+    end
 
     min = repository(:default).adapter.select("SELECT min(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
     max = repository(:default).adapter.select("SELECT max(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
@@ -57,12 +59,12 @@ class Paginator
     @min_id = min.empty? ? nil : min[0]
     @max_id = max.empty? ? nil : max[0]
 
-    @packages  = packages()
+    @packages = list_packages()
   end
 
   # provide a list of packages
 
-  def packages
+  def list_packages
     return case
            when @before_id; packages_before
            when @after_id;  packages_after
@@ -88,12 +90,12 @@ class Paginator
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
-  def has_next?
+  def has_next_page?
     return false if @packages.empty?
     return @packages.last[:id] > @min_id
   end
 
-  def has_previous?
+  def has_previous_page?
     return false if @packages.empty?
     return @packages.first[:id] < @max_id
   end
@@ -107,27 +109,28 @@ class Paginator
   end
 
   def previous_page
-    return "/packages/" if @packages.empty?
-    return "/packages/" unless has_previous?
-    return "/packages/before=#{@packages.first[:id]}"
+    return "/packages" if @packages.empty?
+    return "/packages" unless has_previous_page?
+    return "/packages?before=#{@packages.first[:id]}"
   end
 
   def next_page
-    return "/packages/" if @packages.empty?
-    return "/packages/" unless has_next?
-    return "/packages/after=#{@packages.last[:id]}"
+    return "/packages" if @packages.empty?
+    return "/packages" unless has_next_page?
+    return "/packages?after=#{@packages.last[:id]}"
   end
 
   def first_page
-    return "/packages/"
+    return "/packages"
   end
 
   def last_page
-    size_on_last_page  = @count % PACKAGES_PER_PAGE
-    size_on_last_page  = PACKAGES_PER_PAGE if size_on_last_page == 0
-    ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} ORDER BY \"id\" desc LIMIT #{size_on_last_page}")
-    return "/packages/" if ids.empty?
-    return "/packages/after=#{ids[0].to_i + 1}"
+    skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
+    skip -= PACKAGES_PER_PAGE if skip == @count
+
+    ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} ORDER BY \"id\" desc OFFSET #{skip} LIMIT 1")
+    return "/packages" if ids.empty?
+    return "/packages?after=#{ids[0].to_i + 1}"
   end
 
 end

@@ -28,7 +28,7 @@
       - when :present
         #{@package.islandora_summary_link(@package.islandora_thumbnail_link, 'target="islandora"')}
       - when :missing
-        Package is no longer present on islandora.
+        This package is no longer present on islandora.
       - when :error
         Islandora cannot be reached at the moment - can't access datastreams for display.
       %br

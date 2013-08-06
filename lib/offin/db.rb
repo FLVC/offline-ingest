@@ -131,7 +131,7 @@ module DataBase
       self.component_objects.map { |rec| rec.pid }
     end
 
-    # display support
+    # display support.  probably doesn't belong in this class at all.
 
     def islandora_link_base path, text, css = ''
       "<a #{css} href=\"http://#{self.islandora_site.hostname}/islandora/object/#{path}\">#{text}</a>"
@@ -167,7 +167,7 @@ module DataBase
     # provide a 'drill-down' url with text 'success', 'warning', 'error' depending;  assumes a relative link
 
     def admin_status_url css = ''
-      url = "<a #{css} href=\"#{self['id']}\">"
+      url = "<a #{css} href=\"/packages/#{self['id']}\">"
       return url + case
                    when (not get_errors.empty?);     'error</a>'
                    when (not get_warnings.empty?);   'warning</a>'
@@ -249,7 +249,7 @@ module DataBase
     repository(:default).adapter.resource_naming_convention = DataMapper::NamingConventions::Resource::UnderscoredAndPluralizedWithoutModule
     DataMapper.finalize
 
-    # ping database
+    # ping database so we can fail fast
 
     return dm.select('select 1 + 1') == [ 2 ]
   rescue => e
