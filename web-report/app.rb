@@ -119,7 +119,8 @@ end
 # Intro page
 
 get '/' do
-  haml :index
+  redirect '/packages'
+  # haml :index  -- for later when we have more microservices....
 end
 
 get '/packages/' do
