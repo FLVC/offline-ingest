@@ -131,49 +131,6 @@ module DataBase
       self.component_objects.map { |rec| rec.pid }
     end
 
-    # display support.  probably doesn't belong in this class at all.
-
-    def islandora_link_base path, text, css = ''
-      "<a #{css} href=\"http://#{self.islandora_site.hostname}/islandora/object/#{path}\">#{text}</a>"
-    end
-
-    def islandora_thumbnail_link  css = ''
-      return if not self.success
-      return "<img #{css} src=\"http://#{self.islandora_site.hostname}/islandora/object/#{self.islandora_pid}/datastream/TN/view\">"
-    end
-
-    # provide a link to the islandora page, if possible, otherwise just the package name
-
-    def islandora_description_link text, css = ''
-      return self.package_name unless self.success and self.islandora_pid
-      return islandora_link_base(self.islandora_pid + '#tabs-2', text, css)
-    end
-
-    def islandora_summary_link text, css = ''
-      return self.package_name unless self.success and self.islandora_pid
-      return islandora_link_base(self.islandora_pid, text, css)
-    end
-
-    def digitool_link text, css = ''
-      return unless self.digitool_id
-      return "<a #{css} href=\"http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{self.digitool_id}\">#{text}</a>"
-    end
-
-    def islandora_collection_links title_mapping = {},  css = ''
-      collections = self.get_collections
-      return collections.map { |pid| islandora_link_base(pid, title_mapping[pid] ? title_mapping[pid] + " (#{pid})" : pid, css) }
-    end
-
-    # provide a 'drill-down' url with text 'success', 'warning', 'error' depending;  assumes a relative link
-
-    def admin_status_url css = ''
-      url = "<a #{css} href=\"/packages/#{self['id']}\">"
-      return url + case
-                   when (not get_errors.empty?);     'error</a>'
-                   when (not get_warnings.empty?);   'warning</a>'
-                   else;                             'success</a>'
-                   end
-    end
   end # of class IslandoraPackage
 
 

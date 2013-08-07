@@ -14,19 +14,24 @@
     %h1 Ingest  #{@package.success ? 'Success' : 'Failure' } Report for Package #{@package.package_name} on #{@hostname}
 
     - if @on_islandora == :present
-      Title: #{@package.islandora_description_link(@package.package_name + ": #{@package.title} &rArr;", 'target="islandora"')}
+      Title:
+      %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
+        #{@package.title + " &rArr;"}
     - else
       Title: #{@package.title}
     %br
 
     - if @package.digitool_id
-      DigiTool ID: #{@package.digitool_link("#{@package.digitool_id} &rArr;", 'target="digitool"')}
+      DigiTool ID:
+      %a{ :target => "digitool", :href => "http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{@package.digitool_id}" }
+        #{@package.digitool_id.to_s + " &rArr;"}
       %br
 
     - if @package.success
       - case @on_islandora
       - when :present
-        #{@package.islandora_summary_link(@package.islandora_thumbnail_link, 'target="islandora"')}
+        %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
+          %img{ :src => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}/datastream/TN/view" }
       - when :missing
         This package is no longer present on islandora.
       - when :error

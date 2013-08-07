@@ -48,8 +48,14 @@ helpers do
     return Utils.pretty_elapsed(package.time_finished.strftime('%s').to_i - package.time_started.strftime('%s').to_i)
   end
 
-  def list_collection_links config, package
-    return package.islandora_collection_links(Utils.get_collection_names(config))
+  def list_collection_links config, package, css = ''
+    collection_titles = Utils.get_collection_names(config)
+    list = []
+    collections = package.get_collections.each do |pid|
+      title = collection_titles[pid] ? collection_titles[pid] + " (#{pid})" : pid
+      list.push "<a href=\"http://#{config.site}/islandora/object/#{pid}\">#{title}</a>"
+    end
+    return list
   end
 
   def list_datastream_links config, package
@@ -64,41 +70,10 @@ helpers do
     return Utils.ping_islandora_for_object(config.site, package.islandora_pid)
   end
 
-  # At most one of before_id, after_id should be set.
-
-  def get_page_worth_of_packages before_id, after_id
-
-    if before_id
-      pid = before_id.to_i
-      ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} AND \"id\" > #{pid} ORDER BY \"id\" ASC LIMIT #{PACKAGES_PER_PAGE}")
-    elsif after_id
-      pid = after_id.to_i
-      ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} AND \"id\" < #{pid} ORDER BY \"id\" DESC LIMIT #{PACKAGES_PER_PAGE}")
-    else
-      ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} ORDER BY \"id\" DESC LIMIT #{PACKAGES_PER_PAGE}")
-    end
-
-    return [] if ids.empty?
-    return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
+  def get_on_site_map config, packages
+    return Utils.ping_islandora_for_objects(config.site, packages.map { |p| p.islandora_pid })
   end
 
-
-  def get_page_limits packages
-    return nil, nil if packages.empty?
-    min = repository(:default).adapter.select("SELECT min(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
-    max = repository(:default).adapter.select("SELECT max(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
-
-    return [] if min.empty?
-    min, max = min[0], max[0]
-
-    before = packages.first[:id]
-    after  = packages.last[:id]
-
-    after = packages.last[:id] > min ? packages.last[:id] : nil
-    before = packages.first[:id] < max ? packages.first[:id] : nil
-
-    return before, after
-  end
 end
 
 before do
@@ -128,8 +103,9 @@ get '/packages/' do
 end
 
 get '/packages' do
-  @paginator = PackagePaginator.new(@site, params[:before], params[:after])
-  @packages  = @paginator.packages
+  @paginator          = PackageListPaginator.new(@site, params)
+  @packages           = @paginator.packages
+  @islandora_presence = get_on_site_map(@config, @packages)
   haml :packages
 end
 

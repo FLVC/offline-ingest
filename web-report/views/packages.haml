@@ -31,28 +31,28 @@
         %input{ :type => 'submit', :value => "doesn't search yet" }
 
 
-    - if @paginator.is_first_page?
+    - if @paginator.is_first_page_list?
       << first
     - else
-      %a{ :href => @paginator.first_page }
+      %a{ :href => @paginator.first_page_list }
         << first
 
-    - if @paginator.has_previous_page?
-      %a{ :href => @paginator.previous_page }
+    - if @paginator.has_previous_page_list?
+      %a{ :href => @paginator.previous_page_list }
         < prev #{'|'}
     - else
       < prev #{'|'}
 
-    - if @paginator.has_next_page?
-      %a{ :href => @paginator.next_page }
+    - if @paginator.has_next_page_list?
+      %a{ :href => @paginator.next_page_list }
         | next >
     - else
       | next >
 
-    - if @paginator.is_last_page?
+    - if @paginator.is_last_page_list?
       last >>
     - else
-      %a{ :href => @paginator.last_page }
+      %a{ :href => @paginator.last_page_list }
         last >>
     %br
 
@@ -60,16 +60,36 @@
     %table{ :class => 'packages' }
       %thead
         %tr
-          %th{ :style => "width:12%;" } Date
+          %th{ :style => "width:15%;" } Date
           %th{ :style => "width:10%;" } Status
-          %th{ :style => "width:13%;" } Package
-          %th{ :style => "width:13%;" } Digitool
-          %th{ :style => "width:52%;" } Title
+          %th{ :style => "width:12%;" } Package
+          %th{ :style => "width:12%;" } Digitool
+          %th{ :style => "width:51%;" } Title
       %tbody
         - @packages.each do |p|
           %tr
             %td #{p.time_started.strftime('%F %T')}
-            %td #{p.admin_status_url}
-            %td #{p.islandora_description_link(p.package_name + ' &rArr;', 'target="islandora"')}
-            %td #{p.digitool_link("#{p.digitool_id} &rArr;", 'target="digitool"') or ''}
+
+            %td
+              %a{ :href => "/packages/#{p[:id]}" }
+                - case
+                - when p.errors?
+                  %img{ :src => "/failure.png" }
+                  error
+                - when p.warnings?
+                  %img{ :src => "/warning.png" }
+                  warning
+                - else
+                  %img{ :src => "/success.png" }
+                  success
+
+            %td
+              - if p.success
+                %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{p.islandora_pid}" }
+                  #{p.package_name.to_s + " &rArr;"}
+            %td
+              - if p.digitool_id
+                %a{ :target => "digitool", :href => "http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{p.digitool_id}" }
+                  #{p.digitool_id.to_s + " &rArr;"}
+
             %td #{p.title or ''}
