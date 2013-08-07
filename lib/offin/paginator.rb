@@ -14,7 +14,7 @@ class PackagePaginator
   # Think of a page as descending list of numeric IDs (those IDs are
   # in fact the surrogate auto-incremented keys produced for a package
   # table, created when a package starts to get ingested, so this
-  # arrangement gives us a reverse chronological browsable list).
+  # list gives us a reverse chronological browsable list).
 
   # There are three ways to initialize an object in the paginator class.
   #
@@ -73,30 +73,32 @@ class PackagePaginator
   end
 
   def packages_start
-    ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} ORDER BY \"id\" DESC LIMIT #{PACKAGES_PER_PAGE}")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} ORDER BY id DESC LIMIT #{PACKAGES_PER_PAGE}")
     return [] if ids.empty?
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
   def packages_after
-    ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} AND \"id\" < #{@after_id} ORDER BY \"id\" DESC LIMIT #{PACKAGES_PER_PAGE}")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} AND id < #{@after_id} ORDER BY id DESC LIMIT #{PACKAGES_PER_PAGE}")
     return [] if ids.empty?
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
   def packages_before
-    ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} AND \"id\" > #{@before_id} ORDER BY \"id\" ASC LIMIT #{PACKAGES_PER_PAGE}")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} AND id > #{@before_id} ORDER BY id ASC LIMIT #{PACKAGES_PER_PAGE}")
     return [] if ids.empty?
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
+  # methods to use in views to set links, e.g  << first < previous | next > last >>  links which may be inactive, depending.
+
   def has_next_page?
-    return false if @packages.empty?
+    return false if @packages.empty? or @min_id.nil?
     return @packages.last[:id] > @min_id
   end
 
   def has_previous_page?
-    return false if @packages.empty?
+    return false if @packages.empty? or @max_id.nil>
     return @packages.first[:id] < @max_id
   end
 
@@ -110,13 +112,13 @@ class PackagePaginator
 
   def previous_page
     return "/packages" if @packages.empty?
-    return "/packages" unless has_previous_page?
+    return "/packages" unless has_previous_page?        # just defensive: use has_previous_page? before calling this
     return "/packages?before=#{@packages.first[:id]}"
   end
 
   def next_page
     return "/packages" if @packages.empty?
-    return "/packages" unless has_next_page?
+    return "/packages" unless has_next_page?           # just defensive: use has_next_page? before calling this
     return "/packages?after=#{@packages.last[:id]}"
   end
 
@@ -128,7 +130,7 @@ class PackagePaginator
     skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
     skip -= PACKAGES_PER_PAGE if skip == @count
 
-    ids = repository(:default).adapter.select("SELECT \"id\" FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]} ORDER BY \"id\" desc OFFSET #{skip} LIMIT 1")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} ORDER BY id DESC OFFSET #{skip} LIMIT 1")
     return "/packages" if ids.empty?
     return "/packages?after=#{ids[0].to_i + 1}"
   end
