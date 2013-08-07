@@ -7,7 +7,7 @@
 
 require 'offin/db'
 
-class PackagePaginator
+class PackageListPaginator
 
   PACKAGES_PER_PAGE = 20
 
@@ -16,7 +16,7 @@ class PackagePaginator
   # table, created when a package starts to get ingested, so this
   # list gives us a reverse chronological browsable list).
 
-  # There are three ways to initialize an object in the paginator class.
+  # There are three ways to initialize an object in the paginator class depending on the params hash (from sinatra)
   #
   # * Provide neither BEFORE_ID nor AFTER_ID.
   #     provide a list of PAGE_SIZE packages from most recent
@@ -41,14 +41,14 @@ class PackagePaginator
 
   attr_reader :packages, :count
 
-  def initialize site, before_id = nil, after_id = nil
-    @site      = site
+  def initialize site, params = {}
+    @site = site
 
     case
-    when (before_id and after_id);   @before_id, @after_id = nil, nil
-    when (before_id);                @before_id, @after_id = before_id.to_i, nil
-    when (after_id);                 @before_id, @after_id = nil, after_id.to_i
-    else;                            @before_id, @after_id = nil, nil
+    when (params[:before] and params[:after]);   @before_id, @after_id = nil, nil
+    when (params[:before]);                      @before_id, @after_id = params[:before].to_i, nil
+    when (params[:after]);                       @before_id, @after_id = nil, params[:after].to_i
+    else;                                        @before_id, @after_id = nil, nil
     end
 
     min = repository(:default).adapter.select("SELECT min(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
@@ -90,43 +90,43 @@ class PackagePaginator
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
-  # methods to use in views to set links, e.g  << first < previous | next > last >>  links which may be inactive, depending.
+  # methods to use in views to set links, e.g "<< first < previous | next > last >>" where links which may be inactive, depending.
 
-  def has_next_page?
+  def has_next_page_list?
     return false if @packages.empty? or @min_id.nil?
     return @packages.last[:id] > @min_id
   end
 
-  def has_previous_page?
-    return false if @packages.empty? or @max_id.nil>
+  def has_previous_page_list?
+    return false if @packages.empty? or @max_id.nil?
     return @packages.first[:id] < @max_id
   end
 
-  def is_first_page?
+  def is_first_page_list?
     @packages.map { |p| p[:id] }.include? @max_id
   end
 
-  def is_last_page?
+  def is_last_page_list?
     @packages.map { |p| p[:id] }.include? @min_id
   end
 
-  def previous_page
+  def previous_page_list
     return "/packages" if @packages.empty?
-    return "/packages" unless has_previous_page?        # just defensive: use has_previous_page? before calling this
+    return "/packages" unless has_previous_page_list?        # just defensive: use has_previous_page_list? before calling this
     return "/packages?before=#{@packages.first[:id]}"
   end
 
-  def next_page
+  def next_page_list
     return "/packages" if @packages.empty?
-    return "/packages" unless has_next_page?           # just defensive: use has_next_page? before calling this
+    return "/packages" unless has_next_page_list?           # just defensive: use has_next_page_list? before calling this
     return "/packages?after=#{@packages.last[:id]}"
   end
 
-  def first_page
+  def first_page_list
     return "/packages"
   end
 
-  def last_page
+  def last_page_list
     skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
     skip -= PACKAGES_PER_PAGE if skip == @count
 
@@ -136,3 +136,7 @@ class PackagePaginator
   end
 
 end
+
+
+
+# this is like above, will add

@@ -179,6 +179,15 @@ class Utils
     return :error
   end
 
+  def Utils.ping_islandora_for_objects islandora_site, *pids
+    map = {}
+    pids.each do |pid|
+      map[pid] = Utils.ping_islandora_for_object islandora_site, pid
+    end
+  rescue => e
+    return map
+  end
+
   def Utils.get_manifest config, directory
 
     manifest_filename = File.join(directory, 'manifest.xml')
