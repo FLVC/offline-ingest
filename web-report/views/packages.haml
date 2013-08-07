@@ -87,6 +87,9 @@
               - if p.success
                 %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{p.islandora_pid}" }
                   #{p.package_name.to_s + " &rArr;"}
+              - else
+                #{p.package_name}
+
             %td
               - if p.digitool_id
                 %a{ :target => "digitool", :href => "http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{p.digitool_id}" }

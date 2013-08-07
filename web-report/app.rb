@@ -71,7 +71,8 @@ helpers do
   end
 
   def get_on_site_map config, packages
-    return Utils.ping_islandora_for_objects(config.site, packages.map { |p| p.islandora_pid })
+    pids = packages.map { |p| p.islandora_pid }
+    return Utils.ping_islandora_for_objects(config.site, pids)
   end
 
 end
@@ -105,7 +106,7 @@ end
 get '/packages' do
   @paginator          = PackageListPaginator.new(@site, params)
   @packages           = @paginator.packages
-  @islandora_presence = get_on_site_map(@config, @packages)
+  # @islandora_presence = get_on_site_map(@config, @packages)  -- this is WAAAY to slow to use;
   haml :packages
 end
 

@@ -179,12 +179,11 @@ class Utils
     return :error
   end
 
-  def Utils.ping_islandora_for_objects islandora_site, *pids
+  def Utils.ping_islandora_for_objects islandora_site, pids
     map = {}
     pids.each do |pid|
       map[pid] = Utils.ping_islandora_for_object islandora_site, pid
     end
-  rescue => e
     return map
   end
 
