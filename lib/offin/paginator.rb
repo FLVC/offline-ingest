@@ -51,10 +51,10 @@ class PackageListPaginator
     else;                                        @before_id, @after_id = nil, nil
     end
 
-    min = repository(:default).adapter.select("SELECT min(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
-    max = repository(:default).adapter.select("SELECT max(\"id\") FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")
+    min = repository(:default).adapter.select("SELECT min(id) FROM islandora_packages WHERE islandora_site_id = #{@site[:id]}")
+    max = repository(:default).adapter.select("SELECT max(id) FROM islandora_packages WHERE islandora_site_id = #{@site[:id]}")
 
-    @count = repository(:default).adapter.select("SELECT count(*) FROM \"islandora_packages\" WHERE \"islandora_site_id\" = #{@site[:id]}")[0]
+    @count = repository(:default).adapter.select("SELECT count(*) FROM islandora_packages WHERE islandora_site_id = #{@site[:id]}")[0]
 
     @min_id = min.empty? ? nil : min[0]
     @max_id = max.empty? ? nil : max[0]

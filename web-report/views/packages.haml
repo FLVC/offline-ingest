@@ -60,17 +60,18 @@
     %table{ :class => 'packages' }
       %thead
         %tr
-          %th{ :style => "width:15%;" } Date
+          %th{ :style => "width:10%;" } Date
           %th{ :style => "width:10%;" } Status
           %th{ :style => "width:12%;" } Package
           %th{ :style => "width:12%;" } Digitool
-          %th{ :style => "width:51%;" } Title
+          %th{ :style => "width:56%;" } Title
       %tbody
         - @packages.each do |p|
           %tr
-            %td #{p.time_started.strftime('%F %T')}
+            %td{ :style => 'white-space:nowrap;' }
+              #{p.time_started.strftime('%F %T')}
 
-            %td
+            %td{ :style => 'white-space:nowrap;' }
               %a{ :href => "/packages/#{p[:id]}" }
                 - case
                 - when p.errors?
@@ -83,16 +84,17 @@
                   %img{ :src => "/success.png" }
                   success
 
-            %td
+            %td{ :style => 'white-space:nowrap;' }
               - if p.success
                 %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{p.islandora_pid}" }
                   #{p.package_name.to_s + " &rArr;"}
               - else
                 #{p.package_name}
 
-            %td
+            %td{ :style => 'white-space:nowrap;' }
               - if p.digitool_id
                 %a{ :target => "digitool", :href => "http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{p.digitool_id}" }
                   #{p.digitool_id.to_s + " &rArr;"}
 
-            %td #{p.title or ''}
+            %td{ :style => 'white-space:nowrap;' }
+              #{p.title or ''}

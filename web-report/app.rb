@@ -20,21 +20,23 @@ configure do
   # use Rack::CommonLogger
 
 
-  case ENV['SERVER_NAME']
-  when "islandora-admin7d.fcla.edu"
-    DataBase.debug = true
-    DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d'))
-  when "fsu-admin.sacred.net"
-    DataBase.debug = true
-    DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod'))
-  else
-    # how do we error out sensibly here?
-  end
+  # renaming in progress: TODO: clean this up
+
+  section_name = case ENV['SERVER_NAME']
+                 when "islandora-admin7d.fcla.edu"; 'islandora7d'
+                 when "admin.islandora7d.fcla.edu"; 'islandora7d'
+                 when "fsu-admin.sacred.net";       'fsu7prod'
+                 when "admin.fsu.digital.flvc.org"; 'fsu7prod'
+                 when "admin.fsu7t.fcla.edu";       'fsu7t'
+                 else ;                             'oops' # how do we error out sensibly here?
+                 end
+
+  DataBase.debug = true
+  DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
 end
 
 
 helpers do
-  PACKAGES_PER_PAGE = 15
 
   def list_component_links package
     return package.get_components.map { |pid| "<a href=\"http://#{@hostname}/islandora/object/#{pid}\">#{pid}</a>" }
@@ -78,18 +80,34 @@ helpers do
 end
 
 before do
+
+  # renaming in progress: TODO: clean this up
+
   case ENV['SERVER_NAME']
-  when 'islandora-admin7d.fcla.edu'
+
+  when "islandora-admin7d.fcla.edu"
     @hostname = 'islandora7d.fcla.edu'
-    @site = DataBase::IslandoraSite.first(:hostname => @hostname)
     @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d')
+  when "admin.islandora7d.fcla.edu"
+    @hostname = 'islandora7d.fcla.edu'
+    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d')
+
   when "fsu-admin.sacred.net"
     @hostname = 'fsu.digital.flvc.org'
-    @site = DataBase::IslandoraSite.first(:hostname => @hostname)
     @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod')
+  when "admin.fsu.digital.flvc.org"
+    @hostname = 'fsu.digital.flvc.org'
+    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod')
+
+  when "admin.fsu7t.fcla.edu"
+    @hostname = 'fsu7t.fcla.edu'
+    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7t')
+
   else
     halt 500, "Don't know how to configure for server #{ENV['SERVER_NAME']}"
   end
+
+  @site = DataBase::IslandoraSite.first(:hostname => @hostname)
 end
 
 # Intro page
