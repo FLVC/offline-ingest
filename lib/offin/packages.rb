@@ -791,12 +791,12 @@ class BookPackage < Package
 
     unless unexpected.empty?
       warning "The Book package #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
-      warning unexpected.map { |name| ' - ' + name }
+      warning unexpected.map { |name| ' - ' + name }.sort
     end
 
     unless missing.empty?
       error "The Book package #{@directory_name} is missing the following #{missing.count} required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
-      error missing.map { |name| ' - ' + name }
+      error missing.map { |name| ' - ' + name }.sort
       return false
     end
 
@@ -1040,6 +1040,10 @@ class BookPackage < Package
 
   def rels_ext page_pid, sequence
 
+    toc_entry = @table_of_contents.pages[sequence - 1]
+
+    page_label = toc_entry ?  Utils.xml_escape(toc_entry.title) : "Page #{sequence}"
+
     return <<-XML.gsub(/^    /, '')
     <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
              xmlns:fedora-model="info:fedora/fedora-system:def/model#"
@@ -1050,7 +1054,7 @@ class BookPackage < Package
         <fedora-model:hasModel rdf:resource="info:fedora/islandora:pageCModel"></fedora-model:hasModel>
         <islandora:isPageOf rdf:resource="info:fedora/#{@pid}"></islandora:isPageOf>
         <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
-        <islandora:isPageNumber>#{sequence}</islandora:isPageNumber>
+        <islandora:isPageNumber>#{page_label}</islandora:isPageNumber>
         <islandora:isSection>1</islandora:isSection>
         <islandora:hasLanguage>eng</islandora:hasLanguage>
         <islandora:preprocess>false</islandora:preprocess>

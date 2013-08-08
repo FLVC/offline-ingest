@@ -14,7 +14,7 @@
       $('.packages tbody tr:even').addClass('even');
       });
 
-    %title Ingest Report
+    %title Ingest Report for #{@hostname}
 
   %body
 
@@ -23,39 +23,52 @@
 
     %form{ :method => 'get' }
       %fieldset
-        %label{ :for => 'date' } Date:
+        %label{ :for => 'date',  :style => 'margin-left: 0;' } Date:
         %input{ :name => 'date', :type => 'text', :value => "" }
 
         %label{ :for => 'title' } Title:
         %input{ :name => 'title', :type => 'text', :value => "" }
-        %input{ :type => 'submit', :value => "doesn't search yet" }
 
+        %label{ :for => 'content_type' } Content Type:
+        %select{ :name => 'content_type' }
+          %option Any
+          %option Basic Image
+          %option Book
+          %option Large Image
+          %option PDF
+
+        %input{ :style => 'align: right;',  :type => 'submit', :value => "Yes, I Know Damn Well This Doesn't Work Yet" }
+
+    %br
+
+    / make these bolder, larger, give more space
 
     - if @paginator.is_first_page_list?
-      << first
+      &lArr;&lArr; First
     - else
       %a{ :href => @paginator.first_page_list }
-        << first
+        &lArr;&lArr; First
 
     - if @paginator.has_previous_page_list?
       %a{ :href => @paginator.previous_page_list }
-        < prev #{'|'}
+        &larr;&larr; Previous
     - else
-      < prev #{'|'}
+      &larr;&larr; Previous
+
+    &equiv;
 
     - if @paginator.has_next_page_list?
       %a{ :href => @paginator.next_page_list }
-        | next >
+        Next &rarr;&rarr;
     - else
-      | next >
+      Next &rarr;&rarr;
 
     - if @paginator.is_last_page_list?
-      last >>
+      Last &rArr;&rArr;
     - else
       %a{ :href => @paginator.last_page_list }
-        last >>
+        Last &rArr;&rArr;
     %br
-
 
     %table{ :class => 'packages' }
       %thead

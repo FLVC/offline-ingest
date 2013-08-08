@@ -7,7 +7,7 @@
     %link{ :rel => "stylesheet", :href => "/site.css",  :type => "text/css"  }
     %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
 
-    %title Ingest Report for Package #{@package.package_name}
+    %title Ingest Report on #{@hostname} for Package #{@package.package_name}
 
   %body
 
@@ -65,8 +65,6 @@
     - if @package.success and @on_islandora == :present
       Datastreams: #{@datastreams.join(', ')}
       %br
-
-
 
     - if @package.errors?
       %h2 Errors
