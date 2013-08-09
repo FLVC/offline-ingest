@@ -20,24 +20,41 @@
 
     %h1 Ingest Report for #{@hostname}: #{@paginator.count} Digital Objects
 
+    %br
+      #{@paginator.comment}
+    %br
 
     %form{ :method => 'get' }
       %fieldset
-        %label{ :for => 'date',  :style => 'margin-left: 0;' } Date:
-        %input{ :name => 'date', :type => 'text', :value => "" }
+        %label{ :for =>  'from-date', :style => 'margin-left: 0;' } Date:
+        %input{ :name => 'from-date', :type => 'text', :value => "", :placeholder => "2013-01-01", :style => "width: 8em;" }
+        %input{ :name => 'to-date',   :type => 'text', :value => "", :placeholder => "2013-12-31", :style => "width: 8em;" }
 
-        %label{ :for => 'title' } Title:
-        %input{ :name => 'title', :type => 'text', :value => "" }
+        %label{ :for =>  'ids' } ID:
+        %input{ :name => 'ids', :type => 'text', :value => "", :style => "width: 8em;" }
 
-        %label{ :for => 'content_type' } Content Type:
-        %select{ :name => 'content_type' }
-          %option Any
-          %option Basic Image
-          %option Book
-          %option Large Image
-          %option PDF
+        %label{ :for =>  'title' } Title:
+        %input{ :name => 'title', :type => 'text', :value => "", :style => "width: 20em;"  }
 
-        %input{ :style => 'align: right;',  :type => 'submit', :value => "Yes, I Know Damn Well This Doesn't Work Yet" }
+        %label{ :for =>   'content-type' } Content Type:
+        %select{ :name => 'content-type' }
+          %option{ :value => ""                                } Any
+          %option{ :value => "islandora:sp_basic_image"        } Basic Image
+          %option{ :value => "islandora:bookCModel"            } Book
+          %option{ :value => "islandora:sp_large_image_cmodel" } Large Image
+          %option{ :value => "islandora:sp_pdf"                } PDF
+
+        %label{ :for =>   'status' } Status:
+        %select{ :name => 'status' }
+          %option{ :value => ""        } Any
+          %option{ :value => "warning" } Warning
+          %option{ :value => "error"   } Error
+
+        %input{ :type => 'hidden', :name => 'before', :value => '' }
+        %input{ :type => 'hidden', :name => 'after',  :value => '' }
+        %br
+        %br
+        %input{ :style => 'align: right;',  :type => 'submit', :value => "Filter Ingest Data" }
 
     %br
 
@@ -51,17 +68,17 @@
 
     - if @paginator.has_previous_page_list?
       %a{ :href => @paginator.previous_page_list }
-        &larr;&larr; Previous
+        &larr; Previous
     - else
-      &larr;&larr; Previous
+      &larr; Previous
 
     &equiv;
 
     - if @paginator.has_next_page_list?
       %a{ :href => @paginator.next_page_list }
-        Next &rarr;&rarr;
+        Next &rarr;
     - else
-      Next &rarr;&rarr;
+      Next &rarr;
 
     - if @paginator.is_last_page_list?
       Last &rArr;&rArr;
@@ -73,6 +90,7 @@
     %table{ :class => 'packages' }
       %thead
         %tr
+          %th ID
           %th{ :style => "width:10%;" } Date
           %th{ :style => "width:10%;" } Status
           %th{ :style => "width:12%;" } Package
@@ -81,6 +99,8 @@
       %tbody
         - @packages.each do |p|
           %tr
+            %td #{p[:id]}
+
             %td{ :style => 'white-space:nowrap;' }
               #{p.time_started.strftime('%F %T')}
 

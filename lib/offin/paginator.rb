@@ -39,10 +39,26 @@ class PackageListPaginator
   # SITE is required and is the value returned from DataBase::IslandoraSite.first(:hostname => '...')
   # Note that BEFORE_ID and AFTER_ID are derived from user input and must be sanitized.
 
-  attr_reader :packages, :count
+  attr_reader :packages, :count, :comment
 
   def initialize site, params = {}
     @site = site
+
+    sql_text, placeholder_values = decode_params(params)
+
+
+    foo = "SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? AND #{sql_text} ORDER BY id DESC LIMIT ?"
+
+    bar = [ @site[:id] ] + placeholder_values +  [ PACKAGES_PER_PAGE ]
+
+    @comment  = "params: " + params.inspect + "<br>"
+    @comment += "SQL: \"#{sql_text}\", " + placeholder_values.map { |vl| vl.inspect }.join(', ')
+    @comment += "<BR>"
+    @comment += foo + ", " + bar.map { |vl| vl.inspect }.join(', ')
+
+    ids = repository(:default).adapter.select(foo, *bar)
+
+    @comment += "<BR>" + ids.inspect
 
     case
     when (params[:before] and params[:after]);   @before_id, @after_id = nil, nil
@@ -51,10 +67,10 @@ class PackageListPaginator
     else;                                        @before_id, @after_id = nil, nil
     end
 
-    min = repository(:default).adapter.select("SELECT min(id) FROM islandora_packages WHERE islandora_site_id = #{@site[:id]}")
-    max = repository(:default).adapter.select("SELECT max(id) FROM islandora_packages WHERE islandora_site_id = #{@site[:id]}")
+    min = repository(:default).adapter.select("SELECT min(id) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])
+    max = repository(:default).adapter.select("SELECT max(id) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])
 
-    @count = repository(:default).adapter.select("SELECT count(*) FROM islandora_packages WHERE islandora_site_id = #{@site[:id]}")[0]
+    @count = repository(:default).adapter.select("SELECT count(*) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])[0]
 
     @min_id = min.empty? ? nil : min[0]
     @max_id = max.empty? ? nil : max[0]
@@ -73,19 +89,19 @@ class PackageListPaginator
   end
 
   def packages_start
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} ORDER BY id DESC LIMIT #{PACKAGES_PER_PAGE}")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? ORDER BY id DESC LIMIT ?", @site[:id], PACKAGES_PER_PAGE)
     return [] if ids.empty?
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
   def packages_after
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} AND id < #{@after_id} ORDER BY id DESC LIMIT #{PACKAGES_PER_PAGE}")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? AND id < ? ORDER BY id DESC LIMIT ?", @site[:id], @after_id, PACKAGES_PER_PAGE)
     return [] if ids.empty?
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
   def packages_before
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} AND id > #{@before_id} ORDER BY id ASC LIMIT #{PACKAGES_PER_PAGE}")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? AND id > ? ORDER BY id ASC LIMIT ?", @site[:id], @before_id, PACKAGES_PER_PAGE)
     return [] if ids.empty?
     return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
@@ -130,11 +146,47 @@ class PackageListPaginator
     skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
     skip -= PACKAGES_PER_PAGE if skip == @count
 
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = #{@site[:id]} ORDER BY id DESC OFFSET #{skip} LIMIT 1")
+    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? ORDER BY id DESC OFFSET ? LIMIT 1", @site[:id], skip)
     return "/packages" if ids.empty?
     return "/packages?after=#{ids[0].to_i + 1}"
   end
 
+
+  private
+
+  def decode_params params
+
+    # we remove non-values from params:
+
+    params.each { |k,v| params.delete(k) if v.nil? or v.empty? }
+
+    conditions = []
+    values     = []
+
+    params.keys.each do |name|
+      val = params[name]
+      # next unless val and not val.empty?
+      case name
+      when 'from-date'
+      when 'to-date'
+      when 'title'
+        conditions.push "title ilike ?"
+        values.push "%#{val}%"
+      when 'ids'
+        conditions.push "(CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ? OR package_name ilike ?)"
+        values += ["%#{val}%"] * 3
+      when 'content-type'
+        conditions.push "content_model = ?"
+        values.push val
+      when 'status'
+        conditions.push "islandora_packages.id IN (select warning_messages.islandora_package_id FROM warning_messages)"  if val == 'warning'
+        conditions.push "islandora_packages.id IN (select error_messages.islandora_package_id FROM error_messages)"      if val == 'error'
+      end
+
+    end
+
+    return conditions.join(' AND '), values
+  end
 end
 
 
