@@ -1,9 +1,10 @@
 # Paginator is a class to help simplify the page-by-page displays of a
-# list of packages, where that list may be growing faster than the person
-# can page through it.   It provides a list of datamapper::package records.
+# list of packages, where that list may be growing faster than the
+# person can page through it.  It provides a list of
+# datamapper::package records based on filtering and pagination data.
 #
-# It is only used in our sinatra app.
-
+# It is primarily used in our sinatra data analysis app within view
+# templates.
 
 require 'offin/db'
 
@@ -16,7 +17,7 @@ class PackageListPaginator
   # table, created when a package starts to get ingested, so this
   # list gives us a reverse chronological browsable list).
 
-  # There are three ways to initialize an object in the paginator class depending on the params hash (from sinatra)
+  # There are main three ways to initialize an object in the paginator class depending on the params hash (from sinatra)
   #
   # * Provide neither BEFORE_ID nor AFTER_ID.
   #     provide a list of PAGE_SIZE packages from most recent
@@ -31,10 +32,10 @@ class PackageListPaginator
   #     just after the ID with value AFTER_ID
   #
   # If both BEFORE_ID and AFTER_ID are used, we'll not pay any
-  # attention to them.
+  # attention to either of them.
   #
-  # There are some additional convenience methods for dealing with
-  # setting up links, etc, in a view.
+  # There are additional filtering parameters that are applied to the
+  # entire packages list before the above logic comes into play.
   #
   # SITE is required and is the value returned from DataBase::IslandoraSite.first(:hostname => '...')
   # Note that BEFORE_ID and AFTER_ID are derived from user input and must be sanitized.
@@ -44,8 +45,9 @@ class PackageListPaginator
   def initialize site, params = {}
     @site = site
 
-    sql_text, placeholder_values = process_params(params)
+    sql_text, placeholder_values = process_params(params)  # cleans out unset params as a side effect
 
+######## debugging..
 
 
     @comment  = "params: " + params.inspect + "<br>"
@@ -56,6 +58,9 @@ class PackageListPaginator
 
     @comment += "<BR>" + ids.inspect
 
+########
+
+
     case
     when (params[:before] and params[:after]);   @before_id, @after_id = nil, nil
     when (params[:before]);                      @before_id, @after_id = params[:before].to_i, nil
@@ -63,13 +68,8 @@ class PackageListPaginator
     else;                                        @before_id, @after_id = nil, nil
     end
 
-    min = repository(:default).adapter.select("SELECT min(id) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])
-    max = repository(:default).adapter.select("SELECT max(id) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])
-
-    @count = repository(:default).adapter.select("SELECT count(*) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])[0]
-
-    @min_id = min.empty? ? nil : min[0]
-    @max_id = max.empty? ? nil : max[0]
+    rec = repository(:default).adapter.select("SELECT min(id), max(id), count(*) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])[0]
+    @min, @max, @count = rec.min, rec.max, rec.count
 
     @packages = list_packages()
   end
@@ -150,38 +150,72 @@ class PackageListPaginator
 
   private
 
+  # We do database queries in two steps.  First, subject to pagination
+  # (:before, :after) and search parameters (everything else), we
+  # create an SQL statement that selects a page's worth of the DB's
+  # islandora_packages.id's, a sequence of integers.  Once that's
+  # done, we'll use the id's to instantiate the datamapper objects that
+  # will be passed to our view templates.
+  #
+  # process_params(params) supplies the logic for this first part. Note that
+  # params is user-supplied input and untrustworthy - thus the placeholders.
+  #
+  # Note also: this is very PostgreSQL specific SQL.
+
   def process_params params
 
-    # we remove non-values from params:
+    # we remove non-values from params, which will modify the params hash for the caller:
 
     params.each { |k,v| params.delete(k) if v.nil? or v.empty? }
 
+    # special case - there should be at most one of these, if not, remove both:
+
+    if params['before'] and params['after']
+      params.delete('before')
+      params.delete('after')
+    end
+
+    # special case: reorder from/to dates
+    # TODO
+
     conditions = []
-    values     = []
+    placeholder_values = []
+    order_by   = 'ORDER BY id DESC LIMIT ?'
 
     params.keys.each do |name|
       val = params[name]
       # next unless val and not val.empty?
       case name
       when 'from-date'
+        # TODO
       when 'to-date'
+        # TODO
       when 'title'
-        conditions.push "title ilike ?"
-        values.push "%#{val}%"
+        conditions.push 'title ilike ?'
+        placeholder_values.push "%#{val}%"
       when 'ids'
-        conditions.push "(CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ? OR package_name ilike ?)"
-        values += ["%#{val}%"] * 3
+        conditions.push '(CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ? OR package_name ilike ?)'
+        placeholder_values += [ "%#{val}%" ] * 3
       when 'content-type'
-        conditions.push "content_model = ?"
-        values.push val
+        conditions.push 'content_model = ?'
+        placeholder_values.push val
       when 'status'
-        conditions.push "islandora_packages.id IN (select warning_messages.islandora_package_id FROM warning_messages)"  if val == 'warning'
-        conditions.push "islandora_packages.id IN (select error_messages.islandora_package_id FROM error_messages)"      if val == 'error'
+        conditions.push 'islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)'  if val == 'warning'
+        conditions.push 'islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)'      if val == 'error'
+      when 'before'
+        conditions.push 'id > ?'
+        placeholder_values.push val
+        order_by  = 'ORDER BY id ASC LIMIT ?'
+      when 'after'
+        conditions.push 'id < ?'
+        placeholder_values.push val
       end
 
     end
 
-    return conditions.join(' AND '), values
+    # TODO: just do sql calls here...
+
+    return ('SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? ' + conditions.join(' AND ') + ' ' + order_by), ([ @site[:id] ] + placeholder_values + [ PACKAGES_PER_PAGE ])
   end
 end
 
