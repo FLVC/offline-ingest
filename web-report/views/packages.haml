@@ -14,13 +14,19 @@
       $('.packages tbody tr:even').addClass('even');
       });
 
+    :javascript
+      function clearForm($form) {
+      $form.find('input:text, input:password, input:file, select, textarea').val('');
+      $form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
+      };
+
     %title Ingest Report for #{@hostname}
 
   %body
 
     %h1 Ingest Report for #{@hostname}: #{@paginator.count} Digital Objects
 
-    %form{ :method => 'get' }
+    %form{ :method => 'get', :id => 'filter' }
       %fieldset
         %label{ :for =>  'from-date', :style => 'margin-left: 0;' } Date:
         %input{ :name => 'from-date', :type => 'text', :value => "", :placeholder => "2013-01-01", :style => "width: 8em;" }
@@ -50,7 +56,8 @@
         %input{ :type => 'hidden', :name => 'after',  :value => '' }
         %br
         %br
-        %input{ :style => 'align: right;',  :type => 'submit', :value => "Filter Ingest Data" }
+        %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit" }
+        %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));"  }
 
     %br
 
