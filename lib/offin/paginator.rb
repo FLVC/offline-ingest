@@ -6,6 +6,7 @@
 # It is primarily used in our sinatra data analysis app within view
 # templates.
 
+require 'cgi'
 require 'offin/db'
 
 class PackageListPaginator
@@ -40,102 +41,56 @@ class PackageListPaginator
   # SITE is required and is the value returned from DataBase::IslandoraSite.first(:hostname => '...')
   # Note that BEFORE_ID and AFTER_ID are derived from user input and must be sanitized.
 
-  attr_reader :packages, :count, :comment
+  attr_reader :packages, :count, :comment, :params
 
   def initialize site, params = {}
     @site = site
-
-    sql_text, placeholder_values = process_params(params)  # cleans out unset params as a side effect
-
-######## debugging..
-
-
-    @comment  = "params: " + params.inspect + "<br>"
-    @comment += "SQL: \"#{sql_text}\", " + placeholder_values.map { |vl| vl.inspect }.join(', ')
-    @comment += "<BR>"
-
-    ids = repository(:default).adapter.select(sql_text, *placeholder_values)
-
-    @comment += "<BR>" + ids.inspect
-
-########
-
-
-    case
-    when (params[:before] and params[:after]);   @before_id, @after_id = nil, nil
-    when (params[:before]);                      @before_id, @after_id = params[:before].to_i, nil
-    when (params[:after]);                       @before_id, @after_id = nil, params[:after].to_i
-    else;                                        @before_id, @after_id = nil, nil
-    end
-
-    rec = repository(:default).adapter.select("SELECT min(id), max(id), count(*) FROM islandora_packages WHERE islandora_site_id = ?", @site[:id])[0]
-    @min, @max, @count = rec.min, rec.max, rec.count
-
-    @packages = list_packages()
-  end
-
-  # provide a list of packages
-
-  def list_packages
-    return case
-           when @before_id; packages_before
-           when @after_id;  packages_after
-           else;            packages_start
-           end
-  end
-
-  def packages_start
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? ORDER BY id DESC LIMIT ?", @site[:id], PACKAGES_PER_PAGE)
-    return [] if ids.empty?
-    return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
-  end
-
-  def packages_after
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? AND id < ? ORDER BY id DESC LIMIT ?", @site[:id], @after_id, PACKAGES_PER_PAGE)
-    return [] if ids.empty?
-    return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
-  end
-
-  def packages_before
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? AND id > ? ORDER BY id ASC LIMIT ?", @site[:id], @before_id, PACKAGES_PER_PAGE)
-    return [] if ids.empty?
-    return DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
+    @comment = ''
+    @params = params
+    ids = process_params  # cleans out unset @params as a side effect
+    @packages = DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
   end
 
   # methods to use in views to set links, e.g "<< first < previous | next > last >>" where links which may be inactive, depending.
 
   def has_next_page_list?
-    return false if @packages.empty? or @min_id.nil?
-    return @packages.last[:id] > @min_id
+    return false if @packages.empty? or @min.nil?
+    return @packages.last[:id] > @min
   end
 
   def has_previous_page_list?
-    return false if @packages.empty? or @max_id.nil?
-    return @packages.first[:id] < @max_id
+    return false if @packages.empty? or @max.nil?
+    return @packages.first[:id] < @max
+  end
+
+  def no_pages?
+    @packages.empty?
+  end
+
+  def any_pages?
+    not @packages.empty?
   end
 
   def is_first_page_list?
-    @packages.map { |p| p[:id] }.include? @max_id
+    @packages.map { |p| p[:id] }.include? @max
   end
 
   def is_last_page_list?
-    @packages.map { |p| p[:id] }.include? @min_id
+    @packages.map { |p| p[:id] }.include? @min
   end
 
   def previous_page_list
-    return "/packages" if @packages.empty?
-    return "/packages" unless has_previous_page_list?        # just defensive: use has_previous_page_list? before calling this
-    return "/packages?before=#{@packages.first[:id]}"
+    return "/packages" + query_string if @packages.empty?
+    return "/packages" + query_string('before' => @packages.first[:id],  'after' => nil)
   end
 
   def next_page_list
-    return "/packages" if @packages.empty?
-    return "/packages" unless has_next_page_list?           # just defensive: use has_next_page_list? before calling this
-    return "/packages?after=#{@packages.last[:id]}"
+    return "/packages" + query_string if @packages.empty?
+    return "/packages" + query_string('after' => @packages.last[:id],  'before' => nil)
   end
 
   def first_page_list
-    return "/packages"
+    return "/packages" + query_string('after' => nil, 'before' => nil)
   end
 
   def last_page_list
@@ -143,8 +98,21 @@ class PackageListPaginator
     skip -= PACKAGES_PER_PAGE if skip == @count
 
     ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? ORDER BY id DESC OFFSET ? LIMIT 1", @site[:id], skip)
-    return "/packages" if ids.empty?
-    return "/packages?after=#{ids[0].to_i + 1}"
+    return "/packages" + query_string if ids.empty?
+    return "/packages" + query_string('after' => ids[0] + 1,  'before' => nil)
+  end
+
+  def is_content_type? str
+    @params['content-type'] == str
+  end
+
+  def is_status? str
+    @params['status'] == str
+  end
+
+  def add_comment str
+    @comment = '' unless @comment
+    @comment += str + '<br>'
   end
 
 
@@ -157,33 +125,22 @@ class PackageListPaginator
   # done, we'll use the id's to instantiate the datamapper objects that
   # will be passed to our view templates.
   #
-  # process_params(params) supplies the logic for this first part. Note that
+  # process_params() supplies the logic for this first part. Note that
   # params is user-supplied input and untrustworthy - thus the placeholders.
   #
-  # Note also: this is very PostgreSQL specific SQL.
+  # N.B.: this is very PostgreSQL-specific SQL.
 
-  def process_params params
+  def process_params
+    temper_params()
 
-    # we remove non-values from params, which will modify the params hash for the caller:
-
-    params.each { |k,v| params.delete(k) if v.nil? or v.empty? }
-
-    # special case - there should be at most one of these, if not, remove both:
-
-    if params['before'] and params['after']
-      params.delete('before')
-      params.delete('after')
-    end
-
-    # special case: reorder from/to dates
-    # TODO
+    # TODO: reorder from/to dates
 
     conditions = []
     placeholder_values = []
-    order_by   = 'ORDER BY id DESC LIMIT ?'
+    order_by_and_limit   = 'ORDER BY id DESC LIMIT ?'
 
-    params.keys.each do |name|
-      val = params[name]
+    @params.keys.each do |name|
+      val = @params[name]
       # next unless val and not val.empty?
       case name
       when 'from-date'
@@ -202,23 +159,61 @@ class PackageListPaginator
       when 'status'
         conditions.push 'islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)'  if val == 'warning'
         conditions.push 'islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)'      if val == 'error'
-      when 'before'
-        conditions.push 'id > ?'
-        placeholder_values.push val
-        order_by  = 'ORDER BY id ASC LIMIT ?'
-      when 'after'
-        conditions.push 'id < ?'
-        placeholder_values.push val
       end
-
     end
 
-    # TODO: just do sql calls here...
+    # First, get the global limits of what our current search criteria would return, and stash in @min, @max, @count:
 
-    return ('SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? ' + conditions.join(' AND ') + ' ' + order_by), ([ @site[:id] ] + placeholder_values + [ PACKAGES_PER_PAGE ])
+    sql_text = "SELECT min(id), max(id), count(*) FROM islandora_packages WHERE islandora_site_id = ?"
+    parameters = [ @site[:id] ]
+
+    unless conditions.empty?
+      sql_text += ' AND ' + conditions.join(' AND ')
+      parameters += placeholder_values
+    end
+
+    rec = repository(:default).adapter.select(sql_text, *parameters)[0]
+    @min, @max, @count = rec.min, rec.max, rec.count
+
+    # now we can add the page restictions (one of the params 'before', 'after') if any, and get the page-sized list we want:
+
+    if val = @params['before']
+      conditions.push 'id > ?'
+      placeholder_values.push val
+      order_by_and_limit  = 'ORDER BY id ASC LIMIT ?'
+    end
+
+    if val = @params['after']
+      conditions.push 'id < ?'
+      placeholder_values.push val
+    end
+
+    if conditions.empty?
+      sql_text = 'SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? ' + order_by_and_limit
+      parameters = [ @site[:id],  PACKAGES_PER_PAGE ]
+    else
+      sql_text = 'SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? AND ' + conditions.join(' AND ') + ' ' + order_by_and_limit
+      parameters = [ @site[:id] ] + placeholder_values + [ PACKAGES_PER_PAGE ]
+    end
+
+    return repository(:default).adapter.select(sql_text, *parameters)
   end
-end
 
+  def temper_params additional_params = {}
+    @params.merge! additional_params
+    @params.each { |k,v| @params[k] = v.to_s;  @params.delete(k) if @params[k].empty? }
+    # if @params['before'] and @params['after']  # special case - there should be at most one of these, if not, remove both (do we have to?)
+    #   @params.delete('before')
+    #   @params.delete('after')
+    # end
+  end
 
+  def query_string additional_params = {}
+    temper_params(additional_params)
+    pairs = []
+    @params.each { |k,v| pairs.push "#{CGI::escape(k)}=#{CGI::escape(v)}" }
+    return '' if pairs.empty?
+    return '?' + pairs.join('&')
+  end
 
-# this is like above, will add
+end # of class PackageListPaginator
