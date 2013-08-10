@@ -97,7 +97,47 @@ class PackageListPaginator
     skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
     skip -= PACKAGES_PER_PAGE if skip == @count
 
-    ids = repository(:default).adapter.select("SELECT id FROM islandora_packages WHERE islandora_site_id = ? ORDER BY id DESC OFFSET ? LIMIT 1", @site[:id], skip)
+    conditions = []
+    placeholder_values = []
+
+    ### TODO: almost identical to process_params() - refactor!
+
+    # everything but 'before' and 'after'
+
+    @params.keys.each do |name|
+      val = @params[name]
+      # next unless val and not val.empty?
+      case name
+      when 'from-date'
+        # TODO
+      when 'to-date'
+        # TODO
+      when 'title'
+        conditions.push 'title ilike ?'
+        placeholder_values.push "%#{val}%"
+      when 'ids'
+        conditions.push '(CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ? OR package_name ilike ?)'
+        placeholder_values += [ "%#{val}%" ] * 3
+      when 'content-type'
+        conditions.push 'content_model = ?'
+        placeholder_values.push val
+      when 'status'
+        conditions.push 'islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)'  if val == 'warning'
+        conditions.push 'islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)'      if val == 'error'
+      end
+    end
+
+
+    if conditions.empty?
+      sql = "SELECT id FROM islandora_packages WHERE islandora_site_id = ? ORDER BY id DESC OFFSET ? LIMIT 1"
+      parameters = [ @site[:id], skip ]
+    else
+      sql = "SELECT id FROM islandora_packages WHERE islandora_site_id = ? AND "  + conditions.join(" AND ") + " ORDER BY id DESC OFFSET ? LIMIT 1"
+      parameters = [ @site[:id] ] + placeholder_values + [ skip ]
+    end
+
+    ids = repository(:default).adapter.select(sql, *parameters)
+
     return "/packages" + query_string if ids.empty?
     return "/packages" + query_string('after' => ids[0] + 1,  'before' => nil)
   end
@@ -138,6 +178,9 @@ class PackageListPaginator
     conditions = []
     placeholder_values = []
     order_by_and_limit   = 'ORDER BY id DESC LIMIT ?'
+
+    # everything but 'before' and 'after'
+    ### NOTE: identical to def last... refactor!
 
     @params.keys.each do |name|
       val = @params[name]
