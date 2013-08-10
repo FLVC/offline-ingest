@@ -44,19 +44,15 @@ class PackageListPaginator
   def initialize site, params = {}
     @site = site
 
-    sql_text, placeholder_values = decode_params(params)
+    sql_text, placeholder_values = process_params(params)
 
 
-    foo = "SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? AND #{sql_text} ORDER BY id DESC LIMIT ?"
-
-    bar = [ @site[:id] ] + placeholder_values +  [ PACKAGES_PER_PAGE ]
 
     @comment  = "params: " + params.inspect + "<br>"
     @comment += "SQL: \"#{sql_text}\", " + placeholder_values.map { |vl| vl.inspect }.join(', ')
     @comment += "<BR>"
-    @comment += foo + ", " + bar.map { |vl| vl.inspect }.join(', ')
 
-    ids = repository(:default).adapter.select(foo, *bar)
+    ids = repository(:default).adapter.select(sql_text, *placeholder_values)
 
     @comment += "<BR>" + ids.inspect
 
@@ -154,7 +150,7 @@ class PackageListPaginator
 
   private
 
-  def decode_params params
+  def process_params params
 
     # we remove non-values from params:
 
