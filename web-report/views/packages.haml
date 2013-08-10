@@ -14,52 +14,86 @@
       $('.packages tbody tr:even').addClass('even');
       });
 
-    %title Ingest Report
+    :javascript
+      function clearForm($form) {
+      $form.find('input:text, input:password, input:file, select, textarea').val('');
+      $form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
+      };
+
+    %title Ingest Report for #{@hostname}
 
   %body
 
     %h1 Ingest Report for #{@hostname}: #{@paginator.count} Digital Objects
 
-
-    %form{ :method => 'get' }
+    %form{ :method => 'get', :id => 'filter' }
       %fieldset
-        %label{ :for => 'date' } Date:
-        %input{ :name => 'date', :type => 'text', :value => "" }
+        %label{ :for =>  'from-date', :style => 'margin-left: 0;' } Date:
+        %input{ :name => 'from-date', :type => 'text', :value => "", :placeholder => "2013-01-01", :style => "width: 8em;" }
+        %input{ :name => 'to-date',   :type => 'text', :value => "", :placeholder => "2013-12-31", :style => "width: 8em;" }
 
-        %label{ :for => 'title' } Title:
-        %input{ :name => 'title', :type => 'text', :value => "" }
-        %input{ :type => 'submit', :value => "doesn't search yet" }
+        %label{ :for =>  'ids' } ID:
+        %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;" }
 
+        %label{ :for =>  'title' } Title:
+        %input{ :name => 'title', :type => 'text', :value => @paginator.params["title"], :style => "width: 20em;"  }
 
-    - if @paginator.is_first_page_list?
-      << first
-    - else
-      %a{ :href => @paginator.first_page_list }
-        << first
+        %label{ :for =>   'content-type' } Content Type:
+        %select{ :name => 'content-type' }
+          %option{ :value => "" } Any
+          %option{ :value => "islandora:sp_basic_image",        :selected => @paginator.is_content_type?("islandora:sp_basic_image")          } Basic Image
+          %option{ :value => "islandora:sp_large_image_cmodel", :selected => @paginator.is_content_type?("islandora:sp_large_image_cmodel")   } Large Image
+          %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
+          %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
 
-    - if @paginator.has_previous_page_list?
-      %a{ :href => @paginator.previous_page_list }
-        < prev #{'|'}
-    - else
-      < prev #{'|'}
+        %label{ :for =>   'status' } Status:
+        %select{ :name => 'status' }
+          %option{ :value => "" } Any
+          %option{ :value => "warning", :selected => @paginator.is_status?("warning") } Warning
+          %option{ :value => "error",   :selected => @paginator.is_status?("error")   } Error
 
-    - if @paginator.has_next_page_list?
-      %a{ :href => @paginator.next_page_list }
-        | next >
-    - else
-      | next >
+        %input{ :type => 'hidden', :name => 'before', :value => '' }
+        %input{ :type => 'hidden', :name => 'after',  :value => '' }
+        %br
+        %br
+        %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit" }
+        %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));"  }
 
-    - if @paginator.is_last_page_list?
-      last >>
-    - else
-      %a{ :href => @paginator.last_page_list }
-        last >>
     %br
 
+    / make these bolder, larger, give more space
+
+    - if @paginator.no_pages? or @paginator.is_first_page_list?
+      &lArr;&lArr; First
+    - else
+      %a{ :href => @paginator.first_page_list }
+        &lArr;&lArr; First
+
+    - if @paginator.any_pages? and @paginator.has_previous_page_list?
+      %a{ :href => @paginator.previous_page_list }
+        &larr; Previous
+    - else
+      &larr; Previous
+
+    &equiv;
+
+    - if @paginator.any_pages? and @paginator.has_next_page_list?
+      %a{ :href => @paginator.next_page_list }
+        Next &rarr;
+    - else
+      Next &rarr;
+
+    - if @paginator.no_pages? or @paginator.is_last_page_list?
+      Last &rArr;&rArr;
+    - else
+      %a{ :href => @paginator.last_page_list }
+        Last &rArr;&rArr;
+    %br
 
     %table{ :class => 'packages' }
       %thead
         %tr
+          %th ID
           %th{ :style => "width:10%;" } Date
           %th{ :style => "width:10%;" } Status
           %th{ :style => "width:12%;" } Package
@@ -68,6 +102,8 @@
       %tbody
         - @packages.each do |p|
           %tr
+            %td #{p[:id]}
+
             %td{ :style => 'white-space:nowrap;' }
               #{p.time_started.strftime('%F %T')}
 

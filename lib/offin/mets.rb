@@ -36,7 +36,7 @@ class TableOfContents
           if f.mimetype =~ /image/
             entry.image_filename = f.href
             entry.image_mimetype = f.mimetype
-          elsif f.mimetype =~ /text/
+          elsif f.mimetype =~ /text/             # what was I thinking here? no way this is going to work....
             entry.text_filename = f.href
             entry.text_mimetype = f.mimetype
           end
@@ -55,7 +55,7 @@ class TableOfContents
     cleanup_page_titles
     check_for_page_images
     nip_it_in_the_bud
-  end
+   end
 
 
   def each
@@ -388,7 +388,7 @@ class Mets
       scores.each { |sm,num| return sm if num == max }
     end
 
-    error "Can't determine which of the multiple METS structMaps should be used."
+    error "Can't determine which of the #{list.count} METS structMaps should be used."
     @valid = false
     return
   end

@@ -38,7 +38,7 @@ class Utils
     return str.gsub('&lt;', '<').gsub('&gt;', '>').gsub('&amp;', '&').gsub('&apos;', "'").gsub(/\&\#([0-9]+);/) { |i| $1.to_i.chr }
   end
 
-  # Escaping attribute data would include &quot;
+  # Don't use this for escaping attribute data; that requires '"' => '&quot;'
 
   def Utils.xml_escape str
     return str.gsub('&', '&amp;').gsub("'", '&apos;').gsub('<', '&lt;').gsub('>', '&gt;')
