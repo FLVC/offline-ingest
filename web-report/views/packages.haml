@@ -59,6 +59,7 @@
         %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit" }
         %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));"  }
 
+
     %br
 
     / make these bolder, larger, give more space
@@ -93,7 +94,6 @@
     %table{ :class => 'packages' }
       %thead
         %tr
-          %th ID
           %th{ :style => "width:10%;" } Date
           %th{ :style => "width:10%;" } Status
           %th{ :style => "width:12%;" } Package
@@ -102,12 +102,10 @@
       %tbody
         - @packages.each do |p|
           %tr
-            %td #{p[:id]}
-
-            %td{ :style => 'white-space:nowrap;' }
+            %td
               #{p.time_started.strftime('%F %T')}
 
-            %td{ :style => 'white-space:nowrap;' }
+            %td
               %a{ :href => "/packages/#{p[:id]}" }
                 - case
                 - when p.errors?
@@ -120,17 +118,17 @@
                   %img{ :src => "/success.png" }
                   success
 
-            %td{ :style => 'white-space:nowrap;' }
+            %td
               - if p.success
                 %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{p.islandora_pid}" }
                   #{p.package_name.to_s + " &rArr;"}
               - else
                 #{p.package_name}
 
-            %td{ :style => 'white-space:nowrap;' }
+            %td
               - if p.digitool_id
                 %a{ :target => "digitool", :href => "http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{p.digitool_id}" }
                   #{p.digitool_id.to_s + " &rArr;"}
 
-            %td{ :style => 'white-space:nowrap;' }
+            %td
               #{p.title or ''}
