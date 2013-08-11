@@ -1,3 +1,111 @@
+require 'cgi'
+require 'offin/db'
+
+# SqlAssembler is a helper class for our main event here,
+# PackageListPaginator.  It lets us gather up the parts of a basic SQL
+# select statement in a re-usable way.
+
+Struct.new('SqlFragment', :text, :parameters)
+
+class SqlAssembler
+
+  def initialize
+    @select = new_statement_fragment
+    @where  = new_statement_fragment
+    @order  = new_statement_fragment
+    @limit  = new_statement_fragment
+  end
+
+  def add_condition text, *parameters
+    add @where, text, *parameters
+  end
+
+  def set_select text, *parameters
+    update @select, text, *parameters
+  end
+
+  def set_order text, *parameters
+    update @order, text, *parameters
+  end
+
+  def set_limit  text, *parameters
+    update @limit, text, *parameters
+  end
+
+  def execute
+    sql, placeholder_values = assemble()
+    return repository(:default).adapter.select(sql, *placeholder_values)
+  end
+
+  private
+
+  def new_statement_fragment
+    fragment = Struct::SqlFragment.new;
+    fragment.text = [];
+    fragment.parameters = [];
+    return fragment
+  end
+
+  def update fragment, text, *parameters
+    parameters = [] if parameters.nil?
+    fragment.text = [ text.strip ]
+    fragment.parameters = parameters.flatten
+  end
+
+  def add fragment, text, *parameters
+    parameters = [] if parameters.nil?
+    fragment.text.push text.strip
+    fragment.parameters += parameters.flatten
+  end
+
+  def assemble
+
+    # We assume exactly one select text; start out with this  "SELECT ..."
+
+    sql_text = @select.text.first
+    placeholder_values = @select.parameters
+
+    # handle multiple conditions:  "WHERE ... AND ..."
+
+    unless @where.text.length < 1
+      sql_text += " WHERE " + @where.text[0]
+    end
+
+    unless @where.text.length < 2
+      sql_text += " AND " + @where.text[1..-1].join(" AND ")
+    end
+
+    unless @where.parameters.empty?
+      placeholder_values.push *@where.parameters
+    end
+
+    # we assume zero or one order and limit fragments
+
+    # "ORDER BY..."
+
+    unless @order.text.empty?
+      sql_text += " " + @order.text.first
+    end
+
+    unless @order.parameters.empty?
+      placeholder_values.push *@order.parameters
+    end
+
+    # "OFFSET ... LIMIT ..."
+
+    unless @limit.text.empty?
+      sql_text += " " + @limit.text.first
+    end
+
+    unless @limit.parameters.empty?
+      placeholder_values.push *@limit.parameters
+    end
+
+    return sql_text, placeholder_values
+  end
+end
+
+
 # Paginator is a class to help simplify the page-by-page displays of a
 # list of packages, where that list may be growing faster than the
 # person can page through it.  It provides a list of
@@ -5,9 +113,6 @@
 #
 # It is primarily used in our sinatra data analysis app within view
 # templates.
-
-require 'cgi'
-require 'offin/db'
 
 class PackageListPaginator
 
@@ -45,7 +150,7 @@ class PackageListPaginator
 
   def initialize site, params = {}
     @site = site
-    @comment = ''
+    @comment = nil
     @params = params
     ids = process_params  # cleans out unset @params as a side effect
     @packages = DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
@@ -93,54 +198,57 @@ class PackageListPaginator
     return "/packages" + query_string('after' => nil, 'before' => nil)
   end
 
+
+  ## TODO: add date support here
+
+  def setup_basic_filters sql
+
+    sql.add_condition('islandora_site_id = ?', @site[:id])
+
+    if val = @params['title']
+      sql.add_condition('title ilike ?', "%#{val}%")
+    end
+
+    if val = @params['ids']
+      sql.add_condition('(package_name ilike ? OR CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ?)', [ "%#{val}%" ] * 3)
+    end
+
+    if val = @params['content-type']
+      sql.add_condition('content_model = ?', val)
+    end
+
+    if @params['status'] == 'warning'
+      sql.add_condition('islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)')
+    end
+
+    if @params['status'] == 'error'
+      sql.add_condition('islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)')
+    end
+
+    return sql
+  end
+
+  # last_page_list => URL that will take us to the last page of our
+  # list of packages (subject to our filters)
+
   def last_page_list
     skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
     skip -= PACKAGES_PER_PAGE if skip == @count
 
-    conditions = []
-    placeholder_values = []
+    sql = setup_basic_filters(SqlAssembler.new)
 
-    ### TODO: almost identical to process_params() - refactor!
+    sql.set_select('SELECT id FROM islandora_packages')
+    sql.set_order('ORDER BY id DESC')
+    sql.set_limit('OFFSET ? LIMIT 1', skip)
 
-    # everything but 'before' and 'after'
+    ids = sql.execute
 
-    @params.keys.each do |name|
-      val = @params[name]
-      # next unless val and not val.empty?
-      case name
-      when 'from-date'
-        # TODO
-      when 'to-date'
-        # TODO
-      when 'title'
-        conditions.push 'title ilike ?'
-        placeholder_values.push "%#{val}%"
-      when 'ids'
-        conditions.push '(CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ? OR package_name ilike ?)'
-        placeholder_values += [ "%#{val}%" ] * 3
-      when 'content-type'
-        conditions.push 'content_model = ?'
-        placeholder_values.push val
-      when 'status'
-        conditions.push 'islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)'  if val == 'warning'
-        conditions.push 'islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)'      if val == 'error'
-      end
-    end
-
-
-    if conditions.empty?
-      sql = "SELECT id FROM islandora_packages WHERE islandora_site_id = ? ORDER BY id DESC OFFSET ? LIMIT 1"
-      parameters = [ @site[:id], skip ]
-    else
-      sql = "SELECT id FROM islandora_packages WHERE islandora_site_id = ? AND "  + conditions.join(" AND ") + " ORDER BY id DESC OFFSET ? LIMIT 1"
-      parameters = [ @site[:id] ] + placeholder_values + [ skip ]
-    end
-
-    ids = repository(:default).adapter.select(sql, *parameters)
-
-    return "/packages" + query_string if ids.empty?
+    return "/packages" + query_string('after' => nil, 'before' => nil) if ids.empty?
     return "/packages" + query_string('after' => ids[0] + 1,  'before' => nil)
   end
+
+
+  # parameter checking convience funtions for view, e.g.  :select => paginator.is_content_type?('islandora:sp_pdf')
 
   def is_content_type? str
     @params['content-type'] == str
@@ -150,15 +258,21 @@ class PackageListPaginator
     @params['status'] == str
   end
 
+  # add a comment to place on a page - useful for debugging
+
   def add_comment str
     @comment = '' unless @comment
     @comment += str + '<br>'
   end
 
+  def comment?
+    @comment
+  end
+
 
   private
 
-  # We do database queries in two steps.  First, subject to pagination
+  # We do database queries in two steps.  First, subject to page positions
   # (:before, :after) and search parameters (everything else), we
   # create an SQL statement that selects a page's worth of the DB's
   # islandora_packages.id's, a sequence of integers.  Once that's
@@ -166,95 +280,57 @@ class PackageListPaginator
   # will be passed to our view templates.
   #
   # process_params() supplies the logic for this first part. Note that
-  # params is user-supplied input and untrustworthy - thus the placeholders.
+  # @params is user-supplied input and untrustworthy - thus we use
+  # placeholders.
   #
-  # N.B.: this is very PostgreSQL-specific SQL.
+  # N.B.: some of this is very PostgreSQL-specific SQL.
 
   def process_params
     temper_params()
 
-    # TODO: reorder from/to dates
+    # first: find the limits of our package set - largest id, smallest id, total siet
 
-    conditions = []
-    placeholder_values = []
-    order_by_and_limit   = 'ORDER BY id DESC LIMIT ?'
+    sql = setup_basic_filters(SqlAssembler.new)
 
-    # everything but 'before' and 'after'
-    ### NOTE: identical to def last... refactor!
+    sql.set_select('SELECT min(id), max(id), count(*) FROM islandora_packages')
 
-    @params.keys.each do |name|
-      val = @params[name]
-      # next unless val and not val.empty?
-      case name
-      when 'from-date'
-        # TODO
-      when 'to-date'
-        # TODO
-      when 'title'
-        conditions.push 'title ilike ?'
-        placeholder_values.push "%#{val}%"
-      when 'ids'
-        conditions.push '(CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ? OR package_name ilike ?)'
-        placeholder_values += [ "%#{val}%" ] * 3
-      when 'content-type'
-        conditions.push 'content_model = ?'
-        placeholder_values.push val
-      when 'status'
-        conditions.push 'islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)'  if val == 'warning'
-        conditions.push 'islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)'      if val == 'error'
-      end
-    end
+    rec = sql.execute()[0]
 
-    # First, get the global limits of what our current search criteria would return, and stash in @min, @max, @count:
-
-    sql_text = "SELECT min(id), max(id), count(*) FROM islandora_packages WHERE islandora_site_id = ?"
-    parameters = [ @site[:id] ]
-
-    unless conditions.empty?
-      sql_text += ' AND ' + conditions.join(' AND ')
-      parameters += placeholder_values
-    end
-
-    rec = repository(:default).adapter.select(sql_text, *parameters)[0]
     @min, @max, @count = rec.min, rec.max, rec.count
 
-    # now we can add the page restictions (one of the params 'before', 'after') if any, and get the page-sized list we want:
+    # now we can figure out where the page of interest starts (using one of the params 'before', 'after') and get the page-sized list we want:
+    # if there are no 'before' or 'after' parameters we'll generate a page list starting from the most recent package.
+
+    sql.set_select('SELECT DISTINCT id FROM islandora_packages')
+    sql.set_limit('LIMIT ?', PACKAGES_PER_PAGE)
+    sql.set_order('ORDER BY id DESC')
 
     if val = @params['before']
-      conditions.push 'id > ?'
-      placeholder_values.push val
-      order_by_and_limit  = 'ORDER BY id ASC LIMIT ?'
+      sql.add_condition('id > ?', val)
+      sql.set_order('ORDER BY id ASC')
     end
 
     if val = @params['after']
-      conditions.push 'id < ?'
-      placeholder_values.push val
+      sql.add_condition('id < ?', val)
     end
 
-    if conditions.empty?
-      sql_text = 'SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? ' + order_by_and_limit
-      parameters = [ @site[:id],  PACKAGES_PER_PAGE ]
-    else
-      sql_text = 'SELECT DISTINCT id FROM islandora_packages WHERE islandora_site_id = ? AND ' + conditions.join(' AND ') + ' ' + order_by_and_limit
-      parameters = [ @site[:id] ] + placeholder_values + [ PACKAGES_PER_PAGE ]
-    end
-
-    return repository(:default).adapter.select(sql_text, *parameters)
+    return sql.execute
   end
 
   def temper_params additional_params = {}
     @params.merge! additional_params
     @params.each { |k,v| @params[k] = v.to_s;  @params.delete(k) if @params[k].empty? }
-    # if @params['before'] and @params['after']  # special case - there should be at most one of these, if not, remove both (do we have to?)
-    #   @params.delete('before')
-    #   @params.delete('after')
-    # end
+
+    if @params['before'] and @params['after']  # special case - there should be at most one of these, if not, remove both (do we really have to do this? it's mostly defensive programming...)
+       @params.delete('before')
+       @params.delete('after')
+    end
   end
 
   def query_string additional_params = {}
     temper_params(additional_params)
     pairs = []
-    @params.each { |k,v| pairs.push "#{CGI::escape(k)}=#{CGI::escape(v)}" }
+    @params.each { |k,v| pairs.push "#{CGI::escape(k)}=#{CGI::escape(v)}" } # ecaping the key is purely defensive.
     return '' if pairs.empty?
     return '?' + pairs.join('&')
   end

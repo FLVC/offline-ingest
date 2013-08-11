@@ -28,6 +28,7 @@
 
     %form{ :method => 'get', :id => 'filter' }
       %fieldset
+
         %label{ :for =>  'from-date', :style => 'margin-left: 0;' } Date:
         %input{ :name => 'from-date', :type => 'text', :value => "", :placeholder => "2013-01-01", :style => "width: 8em;" }
         %input{ :name => 'to-date',   :type => 'text', :value => "", :placeholder => "2013-12-31", :style => "width: 8em;" }
@@ -54,8 +55,10 @@
 
         %input{ :type => 'hidden', :name => 'before', :value => '' }
         %input{ :type => 'hidden', :name => 'after',  :value => '' }
+
         %br
         %br
+
         %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit" }
         %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));"  }
 
