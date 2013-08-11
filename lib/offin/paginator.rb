@@ -116,7 +116,7 @@ end
 
 class PackageListPaginator
 
-  PACKAGES_PER_PAGE = 24
+  PACKAGES_PER_PAGE = 16
 
   # Think of a page as descending list of numeric IDs (those IDs are
   # in fact the surrogate auto-incremented keys produced for a package
