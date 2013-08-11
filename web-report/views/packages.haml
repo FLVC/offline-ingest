@@ -30,8 +30,8 @@
       %fieldset
 
         %label{ :for =>  'from-date', :style => 'margin-left: 0;' } Date:
-        %input{ :name => 'from-date', :type => 'text', :value => "", :placeholder => "2013-01-01", :style => "width: 8em;" }
-        %input{ :name => 'to-date',   :type => 'text', :value => "", :placeholder => "2013-12-31", :style => "width: 8em;" }
+        %input{ :name => 'from-date', :type => 'text', :value => "", :placeholder => "1970-01-01", :style => "width: 8em;" }
+        %input{ :name => 'to-date',   :type => 'text', :value => "", :placeholder => Time.now.strftime('%F'), :style => "width: 8em;" }
 
         %label{ :for =>  'ids' } ID:
         %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;" }

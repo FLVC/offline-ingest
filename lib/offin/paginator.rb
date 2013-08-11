@@ -144,16 +144,14 @@ class PackageListPaginator
   # entire packages list before the above logic comes into play.
   #
   # SITE is required and is the value returned from DataBase::IslandoraSite.first(:hostname => '...')
-  # Note that BEFORE_ID and AFTER_ID are derived from user input and must be sanitized.
 
   attr_reader :packages, :count, :comment, :params
 
   def initialize site, params = {}
-    @site = site
-    @comment = nil
-    @params = params
-    ids = process_params  # cleans out unset @params as a side effect
-    @packages = DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => ids)
+    @site     = site
+    @params   = params
+    @packages = DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => process_params())
+    @comment  = nil
   end
 
   # methods to use in views to set links, e.g "<< first < previous | next > last >>" where links which may be inactive, depending.
@@ -185,12 +183,12 @@ class PackageListPaginator
   end
 
   def previous_page_list
-    return "/packages" + query_string if @packages.empty?
+    return "/packages" + query_string('after' => nil, 'before' => nil) if @packages.empty?
     return "/packages" + query_string('before' => @packages.first[:id],  'after' => nil)
   end
 
   def next_page_list
-    return "/packages" + query_string if @packages.empty?
+    return "/packages" + query_string('after' => nil, 'before' => nil) if @packages.empty?
     return "/packages" + query_string('after' => @packages.last[:id],  'before' => nil)
   end
 
