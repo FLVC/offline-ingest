@@ -3,13 +3,22 @@ require 'RMagick'
 require 'fileutils'
 require 'iconv'
 require 'offin/exceptions'
-require 'offin/sql-assembler'
 require 'open3'
 require 'stringio'
 require 'tempfile'
 require 'timeout'
 require 'rest_client'
 require 'nokogiri'
+
+
+begin
+  warn_level = $VERBOSE
+  $VERBOSE = nil
+  require 'offin/sql-assembler'  # requires data_mapper,  which redefines CSV, which complains.
+ensure
+  $VERBOSE = warn_level
+end
+
 
 # Extend RI mixins to include itql queries:
 
@@ -24,6 +33,9 @@ module Rubydora
     end
   end
 end
+
+
+
 
 class Utils
 
@@ -121,27 +133,24 @@ class Utils
     return {}
   end
 
-# get_datastream_names(config, islandora_pid) => hash
-#
-# parse XML for dsid/label pairs, as from the example document:
-#
-# <?xml version="1.0" encoding="UTF-8"?>
-# <objectDatastreams xmlns="http://www.fedora.info/definitions/1/0/access/"
-#                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#                    xsi:schemaLocation="http://www.fedora.info/definitions/1/0/access/
-#                                        http://www.fedora-commons.org/definitions/1/0/listDatastreams.xsd"
-#                    pid="fsu:1775" baseURL="http://islandorad.fcla.edu:8080/fedora/">
-#   <datastream dsid="DC" label="Dublin Core Record" mimeType="text/xml"/>
-#   <datastream dsid="RELS-EXT" label="Relationships" mimeType="application/rdf+xml"/>
-#   <datastream dsid="MODS" label="MODS Record" mimeType="text/xml"/>
-#   <datastream dsid="MARCXML" label="Archived Digitool MarcXML" mimeType="text/xml"/>
-#   <datastream dsid="TN" label="Thumbnail" mimeType="image/jpeg"/>
-#   <datastream dsid="DT-METS" label="Archived DigiTool METS for future reference" mimeType="text/xml"/>
-#   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
-# </objectDatastreams>
-
-
-# TODO: quick timeout here
+  # get_datastream_names(config, islandora_pid) => hash
+  #
+  # parse XML for dsid/label pairs, as from the example document:
+  #
+  # <?xml version="1.0" encoding="UTF-8"?>
+  # <objectDatastreams xmlns="http://www.fedora.info/definitions/1/0/access/"
+  #                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  #                    xsi:schemaLocation="http://www.fedora.info/definitions/1/0/access/
+  #                                        http://www.fedora-commons.org/definitions/1/0/listDatastreams.xsd"
+  #                    pid="fsu:1775" baseURL="http://islandorad.fcla.edu:8080/fedora/">
+  #   <datastream dsid="DC" label="Dublin Core Record" mimeType="text/xml"/>
+  #   <datastream dsid="RELS-EXT" label="Relationships" mimeType="application/rdf+xml"/>
+  #   <datastream dsid="MODS" label="MODS Record" mimeType="text/xml"/>
+  #   <datastream dsid="MARCXML" label="Archived Digitool MarcXML" mimeType="text/xml"/>
+  #   <datastream dsid="TN" label="Thumbnail" mimeType="image/jpeg"/>
+  #   <datastream dsid="DT-METS" label="Archived DigiTool METS for future reference" mimeType="text/xml"/>
+  #   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
+  # </objectDatastreams>
 
   def Utils.get_datastream_names fedora_url, pid
     doc = quickly do
@@ -158,8 +167,6 @@ class Utils
   rescue => e
     return {}
   end
-
-  # TODO: timeout
 
   def Utils.ping_islandora_for_object islandora_site, pid
     return :missing unless pid
@@ -341,7 +348,6 @@ class Utils
     end
     return image
   end
-
 
   # expects image or pathname, image must be a format understood by tesseract (no jp2)
 

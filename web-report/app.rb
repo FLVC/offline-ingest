@@ -5,8 +5,8 @@ require 'offin/utils'
 require 'offin/paginator'
 require 'offin/csv-provider'
 
-
 configure do
+
   $KCODE = 'UTF8'
   set :logging,      :true          # use CommonLogger for now
 
@@ -28,8 +28,8 @@ configure do
 
   DataBase.debug = true
   DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
-end
 
+end # of configure
 
 helpers do
 
@@ -75,6 +75,7 @@ helpers do
 end
 
 before do
+
   case ENV['SERVER_NAME']
 
   when "admin.islandora7d.fcla.edu"
@@ -94,7 +95,8 @@ before do
   end
 
   @site = DataBase::IslandoraSite.first(:hostname => @hostname)
-end
+
+end # of before
 
 # Intro page
 
@@ -126,12 +128,12 @@ get '/packages/:id' do
 end
 
 get '/status' do
-  [ 200, {'Content-Type'  => 'application/xml'}, "<status/>\n" ]
+  [ 200, { 'Content-Type'  => 'application/xml' }, "<status/>\n" ]
 end
 
 get '/csv' do
-  csv = CsvProvider.new(@site, params)
+  csv_provider = CsvProvider.new(@site, params)
   content_type 'text/csv'
-  attachment
-  csv.each { |line| puts line }
+  attachment('packages.csv')
+  csv_provider
 end
