@@ -28,7 +28,7 @@ configure do
                  when "fsu-admin.sacred.net";       'fsu7prod'
                  when "admin.fsu.digital.flvc.org"; 'fsu7prod'
                  when "admin.fsu7t.fcla.edu";       'fsu7t'
-                 else ;                             'oops' # how do we error out sensibly here?
+                 else ;                             ENV['SERVER_NAME']  # to get it into error message, at lease
                  end
 
   DataBase.debug = true
