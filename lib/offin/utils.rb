@@ -63,7 +63,7 @@ class Utils
   end
 
 
-  def Utils.silence_streams(*streams)
+  def Utils.silence_streams(*streams)  # after some rails code by DHH
 
     on_hold = streams.collect { |stream| stream.dup }
     streams.each do |stream|

@@ -5,7 +5,6 @@ require 'offin/utils'
 require 'offin/paginator'
 require 'offin/csv-provider'
 
-
 configure do
   $KCODE = 'UTF8'
   set :logging,      :true          # use CommonLogger for now
@@ -20,9 +19,9 @@ configure do
   # use Rack::CommonLogger
 
   section_name = case ENV['SERVER_NAME']
-                 when "admin.islandora7d.fcla.edu"; 'islandora7d'
                  when "admin.fsu.digital.flvc.org"; 'fsu7prod'
                  when "admin.fsu7t.fcla.edu";       'fsu7t'
+                 when "admin.islandora7d.fcla.edu"; 'islandora7d'
                  else ;                              ENV['SERVER_NAME']  # at least we'll get an error message with some data...
                  end
 
@@ -50,15 +49,15 @@ helpers do
     list = []
     collections = package.get_collections.each do |pid|
       title = collection_titles[pid] ? collection_titles[pid] + " (#{pid})" : pid
-      list.push "<a href=\"http://#{config.site}/islandora/object/#{pid}\">#{title}</a>"
+      list.push "<a #{css} href=\"http://#{config.site}/islandora/object/#{pid}\">#{title}</a>"
     end
     return list
   end
 
-  def list_datastream_links config, package
+  def list_datastream_links config, package, css = ''
     links = []
     Utils.get_datastream_names(config.url, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
-      links.push "<a href=\"http://#{config.site}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
+      links.push "<a #{css} href=\"http://#{config.site}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
     end
     return links
   end
@@ -67,14 +66,17 @@ helpers do
     return Utils.ping_islandora_for_object(config.site, package.islandora_pid)
   end
 
+  #  this is WAAAY to slow to use; rethink using an RI query
+
   def get_on_site_map config, packages
     pids = packages.map { |p| p.islandora_pid }
     return Utils.ping_islandora_for_objects(config.site, pids)
   end
 
-end
+end # of helpers
 
 before do
+
   case ENV['SERVER_NAME']
 
   when "admin.islandora7d.fcla.edu"
@@ -94,9 +96,10 @@ before do
   end
 
   @site = DataBase::IslandoraSite.first(:hostname => @hostname)
-end
 
-# Intro page
+end # of before
+
+# Intro page; not anything there now, let's just go to packages
 
 get '/' do
   redirect '/packages'
@@ -110,7 +113,7 @@ end
 get '/packages' do
   @paginator          = PackageListPaginator.new(@site, params)
   @packages           = @paginator.packages
-  # @islandora_presence = get_on_site_map(@config, @packages)  -- this is WAAAY to slow to use;
+  # @islandora_presence = get_on_site_map(@config, @packages)
   haml :packages
 end
 
