@@ -119,13 +119,19 @@ get '/packages' do
 end
 
 get '/packages/:id' do
+  @paginator    = PackagePaginator.new(@site, params[:id].to_i, params)
+
   @package      = DataBase::IslandoraPackage.first(:id => params[:id], :islandora_site => @site)
+
+  # TODO: move some of the following into PackagePaginator (used to just use a package object)
+
   @collections  = list_collection_links(@config, @package)
   @elapsed      = get_elapsed_time(@package)
   @components   = list_component_links(@package)
   @purls        = list_purl_links(@package)
   @datastreams  = list_datastream_links(@config, @package)
   @on_islandora = check_if_present(@config, @package)   # one of :present, :missing, :error
+
   haml :package
 end
 

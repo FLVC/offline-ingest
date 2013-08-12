@@ -27,7 +27,7 @@ config = {}
 config['fedora-address']  = 'fsu7t.fcla.edu:8080'
 config['scheme']          = 'http'
 config['fedora-username'] = 'fedoraAdmin'
-config['fedora-password'] = 'foobar'
+config['fedora-password'] = 'xxxxx'
 
 
 

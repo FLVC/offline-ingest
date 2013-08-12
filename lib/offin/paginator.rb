@@ -229,3 +229,79 @@ class PackageListPaginator
   end
 
 end # of class PackageListPaginator
+
+
+# PackagePaginator is class to help us build views, for linking to
+# next/previous packages that meet a list of search criteria.
+
+class PackagePaginator
+
+  attr_reader :package, :params, :id
+
+  # As in PackageListPaginator, SITE is the value returned from
+  # DataBase::IslandoraSite.first(:hostname => '...islandora site...')
+  # ID is the integer identifier (auto incremented) for the package
+  # table, extracted from the URL, and PARAMS is from the query
+  # paramters. So both the latter are user-supplied.
+
+  def initialize site, id, params = {}
+
+    @params       = temper_params(params)
+    @site         = site
+    @id           = id.to_i
+    @package      = DataBase::IslandoraPackage.all(:id => @id)
+    @comment      = nil
+    @previous_id  = get_previous_id @id, @params
+    @next_id      = get_next_id @id, @params
+
+  end
+
+  def temper_params params, additional_params = {}
+    result = params.merge additional_params
+    result.each { |k,v| result[k] = v.to_s;  result.delete(k) if result[k].empty? }
+  end
+
+  def get_previous_id id, params
+    sql = Utils.setup_basic_filters(SQLAssembler.new, params.merge('site_id' => @site[:id], 'before' => nil, 'after' => nil))
+    sql.set_select    'SELECT id from islandora_packages'
+    sql.set_limit     'LIMIT 1'
+    sql.set_order     'ORDER BY id ASC'
+    sql.add_condition 'id > ', id
+
+    return sql.execute()[0]
+  end
+
+  def get_next_id id, params
+    sql = Utils.setup_basic_filters(SQLAssembler.new, params.merge('site_id' => @site[:id]), 'before' => nil, 'after' => nil)
+    sql.set_select    'SELECT id from islandora_packages'
+    sql.set_limit     'LIMIT 1'
+    sql.set_order     'ORDER BY id DESC'
+    sql.add_condition 'id < ', id
+
+    return sql.execute()[0]
+  end
+
+  def query_string
+    pairs = []
+    @params.each { |k,v| pairs.push "#{CGI::escape(k)}=#{CGI::escape(v)}" } # ecaping the key is purely defensive.
+    return '' if pairs.empty?
+    return '?' + pairs.join('&')
+  end
+
+  def has_next_page?
+    not @next_id.nil?
+  end
+
+  def has_previous_page?
+    not @previous_id.nil?
+  end
+
+  def previous_page
+    "/packages/#{@previous_id}" + query_string
+  end
+
+  def next_page
+    "/packages/#{@next_id}" + query_string
+  end
+
+end

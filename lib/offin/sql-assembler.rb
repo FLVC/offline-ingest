@@ -9,10 +9,7 @@ Struct.new('SqlFragment', :text, :parameters)
 class SqlAssembler
 
   def initialize
-    @select = new_statement_fragment
-    @where  = new_statement_fragment
-    @order  = new_statement_fragment
-    @limit  = new_statement_fragment
+    @select, @where, @order, @limit  = new_statement_fragment, new_statement_fragment, new_statement_fragment, new_statement_fragment
   end
 
   def add_condition text, *parameters
@@ -39,20 +36,17 @@ class SqlAssembler
   private
 
   def new_statement_fragment
-    fragment = Struct::SqlFragment.new;
-    fragment.text = [];
-    fragment.parameters = [];
-    return fragment
+    return Struct::SqlFragment.new([], [])
   end
 
   def update fragment, text, *parameters
-    parameters = [] if parameters.nil?
+    parameters ||= []
     fragment.text = [ text.strip ]
     fragment.parameters = parameters.flatten
   end
 
   def add fragment, text, *parameters
-    parameters = [] if parameters.nil?
+    parameters ||= []
     fragment.text.push text.strip
     fragment.parameters += parameters.flatten
   end
