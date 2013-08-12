@@ -5,12 +5,11 @@ require 'offin/utils'
 require 'offin/paginator'
 
 
-
 configure do
   $KCODE = 'UTF8'
-  set :logging,      :true        # temporarily true - set to false and start it up explicitly later with our own logging
+  set :logging,      :true          # use CommonLogger for now
 
-  set :environment,  :production  # Get some exceptional defaults.
+  set :environment,  :production
   # set :raise_errors, false        # Let our app handle the exceptions.
   # set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
 
@@ -19,16 +18,11 @@ configure do
   set :haml, :format => :html5, :escape_html => false
   # use Rack::CommonLogger
 
-
-  # renaming in progress: TODO: clean this up
-
   section_name = case ENV['SERVER_NAME']
-                 when "islandora-admin7d.fcla.edu"; 'islandora7d'
                  when "admin.islandora7d.fcla.edu"; 'islandora7d'
-                 when "fsu-admin.sacred.net";       'fsu7prod'
                  when "admin.fsu.digital.flvc.org"; 'fsu7prod'
                  when "admin.fsu7t.fcla.edu";       'fsu7t'
-                 else ;                             'oops' # how do we error out sensibly here?
+                 else ;                              ENV['SERVER_NAME']  # at least we'll get an error message with some data...
                  end
 
   DataBase.debug = true
@@ -80,21 +74,12 @@ helpers do
 end
 
 before do
-
-  # renaming in progress: TODO: clean this up
-
   case ENV['SERVER_NAME']
 
-  when "islandora-admin7d.fcla.edu"
-    @hostname = 'islandora7d.fcla.edu'
-    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d')
   when "admin.islandora7d.fcla.edu"
     @hostname = 'islandora7d.fcla.edu'
     @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d')
 
-  when "fsu-admin.sacred.net"
-    @hostname = 'fsu.digital.flvc.org'
-    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod')
   when "admin.fsu.digital.flvc.org"
     @hostname = 'fsu.digital.flvc.org'
     @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod')
@@ -143,10 +128,9 @@ get '/status' do
   [ 200, {'Content-Type'  => 'application/xml'}, "<status/>\n" ]
 end
 
-
 get '/csv' do
   csv = CsvProvider.new(@site, params)
   content_type 'text/csv'
   attachment
-  csv.each { |line| puts line }   # could use body hack here..
+  csv.each { |line| puts line }
 end
