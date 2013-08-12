@@ -1,5 +1,4 @@
-require 'datamapper'
-
+require 'data_mapper'
 
 # SqlAssembler is a helper class for PackageListPaginator.  It lets us
 # gather up the parts of a basic SQL select statement in a re-usable
