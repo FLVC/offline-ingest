@@ -10,6 +10,16 @@ require 'timeout'
 require 'rest_client'
 require 'nokogiri'
 
+
+begin
+  warn_level = $VERBOSE
+  $VERBOSE = nil
+  require 'offin/sql-assembler'  # requires data_mapper,  which redefines CSV, which complains.
+ensure
+  $VERBOSE = warn_level
+end
+
+
 # Extend RI mixins to include itql queries:
 
 module Rubydora
@@ -23,6 +33,9 @@ module Rubydora
     end
   end
 end
+
+
+
 
 class Utils
 
@@ -62,7 +75,7 @@ class Utils
   end
 
 
-  def Utils.silence_streams(*streams)
+  def Utils.silence_streams(*streams)  # after some rails code by DHH
 
     on_hold = streams.collect { |stream| stream.dup }
     streams.each do |stream|
@@ -90,7 +103,6 @@ class Utils
     return texts.join(', ')
   end
 
-
   def Utils.quickly
     Timeout.timeout(2) do
       yield
@@ -98,8 +110,6 @@ class Utils
   rescue Timeout::Error => e
     raise 'timed out after 2 seconds'
   end
-
-
 
   # return a mapping from short islandpora pids (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles
 
@@ -123,27 +133,24 @@ class Utils
     return {}
   end
 
-# get_datastream_names(config, islandora_pid) => hash
-#
-# parse XML for dsid/label pairs, as from the example document:
-#
-# <?xml version="1.0" encoding="UTF-8"?>
-# <objectDatastreams xmlns="http://www.fedora.info/definitions/1/0/access/"
-#                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#                    xsi:schemaLocation="http://www.fedora.info/definitions/1/0/access/
-#                                        http://www.fedora-commons.org/definitions/1/0/listDatastreams.xsd"
-#                    pid="fsu:1775" baseURL="http://islandorad.fcla.edu:8080/fedora/">
-#   <datastream dsid="DC" label="Dublin Core Record" mimeType="text/xml"/>
-#   <datastream dsid="RELS-EXT" label="Relationships" mimeType="application/rdf+xml"/>
-#   <datastream dsid="MODS" label="MODS Record" mimeType="text/xml"/>
-#   <datastream dsid="MARCXML" label="Archived Digitool MarcXML" mimeType="text/xml"/>
-#   <datastream dsid="TN" label="Thumbnail" mimeType="image/jpeg"/>
-#   <datastream dsid="DT-METS" label="Archived DigiTool METS for future reference" mimeType="text/xml"/>
-#   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
-# </objectDatastreams>
-
-
-# TODO: quick timeout here
+  # get_datastream_names(config, islandora_pid) => hash
+  #
+  # parse XML for dsid/label pairs, as from the example document:
+  #
+  # <?xml version="1.0" encoding="UTF-8"?>
+  # <objectDatastreams xmlns="http://www.fedora.info/definitions/1/0/access/"
+  #                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  #                    xsi:schemaLocation="http://www.fedora.info/definitions/1/0/access/
+  #                                        http://www.fedora-commons.org/definitions/1/0/listDatastreams.xsd"
+  #                    pid="fsu:1775" baseURL="http://islandorad.fcla.edu:8080/fedora/">
+  #   <datastream dsid="DC" label="Dublin Core Record" mimeType="text/xml"/>
+  #   <datastream dsid="RELS-EXT" label="Relationships" mimeType="application/rdf+xml"/>
+  #   <datastream dsid="MODS" label="MODS Record" mimeType="text/xml"/>
+  #   <datastream dsid="MARCXML" label="Archived Digitool MarcXML" mimeType="text/xml"/>
+  #   <datastream dsid="TN" label="Thumbnail" mimeType="image/jpeg"/>
+  #   <datastream dsid="DT-METS" label="Archived DigiTool METS for future reference" mimeType="text/xml"/>
+  #   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
+  # </objectDatastreams>
 
   def Utils.get_datastream_names fedora_url, pid
     doc = quickly do
@@ -160,8 +167,6 @@ class Utils
   rescue => e
     return {}
   end
-
-  # TODO: timeout
 
   def Utils.ping_islandora_for_object islandora_site, pid
     return :missing unless pid
@@ -344,7 +349,6 @@ class Utils
     return image
   end
 
-
   # expects image or pathname, image must be a format understood by tesseract (no jp2)
 
   def Utils.tesseract config, image_or_filename, hocr = nil
@@ -476,4 +480,37 @@ class Utils
   end
 
 
-end
+  # Helper for PackageListPaginator, CsvProvider.
+
+  ## TODO: add date support here
+
+  def Utils.setup_basic_filters sql, params
+
+    if val = params['site_id']
+      sql.add_condition('islandora_site_id = ?', val)
+    end
+
+    if val = params['title']
+      sql.add_condition('title ilike ?', "%#{val}%")
+    end
+
+    if val = params['ids']
+      sql.add_condition('(package_name ilike ? OR CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ?)', [ "%#{val}%" ] * 3)
+    end
+
+    if val = params['content-type']
+      sql.add_condition('content_model = ?', val)
+    end
+
+    if params['status'] == 'warning'
+      sql.add_condition('islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)')
+    end
+
+    if params['status'] == 'error'
+      sql.add_condition('islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)')
+    end
+
+    return sql
+  end
+
+end # of class Utils
