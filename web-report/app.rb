@@ -142,3 +142,11 @@ end
 get '/status' do
   [ 200, {'Content-Type'  => 'application/xml'}, "<status/>\n" ]
 end
+
+
+get '/csv' do
+  csv = CsvProvider.new(@site, params)
+  content_type 'text/csv'
+  attachment
+  csv.each { |line| puts line }   # could use body hack here..
+end

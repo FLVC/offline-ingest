@@ -91,7 +91,6 @@ class Utils
     return texts.join(', ')
   end
 
-
   def Utils.quickly
     Timeout.timeout(2) do
       yield
@@ -99,8 +98,6 @@ class Utils
   rescue Timeout::Error => e
     raise 'timed out after 2 seconds'
   end
-
-
 
   # return a mapping from short islandpora pids (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles
 
