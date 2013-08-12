@@ -3,6 +3,7 @@ require 'offin/db'
 require 'offin/config'
 require 'offin/utils'
 require 'offin/paginator'
+require 'offin/csv-provider'
 
 
 configure do
