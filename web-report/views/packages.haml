@@ -24,14 +24,14 @@
 
   %body
 
-    %h1 Ingest Report for #{@hostname}: #{@paginator.count} Digital Objects
+    %h1 Ingest Report for #{@hostname}: #{@paginator.count} Digital Objects Shown of #{@paginator.total}
 
     %form{ :method => 'get', :id => 'filter' }
       %fieldset
 
         %label{ :for =>  'from-date', :style => 'margin-left: 0;' } Date:
-        %input{ :name => 'from-date', :type => 'text', :value => "", :placeholder => "1970-01-01", :style => "width: 8em;" }
-        %input{ :name => 'to-date',   :type => 'text', :value => "", :placeholder => Time.now.strftime('%F'), :style => "width: 8em;" }
+        %input{ :name => 'from-date', :style => "width: 8em;", :type => 'text', :value => @paginator.params["from-date"], :placeholder => "1970-01-01"            }
+        %input{ :name => 'to-date',   :style => "width: 8em;", :type => 'text', :value => @paginator.params["to-date"],   :placeholder => Time.now.strftime('%F') }
 
         %label{ :for =>  'ids' } ID:
         %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;" }

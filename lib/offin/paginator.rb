@@ -43,12 +43,12 @@ class PackageListPaginator
   #
   # SITE is required and is the value returned from DataBase::IslandoraSite.first(:hostname => '...')
 
-  attr_reader :packages, :count, :comment, :params
+  attr_reader :packages, :count, :comment, :params, :total
 
   def initialize site, params = {}
-    @site     = site
     @params   = params
-    @packages = DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => process_params())
+    @site     = site
+    @packages = DataBase::IslandoraPackage.all(:order => [ :id.desc ], :id => process_params())   # process_params sets up @count, @total, @min, @max & modifies @params as side effect
     @comment  = nil
   end
 
@@ -122,7 +122,6 @@ class PackageListPaginator
     return "/packages" + query_string('before' => nil, 'after' => ids[0] + 1)
   end
 
-
   # parameter checking convience funtions for view, e.g.  :select => paginator.is_content_type?('islandora:sp_pdf')
 
   def is_content_type? str
@@ -147,34 +146,44 @@ class PackageListPaginator
 
   private
 
-  # We do database queries in two steps.  First, subject to page positions
-  # (:before, :after) and search parameters (everything else), we
-  # create an SQL statement that selects a page's worth of the DB's
-  # islandora_packages.id's, a sequence of integers.  Once that's
-  # done, we'll use the id's to instantiate the datamapper objects that
-  # will be passed to our view templates.
+  # We do database queries in two steps.  First, subject to page
+  # positions (query parameters :before, :after) and search parameters
+  # (everything else), we create an SQL statement that selects a
+  # page's worth of the DB's islandora_packages.id's, a sequence of
+  # integers.  Once that's done, we'll use the id's to instantiate the
+  # datamapper objects that will be passed to our view templates.
   #
   # process_params() supplies the logic for this first part. Note that
   # @params is user-supplied input and untrustworthy - thus we use
-  # placeholders.
+  # placeholders - the SQLAssembler object helps keep track of all of
+  # those.
   #
-  # N.B.: some of this is very PostgreSQL-specific SQL.
+  # N.B.: some of this results in very PostgreSQL-specific SQL.
 
   def process_params
     temper_params()
 
-    # first: find the limits of our package set - largest id, smallest id, total siet
+    # First, let's find out the total size of the db:
 
-    sql = Utils.setup_basic_filters(SqlAssembler.new, @params.merge('site_id' => @site[:id]))
+    sql = SqlAssembler.new
+    sql.set_select 'SELECT count(*) FROM islandora_packages'
+    @total = sql.execute()[0].count
+
+    # Second: find the limits of our filtered package set (conditions
+    # are added by setup_basic_filters)
 
     sql.set_select 'SELECT min(id), max(id), count(*) FROM islandora_packages'
+    Utils.setup_basic_filters(sql, @params.merge('site_id' => @site[:id]))
 
     rec = sql.execute()[0]
 
     @min, @max, @count = rec.min, rec.max, rec.count
 
-    # now we can figure out where the page of interest starts (using one of the params 'before', 'after') and get the page-sized list we want;
-    # if there are no 'before' or 'after' parameters we'll generate a page list starting from the most recent package (i.e. the first page)
+    # Now we can figure out where the page of interest starts (using
+    # one of the params 'before', 'after') and get the page-sized list
+    # we want; if there are no 'before' or 'after' parameters we'll
+    # generate a page list starting from the most recent package
+    # (i.e. the first page)
 
     sql.set_select 'SELECT DISTINCT id FROM islandora_packages'
     sql.set_limit  'LIMIT ?', PACKAGES_PER_PAGE
@@ -192,6 +201,13 @@ class PackageListPaginator
     return sql.execute
   end
 
+  # temper_params() removes empty query parameters from @params (e.g. if
+  # a query string was "?foo=this&bar=&quux=that", @params is
+  # initially { 'foo' => 'this, 'bar' => nil, 'quux' => 'that' }, so
+  # temper_params() removes 'bar' entirely). Make sure values are
+  # strings, etc, maybe do some modifications using additional_params
+  # hash.
+
   def temper_params additional_params = {}
     @params.merge! additional_params
     @params.each { |k,v| @params[k] = v.to_s;  @params.delete(k) if @params[k].empty? }
@@ -201,6 +217,8 @@ class PackageListPaginator
        @params.delete('after')
     end
   end
+
+  # build a query string for a link.
 
   def query_string additional_params = {}
     temper_params(additional_params)
