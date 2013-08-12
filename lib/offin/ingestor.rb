@@ -73,8 +73,8 @@ class Ingestor
 
 
   def connect config
-    Utils.field_system_error("For repository '#{@config.url}'")   do
-      repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+    Utils.field_system_error("For repository '#{@config.fedora_url}'")   do
+      repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
       repository.ping
       return repository
     end
@@ -82,7 +82,7 @@ class Ingestor
 
 
   def getpid
-    Utils.field_system_error("Unable to request a new PID from the fedora repository '#{@config.url}'")   do
+    Utils.field_system_error("Unable to request a new PID from the fedora repository '#{@config.fedora_url}'")   do
       pid_doc = @repository.next_pid(:namespace => @namespace)
       sax_document = SaxDocumentGetNextPID.new
       Nokogiri::XML::SAX::Parser.new(sax_document).parse(pid_doc)

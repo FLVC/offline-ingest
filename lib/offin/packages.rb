@@ -34,9 +34,10 @@ class PackageFactory
     raise PackageError, "Package directory '#{directory}' isn't really a directory." unless File.directory? directory
     raise PackageError, "Package directory '#{directory}' isn't readable."           unless File.readable? directory
 
+
+    #### TODO: we need to get problems a manifest into a dummy package with .error slots,  if we want to use existing error reporting code cleanly
+
     manifest = Utils.get_manifest @config, directory
-
-
 
 
     return case manifest.content_model
@@ -123,7 +124,7 @@ class Package
 
   def delete_from_islandora
     return if pids.empty?
-    repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+    repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
     pids.each do |p|
       begin
         p = "info:fedora/#{p}" unless p =~ /^info:fedora/
@@ -158,10 +159,7 @@ class Package
   def boilerplate ingestor
 
     @pid = ingestor.pid
-    if @iid.nil?
-      @iid = @directory_name
-      @mods.add_iid_identifier @iid
-    end
+    @mods.add_iid_identifier @iid if @mods.iids.empty?   # we do sanity checking on the @iid elsewhere
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
 
@@ -269,6 +267,8 @@ class Package
   end
 
 
+
+
   def handle_mods
     @mods = Utils.get_mods @config, @directory_path
 
@@ -290,6 +290,13 @@ class Package
       @valid = false
     elsif iids.length == 1
       @iid = iids.first
+    elsif iids.nil? or iids.length == 0
+      @iid = @directory_name
+    end
+
+    if pid = Utils.get_pre_existing_islandora_pid_for_iid(@config, @iid)
+      error "The IID for this package, #{@iid}, is alreading being used for islandora object #{pid}. The IID must be unique."
+      @valid = false
     end
 
     @purls  = @mods.purls

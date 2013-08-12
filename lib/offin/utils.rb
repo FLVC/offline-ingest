@@ -111,6 +111,50 @@ class Utils
     raise 'timed out after 2 seconds'
   end
 
+  def Utils.get_pre_existing_islandora_pid_for_iid config, iid
+
+    # we check solr to see if this iid has already been assigned.
+    # we'll get and parse a document as follows if we get a hit.
+    #
+    #
+    # <?xml version="1.0" encoding="UTF-8"?>
+    # <response>
+    # <lst name="responseHeader">
+    #   <int name="status">0</int>
+    #   <int name="QTime">0</int>
+    #   <lst name="params">
+    #     <str name="indent">on</str>
+    #     <str name="version">2.2</str>
+    #     <str name="fl">PID,mods_identifier_iid_ms</str>
+    #     <str name="q">mods_identifier_iid_ms:FSDT2854731</str>
+    #   </lst>
+    # </lst>
+    # <result name="response" numFound="1" start="0">
+    #   <doc>
+    #     <str name="PID">fsu:122</str>
+    #     <arr name="mods_identifier_iid_ms"><str>FSDT2854731</str></arr>
+    #   </doc>
+    # </result>
+    # </response>
+
+    # return if config.testing
+
+    return if config.test_mode and not config.solr_url   # user specified testing mode without specifying server - technicaly OK?
+
+    doc = quickly do
+      RestClient.get("#{config.solr_url}/select/?q=mods_identifier_iid_ms:#{iid}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms")
+    end
+
+    xml = Nokogiri::XML(doc)
+    element = xml.xpath("//result/doc/str[@name='PID']")[0]
+    return element.child.text if element and element.child
+    return nil
+
+  rescue => e
+    raise SystemError, "Can't obtain IID search document from solr at '#{config.solr_url}' to check for IID, #{e.class} - #{e.message}"
+  end
+
+
   # return a mapping from short islandpora pids (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles
 
   def Utils.get_collection_names config
@@ -118,7 +162,7 @@ class Utils
              "where $object <fedora-model:label> $title " +
                "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
 
-    repository = ::Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+    repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
 
     quickly do
       repository.ping

@@ -49,7 +49,7 @@ end
 
 
 config = parse_command_line(ARGV)
-repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
 
 ARGV.each do |pid|
   begin
