@@ -60,9 +60,8 @@
         %br
 
         %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit" }
+        %input{ :type => 'button', :value => "Get CSV", :onClick => "window.location='#{@paginator.csv_link}'"
         %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));"  }
-
-
     %br
 
     / make these bolder, larger, give more space

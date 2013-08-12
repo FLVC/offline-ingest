@@ -1,118 +1,16 @@
 require 'cgi'
 require 'offin/db'
-
-# SqlAssembler is a helper class for our main event here,
-# PackageListPaginator.  It lets us gather up the parts of a basic SQL
-# select statement in a re-usable way.
-
-Struct.new('SqlFragment', :text, :parameters)
-
-class SqlAssembler
-
-  def initialize
-    @select = new_statement_fragment
-    @where  = new_statement_fragment
-    @order  = new_statement_fragment
-    @limit  = new_statement_fragment
-  end
-
-  def add_condition text, *parameters
-    add @where, text, *parameters
-  end
-
-  def set_select text, *parameters
-    update @select, text, *parameters
-  end
-
-  def set_order text, *parameters
-    update @order, text, *parameters
-  end
-
-  def set_limit  text, *parameters
-    update @limit, text, *parameters
-  end
-
-  def execute
-    sql, placeholder_values = assemble()
-    return repository(:default).adapter.select(sql, *placeholder_values)
-  end
-
-  private
-
-  def new_statement_fragment
-    fragment = Struct::SqlFragment.new;
-    fragment.text = [];
-    fragment.parameters = [];
-    return fragment
-  end
-
-  def update fragment, text, *parameters
-    parameters = [] if parameters.nil?
-    fragment.text = [ text.strip ]
-    fragment.parameters = parameters.flatten
-  end
-
-  def add fragment, text, *parameters
-    parameters = [] if parameters.nil?
-    fragment.text.push text.strip
-    fragment.parameters += parameters.flatten
-  end
-
-  def assemble
-
-    # We assume exactly one select text; start out with this  "SELECT ..."
-
-    sql_text = @select.text.first
-    placeholder_values = @select.parameters
-
-    # handle multiple conditions:  "WHERE ... AND ..."
-
-    unless @where.text.length < 1
-      sql_text += " WHERE " + @where.text[0]
-    end
-
-    unless @where.text.length < 2
-      sql_text += " AND " + @where.text[1..-1].join(" AND ")
-    end
-
-    unless @where.parameters.empty?
-      placeholder_values.push *@where.parameters
-    end
-
-    # we assume zero or one order and limit fragments
-
-    # "ORDER BY..."
-
-    unless @order.text.empty?
-      sql_text += " " + @order.text.first
-    end
-
-    unless @order.parameters.empty?
-      placeholder_values.push *@order.parameters
-    end
-
-    # "OFFSET ... LIMIT ..."
-
-    unless @limit.text.empty?
-      sql_text += " " + @limit.text.first
-    end
-
-    unless @limit.parameters.empty?
-      placeholder_values.push *@limit.parameters
-    end
-
-    return sql_text, placeholder_values
-  end
-end
+require 'offin/sql-assembler'
+require 'offin/utils'
 
 
 # Paginator is a class to help simplify the page-by-page displays of a
 # list of packages, where that list may be growing faster than the
 # person can page through it.  It provides a list of
-# datamapper::package records based on filtering and pagination data.
+# datamapper::package records based on filtering and pagination data
+# provided by query parameters.
 #
-# It is primarily used in our sinatra data analysis app within view
-# templates.
+# It is used in our sinatra data analysis app within view templates.
 
 class PackageListPaginator
 
@@ -184,65 +82,44 @@ class PackageListPaginator
 
   def previous_page_list
     return "/packages" + query_string('after' => nil, 'before' => nil) if @packages.empty?
-    return "/packages" + query_string('before' => @packages.first[:id],  'after' => nil)
+    return "/packages" + query_string('after' => nil, 'before' => @packages.first[:id])
   end
 
   def next_page_list
-    return "/packages" + query_string('after' => nil, 'before' => nil) if @packages.empty?
-    return "/packages" + query_string('after' => @packages.last[:id],  'before' => nil)
+    return "/packages" + query_string('before' => nil, 'after' => nil) if @packages.empty?
+    return "/packages" + query_string('before' => nil, 'after' => @packages.last[:id])
   end
 
   def first_page_list
     return "/packages" + query_string('after' => nil, 'before' => nil)
   end
 
+  def csv_link
+    "/csv" + query_string('after' => nil, 'before' => nil)
+  end
 
-  ## TODO: add date support here
 
-  def setup_basic_filters sql
-
-    sql.add_condition('islandora_site_id = ?', @site[:id])
-
-    if val = @params['title']
-      sql.add_condition('title ilike ?', "%#{val}%")
-    end
-
-    if val = @params['ids']
-      sql.add_condition('(package_name ilike ? OR CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ?)', [ "%#{val}%" ] * 3)
-    end
-
-    if val = @params['content-type']
-      sql.add_condition('content_model = ?', val)
-    end
-
-    if @params['status'] == 'warning'
-      sql.add_condition('islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)')
-    end
-
-    if @params['status'] == 'error'
-      sql.add_condition('islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)')
-    end
-
-    return sql
+  def offset_to_last_page
+    skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
+    skip -= PACKAGES_PER_PAGE if skip == @count
+    return skip
   end
 
   # last_page_list => URL that will take us to the last page of our
   # list of packages (subject to our filters)
 
   def last_page_list
-    skip  = (@count / PACKAGES_PER_PAGE) * PACKAGES_PER_PAGE
-    skip -= PACKAGES_PER_PAGE if skip == @count
 
-    sql = setup_basic_filters(SqlAssembler.new)
+    sql = Utils.setup_basic_filters(SqlAssembler.new, @params.merge('site_id' => @site[:id]))
 
-    sql.set_select('SELECT id FROM islandora_packages')
-    sql.set_order('ORDER BY id DESC')
-    sql.set_limit('OFFSET ? LIMIT 1', skip)
+    sql.set_select 'SELECT id FROM islandora_packages'
+    sql.set_order  'ORDER BY id DESC'
+    sql.set_limit  'OFFSET ? LIMIT 1', offset_to_last_page
 
     ids = sql.execute
 
-    return "/packages" + query_string('after' => nil, 'before' => nil) if ids.empty?
-    return "/packages" + query_string('after' => ids[0] + 1,  'before' => nil)
+    return "/packages" + query_string('before' => nil, 'after' => nil) if ids.empty?
+    return "/packages" + query_string('before' => nil, 'after' => ids[0] + 1)
   end
 
 
@@ -288,20 +165,20 @@ class PackageListPaginator
 
     # first: find the limits of our package set - largest id, smallest id, total siet
 
-    sql = setup_basic_filters(SqlAssembler.new)
+    sql = Utils.setup_basic_filters(SqlAssembler.new, @params.merge('site_id' => @site[:id]))
 
-    sql.set_select('SELECT min(id), max(id), count(*) FROM islandora_packages')
+    sql.set_select 'SELECT min(id), max(id), count(*) FROM islandora_packages'
 
     rec = sql.execute()[0]
 
     @min, @max, @count = rec.min, rec.max, rec.count
 
-    # now we can figure out where the page of interest starts (using one of the params 'before', 'after') and get the page-sized list we want:
-    # if there are no 'before' or 'after' parameters we'll generate a page list starting from the most recent package.
+    # now we can figure out where the page of interest starts (using one of the params 'before', 'after') and get the page-sized list we want;
+    # if there are no 'before' or 'after' parameters we'll generate a page list starting from the most recent package (i.e. the first page)
 
-    sql.set_select('SELECT DISTINCT id FROM islandora_packages')
-    sql.set_limit('LIMIT ?', PACKAGES_PER_PAGE)
-    sql.set_order('ORDER BY id DESC')
+    sql.set_select 'SELECT DISTINCT id FROM islandora_packages'
+    sql.set_limit  'LIMIT ?', PACKAGES_PER_PAGE
+    sql.set_order  'ORDER BY id DESC'
 
     if val = @params['before']
       sql.add_condition('id > ?', val)

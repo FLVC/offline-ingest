@@ -3,6 +3,7 @@ require 'RMagick'
 require 'fileutils'
 require 'iconv'
 require 'offin/exceptions'
+require 'offin/sql-assembler'
 require 'open3'
 require 'stringio'
 require 'tempfile'
@@ -476,4 +477,37 @@ class Utils
   end
 
 
-end
+  # Helper for PackageListPaginator, CsvProvider.
+
+  ## TODO: add date support here
+
+  def Utils.setup_basic_filters sql, params
+
+    if val = params['site_id']
+      sql.add_condition('islandora_site_id = ?', val)
+    end
+
+    if val = params['title']
+      sql.add_condition('title ilike ?', "%#{val}%")
+    end
+
+    if val = params['ids']
+      sql.add_condition('(package_name ilike ? OR CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ?)', [ "%#{val}%" ] * 3)
+    end
+
+    if val = params['content-type']
+      sql.add_condition('content_model = ?', val)
+    end
+
+    if params['status'] == 'warning'
+      sql.add_condition('islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)')
+    end
+
+    if params['status'] == 'error'
+      sql.add_condition('islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)')
+    end
+
+    return sql
+  end
+
+end # of class Utils
