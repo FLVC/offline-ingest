@@ -105,13 +105,14 @@
           %th{ :style => "width:12%;" } Digitool
           %th{ :style => "width:56%;" } Title
       %tbody
+        - query_string = @paginator.query_string('before' => nil,  'after' => nil)
         - @packages.each do |p|
           %tr
             %td
               #{p.time_started.strftime('%F %T')}
 
             %td
-              %a{ :href => "/packages/#{p[:id]}" }
+              %a{ :href => "/packages/#{p[:id]}" + query_string }
                 - case
                 - when p.errors?
                   %img{ :src => "/failure.png" }

@@ -13,6 +13,26 @@
 
     %h1 Ingest  #{@package.success ? 'Success' : 'Failure' } Report for Package #{@package.package_name} on #{@hostname}
 
+    - if @paginator.has_previous_page?
+      %a{ :href => @paginator.previous_page }
+        &lArr;&lArr; Previous
+    - else
+      &lArr;&lArr; Previous
+
+    &equiv;
+
+    %a{ :href => @paginator.up_page }
+      All
+
+    &equiv;
+
+    - if @paginator.has_next_page?
+      %a{ :href => @paginator.next_page }
+        Next &rArr;&rArr;
+    - else
+      Next &rArr;&rArr;
+    %br
+
     - if @on_islandora == :present
       Title:
       %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }

@@ -9,14 +9,13 @@ configure do
 
   $KCODE = 'UTF8'
   set :logging,      :true          # use CommonLogger for now
-
   set :environment,  :production
-  # set :raise_errors, false        # Let our app handle the exceptions.
-  # set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
-
+  set :raise_errors, false        # Let our app handle the exceptions.
+  set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
   set :raise_errors, true
-  set :dump_errors,  true
-  set :haml, :format => :html5, :escape_html => false
+
+  # set :dump_errors,  true
+  # set :haml, :format => :html5, :escape_html => false
   # use Rack::CommonLogger
 
   section_name = case ENV['SERVER_NAME']
@@ -26,8 +25,16 @@ configure do
                  else ;                              ENV['SERVER_NAME']  # at least we'll get an error message with some data...
                  end
 
-  DataBase.debug = true
-  DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
+
+  if defined?(PhusionPassenger)
+    PhusionPassenger.on_event(:starting_worker_process) do |forked|
+       if forked
+         DataBase.debug = true
+         DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
+         STDERR.puts "DB Setup Complete"
+       end
+     end
+  end
 
 end # of configure
 
@@ -119,8 +126,7 @@ get '/packages' do
 end
 
 get '/packages/:id' do
-  @paginator    = PackagePaginator.new(@site, params[:id].to_i, params)
-
+  @paginator    = PackagePaginator.new(@site, params)
   @package      = DataBase::IslandoraPackage.first(:id => params[:id], :islandora_site => @site)
 
   # TODO: move some of the following into PackagePaginator (used to just use a package object)

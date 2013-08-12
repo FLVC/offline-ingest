@@ -33,6 +33,11 @@ class SqlAssembler
     return repository(:default).adapter.select(sql, *placeholder_values)
   end
 
+  def dump
+    sql, placeholder_values = assemble()
+    STDERR.puts "SQL Assembler Dump: " + sql.inspect +  ",  " + placeholder_values.inspect
+  end
+
   private
 
   def new_statement_fragment
