@@ -1,4 +1,4 @@
-require 'datamapper'
+require 'data_mapper'
 require 'offin/sql-assembler'
 require 'offin/utils'
 require 'csv'
@@ -25,7 +25,7 @@ class CsvProvider
   # we'll need to chunk out the sql for much more than that, if it
   # ever becomes necessary.
 
-  def cvs_data
+  def csv_data
     sql = Utils.setup_basic_filters(SqlAssembler.new, @params.merge('site_id' => @site[:id]))
     sql.set_select 'SELECT package_name, digitool_id, islandora_pid, content_model, time_started, time_finished, bytes_ingested FROM islandora_packages'
     sql.set_order  'ORDER BY id DESC'
