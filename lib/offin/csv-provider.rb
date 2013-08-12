@@ -33,7 +33,7 @@ class CsvProvider
   end
 
   def csv_title
-    return '"package name", "status", "title", "digitool id", "islandora pid", "content model", "time started", "time finished", "raw bytes ingested"'
+    return '"package name", "status", "title", "digitool id", "islandora pid", "content model", "time started", "time finished", "raw bytes ingested"' + "\n"
   end
 
 end
