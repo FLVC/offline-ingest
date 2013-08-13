@@ -33,11 +33,7 @@
       Next &rarr;
     %br
 
-    - if @on_islandora == :present
-      Title:
-      %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
-        #{@package.title + " &rArr;"}
-    - else
+    - if @package.title
       Title: #{@package.title}
     %br
 
@@ -48,7 +44,13 @@
       %br
 
     - if @package.islandora_pid
-      Islandora ID:  #{@package.islandora_pid}
+      Islandora ID:
+      - if @on_islandora == :present
+        %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
+          #{@package.islandora_pid + " &rArr;"}
+      - else
+        #{@package.islandora_pid}
+
       %br
 
     - if @package.success

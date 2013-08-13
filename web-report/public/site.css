@@ -1,3 +1,14 @@
+// gets the jquery ui datepicker font size lower; note that this file has to be loaded after jquery ui and css code.
+
+.ui-datepicker {
+    font-size: 0.8em;
+}
+
+.ui-widget {
+    font-size: 0.8em;
+}
+
+
 body {
     font: georgia, sans-serif;
     line-height: 1.88889;
@@ -22,17 +33,23 @@ h2 {
     color: #000;
 }
 
-fieldset {
+.filter_entry {
     font: italic bold 1.0em georgia, sans-serif;
     text-align: left;
-    padding: 0.75em 1em 0.75em 1em;
+    padding: 0.75em;
     color: white;
     background-color: #636363;
 
-    width: 90%;
+    margin: 0 0.75em 0 0
+    width: 100%;
     border: solid;
     border-color: black;
     border-width: 1px;
+}
+
+fieldset {
+    padding: 0;
+    margin: 0;
 }
 
 label {
@@ -151,15 +168,68 @@ tr.odd {
     vertical-align: top;
 }
 
-.expansive {
+.full {
     width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
-.footer {
-    margin: 30px 10px 10px 10px;
-    font: italic 0.65em georgia, sans-serif;
+.left {
+    float: left;
+    padding: 0;
+    margin: 0;
 }
 
-div.ui-datepicker{
- font-size:10px;
+.right {
+    width: 100%;
+    text-align: right;
+    padding: 0;
+    margin: 0;
+}
+
+
+.pager_link {
+    font: bold 0.75em georgia, sans-serif;
+    color: #944;
+}
+
+.pager_dead {
+    font: bold 0.75em georgia, sans-serif;
+}
+
+.other_button {
+    font: normal 0.75em georgia, sans-serif;
+}
+
+.full {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.left {
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+.right {
+    width: 100%;
+    text-align: right;
+    padding: 0;
+    margin: 0;
+}
+
+
+.pager_button {
+    font: bold 0.9em georgia, sans-serif;
+    color: #944;
+}
+
+.pager_dead {
+    font: bold 0.9em georgia, sans-serif;
+}
+
+.other_button {
+    font: normal 0.9em georgia, sans-serif;
 }
