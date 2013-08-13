@@ -163,7 +163,7 @@ class Package
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
 
-    # TODO: need to check that @mods is valid after adding manifest?
+    # TODO: do we ever need to check that @mods is valid after adding manifest?
 
     # Somewhat order dependent:
 
@@ -291,6 +291,7 @@ class Package
     elsif iids.length == 1
       @iid = iids.first
     elsif iids.nil? or iids.length == 0
+      warning "MODS file doesn't include an IID, using the package name #{@directory_name}."
       @iid = @directory_name
     end
 

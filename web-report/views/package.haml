@@ -4,8 +4,8 @@
   %head
 
     %meta{ :charset => "utf-8" }
+    %link{ :rel => "shortcut icon",  :href => "/images/favicon.ico" }
     %link{ :rel => "stylesheet", :href => "/site.css",  :type => "text/css"  }
-    %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
 
     %title Ingest Report on #{@hostname} for Package #{@package.package_name}
 
@@ -15,22 +15,22 @@
 
     - if @paginator.has_previous_page?
       %a{ :href => @paginator.previous_page }
-        &lArr;&lArr; Previous
+        &larr; Previous
     - else
-      &lArr;&lArr; Previous
+      &larr; Previous
 
     &equiv;
 
     %a{ :href => @paginator.up_page }
-      All
+      Package List
 
     &equiv;
 
     - if @paginator.has_next_page?
       %a{ :href => @paginator.next_page }
-        Next &rArr;&rArr;
+        Next &rarr;
     - else
-      Next &rArr;&rArr;
+      Next &rarr;
     %br
 
     - if @on_islandora == :present
@@ -47,6 +47,10 @@
         #{@package.digitool_id.to_s + " &rArr;"}
       %br
 
+    - if @package.islandora_pid
+      Islandora ID:  #{@package.islandora_pid}
+      %br
+
     - if @package.success
       - case @on_islandora
       - when :present
@@ -57,6 +61,7 @@
       - when :error
         Islandora cannot be reached at the moment - can't access datastreams for display.
       %br
+
 
     Ingest Date:  #{@package.time_started.strftime('%F %T')}
     %br
@@ -87,13 +92,13 @@
       %br
 
     - if @package.errors?
-      %h2 Errors
+      %h2 Package Errors
       - @package.get_errors.each do |err|
         #{err}
         %br
 
     - if @package.warnings?
-      %h2 Warnings
+      %h2 Package Warnings
       - @package.get_warnings.each do |warn|
         #{warn}
         %br

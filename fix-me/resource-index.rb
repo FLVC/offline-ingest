@@ -2,7 +2,7 @@ require 'rest-client'
 require 'nokogiri'
 require 'document-parsers'
 
-# TODO: exception handling. Connection errors should be treated transiently, i.e. give up on processing this particular package.
+
 
 class ResourceIndex
 
@@ -17,12 +17,7 @@ class ResourceIndex
     @password  = config['fedora-password']
 
     @url = "#{scheme}://#{address}/fedora/risearch"
-
-    # TODO: sanity check for values above
-    # TODO: initially check for a connection, maybe establish a cookiejar in the process?
   end
-
-  # TODO: exception handling, e.g., server unreachable, etc.
 
   def sparql str
     params = {}
@@ -49,12 +44,10 @@ class ResourceIndex
 
   def feed params
     # params['stream'] = 'off'
-
     t1 = Time.now
     xml = RestClient::Resource.new(@url, @username, @password).post params
     t2 = Time.now
     STDERR.puts "Query took #{(t2 - t1) * 1000} ms"
-
     return parse_sparql(xml)
   end
 
@@ -65,7 +58,6 @@ class ResourceIndex
     itql("select $object $title from <#ri> where ($object <fedora-model:label> $title and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>)").each do |rec|
       records[rec.object.sub('info:fedora/', '')] = rec.title
     end
-
     return records
   end
 

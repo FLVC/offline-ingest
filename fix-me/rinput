@@ -2,8 +2,10 @@
 # $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), './lib/'))
 # $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib/'))
 
-# Take STDIN, assuming that it's from a log file - grab the risearch lines, decode them, send it off to risearch and present the output.
-# Won't repeat two concurrent requests, so this is safe to use from live tailed log.
+# Take STDIN, assuming that it's from a log file - grab the risearch
+# lines, decode them, send it off to risearch and present the output.
+# Won't repeat two concurrent requests, so this is safe to use from
+# live tailed log.
 #
 
 $LOAD_PATH.unshift File.dirname(__FILE__)
@@ -28,7 +30,6 @@ config['fedora-address']  = 'fsu7t.fcla.edu:8080'
 config['scheme']          = 'http'
 config['fedora-username'] = 'fedoraAdmin'
 config['fedora-password'] = 'xxxxx'
-
 
 
 @ri = ResourceIndex.new config
@@ -59,8 +60,6 @@ end
 
 
 
-
-
 lines = []
 
 while line = STDIN.gets
@@ -70,5 +69,3 @@ while line = STDIN.gets
     # puts $line
   end
 end
-
-#  puts "Searched via " + ri.url

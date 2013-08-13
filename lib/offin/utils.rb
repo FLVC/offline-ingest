@@ -141,8 +141,9 @@ class Utils
 
     return if config.test_mode and not config.solr_url   # user specified testing mode without specifying server - technicaly OK?
 
+    url = "#{config.solr_url}/select/?q=mods_identifier_iid_ms:#{iid}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms"
     doc = quickly do
-      RestClient.get("#{config.solr_url}/select/?q=mods_identifier_iid_ms:#{iid}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms")
+      RestClient.get(url)
     end
 
     xml = Nokogiri::XML(doc)
@@ -150,8 +151,11 @@ class Utils
     return element.child.text if element and element.child
     return nil
 
+  rescue RestClient::Exception => e
+    raise SystemError, "Can't obtain IID from solr at '#{url}': #{e.class} #{e.message}"
+
   rescue => e
-    raise SystemError, "Can't obtain IID search document from solr at '#{config.solr_url}' to check for IID, #{e.class} - #{e.message}"
+    raise SystemError, "Can't process IID from solr: : #{e.class} #{e.message}"
   end
 
 
