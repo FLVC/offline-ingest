@@ -14,7 +14,7 @@ require 'offin/utils'
 
 class PackageListPaginator
 
-  PACKAGES_PER_PAGE = 16
+  PACKAGES_PER_PAGE = 20
 
   # Think of a page as descending list of numeric IDs (those IDs are
   # in fact the surrogate auto-incremented keys produced for a package
@@ -78,6 +78,16 @@ class PackageListPaginator
 
   def is_last_page_list?
     @packages.map { |p| p[:id] }.include? @min
+  end
+
+  # build a query string for a link.
+
+  def query_string additional_params = {}
+    temper_params(additional_params)
+    pairs = []
+    @params.each { |k,v| pairs.push "#{CGI::escape(k)}=#{CGI::escape(v)}" } # ecaping the key is purely defensive.
+    return '' if pairs.empty?
+    return '?' + pairs.join('&')
   end
 
   def previous_page_list
@@ -212,20 +222,16 @@ class PackageListPaginator
     @params.merge! additional_params
     @params.each { |k,v| @params[k] = v.to_s;  @params.delete(k) if @params[k].empty? }
 
+    # clear invalid dates
+
+    from, to = Utils.parse_dates(@params['from'], @params['to'])
+    @params.delete('from') unless from
+    @params.delete('to') unless to
+
     if @params['before'] and @params['after']  # special case - there should be at most one of these, if not, remove both (do we really have to do this? it's mostly defensive programming...)
        @params.delete('before')
        @params.delete('after')
     end
-  end
-
-  # build a query string for a link.
-
-  def query_string additional_params = {}
-    temper_params(additional_params)
-    pairs = []
-    @params.each { |k,v| pairs.push "#{CGI::escape(k)}=#{CGI::escape(v)}" } # ecaping the key is purely defensive.
-    return '' if pairs.empty?
-    return '?' + pairs.join('&')
   end
 
 end # of class PackageListPaginator
@@ -243,11 +249,11 @@ class PackagePaginator
   # table, extracted from the URL, and PARAMS is from the query
   # paramters. So both the latter are user-supplied.
 
-  def initialize site, id, params = {}
+  def initialize site, params = {}
 
-    @params       = temper_params(params)
+    @id           = params['id'].to_i
+    @params       = temper_params(params, 'after' => nil, 'before' => nil, 'id' => nil, 'captures' => nil)   # 'captures' introduced by sinatra
     @site         = site
-    @id           = id.to_i
     @package      = DataBase::IslandoraPackage.all(:id => @id)
     @comment      = nil
     @previous_id  = get_previous_id @id, @params
@@ -261,22 +267,24 @@ class PackagePaginator
   end
 
   def get_previous_id id, params
-    sql = Utils.setup_basic_filters(SQLAssembler.new, params.merge('site_id' => @site[:id], 'before' => nil, 'after' => nil))
+    sql = Utils.setup_basic_filters(SqlAssembler.new, params.merge('site_id' => @site[:id], 'before' => nil, 'after' => nil))
     sql.set_select    'SELECT id from islandora_packages'
     sql.set_limit     'LIMIT 1'
     sql.set_order     'ORDER BY id ASC'
-    sql.add_condition 'id > ', id
+    sql.add_condition 'id > ?', id
 
+    # sql.dump
     return sql.execute()[0]
   end
 
   def get_next_id id, params
-    sql = Utils.setup_basic_filters(SQLAssembler.new, params.merge('site_id' => @site[:id]), 'before' => nil, 'after' => nil)
+    sql = Utils.setup_basic_filters(SqlAssembler.new, params.merge('site_id' => @site[:id], 'before' => nil, 'after' => nil))
     sql.set_select    'SELECT id from islandora_packages'
     sql.set_limit     'LIMIT 1'
     sql.set_order     'ORDER BY id DESC'
-    sql.add_condition 'id < ', id
+    sql.add_condition 'id < ?', id
 
+    # sql.dump
     return sql.execute()[0]
   end
 
@@ -302,5 +310,11 @@ class PackagePaginator
   def next_page
     "/packages/#{@next_id}" + query_string
   end
+
+
+  def up_page
+    "/packages" + query_string
+  end
+
 
 end

@@ -40,7 +40,7 @@ end
 
 def get_repository site_code
   config = get_config site_code
-  repository = Rubydora.connect :url => config.url, :user => config.user, :password => config.password
+  repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
   repository.ping
   return repository
 rescue => e

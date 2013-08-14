@@ -1,38 +1,56 @@
+// gets the jquery ui datepicker font size lower; note that this file has to be loaded after jquery ui and css code.
+
+.ui-datepicker {
+    font-size: 0.8em;
+}
+
+.ui-widget {
+    font-size: 0.8em;
+}
+
+
 body {
     font: georgia, sans-serif;
-    line-height: 1.88889;
+    line-height: 1.8;
     color: #000;
-    background: #f0f0f0;   /* #fee; */
-    margin: 10px 10px 10px 10px;
+    background: #f4f4f0;   /* #fee; */
+    margin: 5px;
     padding: 10;
 }
 
 h1 {
-    font: italic normal 1.5em georgia, sans-serif;
+    font: italic normal 1.25em georgia, sans-serif;
     letter-spacing: 1px;
-    margin-bottom: 10;
+    margin: 0.5em 0 0.5em 0;
     font-weight: bold;
     color: #000;}
 
 h2 {
-    font: italic normal 1.25em georgia, sans-serif;
+    font: italic normal 1.15em georgia, sans-serif;
     letter-spacing: 0px;
-    margin-bottom: 10;
+    margin-bottom: 0.5em 0 0.5em 0;
     font-weight: bold;
     color: #000;
 }
 
-fieldset {
+.filter_entry {
     font: italic bold 1.0em georgia, sans-serif;
     text-align: left;
-    padding: 0.75em 1em 0.75em 1em;
+    padding: 0.5em 0.75em 0.5em 0.75em;
     color: white;
-    background-color: #636363;
+    background-color: #445;
 
-    width: 90%;
+    margin: 0 0.75em 0 0
+    width: 100%;
     border: solid;
     border-color: black;
     border-width: 1px;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
 }
 
 label {
@@ -94,7 +112,7 @@ table {
 
 
 td {
-    padding: 0.25em 1em 0.25em 1em;
+    padding: 0em 1em 0em 1em;
     white-space: nowrap;
 }
 
@@ -104,9 +122,9 @@ th {
     text-align: left;
     border: none;
     border-width: 0;
-    padding: 0.5em 1em 0.5em 1em;
+    padding: 0.5em 0 0.5em 1.0em;
     color: white;
-    background-color: #636363;
+    background-color: #445;
 }
 
 
@@ -121,8 +139,7 @@ tr.even {
 }
 
 tr.odd {
-    background-color: #bdbdbd;
-
+    background-color: #c0c0c4;
 }
 
 
@@ -151,11 +168,68 @@ tr.odd {
     vertical-align: top;
 }
 
-.expansive {
+.full {
     width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
-.footer {
-    margin: 30px 10px 10px 10px;
-    font: italic 0.65em georgia, sans-serif;
+.left {
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+.right {
+    width: 100%;
+    text-align: right;
+    padding: 0;
+    margin: 0;
+}
+
+
+.pager_link {
+    font: bold 0.75em georgia, sans-serif;
+    color: #944;
+}
+
+.pager_dead {
+    font: bold 0.75em georgia, sans-serif;
+}
+
+.other_button {
+    font: normal 0.75em georgia, sans-serif;
+}
+
+.full {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.left {
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+.right {
+    width: 100%;
+    text-align: right;
+    padding: 0;
+    margin: 0;
+}
+
+
+.pager_button {
+    font: bold 0.9em georgia, sans-serif;
+    color: #944;
+}
+
+.pager_dead {
+    font: bold 0.9em georgia, sans-serif;
+}
+
+.other_button {
+    font: normal 0.9em georgia, sans-serif;
 }

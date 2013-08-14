@@ -4,8 +4,8 @@
   %head
 
     %meta{ :charset => "utf-8" }
+    %link{ :rel => "shortcut icon",  :href => "/images/favicon.ico" }
     %link{ :rel => "stylesheet", :href => "/site.css",  :type => "text/css"  }
-    %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
 
     %title Ingest Report on #{@hostname} for Package #{@package.package_name}
 
@@ -13,11 +13,27 @@
 
     %h1 Ingest  #{@package.success ? 'Success' : 'Failure' } Report for Package #{@package.package_name} on #{@hostname}
 
-    - if @on_islandora == :present
-      Title:
-      %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
-        #{@package.title + " &rArr;"}
+    - if @paginator.has_previous_page?
+      %a{ :href => @paginator.previous_page }
+        &larr; Previous
     - else
+      &larr; Previous
+
+    &equiv;
+
+    %a{ :href => @paginator.up_page }
+      Package List
+
+    &equiv;
+
+    - if @paginator.has_next_page?
+      %a{ :href => @paginator.next_page }
+        Next &rarr;
+    - else
+      Next &rarr;
+    %br
+
+    - if @package.title
       Title: #{@package.title}
     %br
 
@@ -25,6 +41,16 @@
       DigiTool ID:
       %a{ :target => "digitool", :href => "http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{@package.digitool_id}" }
         #{@package.digitool_id.to_s + " &rArr;"}
+      %br
+
+    - if @package.islandora_pid
+      Islandora ID:
+      - if @on_islandora == :present
+        %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
+          #{@package.islandora_pid + " &rArr;"}
+      - else
+        #{@package.islandora_pid}
+
       %br
 
     - if @package.success
@@ -37,6 +63,7 @@
       - when :error
         Islandora cannot be reached at the moment - can't access datastreams for display.
       %br
+
 
     Ingest Date:  #{@package.time_started.strftime('%F %T')}
     %br
@@ -67,13 +94,13 @@
       %br
 
     - if @package.errors?
-      %h2 Errors
+      %h2 Package Errors
       - @package.get_errors.each do |err|
         #{err}
         %br
 
     - if @package.warnings?
-      %h2 Warnings
+      %h2 Package Warnings
       - @package.get_warnings.each do |warn|
         #{warn}
         %br

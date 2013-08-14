@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
 # TODO: package factory will not create a package object if there is a
-# missing manifest; thus it doesn't get reported as others.  there is
-# a work around below, but it doesn't get logged to the db.  Make the
-# package factory return a generic bad package with error array
+# missing manifest; thus it doesn't get reported as others do.  There
+# is a partial work around below using the hacky @package_error, but
+# this still doesn't get logged to the db.  Perhaps we should make the
+# package factory return a generic bad package with an error array
 # populated.
-
 
 require 'rubygems'
 require 'socket'
@@ -31,7 +31,7 @@ setup_database(config)
 
 factory = PackageFactory.new(config, DigitoolMetadataChecker)
 
-$stdout.sync, indent = true, ' ' * 4
+indent = ' ' * 4
 
 list = ARGV.sort
 
@@ -85,7 +85,5 @@ list.each do |directory|
     end
 
     move_to_dump_directory_maybe(directory, config.dump_directory) if (package and not package.valid?) or (not package and @package_error)
-
-
   end
 end

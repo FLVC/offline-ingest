@@ -4,21 +4,46 @@
   %head
 
     %meta{ :charset => "utf-8" }
+    %link{ :rel => "shortcut icon",  :href => "/images/favicon.ico" }
+    %link{ :rel => "stylesheet", :href => "/jquery-ui.css",  :type => "text/css"  }
+    %script{:type => "text/javascript", :src  => "/jquery-1.10.2.min.js"}
+    %script{:type => "text/javascript", :src  => "/jquery-1.10.3.ui.js" }
     %link{ :rel => "stylesheet", :href => "/site.css",  :type => "text/css"  }
-    %link{ :rel => "shortcut icon",  :href => "/favicon.ico" }
-    %script{:type => "text/javascript", :src  => "/jquery-1.4.js"}
 
     :javascript
       $(document).ready(function() {
-      $('.packages tbody tr:odd').addClass('odd');
-      $('.packages tbody tr:even').addClass('even');
+        $('.packages tbody tr:odd').addClass('odd');
+        $('.packages tbody tr:even').addClass('even');
       });
 
     :javascript
       function clearForm($form) {
-      $form.find('input:text, input:password, input:file, select, textarea').val('');
-      $form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
+        $form.find('input:text, input:password, input:file, select, textarea').val('');
+        $form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
       };
+
+
+    :javascript
+      $(function() {
+        $( "#from" ).datepicker({
+          maxDate: 0,
+          changeMonth: true,
+          changeYear: true,
+          dateFormat: "yy-mm-dd",
+          onClose: function( selectedDate ) {
+             $( "#to" ).datepicker( "option", "minDate", selectedDate );
+          }
+        });
+        $( "#to" ).datepicker({
+          maxDate: 0,
+          changeMonth: true,
+          changeYear: true,
+          dateFormat: "yy-mm-dd",
+          onClose: function( selectedDate ) {
+             $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+          }
+        });
+      });
 
     %title Ingest Report for #{@hostname}
 
@@ -31,96 +56,96 @@
 
     %form{ :method => 'get', :id => 'filter' }
       %fieldset
+        .full
+          .filter_entry
+            %label{ :for =>  'from', :style => 'margin-left: 0;' } Date
+            %input{ :name => 'from', :id => 'from', :style => "width: 6em;", :type => 'text', :value => @paginator.params["from"], :class => 'other_button' }
+            %input{ :name => 'to',   :id => 'to',   :style => "width: 6em;", :type => 'text', :value => @paginator.params["to"], :class => 'other_button'   }
 
-        %label{ :for =>  'from-date', :style => 'margin-left: 0;' } Date:
-        %input{ :name => 'from-date', :style => "width: 8em;", :type => 'text', :value => @paginator.params["from-date"], :placeholder => "1970-01-01"            }
-        %input{ :name => 'to-date',   :style => "width: 8em;", :type => 'text', :value => @paginator.params["to-date"],   :placeholder => Time.now.strftime('%F') }
+            %label{ :for =>   'status' } Status
+            %select{ :name => 'status', :class => 'other_button' }
+              %option{ :value => "" } Any
+              %option{ :value => "warning", :selected => @paginator.is_status?("warning") } Warning
+              %option{ :value => "error",   :selected => @paginator.is_status?("error")   } Error
 
-        %label{ :for =>  'ids' } ID:
-        %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;" }
+            %label{ :for =>  'ids' } ID
+            %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;", :class => 'other_button' }
 
-        %label{ :for =>  'title' } Title:
-        %input{ :name => 'title', :type => 'text', :value => @paginator.params["title"], :style => "width: 20em;"  }
+            %label{ :for =>  'title' } Title
+            %input{ :name => 'title', :type => 'text', :value => @paginator.params["title"], :style => "width: 20em;", :class => 'other_button'  }
 
-        %label{ :for =>   'content-type' } Content Type:
-        %select{ :name => 'content-type' }
-          %option{ :value => "" } Any
-          %option{ :value => "islandora:sp_basic_image",        :selected => @paginator.is_content_type?("islandora:sp_basic_image")          } Basic Image
-          %option{ :value => "islandora:sp_large_image_cmodel", :selected => @paginator.is_content_type?("islandora:sp_large_image_cmodel")   } Large Image
-          %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
-          %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
+            %label{ :for =>   'content-type' } Content Type
+            %select{ :name => 'content-type', :class => 'other_button' }
+              %option{ :value => "" } Any
+              %option{ :value => "islandora:sp_basic_image",        :selected => @paginator.is_content_type?("islandora:sp_basic_image")          } Basic Image
+              %option{ :value => "islandora:sp_large_image_cmodel", :selected => @paginator.is_content_type?("islandora:sp_large_image_cmodel")   } Large Image
+              %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
+              %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
 
-        %label{ :for =>   'status' } Status:
-        %select{ :name => 'status' }
-          %option{ :value => "" } Any
-          %option{ :value => "warning", :selected => @paginator.is_status?("warning") } Warning
-          %option{ :value => "error",   :selected => @paginator.is_status?("error")   } Error
+            %input{ :type => 'hidden', :name => 'before', :value => '' }
+            %input{ :type => 'hidden', :name => 'after',  :value => '' }
 
-        %input{ :type => 'hidden', :name => 'before', :value => '' }
-        %input{ :type => 'hidden', :name => 'after',  :value => '' }
+        %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit", :class => 'other_button' }
+        %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));", :class => 'other_button'  }
 
-        %br
-        %br
+    .full
+      .left
+        - if @paginator.no_pages? or @paginator.is_first_page_list?
+          %input{ :type => 'button', :value => "<< First", :disabled => true, :class => 'pager_dead' }
+        - else
+          %input{ :type => 'button', :value => "<< First", :onClick => "window.location='#{@paginator.first_page_list}'", :class => 'pager_button'  }
 
-        %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit" }
-        %input{ :type => 'button', :value => "Get CSV", :onClick => "window.location='#{@paginator.csv_link}'" }
-        %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));"  }
-    %br
+        - if @paginator.any_pages? and @paginator.has_previous_page_list?
+          %input{ :type => 'button', :value => "< Previous", :onClick => "window.location='#{@paginator.previous_page_list}'", :class => 'pager_button'  }
+        - else
+          %input{ :type => 'button', :value => "< Previous", :disabled => true, :class => 'pager_dead'  }
 
-    / make these bolder, larger, give more space
+        &equiv;
 
-    - if @paginator.no_pages? or @paginator.is_first_page_list?
-      &lArr;&lArr; First
-    - else
-      %a{ :href => @paginator.first_page_list }
-        &lArr;&lArr; First
+        - if @paginator.any_pages? and @paginator.has_next_page_list?
+          %input{ :type => 'button', :value => "Next >", :onClick => "window.location='#{@paginator.next_page_list}'", :class => 'pager_button'  }
+        - else
+          %input{ :type => 'button', :value => "Next >", :disabled => true, :class => 'pager_dead' }
 
-    - if @paginator.any_pages? and @paginator.has_previous_page_list?
-      %a{ :href => @paginator.previous_page_list }
-        &larr; Previous
-    - else
-      &larr; Previous
-
-    &equiv;
-
-    - if @paginator.any_pages? and @paginator.has_next_page_list?
-      %a{ :href => @paginator.next_page_list }
-        Next &rarr;
-    - else
-      Next &rarr;
-
-    - if @paginator.no_pages? or @paginator.is_last_page_list?
-      Last &rArr;&rArr;
-    - else
-      %a{ :href => @paginator.last_page_list }
-        Last &rArr;&rArr;
-    %br
+        - if @paginator.no_pages? or @paginator.is_last_page_list?
+          %input{ :type => 'button', :value => "Last >>", :disabled => true, :class => 'pager_dead' }
+        - else
+          %input{ :type => 'button', :value => "Last >>", :onClick => "window.location='#{@paginator.last_page_list}'", :class => 'pager_button'  }
+      .right
+        - case
+        - when @paginator.count > 1
+          %input{ :type => 'button', :value => "CSV: download these #{@paginator.count} selected records", :onClick => "window.location='#{@paginator.csv_link}'", :class => 'other_button' }
+        - when @paginator.count == 1
+          %input{ :type => 'button', :value => "CSV: download this selected record", :onClick => "window.location='#{@paginator.csv_link}'", :class => 'other_button' }
 
     %table{ :class => 'packages' }
       %thead
         %tr
           %th{ :style => "width:10%;" } Date
-          %th{ :style => "width:10%;" } Status
-          %th{ :style => "width:12%;" } Package
-          %th{ :style => "width:12%;" } Digitool
-          %th{ :style => "width:56%;" } Title
+          %th{ :style => "width:8%;" } Status
+          %th{ :style => "width:10%;" } Package
+          %th{ :style => "width:10%;" } Digitool
+          %th{ :style => "width:62%;" } Title
       %tbody
+        - query_string = @paginator.query_string('before' => nil,  'after' => nil)
         - @packages.each do |p|
           %tr
             %td
               #{p.time_started.strftime('%F %T')}
 
             %td
-              %a{ :href => "/packages/#{p[:id]}" }
-                - case
-                - when p.errors?
-                  %img{ :src => "/failure.png" }
+              - case
+              - when p.errors?
+                %img{ :src => "/images/failure.png" }
+                %a{ :href => "/packages/#{p[:id]}" + query_string }
                   error
-                - when p.warnings?
-                  %img{ :src => "/warning.png" }
+              - when p.warnings?
+                %img{ :src => "/images/warning.png" }
+                %a{ :href => "/packages/#{p[:id]}" + query_string }
                   warning
-                - else
-                  %img{ :src => "/success.png" }
+              - else
+                %img{ :src => "/images/success.png" }
+                %a{ :href => "/packages/#{p[:id]}" + query_string }
                   success
 
             %td

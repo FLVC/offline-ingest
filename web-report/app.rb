@@ -5,18 +5,31 @@ require 'offin/utils'
 require 'offin/paginator'
 require 'offin/csv-provider'
 
+error do
+  e = @env['sinatra.error']
+  request.body.rewind if request.body.respond_to?('rewind')
+  STDERR.puts "#{e.class} #{request.url} - #{e.message}"
+  e.backtrace.each { |line| STDERR.puts line }
+  [ 500, { 'Content-Type' => 'text/plain' }, "Internal Service Error. Please contact the systems administrator.\n" ]
+end
+
+not_found  do
+ [ 404, { 'Content-Type' => 'text/plain' },  "404 Not Found - #{request.url} doesn't exist.\n" ]
+end
+
+
+
 configure do
 
   $KCODE = 'UTF8'
-  set :logging,      :true          # use CommonLogger for now
 
   set :environment,  :production
-  # set :raise_errors, false        # Let our app handle the exceptions.
-  # set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
+  set :logging,      :true        # use CommonLogger for now
+  set :raise_errors, false        # Let our app handle the exceptions.
+  set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
 
-  set :raise_errors, true
-  set :dump_errors,  true
-  set :haml, :format => :html5, :escape_html => false
+  # set :dump_errors,  true
+  # set :haml, :format => :html5, :escape_html => false
   # use Rack::CommonLogger
 
   section_name = case ENV['SERVER_NAME']
@@ -26,8 +39,16 @@ configure do
                  else ;                              ENV['SERVER_NAME']  # at least we'll get an error message with some data...
                  end
 
-  DataBase.debug = true
-  DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
+
+  if defined?(PhusionPassenger)
+    PhusionPassenger.on_event(:starting_worker_process) do |forked|
+       if forked
+         DataBase.debug = true
+         DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
+         STDERR.puts "DB Setup Complete"
+       end
+     end
+  end
 
 end # of configure
 
@@ -57,7 +78,7 @@ helpers do
 
   def list_datastream_links config, package, css = ''
     links = []
-    Utils.get_datastream_names(config.url, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
+    Utils.get_datastream_names(config.fedora_url, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
       links.push "<a #{css} href=\"http://#{config.site}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
     end
     return links
@@ -67,7 +88,7 @@ helpers do
     return Utils.ping_islandora_for_object(config.site, package.islandora_pid)
   end
 
-  #  this is WAAAY to slow to use; rethink using an RI query
+  #  this is WAAAY too slow to use; rethink using an RI query
 
   def get_on_site_map config, packages
     pids = packages.map { |p| p.islandora_pid }
@@ -75,6 +96,8 @@ helpers do
   end
 
 end # of helpers
+
+
 
 before do
 
@@ -119,8 +142,7 @@ get '/packages' do
 end
 
 get '/packages/:id' do
-  @paginator    = PackagePaginator.new(@site, params[:id].to_i, params)
-
+  @paginator    = PackagePaginator.new(@site, params)
   @package      = DataBase::IslandoraPackage.first(:id => params[:id], :islandora_site => @site)
 
   # TODO: move some of the following into PackagePaginator (used to just use a package object)
