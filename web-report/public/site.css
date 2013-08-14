@@ -36,9 +36,9 @@ h2 {
 .filter_entry {
     font: italic bold 1.0em georgia, sans-serif;
     text-align: left;
-    padding: 0.75em;
+    padding: 0.5em 0.75em 0.5em 0.75em;
     color: white;
-    background-color: #636363;
+    background-color: #445;
 
     margin: 0 0.75em 0 0
     width: 100%;
@@ -122,9 +122,9 @@ th {
     text-align: left;
     border: none;
     border-width: 0;
-    padding: 0.65em 0 0.65em 1.0em;
+    padding: 0.5em 0 0.5em 1.0em;
     color: white;
-    background-color: #636363;
+    background-color: #445;
 }
 
 
@@ -139,7 +139,6 @@ tr.even {
 }
 
 tr.odd {
-//  background-color: #b0b0b0;
     background-color: #c0c0c4;
 }
 

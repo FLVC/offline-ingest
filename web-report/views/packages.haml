@@ -26,6 +26,7 @@
     :javascript
       $(function() {
         $( "#from" ).datepicker({
+          maxDate: 0,
           changeMonth: true,
           changeYear: true,
           dateFormat: "yy-mm-dd",
@@ -57,29 +58,29 @@
       %fieldset
         .full
           .filter_entry
-            %label{ :for =>  'from', :style => 'margin-left: 0;' } Date:
-            %input{ :name => 'from', :id => 'from', :style => "width: 8em;", :type => 'text', :value => @paginator.params["from"], :class => 'other_button' }
-            %input{ :name => 'to',   :id => 'to',   :style => "width: 8em;", :type => 'text', :value => @paginator.params["to"], :class => 'other_button'   }
+            %label{ :for =>  'from', :style => 'margin-left: 0;' } Date
+            %input{ :name => 'from', :id => 'from', :style => "width: 6em;", :type => 'text', :value => @paginator.params["from"], :class => 'other_button' }
+            %input{ :name => 'to',   :id => 'to',   :style => "width: 6em;", :type => 'text', :value => @paginator.params["to"], :class => 'other_button'   }
 
-            %label{ :for =>  'ids' } ID:
+            %label{ :for =>   'status' } Status
+            %select{ :name => 'status', :class => 'other_button' }
+              %option{ :value => "" } Any
+              %option{ :value => "warning", :selected => @paginator.is_status?("warning") } Warning
+              %option{ :value => "error",   :selected => @paginator.is_status?("error")   } Error
+
+            %label{ :for =>  'ids' } ID
             %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;", :class => 'other_button' }
 
-            %label{ :for =>  'title' } Title:
+            %label{ :for =>  'title' } Title
             %input{ :name => 'title', :type => 'text', :value => @paginator.params["title"], :style => "width: 20em;", :class => 'other_button'  }
 
-            %label{ :for =>   'content-type' } Content Type:
+            %label{ :for =>   'content-type' } Content Type
             %select{ :name => 'content-type', :class => 'other_button' }
               %option{ :value => "" } Any
               %option{ :value => "islandora:sp_basic_image",        :selected => @paginator.is_content_type?("islandora:sp_basic_image")          } Basic Image
               %option{ :value => "islandora:sp_large_image_cmodel", :selected => @paginator.is_content_type?("islandora:sp_large_image_cmodel")   } Large Image
               %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
               %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
-
-            %label{ :for =>   'status' } Status:
-            %select{ :name => 'status', :class => 'other_button' }
-              %option{ :value => "" } Any
-              %option{ :value => "warning", :selected => @paginator.is_status?("warning") } Warning
-              %option{ :value => "error",   :selected => @paginator.is_status?("error")   } Error
 
             %input{ :type => 'hidden', :name => 'before', :value => '' }
             %input{ :type => 'hidden', :name => 'after',  :value => '' }
@@ -121,10 +122,10 @@
       %thead
         %tr
           %th{ :style => "width:10%;" } Date
-          %th{ :style => "width:10%;" } Status
-          %th{ :style => "width:12%;" } Package
-          %th{ :style => "width:12%;" } Digitool
-          %th{ :style => "width:56%;" } Title
+          %th{ :style => "width:8%;" } Status
+          %th{ :style => "width:10%;" } Package
+          %th{ :style => "width:10%;" } Digitool
+          %th{ :style => "width:62%;" } Title
       %tbody
         - query_string = @paginator.query_string('before' => nil,  'after' => nil)
         - @packages.each do |p|
