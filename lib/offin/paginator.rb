@@ -231,8 +231,7 @@ class PackageListPaginator
 end # of class PackageListPaginator
 
 
-# PackagePaginator is class to help us build views, for linking to
-# next/previous packages that meet a list of search criteria.
+# PackagePaginator is class to help us build views, for linking to next/previous packages that meet a list of search criteria.
 
 class PackagePaginator
 
