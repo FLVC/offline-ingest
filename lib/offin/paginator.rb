@@ -222,6 +222,12 @@ class PackageListPaginator
     @params.merge! additional_params
     @params.each { |k,v| @params[k] = v.to_s;  @params.delete(k) if @params[k].empty? }
 
+    # clear invalid dates
+
+    from, to = Utils.parse_dates(@params['from'], @params['to'])
+    @params.delete('from') unless from
+    @params.delete('to') unless to
+
     if @params['before'] and @params['after']  # special case - there should be at most one of these, if not, remove both (do we really have to do this? it's mostly defensive programming...)
        @params.delete('before')
        @params.delete('after')

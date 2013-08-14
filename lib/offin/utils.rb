@@ -530,19 +530,13 @@ class Utils
 
 
   def Utils.parse_dates from, to
-
     from, to = (from or to), (to or from)  # if only one provide, start with both
-
     return unless from
-
     from, to = (from < to ? from : to), (to > from ? to : from)  # reorder if necessaet
-
     t1 = Time.parse(from)
     return  if t1.strftime('%F') != from
-
     t2 = Time.parse(to)
     return  if t2.strftime('%F') != to
-
     return t1.to_s, (t2 + 86399).to_s
   rescue => e
     return
@@ -550,14 +544,10 @@ class Utils
 
   # Helper for PackageListPaginator, CsvProvider.
 
-  ## TODO: add date support here
-
   def Utils.setup_basic_filters sql, params
 
     from, to = Utils.parse_dates(params['from'], params['to'])
-
     sql.add_condition('time_started > ?', from) if from
-
     sql.add_condition('time_started < ?', to) if to
 
     if val = params['site_id']
