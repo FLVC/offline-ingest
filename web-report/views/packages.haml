@@ -134,16 +134,18 @@
               #{p.time_started.strftime('%F %T')}
 
             %td
-              %a{ :href => "/packages/#{p[:id]}" + query_string }
-                - case
-                - when p.errors?
-                  %img{ :src => "/images/failure.png" }
+              - case
+              - when p.errors?
+                %img{ :src => "/images/failure.png" }
+                %a{ :href => "/packages/#{p[:id]}" + query_string }
                   error
-                - when p.warnings?
-                  %img{ :src => "/images/warning.png" }
+              - when p.warnings?
+                %img{ :src => "/images/warning.png" }
+                %a{ :href => "/packages/#{p[:id]}" + query_string }
                   warning
-                - else
-                  %img{ :src => "/images/success.png" }
+              - else
+                %img{ :src => "/images/success.png" }
+                %a{ :href => "/packages/#{p[:id]}" + query_string }
                   success
 
             %td
