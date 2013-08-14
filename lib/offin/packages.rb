@@ -291,7 +291,7 @@ class Package
     elsif iids.length == 1
       @iid = iids.first
     elsif iids.nil? or iids.length == 0
-      warning "MODS file doesn't include an IID, using the package name #{@directory_name}."
+      # warning "MODS file doesn't include an IID, using the package name #{@directory_name}."
       @iid = @directory_name
     end
 
