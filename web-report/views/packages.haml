@@ -90,24 +90,24 @@
 
     .full
       .left
-        - if @paginator.no_pages? or @paginator.is_first_page_list?
+        - if @paginator.is_first_page_list?
           %input{ :type => 'button', :value => "<< First", :disabled => true, :class => 'pager_dead' }
         - else
           %input{ :type => 'button', :value => "<< First", :onClick => "window.location='#{@paginator.first_page_list}'", :class => 'pager_button'  }
 
-        - if @paginator.any_pages? and @paginator.has_previous_page_list?
+        - if @paginator.has_previous_page_list?
           %input{ :type => 'button', :value => "< Previous", :onClick => "window.location='#{@paginator.previous_page_list}'", :class => 'pager_button'  }
         - else
           %input{ :type => 'button', :value => "< Previous", :disabled => true, :class => 'pager_dead'  }
 
         &equiv;
 
-        - if @paginator.any_pages? and @paginator.has_next_page_list?
+        - if @paginator.has_next_page_list?
           %input{ :type => 'button', :value => "Next >", :onClick => "window.location='#{@paginator.next_page_list}'", :class => 'pager_button'  }
         - else
           %input{ :type => 'button', :value => "Next >", :disabled => true, :class => 'pager_dead' }
 
-        - if @paginator.no_pages? or @paginator.is_last_page_list?
+        - if @paginator.is_last_page_list?
           %input{ :type => 'button', :value => "Last >>", :disabled => true, :class => 'pager_dead' }
         - else
           %input{ :type => 'button', :value => "Last >>", :onClick => "window.location='#{@paginator.last_page_list}'", :class => 'pager_button'  }

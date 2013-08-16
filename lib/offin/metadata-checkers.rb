@@ -25,6 +25,8 @@ class MetadataChecker
     @manifest.label || @mods.title || fallback
   end
 
+  #### TODO: get from manifest:getUser
+
   def get_owner
     return 'fedoraAdmin'
   end
