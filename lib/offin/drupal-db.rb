@@ -8,6 +8,8 @@ require 'offin/exceptions'
 
 module DrupalDataBase
 
+  @@debug = false
+
   def self.debug= bool
     @@debug = bool
   end
@@ -72,13 +74,12 @@ module DrupalDataBase
     return
   end
 
-
   # Given a range name 'str', make sure it's defined (though we ignore case), and return its corresponding finum 'lid'.
 
   def self.check_range_name str
     return self.downcase_keys(self.list_ranges)[str.downcase]
   rescue => e
-    raise SystemErrorr, "Can't check drupal database for embargo ranges"
+    raise SystemError, "Can't check drupal database for embargo ranges"
   end
 
   def self.add_embargo  islandora_pid, ip_range_name, expiration_date = nil
@@ -109,9 +110,9 @@ module DrupalDataBase
   end
 end
 
-
+# e.g.
 # Struct.new('MockConfig', :drupal_database)
-# config = Struct::MockConfig.new("postgres://islandora7:topsecret@localhost/islandora7")
+# config = Struct::MockConfig.new("postgres://islandora7:X5r4z!3p@localhost/islandora7")
 # DrupalDataBase.debug = true;
 # DrupalDataBase.setup(config)
 # puts DrupalDataBase.list_ranges.inspect

@@ -4,5 +4,6 @@
     <collection>FSU:ffp50</collection>
     <submittingInstitution>FSU</submittingInstitution>
     <owningInstitution>FSU</owningInstitution>
+    <embargo rangeName="fsu campus" endDate="2015-12-01"/>
     <objectHistory source="digitool">admin_unit="FSU01", ingest_id="ing6623", creator="creator:PSMITH", creation_date="2010-06-29 13:57:02", modified_by="super:TWEATHER", modification_date="2010-07-19 08:48:49"</objectHistory>
 </manifest>

@@ -64,8 +64,10 @@ def record_to_database site, package, status, start_time, finish_time
   end
 end
 
-def setup_database config
-  DataBase.setup(config) unless config.test_mode
+def setup_databases config
+  return if config.test_mode
+  DrupalDataBase.setup(config)
+  DataBase.setup(config)
 rescue => e
   STDERR.puts e
   exit 1

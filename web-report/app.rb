@@ -4,6 +4,7 @@ require 'offin/config'
 require 'offin/utils'
 require 'offin/paginator'
 require 'offin/csv-provider'
+require 'offin/drupal-database'
 
 error do
   e = @env['sinatra.error']
@@ -43,9 +44,14 @@ configure do
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
        if forked
+         config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name)
          DataBase.debug = true
-         DataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
+         DataBase.setup(config)
          STDERR.puts "DB Setup Complete"
+
+         # Don't need this quite yet:
+         # DrupalDataBase.debug = true
+         # DrupalDataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
        end
      end
   end

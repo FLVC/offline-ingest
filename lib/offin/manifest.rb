@@ -55,6 +55,10 @@ class Manifest
     @manifest_sax_doc.nil? ?  [] : @manifest_sax_doc.object_history
   end
 
+  def embargo
+    @manifest_sax_doc.nil? ?  [] : @manifest_sax_doc.embargo
+  end
+
   def other_logos
     @manifest_sax_doc.nil? ?  [] : @manifest_sax_doc.other_logos
   end

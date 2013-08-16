@@ -422,7 +422,7 @@ class ManifestSaxDocument < SaxDocument
   @@content_models = nil
 
 
-  attr_reader :collections, :content_model, :embargoes, :identifiers, :object_history, :other_logos, :label, :content_model,
+  attr_reader :collections, :content_model, :embargo, :identifiers, :object_history, :other_logos, :label, :content_model,
               :owning_institution, :submitting_institution, :owning_user, :valid
 
   def self.institutions= value
@@ -522,7 +522,7 @@ class ManifestSaxDocument < SaxDocument
   def end_element_namespace name, prefix = nil, uri = nil
     case name
 
-    when 'collection', 'contentModel', 'identifier', 'label', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution'
+    when 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution'
       @elements[name].push @current_string unless @current_string.empty?
 
     when 'objectHistory'
@@ -552,7 +552,14 @@ class ManifestSaxDocument < SaxDocument
     @collections = @elements['collection']
   end
 
-  # Check that
+
+  def check_date str
+    return Time.parse(str).strftime('%F') == str
+  rescue => e
+    return
+  end
+
+  # Check embargo
 
   def embargo_ok?
     return true if @elements['embargo'].empty?
@@ -562,14 +569,29 @@ class ManifestSaxDocument < SaxDocument
       return
     end
 
-    hash = @elements['embargo']
+    hash = @elements['embargo'].shift
 
-    if hash['rangeName'].nil? or hash['rangeName'].empty?
-      error "The manifest has an object history element that is missing the 'source' attribute: #{hash.inspect}."
+    unexpected_attributes = hash.keys - ['endDate', 'rangeName']
+
+    unless unexpected_attributes.empty?
+      error "The manifest embargo has unexpected attributes: #{unexpected_attributes.join(', ')}"
       return
     end
 
-    # 'endDate' is optional and means 'forever'
+    if hash['data']
+      warning "The manifest embargo should not have character data present '#{hash['data']}'"
+    end
+
+    if hash['rangeName'].nil? or hash['rangeName'].empty?
+      error "The manifest embargo is missing the 'rangeName' attribute, which is required: #{hash.inspect}."
+      return
+    end
+
+    # 'endDate' is optional and means 'forever', but if present must be a valid date in YYYY-MM-DD format
+
+    if hash['endDate'] and not check_date(hash['endDate'])
+      error "The manifest embargo attribute endDate is not a valid date: #{hash['endDate']}; it must be a valid date of the form 'YYYY-MM-DD'."
+    end
 
     @embargo = hash
     return true

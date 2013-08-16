@@ -7,6 +7,7 @@ require 'offin/mods'
 require 'offin/ingestor'
 require 'offin/metadata-checkers'
 require 'offin/config'
+require 'offin/drupal-db'
 require 'RMagick'
 
 BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
@@ -181,6 +182,10 @@ class Package
         ds.mimeType = 'text/xml'
       end
     end
+
+    if @manifest.embargo
+      DrupalDataBase.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+    end
   end
 
 
@@ -256,6 +261,15 @@ class Package
       error @manifest.errors
     end
 
+    if @manifest.embargo
+      if @config.test_mode
+        warning "Can't check the drupal database for valid embargo rangeNames in test mode."
+      elsif not DrupalDataBase.check_range_name(@manifest.embargo['rangeName'])
+        error "The manifest has a undefined rangeName \"#{@manifest.embargo['rangeName']}\" - valid rangeNames (case insensitive) are \"#{DrupalDataBase.list_ranges.keys.sort.join('", "')}\"."
+        @valid = false
+      end
+    end
+
     return (@valid &&= @manifest.valid?)
   end
 
@@ -265,8 +279,6 @@ class Package
     @marc = File.read(marc_file) if File.exists?(marc_file)
     return true
   end
-
-
 
 
   def handle_mods
