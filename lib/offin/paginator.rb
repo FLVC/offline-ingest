@@ -73,11 +73,13 @@ class PackageListPaginator
   end
 
   def is_first_page_list?
-    @packages.map { |p| p[:id] }.include? @max
+    return true if no_pages?  # vacuously true
+    return @packages.map { |p| p[:id] }.include? @max
   end
 
   def is_last_page_list?
-    @packages.map { |p| p[:id] }.include? @min
+    return true if no_pages?  # vacuously true
+    return @packages.map { |p| p[:id] }.include? @min
   end
 
   # build a query string for a link.
@@ -246,9 +248,9 @@ class PackagePaginator
 
   # As in PackageListPaginator, SITE is the value returned from
   # DataBase::IslandoraSite.first(:hostname => '...islandora site...')
-  # ID is the integer identifier (auto incremented) for the package
-  # table, extracted from the URL, and PARAMS is from the query
-  # paramters. So both the latter are user-supplied.
+  # ID is the integer identifier (auto incremented) surrogate key for
+  # the package table, extracted from the URL, and PARAMS is from the
+  # query paramters. So both the latter are user-supplied.
 
   def initialize site, params = {}
 
