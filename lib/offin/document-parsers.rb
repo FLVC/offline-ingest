@@ -412,6 +412,7 @@ end   # of class SaxDocumentExtractSparql
 #         admin_unit="NCF01", ingest_id="ing13302", creator="creator:SNORRIS", creation_date="2012-07-20 14:40:25", modified_by="creator:SNORRIS", modification_date="2012-07-20 14:40:48"
 #     </objectHistory>
 #
+#     <embargo rangeName="fsu campus" endDate="2016-12-29"/>
 # </manifest>
 #
 
@@ -421,7 +422,7 @@ class ManifestSaxDocument < SaxDocument
   @@content_models = nil
 
 
-  attr_reader :collections, :content_model, :identifiers, :object_history, :other_logos, :label, :content_model,
+  attr_reader :collections, :content_model, :embargoes, :identifiers, :object_history, :other_logos, :label, :content_model,
               :owning_institution, :submitting_institution, :owning_user, :valid
 
   def self.institutions= value
@@ -442,7 +443,7 @@ class ManifestSaxDocument < SaxDocument
 
     @elements = {}   # dictionary with keys by element names (collection, contentModel), values are lists, generally of strings from XML character data
 
-    [ 'collection', 'contentModel', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution' ].each do |name|
+    [ 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution' ].each do |name|
       @elements[name] = []
     end
 
@@ -452,30 +453,33 @@ class ManifestSaxDocument < SaxDocument
     @identifiers = []
     @other_logos = []
     @object_history = []
+    @embargos = []
 
     @label = nil
     @content_model = nil
     @owning_institution = nil
     @submitting_institution = nil
     @owning_user = nil
+    @embargo = nil
 
     super()
   end
 
   private
 
-  # What manifests are al about:
-
-  # | Manifest Element      | Required | Repeatable | Allowed Character Data                                  | Notes                                               |
-  # |-----------------------+----------+------------+---------------------------------------------------------+-----------------------------------------------------|
-  # | collection            | yes      | yes        | existing Islandora collection object id                 | will create collection on the fly for digitool      |
-  # | contentModel          | yes      | no         | islandora:{sp_pdf,sp_basic_image,sp_large_image_cmodel} |                                                     |
-  # | identifier            | no       | yes        | no embedded spaces?                                     | additional identifiers to be saved                  |
-  # | label                 | no       | no         | any UTF-8 string?                                       | used when displaying the object or object thumbnail |
-  # | otherLogo             | no       | yes        | existing drupal code                                    | determines logo for multibranding                   |
-  # | owningInstitution     | yes      | no         | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  |                                                     |
-  # | owningUser            | yes      | no         | valid drupal user                                       | should have submitter role across owningInstitution |
-  # | submittingInstitution | no       | no         | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  | defaults to owningInstitution                       |
+  # What manifests are all about:
+  #
+  #    Manifest Element      | Required | Repeatable    | Allowed Character Data                                  | Notes
+  #    ----------------------+----------+---------------+---------------------------------------------------------+------------------------------------------------------
+  #    collection            | yes      | yes           | existing Islandora collection object id                 | will create collection on the fly for digitool
+  #    contentModel          | yes      | no            | islandora:{sp_pdf,sp_basic_image,sp_large_image_cmodel} |
+  #    identifier            | no       | yes           | no embedded spaces?                                     | additional identifiers to be saved
+  #    label                 | no       | no            | any UTF-8 string?                                       | used when displaying the object or object thumbnail
+  #    otherLogo             | no       | yes           | existing drupal code                                    | determines logo for multibranding
+  #    owningInstitution     | yes      | no            | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  |
+  #    owningUser            | yes      | no            | valid drupal user                                       | should have submitter role across owningInstitution
+  #    submittingInstitution | no       | no            | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  | defaults to owningInstitution
+  #    embargo               | no       | not currently | n/a                                                     | required attribute rangeName, optional expirationDate
 
   # Textualize the attribute data off a stack element (ignore the :name key)
 
@@ -509,7 +513,7 @@ class ManifestSaxDocument < SaxDocument
       datum[at.localname] = at.value
     end
 
-    @elements['objectHistory'].push hash if name == 'objectHistory'
+    @elements[name].push hash if [ 'objectHistory', 'embargo' ].include? name
 
     @stack.push datum
     puts stack_dump if @@debug
@@ -547,6 +551,30 @@ class ManifestSaxDocument < SaxDocument
 
     @collections = @elements['collection']
   end
+
+  # Check that
+
+  def embargo_ok?
+    return true if @elements['embargo'].empty?
+
+    if @elements['embargo'].length > 1
+      error "The manifest document contains more than one embargo,  which is currently not supported."
+      return
+    end
+
+    hash = @elements['embargo']
+
+    if hash['rangeName'].nil? or hash['rangeName'].empty?
+      error "The manifest has an object history element that is missing the 'source' attribute: #{hash.inspect}."
+      return
+    end
+
+    # 'endDate' is optional and means 'forever'
+
+    @embargo = hash
+    return true
+  end
+
 
   # Check that exactly one of the allowed content models is present.
 
@@ -689,8 +717,9 @@ class ManifestSaxDocument < SaxDocument
     @valid =  owning_institution_ok?       && @valid
     @valid =  label_ok?                    && @valid
     @valid =  object_history_ok?           && @valid
+    @valid =  embargo_ok?                  && @valid
 
-    @valid &&=  true   # if not false, force to 'true' value, instead of non-boolean that ...ok? methods are allowed to return
+    @valid &&=  true   # if not false, force to 'true' value, instead of potentially confusing non-boolean that ...ok? methods might return
 
     warning "There were unexpected elements in the manifest:  #{@bogons.keys.sort.join(', ')}."  unless @bogons.empty?
   end

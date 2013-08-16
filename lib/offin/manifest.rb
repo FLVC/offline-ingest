@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'offin/document-parsers'
 
 # All things manifest.  Parse the XML, etc
