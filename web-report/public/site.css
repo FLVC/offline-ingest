@@ -32,6 +32,12 @@ h2 {
     color: #000;
 }
 
+
+.together {
+    display: inline-block;
+    padding: 0.25em 2em 0.25em 0.25em;
+}
+
 label {
     display: inline-block;
 }

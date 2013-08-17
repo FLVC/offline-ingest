@@ -58,72 +58,81 @@
       %fieldset
         .full
           .filter_entry
-            %label{ :for =>  'from', :style => 'margin-left: 0;' } Date
-            %input{ :name => 'from', :id => 'from', :style => "width: 6em;", :type => 'text', :value => @paginator.params["from"], :class => 'other_button' }
-            %input{ :name => 'to',   :id => 'to',   :style => "width: 6em;", :type => 'text', :value => @paginator.params["to"], :class => 'other_button'   }
 
-            %label{ :for =>   'status' } Status
-            %select{ :name => 'status', :class => 'other_button' }
-              %option{ :value => "" } Any
-              %option{ :value => "warning", :selected => @paginator.is_status?("warning") } Warning
-              %option{ :value => "error",   :selected => @paginator.is_status?("error")   } Error
+            .together
+              %label{ :for =>  'from' } Date
+              %input{ :name => 'from', :id => 'from', :style => "width: 6em;", :type => 'text', :value => @paginator.params["from"], :class => 'other_button' }
+              %input{ :name => 'to',   :id => 'to',   :style => "width: 6em;", :type => 'text', :value => @paginator.params["to"], :class => 'other_button'   }
 
-            %label{ :for =>  'ids' } ID
-            %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;", :class => 'other_button' }
+            .together
+              %label{ :for =>   'status' } Status
+              %select{ :name => 'status', :class => 'other_button' }
+                %option{ :value => "" } Any
+                %option{ :value => "warning", :selected => @paginator.is_status?("warning") } Warning
+                %option{ :value => "error",   :selected => @paginator.is_status?("error")   } Error
 
-            %label{ :for =>  'title' } Title
-            %input{ :name => 'title', :type => 'text', :value => @paginator.params["title"], :style => "width: 20em;", :class => 'other_button'  }
+            .together
+              %label{ :for =>  'ids' } ID
+              %input{ :name => 'ids', :type => 'text', :value => @paginator.params["ids"], :style => "width: 8em;", :class => 'other_button' }
 
-            %label{ :for =>   'content-type' } Content Type
-            %select{ :name => 'content-type', :class => 'other_button' }
-              %option{ :value => "" } Any
-              %option{ :value => "islandora:sp_basic_image",        :selected => @paginator.is_content_type?("islandora:sp_basic_image")          } Basic Image
-              %option{ :value => "islandora:sp_large_image_cmodel", :selected => @paginator.is_content_type?("islandora:sp_large_image_cmodel")   } Large Image
-              %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
-              %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
+            .together
+              %label{ :for =>  'title' } Title
+              %input{ :name => 'title', :type => 'text', :value => @paginator.params["title"], :style => "width: 20em;", :class => 'other_button'  }
 
+            .together
+              %label{ :for =>   'content-type' } Content Type
+              %select{ :name => 'content-type', :class => 'other_button' }
+                %option{ :value => "" } Any
+                %option{ :value => "islandora:sp_basic_image",        :selected => @paginator.is_content_type?("islandora:sp_basic_image")          } Basic Image
+                %option{ :value => "islandora:sp_large_image_cmodel", :selected => @paginator.is_content_type?("islandora:sp_large_image_cmodel")   } Large Image
+                %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
+                %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
 
-            %label{ :for =>   'collection' } Collection
-            %select{ :name => 'collection', :class => 'other_button' }
-              %option{ :value => "" } Any
-              - @collections.each do |pid, title|
-                %option{ :value => pid, :selected => @paginator.is_collection?(pid) } #{title}
+            .together
+              %label{ :for =>   'collection' } Collection
+              %select{ :name => 'collection', :class => 'other_button' }
+                %option{ :value => "" } Any
+                - @collections.each do |pid, title|
+                  %option{ :value => pid, :selected => @paginator.is_collection?(pid) } #{title}
 
             %input{ :type => 'hidden', :name => 'before', :value => '' }
             %input{ :type => 'hidden', :name => 'after',  :value => '' }
 
-        %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit", :class => 'other_button' }
-        %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));", :class => 'other_button'  }
 
-    .full
-      .left
-        - if @paginator.is_first_page_list?
-          %input{ :type => 'button', :value => "<< First", :disabled => true, :class => 'pager_dead' }
-        - else
-          %input{ :type => 'button', :value => "<< First", :onClick => "window.location='#{@paginator.first_page_list}'", :class => 'pager_button'  }
+      .full
+        .left
+          - if @paginator.is_first_page_list?
+            %input{ :type => 'button', :value => "<< First", :disabled => true, :class => 'pager_dead' }
+          - else
+            %input{ :type => 'button', :value => "<< First", :onClick => "window.location='#{@paginator.first_page_list}'", :class => 'pager_button'  }
 
-        - if @paginator.has_previous_page_list?
-          %input{ :type => 'button', :value => "< Previous", :onClick => "window.location='#{@paginator.previous_page_list}'", :class => 'pager_button'  }
-        - else
-          %input{ :type => 'button', :value => "< Previous", :disabled => true, :class => 'pager_dead'  }
+          - if @paginator.has_previous_page_list?
+            %input{ :type => 'button', :value => "< Previous", :onClick => "window.location='#{@paginator.previous_page_list}'", :class => 'pager_button'  }
+          - else
+            %input{ :type => 'button', :value => "< Previous", :disabled => true, :class => 'pager_dead'  }
 
-        &equiv;
+          &equiv;
 
-        - if @paginator.has_next_page_list?
-          %input{ :type => 'button', :value => "Next >", :onClick => "window.location='#{@paginator.next_page_list}'", :class => 'pager_button'  }
-        - else
-          %input{ :type => 'button', :value => "Next >", :disabled => true, :class => 'pager_dead' }
+          %input{ :style => 'align: right;',  :type => 'submit', :value => "Submit", :class => 'other_button' }
+          %input{ :type => 'button', :value => "Clear Form", :onClick => "clearForm($('#filter'));", :class => 'other_button'  }
 
-        - if @paginator.is_last_page_list?
-          %input{ :type => 'button', :value => "Last >>", :disabled => true, :class => 'pager_dead' }
-        - else
-          %input{ :type => 'button', :value => "Last >>", :onClick => "window.location='#{@paginator.last_page_list}'", :class => 'pager_button'  }
-      .right
-        - case
-        - when @paginator.count > 1
-          %input{ :type => 'button', :value => "CSV: download these #{@paginator.count} selected records", :onClick => "window.location='#{@paginator.csv_link}'", :class => 'other_button' }
-        - when @paginator.count == 1
-          %input{ :type => 'button', :value => "CSV: download this selected record", :onClick => "window.location='#{@paginator.csv_link}'", :class => 'other_button' }
+          &equiv;
+
+          - if @paginator.has_next_page_list?
+            %input{ :type => 'button', :value => "Next >", :onClick => "window.location='#{@paginator.next_page_list}'", :class => 'pager_button'  }
+          - else
+            %input{ :type => 'button', :value => "Next >", :disabled => true, :class => 'pager_dead' }
+
+          - if @paginator.is_last_page_list?
+            %input{ :type => 'button', :value => "Last >>", :disabled => true, :class => 'pager_dead' }
+          - else
+            %input{ :type => 'button', :value => "Last >>", :onClick => "window.location='#{@paginator.last_page_list}'", :class => 'pager_button'  }
+        .right
+          - case
+          - when @paginator.count > 1
+            %input{ :type => 'button', :value => "CSV: download these #{@paginator.count} selected records", :onClick => "window.location='#{@paginator.csv_link}'", :class => 'other_button' }
+          - when @paginator.count == 1
+            %input{ :type => 'button', :value => "CSV: download this selected record", :onClick => "window.location='#{@paginator.csv_link}'", :class => 'other_button' }
 
     %table{ :class => 'packages' }
       %thead
