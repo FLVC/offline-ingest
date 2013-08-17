@@ -144,6 +144,10 @@ class PackageListPaginator
     @params['status'] == str
   end
 
+  def is_collection? str
+    @params['collection'] == str
+  end
+
   # add a comment to place on a page - useful for debugging
 
   def add_comment str

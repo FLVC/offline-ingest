@@ -82,6 +82,13 @@
               %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
               %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
 
+
+            %label{ :for =>   'collection' } Collection
+            %select{ :name => 'collection', :class => 'other_button' }
+              %option{ :value => "" } Any
+              - @collections.each do |pid, title|
+                %option{ :value => pid, :selected => @paginator.is_collection?(pid) } #{title}
+
             %input{ :type => 'hidden', :name => 'before', :value => '' }
             %input{ :type => 'hidden', :name => 'after',  :value => '' }
 

@@ -8,7 +8,6 @@
     font-size: 0.8em;
 }
 
-
 body {
     font: georgia, sans-serif;
     line-height: 1.8;
@@ -31,6 +30,10 @@ h2 {
     margin-bottom: 0.5em 0 0.5em 0;
     font-weight: bold;
     color: #000;
+}
+
+label {
+    display: inline-block;
 }
 
 .filter_entry {
@@ -219,7 +222,6 @@ tr.odd {
     padding: 0;
     margin: 0;
 }
-
 
 .pager_button {
     font: bold 0.9em georgia, sans-serif;

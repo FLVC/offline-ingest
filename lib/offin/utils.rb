@@ -542,6 +542,18 @@ class Utils
     return
   end
 
+  # return hash of collection codes offline ingest has actually used
+
+  def Utils.available_collection_codes
+    sql = SqlAssembler.new
+    sql.set_select 'SELECT DISTINCT collection_code FROM islandora_collections'
+    hash = {}
+    sql.execute.each do |collection_code|
+      hash[collection_code] = true
+    end
+    return hash
+  end
+
   # Helper for PackageListPaginator, CsvProvider.
 
   def Utils.setup_basic_filters sql, params
@@ -564,6 +576,10 @@ class Utils
 
     if val = params['content-type']
       sql.add_condition('content_model = ?', val)
+    end
+
+    if val = params['collection']
+      sql.add_condition('islandora_packages.id IN (SELECT islandora_package_id FROM islandora_collections WHERE collection_code = ?)', val)
     end
 
     if params['status'] == 'warning'

@@ -85,8 +85,8 @@
       Purls: #{@purls.join(', ')}
       %br
 
-    - unless @collections.empty?
-      Islandora Collections: #{@collections.join(', ')}
+    - unless @package_collections.empty?
+      Islandora Collections: #{@package_collections.join(', ')}
       %br
 
     - if @package.success and @on_islandora == :present

@@ -72,6 +72,19 @@ helpers do
     return Utils.pretty_elapsed(package.time_finished.strftime('%s').to_i - package.time_started.strftime('%s').to_i)
   end
 
+  # returns list [  [title, pid],  [title, pid], ... ] sorted on title
+
+  def list_collections config
+    used = Utils.available_collection_codes
+    collections = Utils.get_collection_names(config)
+    list = []
+    collections.each do |pid, title|
+      next unless used[pid]
+      list.push [ pid, title ]
+    end
+    return list.sort{ |a,b| a[1].downcase <=> b[1].downcase }
+  end
+
   def list_collection_links config, package, css = ''
     collection_titles = Utils.get_collection_names(config)
     list = []
@@ -141,9 +154,11 @@ get '/packages/' do
 end
 
 get '/packages' do
-  @paginator          = PackageListPaginator.new(@site, params)
-  @packages           = @paginator.packages
-  # @islandora_presence = get_on_site_map(@config, @packages)
+  @collections = list_collections(@config)
+  @paginator   = PackageListPaginator.new(@site, params)
+  @packages    = @paginator.packages
+
+  # @islandora_presence = get_on_site_map(@config, @packages)  # too slow - rethink this
   haml :packages
 end
 
@@ -153,12 +168,12 @@ get '/packages/:id' do
 
   # TODO: move some of the following into PackagePaginator (used to just use a package object)
 
-  @collections  = list_collection_links(@config, @package)
-  @elapsed      = get_elapsed_time(@package)
-  @components   = list_component_links(@package)
-  @purls        = list_purl_links(@package)
-  @datastreams  = list_datastream_links(@config, @package)
-  @on_islandora = check_if_present(@config, @package)   # one of :present, :missing, :error
+  @package_collections = list_collection_links(@config, @package)
+  @elapsed             = get_elapsed_time(@package)
+  @components          = list_component_links(@package)
+  @purls               = list_purl_links(@package)
+  @datastreams         = list_datastream_links(@config, @package)
+  @on_islandora        = check_if_present(@config, @package)   # one of :present, :missing, :error
 
   haml :package
 end
