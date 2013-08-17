@@ -77,12 +77,19 @@ helpers do
   def list_collections config
     used = Utils.available_collection_codes
     collections = Utils.get_collection_names(config)
-    list = []
+    main_list = []
+    palmm_list = []
     collections.each do |pid, title|
       next unless used[pid]
-      list.push [ pid, title ]
+      if pid =~ /^palmm/i
+        palmm_list.push [ pid, '(palmm) ' + title ]
+      else
+        main_list.push [ pid, title ]
+      end
     end
-    return list.sort{ |a,b| a[1].downcase <=> b[1].downcase }
+    palmm_list.sort!{ |a,b| a[1].downcase <=> b[1].downcase }
+    main_list.sort!{ |a,b| a[1].downcase <=> b[1].downcase }
+    return main_list + palmm_list
   end
 
   def list_collection_links config, package, css = ''
