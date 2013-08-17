@@ -8,6 +8,13 @@ require 'offin/exceptions'
 
 module DrupalDataBase
 
+  @@table_prefix = ''    # one of our test setups uses prefixed tables instead of per-site databases. This is a work-around.
+
+  def self.table_prefix= str
+    str += "_" unless str =~ /_$/
+    @@table_prefix = str
+  end
+
   @@debug = false
 
   def self.debug= bool
@@ -37,7 +44,7 @@ module DrupalDataBase
 
   def self.list_ranges
     name_ids = {}
-    repository(:drupal).adapter.select("SELECT name, lid FROM islandora_ip_embargo_lists").each do |record|
+    repository(:drupal).adapter.select("SELECT name, lid FROM #{@@table_prefix}islandora_ip_embargo_lists").each do |record|
       name_ids[record.name.strip] = record.lid
     end
     return name_ids
@@ -46,20 +53,20 @@ module DrupalDataBase
   end
 
   def self.is_embargoed? islandora_pid
-    rec = repository(:drupal).adapter.select("SELECT lid, expiry FROM islandora_ip_embargo_embargoes WHERE pid = ?", islandora_pid)
+    rec = repository(:drupal).adapter.select("SELECT lid, expiry FROM #{@@table_prefix}islandora_ip_embargo_embargoes WHERE pid = ?", islandora_pid)
     return (not rec.empty?)
   rescue => e
     raise SystemError, "Can't read embargoes list from drupal database (see config.yml): #{e.class} #{e.message}."
   end
 
   def self.insert_embargo islandora_pid, range_id, date_ob = nil
-    repository(:drupal).adapter.select("INSERT INTO islandora_ip_embargo_embargoes(pid, lid, expiry) VALUES(?, ?, ?)", islandora_pid, range_id, date_ob)
+    repository(:drupal).adapter.select("INSERT INTO #{@@table_prefix}islandora_ip_embargo_embargoes(pid, lid, expiry) VALUES(?, ?, ?)", islandora_pid, range_id, date_ob)
   rescue => e
     raise SystemError, "Can't insert into drupal database embargoes table for #{islandora_pid}: #{e.class} #{e.message}."
   end
 
   def self.update_embargo islandora_pid, range_id, date_ob = nil
-    repository(:drupal).adapter.select("UPDATE islandora_ip_embargo_embargoes SET lid = ?, expiry = ? WHERE pid = ?", range_id, date_ob, islandora_pid)
+    repository(:drupal).adapter.select("UPDATE #{@@table_prefix}islandora_ip_embargo_embargoes SET lid = ?, expiry = ? WHERE pid = ?", range_id, date_ob, islandora_pid)
   rescue => e
     raise SystemError, "Can't update drupal database embargoes table for #{islandora_pid}: #{e.class} #{e.message}."
   end

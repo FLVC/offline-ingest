@@ -66,6 +66,7 @@ end
 
 def setup_databases config
   return if config.test_mode
+  DrupalDataBase.table_prefix = config.drupal_table_prefix if config.drupal_table_prefix
   DrupalDataBase.setup(config)
   DataBase.setup(config)
 rescue => e
