@@ -227,6 +227,8 @@ class Utils
     else
       return :error
     end
+  rescue RestClient::Forbidden => e
+    return :forbidden
   rescue RestClient::ResourceNotFound => e
     return :missing
   rescue => e

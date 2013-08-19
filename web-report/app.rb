@@ -178,7 +178,7 @@ get '/packages/:id' do
   @components          = list_component_links(@package)
   @purls               = list_purl_links(@package)
   @datastreams         = list_datastream_links(@config, @package)
-  @on_islandora        = check_if_present(@config, @package)   # one of :present, :missing, :error
+  @on_islandora        = check_if_present(@config, @package)   # one of :present, :missing, :error, :forbidden
 
   haml :package
 end
