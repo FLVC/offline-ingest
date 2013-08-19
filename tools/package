@@ -27,6 +27,11 @@ require 'offin/ingest-support'
 
 config  = package_ingest_parse_command_line ARGV
 
+if config.proxy
+  ENV['http_proxy'] = config.proxy
+  ENV['HTTP_PROXY'] = config.proxy
+end
+
 setup_databases(config)
 
 factory = PackageFactory.new(config, DigitoolMetadataChecker)
