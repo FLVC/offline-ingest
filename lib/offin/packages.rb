@@ -265,7 +265,7 @@ class Package
       if @config.test_mode
         warning "Can't check the drupal database for valid embargo rangeNames in test mode."
       elsif not DrupalDataBase.check_range_name(@manifest.embargo['rangeName'])
-        error "The manifest has a undefined rangeName \"#{@manifest.embargo['rangeName']}\" - valid rangeNames (case insensitive) are \"#{DrupalDataBase.list_ranges.keys.sort.join('", "')}\"."
+        error "The manifest has a undefined embargo rangeName \"#{@manifest.embargo['rangeName']}\" - valid embargo rangeNames (case insensitive) are \"#{DrupalDataBase.list_ranges.keys.sort.join('", "')}\"."
         @valid = false
       end
     end
@@ -869,6 +869,12 @@ class BookPackage < Package
       sequence += 1
       pid = ingest_page(pagename, sequence)
       @component_objects.push pid
+    end
+
+    if @manifest.embargo
+      @component_objects.each do |pid|
+        DrupalDataBase.add_embargo pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+      end
     end
   end
 

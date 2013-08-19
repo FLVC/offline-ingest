@@ -58,6 +58,8 @@
       - when :present
         %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
           %img{ :src => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}/datastream/TN/view" }
+      - when :forbidden
+        You are not authorizied to retreive information about this package from Islandora at this time.
       - when :missing
         This package is no longer present on islandora.
       - when :error

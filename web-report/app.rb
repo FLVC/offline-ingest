@@ -18,8 +18,6 @@ not_found  do
  [ 404, { 'Content-Type' => 'text/plain' },  "404 Not Found - #{request.url} doesn't exist.\n" ]
 end
 
-
-
 configure do
 
   $KCODE = 'UTF8'
@@ -47,7 +45,6 @@ configure do
          config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name)
          DataBase.debug = true
          DataBase.setup(config)
-         STDERR.puts "DB Setup Complete"
 
          # Don't need this quite yet:
          # DrupalDataBase.debug = true
@@ -81,6 +78,7 @@ helpers do
     palmm_list = []
     collections.each do |pid, title|
       next unless used[pid]
+      title ||= "Title n/a - id #{pid}"
       if pid =~ /^palmm/i
         palmm_list.push [ pid, '(palmm) ' + title ]
       else
@@ -180,7 +178,7 @@ get '/packages/:id' do
   @components          = list_component_links(@package)
   @purls               = list_purl_links(@package)
   @datastreams         = list_datastream_links(@config, @package)
-  @on_islandora        = check_if_present(@config, @package)   # one of :present, :missing, :error
+  @on_islandora        = check_if_present(@config, @package)   # one of :present, :missing, :error, :forbidden
 
   haml :package
 end
