@@ -640,12 +640,16 @@ class PdfPackage < Package
   end
 
   def ingest
-    return if @config.test_mode
 
     # Do image processing upfront so as to fail faster, if fail we must, before ingest is started.
 
-    thumb   = Utils.pdf_to_thumbnail @config, File.join(@directory_path, @pdf_filename)
-    preview = Utils.pdf_to_preview @config, File.join(@directory_path, @pdf_filename)
+    thumb, messages  = Utils.pdf_to_thumbnail @config, File.join(@directory_path, @pdf_filename)
+    warning messages
+
+    preview, messages = Utils.pdf_to_preview @config, File.join(@directory_path, @pdf_filename)
+    warning messages
+
+    return if @config.test_mode
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 

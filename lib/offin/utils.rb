@@ -370,6 +370,8 @@ class Utils
 
   def Utils.image_to_pdf config, image_filepath
     pdf = nil
+    error = nil
+    errors = []
     Open3.popen3("#{config.image_to_pdf_command} #{Utils.shellescape(image_filepath)} pdf:-") do |stdin, stdout, stderr|
       stdin.close
       pdf = stdout.read
@@ -381,23 +383,35 @@ class Utils
 
   def Utils.pdf_to_thumbnail config, pdf_filepath
     image = nil
+    error = nil
+    errors = []
     Open3.popen3("#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
       stdin.close
       image = stdout.read
       error = stderr.read
     end
-    return image
+    if not error.nil? and not error.empty?
+      errors = [ "When creating a thumbnail image from the PDF with command '#{config.pdf_convert_command}' the following message was produced:" ]
+      errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
+    end
+    return image, errors
   end
 
   def Utils.pdf_to_preview config, pdf_filepath
 
     image = nil
+    error = nil
+    errors = []
     Open3.popen3("#{config.pdf_convert_command} -resize #{config.pdf_preview_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
       stdin.close
       image = stdout.read
       error = stderr.read
     end
-    return image
+    if not error.nil? and not error.empty?
+      errors  = [ "When creating a preview image from the PDF with command '#{config.pdf_convert_command}' the following message was produced:" ]
+      errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
+    end
+    return image, errors
   end
 
   # expects image or pathname, image must be a format understood by tesseract (no jp2)

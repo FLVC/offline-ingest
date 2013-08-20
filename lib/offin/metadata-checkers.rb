@@ -7,8 +7,7 @@ require 'offin/mods'
 # from many sources, and metadata may arrive embedded in a
 # manifest.xml file, a MODS file, METS, MARC, DC, or defaults.
 #
-# Right now, we only have DigiTool-specific behaviours
-
+# Currently we have digitool-specified behavoirs and not.
 
 
 class MetadataChecker
@@ -25,15 +24,12 @@ class MetadataChecker
     @manifest.label || @mods.title || fallback
   end
 
-  #### TODO: get from manifest:getUser
-
   def get_owner
-    return 'fedoraAdmin'
+    return @manifest.owning_user || 'fedoraAdmin'
   end
 
   def load_check
   end
-
 end
 
 
@@ -53,5 +49,4 @@ class DigitoolMetadataChecker < MetadataChecker
   def get_owner
     return 'Digitool Migration Assistant'
   end
-
 end
