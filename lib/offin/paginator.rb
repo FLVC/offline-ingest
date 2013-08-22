@@ -183,6 +183,8 @@ class PackageListPaginator
 
     sql = SqlAssembler.new
     sql.set_select 'SELECT count(*) FROM islandora_packages'
+    sql.add_condition 'islandora_site_id = ?', @site[:id]
+
     @total = sql.execute()[0]
 
     # Second: find the limits of our filtered package set (conditions

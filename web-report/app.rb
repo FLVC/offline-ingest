@@ -7,18 +7,6 @@ require 'offin/csv-provider'
 require 'offin/drupal-db'
 
 
-CONFIG_FILENAME = '/usr/local/islandora/offline-ingest/config.yml'
-
-HOST_MAPPING = {
-    'admin.islandora7d.fcla.edu' => [ 'islandora7d.fcla.edu', 'islandora7d' ],
-    'admin.fsu7t.fcla.edu'       => [ 'fsu7t.fcla.edu',       'fsu7t' ],
-    'admin.fau7t.fcla.edu'       => [ 'fau7t.fcla.edu',       'fau7t' ],
-    'admin.fsu.digital.flvc.org' => [ 'fsu.digital.flvc.org', 'fsu7prod' ],
-    'admin.fau.digital.flvc.org' => [ 'fau.digital.flvc.org', 'fau7prod' ],
-  }
-
-
-
 error do
   e = @env['sinatra.error']
   request.body.rewind if request.body.respond_to?('rewind')
@@ -28,7 +16,7 @@ error do
 end
 
 not_found  do
- [ 404, { 'Content-Type' => 'text/plain' },  "404 Not Found - #{request.url} doesn't exist.\n" ]
+  [ 404, { 'Content-Type' => 'text/plain' },  "404 Not Found - #{request.url} doesn't exist.\n" ]
 end
 
 configure do
@@ -41,6 +29,8 @@ configure do
   set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
 
   ignored, section_name = HOST_MAPPING[ENV['SERVER_NAME']]
+
+  # STDERR.puts "CONFIGURE: server #{ENV['SERVER_NAME']};  section: #{section_name}  }"
 
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
@@ -81,7 +71,7 @@ helpers do
       title ||= "Title n/a - id #{pid}"
       if pid =~ /^palmm/i
         palmm_list.push [ pid, '(palmm) ' + title ]
-      else
+      elsif  pid =~ /^#{config.site_namespace}:/
         main_list.push [ pid, title ]
       end
     end
@@ -94,6 +84,7 @@ helpers do
     collection_titles = Utils.get_collection_names(config)
     list = []
     collections = package.get_collections.each do |pid|
+
       title = collection_titles[pid] ? collection_titles[pid] + " (#{pid})" : pid
       list.push "<a #{css} href=\"http://#{config.site}/islandora/object/#{pid}\">#{title}</a>"
     end
@@ -127,6 +118,8 @@ before do
 
   @hostname, section = HOST_MAPPING[ENV['SERVER_NAME']]
 
+  # STDERR.puts "BEFORE:  server #{ENV['SERVER_NAME']};  section: #{section};  @hostname: #{@hostname};"
+
   halt 500, "Don't know how to configure for server #{ENV['SERVER_NAME']}"  unless @hostname
 
   @config = Datyl::Config.new(CONFIG_FILENAME, 'default', section)
@@ -138,7 +131,7 @@ end # of before
 
 get '/' do
   redirect '/packages'
-  # haml :index  -- for later when we have more microservices....
+  # haml :index # for later when we have more microservices....
 end
 
 get '/packages/' do

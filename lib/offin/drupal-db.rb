@@ -26,10 +26,12 @@ module DrupalDataBase
     drup = DataMapper.setup(:drupal, config.drupal_database)
     DataMapper.finalize
 
-    # one of our drupal systems (production servers) uses posttrgres schemas instead of per-site databases. This should work with that.
+    # one of our drupal systems (production servers) uses posttrgres
+    # schemas instead of per-site databases. We set that up if config
+    # indicates that particular case.
 
-    if config.drupal_default
-      drup.select("set search_path to '#{config.drupal_default}'")
+    if config.drupal_schema
+      drup.select("set search_path to '#{config.drupal_schema}'")
     end
 
     # ping database so we can fail fast
