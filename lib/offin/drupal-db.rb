@@ -8,7 +8,7 @@ require 'offin/exceptions'
 
 module DrupalDataBase
 
-  @@table_prefix = ''    # one of our test setups uses prefixed tables instead of per-site databases. This is a work-around.
+  @@table_prefix = ''    # one of our drupal systems (test servers)  uses prefixed tables instead of per-site databases. This will handle that issue.
 
   def self.table_prefix= str
     str += "_" unless str =~ /_$/
@@ -24,13 +24,18 @@ module DrupalDataBase
   def self.setup config
     DataMapper::Logger.new($stderr, :debug)  if @@debug
     drup = DataMapper.setup(:drupal, config.drupal_database)
-
-    # repository(:drupal).adapter.resource_naming_convention = DataMapper::NamingConventions::Resource::UnderscoredAndPluralizedWithoutModule
     DataMapper.finalize
+
+    # one of our drupal systems (production servers) uses posttrgres schemas instead of per-site databases. This should work with that.
+
+    if config.drupal_default
+      drup.select("set search_path to '#{config.drupal_default}'")
+    end
 
     # ping database so we can fail fast
 
     return drup.select('select 1 + 1') == [ 2 ]
+
   rescue => e
     raise SystemError, "Fatal error: can't connect to drupal database: #{e.class}: #{e.message}"
   end

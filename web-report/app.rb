@@ -6,12 +6,25 @@ require 'offin/paginator'
 require 'offin/csv-provider'
 require 'offin/drupal-db'
 
+
+CONFIG_FILENAME = '/usr/local/islandora/offline-ingest/config.yml'
+
+HOST_MAPPING = {
+    'admin.islandora7d.fcla.edu' => [ 'islandora7d.fcla.edu', 'islandora7d' ],
+    'admin.fsu7t.fcla.edu'       => [ 'fsu7t.fcla.edu',       'fsu7t' ],
+    'admin.fau7t.fcla.edu'       => [ 'fau7t.fcla.edu',       'fau7t' ],
+    'admin.fsu.digital.flvc.org' => [ 'fsu.digital.flvc.org', 'fsu7prod' ],
+    'admin.fau.digital.flvc.org' => [ 'fau.digital.flvc.org', 'fau7prod' ],
+  }
+
+
+
 error do
   e = @env['sinatra.error']
   request.body.rewind if request.body.respond_to?('rewind')
   STDERR.puts "#{e.class} #{request.url} - #{e.message}"
   e.backtrace.each { |line| STDERR.puts line }
-  [ 500, { 'Content-Type' => 'text/plain' }, "Internal Service Error. Please contact the systems administrator.\n" ]
+  [ 500, { 'Content-Type' => 'text/plain' }, "500 Internal Service Error - please contact a systems administrator and have them inspect the apache logs.\n" ]
 end
 
 not_found  do
@@ -27,32 +40,19 @@ configure do
   set :raise_errors, false        # Let our app handle the exceptions.
   set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
 
-  # set :dump_errors,  true
-  # set :haml, :format => :html5, :escape_html => false
-  # use Rack::CommonLogger
-
-  section_name = case ENV['SERVER_NAME']
-                 when "admin.fsu.digital.flvc.org"; 'fsu7prod'
-                 when "admin.fsu7t.fcla.edu";       'fsu7t'
-                 when "admin.islandora7d.fcla.edu"; 'islandora7d'
-                 else ;                              ENV['SERVER_NAME']  # at least we'll get an error message with some data...
-                 end
-
+  ignored, section_name = HOST_MAPPING[ENV['SERVER_NAME']]
 
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
-       if forked
-         config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name)
-         DataBase.debug = true
-         DataBase.setup(config)
+      if forked
+        config = Datyl::Config.new(CONFIG_FILENAME, 'default',  section_name || ENV['SERVER_NAME'])
+        DataBase.debug = true
+        DataBase.setup(config)
 
-         # Don't need this quite yet:
-         # DrupalDataBase.debug = true
-         # DrupalDataBase.setup(Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default',  section_name))
-       end
-     end
+        # Don't need DrupalDataBase yet.  See drupal-db.rb for how to set up using postgres schemas, prefixed tables, and anything else Gary can throw at us.
+      end
+    end
   end
-
 end # of configure
 
 helpers do
@@ -125,25 +125,12 @@ end # of helpers
 
 before do
 
-  case ENV['SERVER_NAME']
+  @hostname, section = HOST_MAPPING[ENV['SERVER_NAME']]
 
-  when "admin.islandora7d.fcla.edu"
-    @hostname = 'islandora7d.fcla.edu'
-    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'islandora7d')
+  halt 500, "Don't know how to configure for server #{ENV['SERVER_NAME']}"  unless @hostname
 
-  when "admin.fsu.digital.flvc.org"
-    @hostname = 'fsu.digital.flvc.org'
-    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7prod')
-
-  when "admin.fsu7t.fcla.edu"
-    @hostname = 'fsu7t.fcla.edu'
-    @config = Datyl::Config.new('/usr/local/islandora/offline-ingest/config.yml', 'default', 'fsu7t')
-
-  else
-    halt 500, "Don't know how to configure for server #{ENV['SERVER_NAME']}"
-  end
-
-  @site = DataBase::IslandoraSite.first(:hostname => @hostname)
+  @config = Datyl::Config.new(CONFIG_FILENAME, 'default', section)
+  @site   = DataBase::IslandoraSite.first(:hostname => @hostname)
 
 end # of before
 

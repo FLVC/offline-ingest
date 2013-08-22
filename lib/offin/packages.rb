@@ -53,8 +53,6 @@ class PackageFactory
 end
 
 
-# TODO: @valid is used redundantly, use valid? throughout based on error array empty or not.
-
 # Package serves as a base class, but it could serve to do a basic
 # check on a directory's well-formedness as a package.
 
@@ -74,7 +72,9 @@ class Package
 
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
-  attr_reader :directory_path, :iid, :label, :manifest, :marc, :mods, :namespace, :owner, :pid, :purls
+  attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid
+
+  attr_accessor :purls, :iid, :label, :owner
 
   def initialize config, directory, manifest, updator_class
 
@@ -83,7 +83,6 @@ class Package
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
     @purls             = []
-    @valid             = true
     @pid               = nil
     @config            = config
     @content_model     = nil
@@ -92,12 +91,13 @@ class Package
     @directory_name    = File.basename(directory)
     @directory_path    = directory
     @datafiles         = list_other_files()
+    @updator           = updator_class.send :new, self
+
 
     handle_manifest(manifest) or return         # sets up @manifest
     handle_mods or return                       # sets up @mods
     handle_marc or return                       # sets up @marc
-
-    handle_updator(updator_class) or return     # does system-specific checks, e.g. digtitool
+    handle_updator or return                    # does system-specific checks, e.g. digtitool
 
     return unless valid?
 
@@ -150,7 +150,7 @@ class Package
   end
 
   def valid?
-    @valid and not errors?
+    not errors?
   end
 
   # Used by all subclassess.  Note that a MetadataUpdater call will
@@ -256,7 +256,7 @@ class Package
       @manifest = Utils.get_manifest @config, @directory_path
     end
 
-    if @manifest.errors?
+    if @manifest.errors? or not @manifest.valid?
       error "The package #{@directory_name} doesn't have a valid manifest file."
       error @manifest.errors
     end
@@ -266,11 +266,10 @@ class Package
         warning "Can't check the drupal database for valid embargo rangeNames in test mode."
       elsif not DrupalDataBase.check_range_name(@manifest.embargo['rangeName'])
         error "The manifest has a undefined embargo rangeName \"#{@manifest.embargo['rangeName']}\" - valid embargo rangeNames (case insensitive) are \"#{DrupalDataBase.list_ranges.keys.sort.join('", "')}\"."
-        @valid = false
       end
     end
 
-    return (@valid &&= @manifest.valid?)
+    return valid?
   end
 
 
@@ -287,7 +286,7 @@ class Package
     if not @mods.valid?
       error "The package #{@directory_name} doesn't have a valid MODS file."
       error @mods.errors
-      return (@valid = false)
+      return false
     end
 
     # Because we get a segv fault when trying to add an IID to MODS at this point, we defer inserting it into the MODS XML until later
@@ -296,10 +295,8 @@ class Package
 
     if iids.length == 1  and iids.first != @directory_name
       error "The MODS file in package #{@directory_name} declares an IID of #{iids.first} which doesn't match the package name."
-      @valid = false
     elsif iids.length > 1
       error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
-      @valid = false
     elsif iids.length == 1
       @iid = iids.first
     elsif iids.nil? or iids.length == 0
@@ -309,43 +306,23 @@ class Package
 
     if pid = Utils.get_pre_existing_islandora_pid_for_iid(@config, @iid)
       error "The IID for this package, #{@iid}, is alreading being used for islandora object #{pid}. The IID must be unique."
-      @valid = false
     end
 
-    @purls  = @mods.purls
-
-    if @purls.empty?
-      error "The MODS file in package #{@directory_name} does not have a PURL declaration: at least one is required."
-      @valid = false
-    end
-
-    return @valid
+    return valid?
   end
 
-  # A MetdataChecker mediates metadata checks according to rules you're
-  # better off not knowing, and various wildly by originating system.
+  # A MetdataChecker mediates specialized metadata checks, for instance, rules
+  # for digitool migrations vs. prospective ingests.
   #
-  # updater needs to:
+  # @updator.post_initialization will at least supply a package label,
+  # supply the islandora owner, and perhaps run specialized checks. It
+  # should be run after all mods, manifest, and marc processing.
   #
-  # supply label, supply islandora owner, run specialized checks.
+  # There is an @updator.post_ingest hook as well.
 
-  def handle_updator updator_class
-
-    updator = updator_class.send :new, @manifest, @mods, nil
-
-    @label = updator.get_label @directory_name     # probably want to do all of this in ingestor block, or boilerplate.... we'll have the ingest PID at that point...
-    @owner = updator.get_owner
-
-    updator.load_check
-
-    if updator.errors?
-      error updator.errors
-      @valid = false
-    end
-
-    warning updator.warnings
-
-    return @valid
+  def handle_updator
+    @updator.post_initialization
+    return valid?
   end
 
 end # of Package base class

@@ -9,32 +9,16 @@ require 'offin/config'
 require 'offin/packages'
 Utils.silence_warnings { require 'offin/db' }   # csv constant redefinition deep in datamapper
 
+
+
+
 def get_config_filename
-
   return case Socket.gethostname
-  when /alpo/i;                                 "/home/fischer/WorkProjects/offline-ingest/config.yml"
-  when /romeo-foxtrot|flvc-rfischer.local/i;    "/Users/fischer/WorkProjects/offline-ingest/config.yml"
-  when /islandora[dtp]/i;                       "/usr/local/islandora/offline-ingest/config.yml"
-  else
-    STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
-    exit -1
-  end
-end
-
-# This is very config-specific and may need to be changed: given the
-# hostname, return the section name of the config.yml file that deals
-# with that host.
-
-def appropriate_server
-  case Socket.gethostname
-  when /alpo/i;                            "alpo"
-  when /islandorad/i;                      "islandora7d"
-  when /islandorat/i;                      "fsu7t"
-  when /islandorap/i;                      "fsu7prod"
-  else
-    STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
-    exit -1
-  end
+         when /islandora[dtp]/i;                       "/usr/local/islandora/offline-ingest/config.yml"
+         else
+           STDERR.puts "#{$0} Doesn't know how to configure the environment for host (#{Socket.gethostname.downcase}), quitting."
+           exit -1
+         end
 end
 
 
@@ -78,8 +62,8 @@ end
 def package_ingest_usage
 
   return <<-EOF.gsub(/^    /, '')
-    Usage:  package [ --test-mode | --server ID ] [ --dump-directory dir ]  package-directories*
-    the options can be abbreviated as -t, -s and -d, respectively.
+    Usage:  package [ --test-mode | --server ID ] [ --dump-directory dir ] [ --prospective ] package-directories*
+    the options can be abbreviated as -t, -s, -d and -p, respectively.
     EOF
 end
 
@@ -95,17 +79,18 @@ def get_config *sections
 end
 
 
-Struct.new('Options', :server_id, :test_mode, :dump_directory)
+Struct.new('Options', :server_id, :test_mode, :dump_directory, :digitool_rules)
 
 def package_ingest_parse_command_line args
-  command_options = Struct::Options.new(nil, nil, nil)
+  command_options = Struct::Options.new(nil, false, nil, true)
   server_sections = get_config_server_sections
 
   opts   = OptionParser.new do |opt|
     opt.banner = package_ingest_usage
-    opt.on("--server ID", String,          "ingest to server ID - one of #{server_sections.join(', ')}")   { |sid| command_options.server_id = sid }
-    opt.on("--test-mode",                  "run basic checks on package without ingesting")                { command_options.test_mode = true }
-    opt.on("--dump-directory DIR", String, "optionally, move failed packages to directory DIR")            { |dir| command_options.dump_directory = dir.sub(/\/+$/, '') }
+    opt.on("--server ID", String,          "ingest to server ID - one of: [ #{server_sections.join(', ')} ]")  { |sid| command_options.server_id = sid }
+    opt.on("--test-mode",                  "run basic checks on package without ingesting")                    { command_options.test_mode = true }
+    opt.on("--dump-directory DIR", String, "optionally, move failed packages to directory DIR")                { |dir| command_options.dump_directory = dir.sub(/\/+$/, '') }
+    opt.on("--prospective",                "don't apply DigiTool processing rules to package")                 { command_options.digitool_rules = false }
   end
 
   opts.parse!(args)
@@ -114,6 +99,7 @@ def package_ingest_parse_command_line args
     raise SystemError, "No server specified." if command_options.server_id.nil?
     raise SystemError, "Bad server ID: use one of #{server_sections.join(', ')}" unless server_sections.include? command_options.server_id
   end
+
 
 
   case
@@ -132,6 +118,8 @@ def package_ingest_parse_command_line args
     raise SystemError, "Can't write to directory #{command_options.dump_directory}"               unless File.writable? command_options.dump_directory
     config[:dump_directory] = command_options.dump_directory
   end
+
+  config[:digitool_rules] = command_options.digitool_rules
 
 
   raise SystemError, "No packages specified." if args.empty?

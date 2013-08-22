@@ -7,6 +7,9 @@
 # package factory return a generic bad package with an error array
 # populated.
 
+# TODO: need to do a sanity check on all the config variables - make
+# sure files are there, directories are writable, etc.
+
 require 'rubygems'
 require 'socket'
 
@@ -14,18 +17,11 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
-$LOAD_PATH.unshift case Socket.gethostname
-                   when /alpo/i;                                "/home/fischer/WorkProjects/offline-ingest/lib/"
-                   when /romeo-foxtrot|flvc-rfischer.local/i;   "/Users/fischer/WorkProjects/offline-ingest/lib/"
-                   when /islandora[dtp]/i;                      "/usr/local/islandora/offline-ingest/lib/"
-                   else
-                     STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
-                     exit -1
-                   end
+$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
 require 'offin/ingest-support'
 
-config  = package_ingest_parse_command_line ARGV
+config = package_ingest_parse_command_line ARGV     ######## TODO: add --prospective flag to avoid digitool-specific processing
 
 if config.proxy
   ENV['http_proxy'] = config.proxy
@@ -34,7 +30,12 @@ end
 
 setup_databases(config)
 
-factory = PackageFactory.new(config, DigitoolMetadataChecker)
+if config.digitool_rules
+  factory = PackageFactory.new(config, DigitoolMetadataChecker)
+else
+  factory = PackageFactory.new(config, ProspectiveMetadataChecker)
+end
+
 
 indent = ' ' * 4
 

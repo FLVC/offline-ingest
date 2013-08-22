@@ -3,18 +3,21 @@
 require 'rubygems'
 require 'socket'
 
-$LOAD_PATH.unshift case Socket.gethostname
-                   when /alpo/i;                                "/home/fischer/WorkProjects/offline-ingest/lib/"
-                   when /romeo-foxtrot|flvc-rfischer.local/i;   "/Users/fischer/WorkProjects/offline-ingest/lib/"
-                   when /islandora[dtp]/i;                      "/usr/local/islandora/offline-ingest/lib/"
-                   else
-                     STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
-                     exit -1
-                   end
+$LOAD_PATH.unshift  "/usr/local/islandora/offline-ingest/lib/"
 
 require 'offin/ingest-support'
 
 DataBase.debug = true
-srv = appropriate_server()
+
+srv = ARGV[0]
+
+if srv.nil?
+  STDERR.puts "usage:  #{$0} config-section"
+  exit 1
+end
+
+cfg = get_config(srv)
+
 puts "Rebuilding server for " + srv
-DataBase.create get_config(srv)
+
+DataBase.create cfg
