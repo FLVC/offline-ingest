@@ -201,7 +201,7 @@ module DataBase
 
   def self.setup config
     DataMapper::Logger.new($stderr, :debug)  if @@debug
-    dm = DataMapper.setup(:default, config.database)
+    dm = DataMapper.setup(:default, config.ingest_database)
 
     repository(:default).adapter.resource_naming_convention = DataMapper::NamingConventions::Resource::UnderscoredAndPluralizedWithoutModule
     DataMapper.finalize

@@ -97,7 +97,9 @@ class Package
     handle_manifest(manifest) or return         # sets up @manifest
     handle_mods or return                       # sets up @mods
     handle_marc or return                       # sets up @marc
-    handle_updator or return                    # does system-specific checks, e.g. digtitool
+    handle_updator or return                    # does system-specific checks, e.g. digtitool, prospective, etc
+
+    handle_misc or return   # sigh. Currently: check owner exists in drupal database.
 
     return unless valid?
 
@@ -324,6 +326,20 @@ class Package
     @updator.post_initialization
     return valid?
   end
+
+  # That drawer in the kitchen that holds all of the assorted
+  # unsortables?  This is like that:
+
+  def handle_misc
+    users = DrupalDataBase.users
+    if not users.include? @owner
+      error "The digital object owner, '#{@owner}', is not one of these valid drupal users: '#{users.join("', '")}'"
+    end
+    return valid?
+  end
+
+
+
 
 end # of Package base class
 

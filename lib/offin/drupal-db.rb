@@ -78,7 +78,13 @@ module DrupalDataBase
     raise SystemError, "Can't update drupal database embargoes table for #{islandora_pid}: #{e.class} #{e.message}."
   end
 
-  # Given a well-formed date string 'yyyy-mm-dd', return it as an epcoh-formatted string. Returns nil if string ill-formed.
+  def self.users
+    return repository(:drupal).adapter.select("SELECT name FROM #{@@table_prefix}users").map { |name| name.strip }.select { |name| not name.empty? }
+  rescue => e
+    return []
+  end
+
+  # Given a well-formed date string 'yyyy-mm-dd', return it as an epoch-formatted string. Returns nil if string ill-formed.
 
   def self.check_date str
     time = Time.parse(str)

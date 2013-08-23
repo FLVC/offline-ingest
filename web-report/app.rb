@@ -4,7 +4,6 @@ require 'offin/config'
 require 'offin/utils'
 require 'offin/paginator'
 require 'offin/csv-provider'
-require 'offin/drupal-db'
 
 
 error do

@@ -21,7 +21,7 @@ $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
 require 'offin/ingest-support'
 
-config = package_ingest_parse_command_line ARGV     ######## TODO: add --prospective flag to avoid digitool-specific processing
+config = package_ingest_parse_command_line ARGV
 
 if config.proxy
   ENV['http_proxy'] = config.proxy
