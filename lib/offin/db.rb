@@ -1,6 +1,7 @@
 require 'data_mapper'
 require 'dm-migrations'
 require 'time'
+require 'offin/exceptions'
 
 
 module DataBase
