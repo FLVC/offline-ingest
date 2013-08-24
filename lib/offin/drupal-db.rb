@@ -154,12 +154,3 @@ class DrupalDataBase
     end
   end
 end
-
-# e.g.
-# Struct.new('MockConfig', :drupal_database)
-# config = Struct::MockConfig.new("postgres://islandora7:X5r4z!3p@localhost/islandora7")
-# DrupalDataBase.debug = true;
-# DrupalDataBase.setup(config)
-# puts DrupalDataBase.list_ranges.inspect
-# DrupalDataBase.add_embargo 'fsu:1', 'fsu campus', '2013-12-01'
-# DrupalDataBase.add_embargo 'fsu:4', 'fsu campus'

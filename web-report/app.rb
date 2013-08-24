@@ -29,8 +29,6 @@ configure do
 
   ignored, section_name = HOST_MAPPING[ENV['SERVER_NAME']]
 
-  # STDERR.puts "CONFIGURE: server #{ENV['SERVER_NAME']};  section: #{section_name}  }"
-
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
       if forked
@@ -38,7 +36,7 @@ configure do
         DataBase.debug = true
         DataBase.setup(config)
 
-        # Don't need DrupalDataBase yet.  See drupal-db.rb for how to set up using postgres schemas, prefixed tables, and anything else Gary can throw at us.
+        # Don't need DrupalDataBase for web app yet.  See drupal-db.rb for how to set up using postgres schemas, prefixed tables, and anything else Gary can throw at us.
       end
     end
   end

@@ -1,3 +1,6 @@
+# The main class for ingesting a directory of files and metadata.
+
+
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
@@ -92,14 +95,13 @@ class Package
     @directory_path    = directory
     @datafiles         = list_other_files()
     @updator           = updator_class.send :new, self
-
+    @drupal_db         = DrupalDataBase.new(config)
 
     handle_manifest(manifest) or return         # sets up @manifest
     handle_mods or return                       # sets up @mods
     handle_marc or return                       # sets up @marc
     handle_updator or return                    # does system-specific checks, e.g. digtitool, prospective, etc
-
-    handle_misc or return   # sigh. Currently: check owner exists in drupal database.
+    handle_misc or return                       # sigh. Currently: check owner exists in drupal database.
 
     return unless valid?
 
@@ -186,7 +188,7 @@ class Package
     end
 
     if @manifest.embargo
-      DrupalDataBase.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+      @drupal_db.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
     end
   end
 
@@ -266,7 +268,7 @@ class Package
     if @manifest.embargo
       if @config.test_mode
         warning "Can't check the drupal database for valid embargo rangeNames in test mode."
-      elsif not DrupalDataBase.check_range_name(@manifest.embargo['rangeName'])
+      elsif not @drupal_db.check_range_name(@manifest.embargo['rangeName'])
         error "The manifest has a undefined embargo rangeName \"#{@manifest.embargo['rangeName']}\" - valid embargo rangeNames (case insensitive) are \"#{DrupalDataBase.list_ranges.keys.sort.join('", "')}\"."
       end
     end
@@ -327,11 +329,11 @@ class Package
     return valid?
   end
 
-  # That drawer in the kitchen that holds all of the assorted
-  # unsortables?  This is like that:
+
+
 
   def handle_misc
-    users = DrupalDataBase.users
+    users = @drupal_db.users
     if not users.include? @owner
       error "The digital object owner, '#{@owner}', is not one of these valid drupal users: '#{users.join("', '")}'"
     end
@@ -870,7 +872,7 @@ class BookPackage < Package
 
     if @manifest.embargo
       @component_objects.each do |pid|
-        DrupalDataBase.add_embargo pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+        @drupal_db.add_embargo pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
       end
     end
   end
