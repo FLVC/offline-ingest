@@ -48,10 +48,8 @@ def record_to_database site, package, status, start_time, finish_time
   end
 end
 
-def setup_databases config
+def setup_ingest_database config
   return if config.test_mode
-  DrupalDataBase.table_prefix = config.drupal_table_prefix if config.drupal_table_prefix
-  DrupalDataBase.setup(config)
   DataBase.setup(config)
 rescue => e
   STDERR.puts e

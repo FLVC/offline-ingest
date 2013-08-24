@@ -329,19 +329,13 @@ class Package
     return valid?
   end
 
-
-
-
   def handle_misc
     users = @drupal_db.users
     if not users.include? @owner
-      error "The digital object owner, '#{@owner}', is not one of these valid drupal users: '#{users.join("', '")}'"
+      error "The digital object owner, '#{@owner}', is not one of the valid drupal users: '#{users.join("', '")}'"
     end
     return valid?
   end
-
-
-
 
 end # of Package base class
 

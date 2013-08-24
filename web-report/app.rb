@@ -31,12 +31,15 @@ configure do
 
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
+
+      # When we fork a new ruby process under apache, re-connect to
+      # the ingest database.  This web service doesn't require a
+      # connection to the drupal databases; we are only using the ingest db.
+
       if forked
         config = Datyl::Config.new(CONFIG_FILENAME, 'default',  section_name || ENV['SERVER_NAME'])
         DataBase.debug = true
         DataBase.setup(config)
-
-        # Don't need DrupalDataBase for web app yet.  See drupal-db.rb for how to set up using postgres schemas, prefixed tables, and anything else Gary can throw at us.
       end
     end
   end

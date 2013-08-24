@@ -25,6 +25,13 @@ class DrupalDataBase
       @table_prefix = ''
     end
 
+    if str = config.drupal_user_table_prefix
+      str += "_" unless str =~ /_$/
+      @user_table_prefix = str
+    else
+      @user_table_prefix = ''
+    end
+
     @schema_required = config.drupal_schema
     @user_schema_required = config.drupal_user_schema
 
@@ -52,9 +59,9 @@ class DrupalDataBase
     drup = DataMapper.setup(:drupal, config.drupal_database)
     DataMapper.finalize
 
-    # ping database so we can fail fast
+    # do something on database so we can fail fast
 
-    drup.select('select 1 + 1') == [ 2 ]
+    drup.select('select 1 + 1')
 
     return drup
   rescue => e
@@ -102,7 +109,7 @@ class DrupalDataBase
 
   def users
     set_user_search_path
-    @db.select("SELECT name FROM #{@table_prefix}users").map { |name| name.strip }.select { |name| not name.empty? }
+    @db.select("SELECT name FROM #{@user_table_prefix}users").map { |name| name.strip }.select { |name| not name.empty? }
   rescue => e
     return []
   ensure

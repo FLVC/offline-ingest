@@ -28,7 +28,7 @@ if config.proxy
   ENV['HTTP_PROXY'] = config.proxy
 end
 
-setup_databases(config)
+setup_ingest_database(config)
 
 if config.digitool_rules
   factory = PackageFactory.new(config, DigitoolMetadataChecker)
