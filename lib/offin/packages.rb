@@ -75,7 +75,7 @@ class Package
 
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
-  attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid
+  attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid, :mods_type_of_resource
 
   attr_accessor :purls, :iid, :label, :owner
 
@@ -96,6 +96,8 @@ class Package
     @datafiles         = list_other_files()
     @updator           = updator_class.send :new, self
     @drupal_db         = DrupalDataBase.new(config)
+
+    @mods_type_of_resource = nil
 
     handle_manifest(manifest) or return         # sets up @manifest
     handle_mods or return                       # sets up @mods
@@ -350,6 +352,7 @@ class BasicImagePackage < Package
     super(config, directory, manifest, updator)
 
     @content_model = BASIC_IMAGE_CONTENT_MODEL
+    @mods_type_of_resource = 'still image'
 
     if @datafiles.length > 1
       error "The Basic Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
@@ -431,6 +434,7 @@ class LargeImagePackage < Package
     super(config, directory, manifest, updator)
 
     @content_model = LARGE_IMAGE_CONTENT_MODEL
+    @mods_type_of_resource = 'still image'
 
     if @datafiles.length > 1
       error "The Large Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
@@ -566,7 +570,9 @@ class PdfPackage < Package
 
   def initialize config, directory, manifest, updator
     super(config, directory, manifest, updator)
+
     @content_model = PDF_CONTENT_MODEL
+    @mods_type_of_resource = 'text'
 
     if @datafiles.length > 2
       raise PackageError, "The PDF package #{@directory_name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
@@ -685,6 +691,7 @@ class BookPackage < Package
     super(config, directory, manifest, updator)
 
     @content_model = BOOK_CONTENT_MODEL
+    @mods_type_of_resource = 'text'
 
     raise PackageError, "The Book package #{@directory_name} contains no data files."  if @datafiles.empty?
 

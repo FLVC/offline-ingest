@@ -89,7 +89,7 @@ class DrupalDataBase
   end
 
   def is_embargoed? islandora_pid
-    @db.select("SELECT lid, expiry FROM #{@table_prefix}islandora_ip_embargo_embargoes WHERE pid = ?", islandora_pid)
+    rec = @db.select("SELECT lid, expiry FROM #{@table_prefix}islandora_ip_embargo_embargoes WHERE pid = ?", islandora_pid)
     return (not rec.empty?)
   rescue => e
     raise SystemError, "Can't read embargoes list from drupal database (see config.yml): #{e.class} #{e.message}."
