@@ -95,7 +95,8 @@ class Package
     @directory_path    = directory
     @datafiles         = list_other_files()
     @updator           = updator_class.send :new, self
-    @drupal_db         = DrupalDataBase.new(config)
+
+    @drupal_db         = DrupalDataBase.new(config) unless config.test_mode
 
     @mods_type_of_resource = nil
 
@@ -166,9 +167,19 @@ class Package
   def boilerplate ingestor
 
     @pid = ingestor.pid
-    @mods.add_iid_identifier @iid if @mods.iids.empty?   # we do sanity checking on the @iid elsewhere
+
+    @mods.add_iid_identifier @iid if @mods.iids.empty?   # we do sanity checking and setup the @iid elsewhere
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
+
+    if not @mods.type_of_resource.include? @mods_type_of_resource
+      @mods.add_type_of_resource @mods_type_of_resource
+    end
+
+    @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
+
+    raise PackageError, "Invalid MODS file" unless @mods.valid?
+
 
     # TODO: do we ever need to check that @mods is valid after adding manifest?
 
@@ -331,7 +342,12 @@ class Package
     return valid?
   end
 
+
+
+
   def handle_misc
+    return valid? if @config.test_mode
+
     users = @drupal_db.users
     if not users.include? @owner
       error "The digital object owner, '#{@owner}', is not one of the valid drupal users: '#{users.join("', '")}'"

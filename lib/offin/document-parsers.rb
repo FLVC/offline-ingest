@@ -390,7 +390,7 @@ end   # of class SaxDocumentExtractSparql
 
 # ManifestSaxDocument parses out these kinds of XML files (no schema yet)
 #
-# <manifest xmlns="info:/flvc/manifest">
+# <manifest xmlns="info:flvc/manifest">
 #
 #     <contentModel>
 #         islandora:sp_basic_image
