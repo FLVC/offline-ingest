@@ -24,10 +24,8 @@ class Mods
   # *) get title (label)
   # *) get PURLs, IIDs
   # *) insert extension elements (see manifest.rb for what could go in there)
-  # ---- TODO for non-digitool ----
-  # *) insert new title
-  # *) update extension elements
-  # *) get extension elements
+  # *) run cleanup xslt
+  # ... more being added
 
   MANIFEST_NAMESPACE = 'info:flvc/manifest/v1'
   MODS_NAMESPACE = 'http://www.loc.gov/mods/v3'

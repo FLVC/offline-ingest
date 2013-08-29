@@ -6,6 +6,10 @@ require 'offin/utils'
 require 'mime/types'
 
 
+# A collection of sax parsers for various pieces of XML processing.
+# See http://nokogiri.org/Nokogiri/HTML/SAX/Parser.html for an intro.
+
+
 class SaxDocument < Nokogiri::XML::SAX::Document
 
   @@debug = false  # hmmm... wonder what this is for?

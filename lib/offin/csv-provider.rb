@@ -3,6 +3,7 @@ require 'offin/sql-assembler'
 require 'offin/utils'
 require 'csv'
 
+# Simple helper class to provide CSV output for web microservice (sinatra)
 
 class CsvProvider
 

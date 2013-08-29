@@ -3,6 +3,11 @@ require 'time'
 require 'offin/exceptions'
 
 
+# A class for querying drupal databases.  While we use the datamapper
+# library to set up the connections, this really doesn't make much use
+# of the datamapper objects.
+
+
 class DrupalDataBase
 
   @@debug = false
@@ -140,8 +145,8 @@ class DrupalDataBase
 
     # When expiration_date is given to us as nil, it means there is no
     # explicit expiration date - it is 'forever'.  We can use a nil
-    # value for the update.  However, if provided, check_date will
-    # return nil on error.
+    # value for the update.  However, if a non-nil value is provided,
+    # check_date will return nil on error.
 
     unless expiration_date.nil?
       epoch_format = check_date(expiration_date)

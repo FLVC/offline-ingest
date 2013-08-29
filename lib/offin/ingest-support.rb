@@ -11,6 +11,10 @@ Utils.silence_warnings { require 'offin/db' }   # csv constant redefinition deep
 
 
 
+# This file has a loose collection of functions used by the .../tools/package
+# script, and perhaps other similar tools.
+
+
 
 def get_config_filename
   return case Socket.gethostname

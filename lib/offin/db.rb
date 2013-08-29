@@ -3,6 +3,9 @@ require 'dm-migrations'
 require 'time'
 require 'offin/exceptions'
 
+# A datamapper-based module for ingest admininstrative data.  It is
+# used by ingest scripts and the admin web service. See
+# http://datamapper.org/docs/ for a tutorial on using datamapper.
 
 module DataBase
 

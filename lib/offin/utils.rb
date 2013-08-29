@@ -1,3 +1,5 @@
+# This file is like that kitchen drawer with the assorted unsortables.
+
 require 'rubydora'
 require 'RMagick'
 require 'fileutils'
@@ -296,6 +298,8 @@ class Utils
     raise PackageError, "Image processing error: could not process JP2 image #{jp2k_filepath.sub(/.*\//, '')}:#{message}#{error.gsub("\n", ' ')}" unless error.empty?
 
     return Magick::Image.read(temp_image_filename).first
+
+
   ensure
     FileUtils.rm_f(temp_image_filename)
   end
@@ -460,7 +464,9 @@ class Utils
   # use tesseract to create an HOCR file; strip out the DOCTYPE to avoid hitting w3c for the DTD:
 
   def Utils.hocr config, image_filepath
-    return Utils.tesseract(config, image_filepath, :hocr).gsub(/<!DOCTYPE\s+html.*?>\s+/mi, '')
+    text = Utils.tesseract(config, image_filepath, :hocr)
+    return unless text.class == String
+    return text.gsub(/<!DOCTYPE\s+html.*?>\s+/mi, '')
   end
 
   # use tesseract to create an OCR file

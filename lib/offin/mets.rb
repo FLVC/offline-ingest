@@ -4,7 +4,7 @@ require 'offin/errors'
 require 'json'
 
 
-# helper classes for maintaining mets data
+# Helper classes for analyzing METS data.
 
 Struct.new('Page',    :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype)
 Struct.new('Chapter', :title, :level)

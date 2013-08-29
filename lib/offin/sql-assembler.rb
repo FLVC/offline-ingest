@@ -2,7 +2,7 @@ require 'data_mapper'
 
 # SqlAssembler is a helper class for PackageListPaginator.  It lets us
 # gather up the parts of a basic SQL select statement in a re-usable
-# way.  Presumably datamapper has been set up.
+# way.  Datamapper must have been set up to use this.
 
 Struct.new('SqlFragment', :text, :parameters)
 

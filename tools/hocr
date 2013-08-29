@@ -22,5 +22,5 @@ require 'offin/utils'
 
 config  = get_config()
 
-# puts Utils.hocr(config, ARGV[0])
-puts Utils.ocr(config, ARGV[0])
+puts Utils.hocr(config, ARGV[0])
+# puts Utils.ocr(config, ARGV[0])

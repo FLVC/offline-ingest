@@ -1,6 +1,5 @@
 # The main class for ingesting a directory of files and metadata.
 
-
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
@@ -359,6 +358,7 @@ end # of Package base class
 
 
 
+# Subclass of Package for handling basic image content model
 
 class BasicImagePackage < Package
 
@@ -439,6 +439,8 @@ class BasicImagePackage < Package
   end
 end
 
+
+# Subclass of Package for handling large image content model
 
 class LargeImagePackage < Package
 
@@ -580,6 +582,9 @@ class LargeImagePackage < Package
 
 end
 
+
+# Subclass of Package for handling the PDF content model
+
 class PdfPackage < Package
 
   # At this point we know we have a manifest, mods and maybe a marc file.
@@ -698,6 +703,8 @@ class PdfPackage < Package
   end
 end
 
+
+# Subclass of Package for handling the Book content model
 
 class BookPackage < Package
 

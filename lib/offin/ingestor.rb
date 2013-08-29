@@ -3,8 +3,14 @@ require 'offin/document-parsers'
 require 'offin/mods'
 require 'offin/errors'
 
+# The ingestor class is a simple wrapper for datastream-level
+# ingests. It uses a copy of the rubydora library to do the heavy
+# lifting.
+
 
 # TODO:  have to yank ingestor warnings and errors into Package object,
+
+
 
 
 # Extend RI mixins to include itql queries:
@@ -27,8 +33,6 @@ class Ingestor
   include Errors
 
   # TODO: sanity check on config object, throw error that should stop all processing
-  # TODO: error handling for: repository (can't connect?, etc);  create (???); ....
-  # TODO: try to run down pid and delete if error after a datastream or object save occurs...
 
 
   attr_reader :repository, :pid, :namespace, :fedora_object, :size
@@ -122,7 +126,7 @@ class Ingestor
     @fedora_object.models << fixup_pid(value)
   end
 
-  # TODO: XMLescape values here for next two?
+ # TODO: XMLescape values here for next two?  It may be escaped by rubydora library, check.
 
   def label= value
     @fedora_object.label = value
