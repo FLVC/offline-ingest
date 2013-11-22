@@ -144,7 +144,7 @@ class Utils
 
     return if config.test_mode and not config.solr_url   # user specified testing mode without specifying server - technicaly OK?
 
-    url = "#{config.solr_url}/select/?q=mods_identifier_iid_ms:#{iid}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms"
+    url = "#{config.solr_url}/select/?q=mods_identifier_iid_mls:#{iid}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms"
     doc = quickly do
       RestClient.get(url)
     end
@@ -203,9 +203,10 @@ class Utils
   #   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
   # </objectDatastreams>
 
-  def Utils.get_datastream_names fedora_url, pid
+  def Utils.get_datastream_names config, pid
     doc = quickly do
-      RestClient.get(fedora_url.sub(/\/+$/, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
+      # RestClient.get(fedora_url.sub(/\/+$/, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
+      RestClient.get("http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
     end
     xml = Nokogiri::XML(doc)
 
@@ -613,6 +614,82 @@ class Utils
     end
 
     return sql
+  end
+
+
+  def Utils.get_datastream_contents config, pid, dsid
+
+      url = "http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid}/datastreams/#{dsid}/content"
+      doc = quickly do
+        RestClient.get(url)
+      end
+
+      return doc
+  end
+
+  def Utils.rels_ext_get_policy_fields config, collection_pid
+    str = <<-XML.gsub(/^    /, '')
+        <islandora:inheritXacmlFrom>#{collection_pid}</islandora:inheritXacmlFrom>
+    XML
+
+    rels_ext_content = Utils.get_datastream_contents(config, collection_pid, 'RELS-EXT')
+    rels_ext_xml = Nokogiri::XML(rels_ext_content)
+    # I know this is very bad but I can't get my head around the errors with multiple namespaces
+    rels_ext_xml.remove_namespaces!
+    view_rule_count = 0
+    manage_rule_count = 0
+
+    rels_ext_xml.xpath("//isViewableByUser").each do |node|
+     view_rule_count += 1
+     if (node.text != 'fedoraAdmin')
+      str += <<-XML.gsub(/^    /, '')
+        <islandora:isViewableByUser>#{node.text}</islandora:isViewableByUser>
+    XML
+     end
+    end
+
+    rels_ext_xml.xpath("//isViewableByRole").each do |node|
+     view_rule_count += 1
+     if (node.text != 'administrator')
+      str += <<-XML.gsub(/^    /, '')
+        <islandora:isViewableByRole>#{node.text}</islandora:isViewableByRole>
+    XML
+     end
+    end
+
+    if view_rule_count > 0
+      str += <<-XML.gsub(/^    /, '')
+        <islandora:isViewableByUser>fedoraAdmin</islandora:isViewableByUser>
+        <islandora:isViewableByRole>administrator</islandora:isViewableByRole>
+    XML
+    end
+
+    rels_ext_xml.xpath("//isManageableByUser").each do |node|
+     manage_rule_count += 1
+     if (node.text != 'fedoraAdmin')
+      str += <<-XML.gsub(/^    /, '')
+        <islandora:isManageableByUser>#{node.text}</islandora:isManageableByUser>
+    XML
+     end
+    end
+
+    rels_ext_xml.xpath("//isManageableByRole").each do |node|
+     manage_rule_count += 1
+     if (node.text != 'administrator')
+      str += <<-XML.gsub(/^    /, '')
+        <islandora:isManageableByRole>#{node.text}</islandora:isManageableByRole>
+    XML
+     end
+    end
+
+    if manage_rule_count > 0
+      str += <<-XML.gsub(/^    /, '')
+        <islandora:isManageableByUser>fedoraAdmin</islandora:isManageableByUser>
+        <islandora:isManageableByRole>administrator</islandora:isManageableByRole>
+    XML
+    end
+
+    return str
   end
 
 end # of class Utils

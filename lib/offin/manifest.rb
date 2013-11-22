@@ -89,4 +89,8 @@ class Manifest
     @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.owning_user
   end
 
+  def page_progression
+    @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.page_progression
+  end
+
 end

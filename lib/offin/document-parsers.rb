@@ -427,7 +427,7 @@ class ManifestSaxDocument < SaxDocument
 
 
   attr_reader :collections, :content_model, :embargo, :identifiers, :object_history, :other_logos, :label, :content_model,
-              :owning_institution, :submitting_institution, :owning_user, :valid
+              :owning_institution, :submitting_institution, :owning_user, :page_progression, :valid
 
   def self.institutions= value
     @@institutions = value
@@ -447,7 +447,7 @@ class ManifestSaxDocument < SaxDocument
 
     @elements = {}   # dictionary with keys by element names (collection, contentModel), values are lists, generally of strings from XML character data
 
-    [ 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution' ].each do |name|
+    [ 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution', 'pageProgression' ].each do |name|
       @elements[name] = []
     end
 
@@ -464,6 +464,7 @@ class ManifestSaxDocument < SaxDocument
     @owning_institution = nil
     @submitting_institution = nil
     @owning_user = nil
+    @page_progression = nil
     @embargo = nil
 
     super()
@@ -526,7 +527,7 @@ class ManifestSaxDocument < SaxDocument
   def end_element_namespace name, prefix = nil, uri = nil
     case name
 
-    when 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution'
+    when 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution', 'pageProgression'
       @elements[name].push @current_string unless @current_string.empty?
 
     when 'objectHistory'
@@ -727,6 +728,27 @@ class ManifestSaxDocument < SaxDocument
     return true
   end
 
+  # Check for optional page progression, if present there may be only one.
+
+  def page_progression_ok?
+
+    return true if @elements['pageProgression'].empty?
+
+    if @elements['pageProgression'].length > 1
+      error "The manifest document lists more than one pageProgression - at most one can be specfied."
+      return
+    end
+
+    page_prog = @elements['pageProgression'].shift
+
+    if page_prog != "rl"
+        warning "In the manifest document, pageProgression was listed but not set to rl"
+        return true
+    end
+
+    @page_progression = page_prog
+    return true
+  end
 
   def end_document
     # optional, multivalued
@@ -744,6 +766,7 @@ class ManifestSaxDocument < SaxDocument
     @valid =  label_ok?                    && @valid
     @valid =  object_history_ok?           && @valid
     @valid =  embargo_ok?                  && @valid
+    @valid =  page_progression_ok?         && @valid
 
     @valid &&=  true   # if not false, force to 'true' value, instead of potentially confusing non-boolean that ...ok? methods might return
 

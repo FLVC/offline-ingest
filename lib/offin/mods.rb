@@ -261,12 +261,21 @@ class Mods
 
     flvc_prefix = get_prefix_for_flvc_extension
 
+    if flvc_extensions?
+        mods_flvc_extension = @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE)
+        mods_flvc_extension.remove()
+    end
+
     str = <<-XML.gsub(/^        /, '')
         <#{format_prefix}extension>
           <#{flvc_prefix}:flvc>
              <#{flvc_prefix}:owningInstitution>#{manifest.owning_institution}</#{flvc_prefix}:owningInstitution>
              <#{flvc_prefix}:submittingInstitution>#{manifest.submitting_institution || manifest.owning_institution}</#{flvc_prefix}:submittingInstitution>
     XML
+
+    manifest.other_logos.each do |other_logo|
+       str += "     <#{flvc_prefix}:otherLogo>#{other_logo}</#{flvc_prefix}:otherLogo>\n"
+    end
 
     manifest.object_history.each do |record|
       str += "     <#{flvc_prefix}:objectHistory source=\"#{record['source']}\">#{record['data']}</#{flvc_prefix}:objectHistory>\n"
@@ -295,12 +304,15 @@ class Mods
     return @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE).children.map { |xt| xt.to_s.strip }.select { |str| not str.empty? }
   end
 
+
   # @prefix is the XML element prefix used for the MODS namespace; if
   # @prefix is nil, then MODS is the default namespace here and we
   # don't need prefix:element.
 
   def format_prefix
-    @prefix.nil? ? '' : "#{@prefix}:"
+    #@prefix.nil? ? '' : "#{@prefix}:"
+    # don't want prefix:element
+    @prefix.nil? ? '' : ''
   end
 
   def validates_against_schema?

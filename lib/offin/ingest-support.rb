@@ -29,7 +29,7 @@ end
 def record_to_database site, package, status, start_time, finish_time
 
   site = DataBase::IslandoraSite.first_or_create(:hostname => site)
-  rec  = DataBase::IslandoraPackage.new(:title          => package.label,
+  rec  = DataBase::IslandoraPackage.new(:title          => package.label[0, 255],
                                         :package_name   => package.name,
                                         :islandora_pid  => package.pid,
                                         :time_started   => start_time,

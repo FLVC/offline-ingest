@@ -28,7 +28,7 @@ class MetadataChecker
       @package.label = @package.manifest.label
 
     elsif @package.mods and @package.mods.title
-      @package.label = @package.mods.title
+      @package.label = @package.mods.title[0,255]
 
     elsif @package.directory_name
       @package.label = @package.directory_name

@@ -1,5 +1,6 @@
 # The main class for ingesting a directory of files and metadata.
 
+require 'nokogiri'
 require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
@@ -85,6 +86,7 @@ class Package
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
     @purls             = []
+    @policy_collections = []   # list of collections with POLICY datastreams and matching namespace
     @pid               = nil
     @config            = config
     @content_model     = nil
@@ -171,7 +173,8 @@ class Package
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
 
-    if not @mods.type_of_resource.include? @mods_type_of_resource
+    #if not @mods.type_of_resource.include? @mods_type_of_resource
+    if @mods.type_of_resource.empty?
       @mods.add_type_of_resource @mods_type_of_resource
     end
 
@@ -202,8 +205,79 @@ class Package
     if @manifest.embargo
       @drupal_db.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
     end
+
+    # Randy, I had to make changes, sorry about the mess
+    @collections.each do |collection_id|
+      collection_namespace = collection_id.partition(":")[0]
+      collection_datastreams = Utils.get_datastream_names(config, collection_id)
+      if collection_namespace == @namespace and collection_datastreams.has_key?('POLICY')
+          @policy_collections.push collection_id
+      end
+    end
+
+    # set POLICY if there is only one collection with same namespace and POLICY datastream
+    # if none or more than one collection, do not set POLICY
+    if @policy_collections.count == 1
+      collection_pid = @policy_collections[0]
+      policy_contents = Utils.get_datastream_contents(@config, collection_pid, 'POLICY')
+
+      ingestor.datastream('POLICY') do |ds|
+        ds.dsLabel  = "XACML Policy Stream"
+        ds.content  = policy_contents
+        ds.mimeType = 'text/xml'
+        ds.controlGroup = 'X'
+      end
+
+    end
+
+    # if collection POLICY set or pageProgression in manifest, must create RELS-EXT with islandora fields
+    if @policy_collections.count == 1 or @manifest.page_progression
+
+      ingestor.datastream('RELS-EXT') do |ds|
+        ds.dsLabel  = 'Relationships'
+        ds.content  = rels_ext_with_islandora_fields(ingestor.pid)
+        ds.mimeType = 'application/rdf+xml'
+      end
+
+    end
+
   end
 
+  def rels_ext_with_islandora_fields pid
+
+    str = <<-XML.gsub(/^    /, '')
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{pid}">
+    XML
+    @collections.each do |collection|
+      str += <<-XML.gsub(/^    /, '')
+        <fedora:isMemberOfCollection rdf:resource="info:fedora/#{collection}"></fedora:isMemberOfCollection>
+    XML
+    end
+    str += <<-XML.gsub(/^    /, '')
+        <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
+    XML
+
+    if @manifest.page_progression
+    str += <<-XML.gsub(/^    /, '')
+        <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>
+    XML
+    end
+
+    if @policy_collections.count == 1
+        str += Utils.rels_ext_get_policy_fields(@config, @policy_collections[0])
+    end
+
+    str += <<-XML.gsub(/^    /, '')
+      </rdf:Description>
+    </rdf:RDF>
+    XML
+
+    return str
+  end
 
   # This is optional - only DigiTool derived MODS files will have it.
 
@@ -1093,7 +1167,7 @@ class BookPackage < Package
 
     page_label = toc_entry ?  Utils.xml_escape(toc_entry.title) : "Page #{sequence}"
 
-    return <<-XML.gsub(/^    /, '')
+    str = <<-XML.gsub(/^    /, '')
     <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
              xmlns:fedora-model="info:fedora/fedora-system:def/model#"
              xmlns:islandora="http://islandora.ca/ontology/relsext#"
@@ -1107,9 +1181,19 @@ class BookPackage < Package
         <islandora:isSection>1</islandora:isSection>
         <islandora:hasLanguage>eng</islandora:hasLanguage>
         <islandora:preprocess>false</islandora:preprocess>
+  XML
+
+    if @policy_collections.count == 1
+      #collection_pid = @policy_collections[0]
+      str += Utils.rels_ext_get_policy_fields(@config, @pid)
+    end
+
+    str += <<-XML.gsub(/^    /, '')
       </rdf:Description>
     </rdf:RDF>
   XML
+
+    return str
   end
 
 
@@ -1167,6 +1251,20 @@ class BookPackage < Package
         ds.dsLabel  = 'Relationships'
         ds.content  = rels_ext(ingestor.pid, sequence)
         ds.mimeType = 'application/rdf+xml'
+      end
+
+      # set POLICY if there is only one collection with same namespace and POLICY datastream
+      if @policy_collections.count == 1
+        collection_pid = @policy_collections[0]
+        policy_contents = Utils.get_datastream_contents(@config, collection_pid, 'POLICY')
+
+        ingestor.datastream('POLICY') do |ds|
+          ds.dsLabel  = "XACML Policy Stream"
+          ds.content  = policy_contents
+          ds.mimeType = 'text/xml'
+          ds.controlGroup = 'X'
+        end
+
       end
 
     end
