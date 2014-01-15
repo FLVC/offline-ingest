@@ -45,13 +45,14 @@ end
 
 
 class ProspectiveMetadataChecker < MetadataChecker
+  ALLOWED_PURL_SERVERS = [ 'purl.flvc.org', 'purl.fcla.edu' ]   # presumably, @config.purl_server maps to one of these
 
 
   def initialize package
     super(package)
   end
 
-  def post_initialization
+  def post_initialization   # TODO: rename to pre_ingest
     super
 
     if (@package.manifest and @package.manifest.owning_user)
@@ -61,6 +62,42 @@ class ProspectiveMetadataChecker < MetadataChecker
     end
   end
 
+
+  def post_ingest
+    super
+    return unless @package.valid?   # should not have to do this...
+
+
+    purl_server = Purlz.new(@config.purl_server, @config.purl_administrator, @config.purl_password)
+
+    @purls.each do |purl|
+      puri = URI.parse(purl)
+
+      unless ALLOWED_PURL_SERVERS.include? puri.hostname.downcase
+        @package.error "PURL was #{purl}, but purl server part must be one of #{ALLOWED_PURL_SERVERS}."
+      end
+
+      target = sprintf("http://%s/islandora/object/%s", @config.site, @iid)
+      result = purl_server.set(puri.path, target, 'flvc', 'fcla', @package.owning_institution)
+
+      unless result
+        @package.error "PURL #{purl} with owning_institution #{@package.owning_institution} and target #{target} could not be created (perhaps bad owning_institution or tombstoned purl?)."
+      end
+    end
+
+    raise PackageError "Failure in post-ingest PURL creation." unless @package.valid?
+
+    # TODO: over time, classify errors returned and sort out which
+    # should be system errors (e.g. network connection to purl server
+    # failed) or package errors.
+
+  rescue PackageError => e
+    raise e
+
+  rescue => e
+    errors "Failure in post-ingest PURL creation: #{e.message}", e.backtrace
+    raise PackageError, e.message
+  end
 
 end
 
@@ -89,6 +126,4 @@ class DigitoolMetadataChecker < MetadataChecker
 
     @package.owner = 'Digitool Migration Assistant'
   end
-
-
 end

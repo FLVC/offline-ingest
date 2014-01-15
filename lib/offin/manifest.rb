@@ -64,8 +64,6 @@ class Manifest
   end
 
   # label (title), content_model, owning_user, owning_institution, submitting_institution are strings or nil
-  #
-  # submitting_institution, if not present, will default to owning_institution
 
   def label
     @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.label
