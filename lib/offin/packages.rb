@@ -182,6 +182,253 @@ class Package
 
     @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
 
+    raise PackageError, "Invalid MODS file" unless @mods.valid?
+
+
+    # TODO: do we ever need to check that @mods is valid after adding manifest?
+
+    # Somewhat order dependent:
+
+    ingestor.label         = @label
+    ingestor.owner         = @owner
+    ingestor.content_model = @content_model
+    ingestor.collections   = @collections
+    ingestor.dc            = @mods.to_dc
+    ingestor.mods          = @mods.to_s
+
+    if @marc
+      ingestor.datastream('MARCXML') do |ds|
+        ds.dsLabel  = "Archived Digitool MarcXML"
+        ds.content  = @marc
+        ds.mimeType = 'text/xml'
+      end
+    end
+
+    if @manifest.embargo
+      @drupal_db.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+    end
+
+    # Randy, I had to make changes, sorry about the mess
+    @collections.each do |collection_id|
+      collection_namespace = collection_id.partition(":")[0]
+      collection_datastreams = Utils.get_datastream_names(config, collection_id)
+      if collection_namespace == @namespace and collection_datastreams.has_key?('POLICY')
+          @policy_collections.push collection_id
+      end
+    end
+
+    # set POLICY if there is only one collection with same namespace and POLICY datastream
+    # if none or more than one collection, do not set POLICY
+    if @policy_collections.count == 1
+      collection_pid = @policy_collections[0]
+      policy_contents = Utils.get_datastream_contents(@config, collection_pid, 'POLICY')
+
+      ingestor.datastream('POLICY') do |ds|
+        ds.dsLabel  = "XACML Policy Stream"
+        ds.content  = policy_contents
+        ds.mimeType = 'text/xml'
+        ds.controlGroup = 'X'
+      end
+
+    end
+
+    # if collection POLICY set or pageProgression in manifest, must create RELS-EXT with islandora fields
+    if @policy_collections.count == 1 or @manifest.page_progression
+
+      ingestor.datastream('RELS-EXT') do |ds|
+        ds.dsLabel  = 'Relationships'
+        ds.content  = rels_ext_with_islandora_fields(ingestor.pid)
+        ds.mimeType = 'application/rdf+xml'
+      end
+
+    end
+
+  end
+
+  def rels_ext_with_islandora_fields pid
+
+    str = <<-XML.gsub(/^    /, '')
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{pid}">
+    XML
+    @collections.each do |collection|
+      str += <<-XML.gsub(/^    /, '')
+        <fedora:isMemberOfCollection rdf:resource="info:fedora/#{collection}"></fedora:isMemberOfCollection>
+    XML
+    end
+    str += <<-XML.gsub(/^    /, '')
+        <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
+    XML
+
+    if @manifest.page_progression
+    str += <<-XML.gsub(/^    /, '')
+        <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>
+    XML
+    end
+
+    if @policy_collections.count == 1
+        str += Utils.rels_ext_get_policy_fields(@config, @policy_collections[0])
+    end
+
+    str += <<-XML.gsub(/^    /, '')
+      </rdf:Description>
+    </rdf:RDF>
+    XML
+
+    return str
+  end
+
+  # This is optional - only DigiTool derived MODS files will have it.
+
+  def digitool_id
+    return nil if @mods.nil?
+    return @mods.digitool_ids.first
+  end
+
+  private
+
+  # Get a list of all collections this package should be a member of; will check the config file for a list of remappings.
+  # TODO: more docs, example fragments of of yaml
+
+  def list_collections manifest
+    remapper = @config.remap_collections || {}
+    list = []
+
+    manifest.collections.each do |pid|
+      pid.downcase!
+
+      case remapper[pid]
+      when NilClass
+        list.push pid
+      when String
+        new_pid = remapper[pid].downcase
+        list.push new_pid
+        # warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collection #{new_pid}"
+      when Array
+        new_pids = remapper[pid].map { |p| p.downcase }
+        list += new_pids
+        # warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collections #{new_pids.join(', ')}"
+      end
+    end
+
+    return list
+  end
+
+  # List all the files in the directory we haven't already accounted for. Subclasses will need to work through these.
+  # Presumably these are all datafiles.
+
+  def list_other_files
+
+    list = []
+
+    Dir["#{@directory_path}/*"].each do |entry|
+
+      raise PackageError, "Found subdirectory '#{entry}' in package" if File.directory?(entry)
+      raise PackageError, "Found unreadable file '#{entry}' in package" unless File.readable?(entry)
+
+      filename = File.basename entry
+      next if [ '.', '..', 'manifest.xml', 'marc.xml', 'mets.xml', "#{directory_name}.xml" ].include? filename
+      list.push filename
+    end
+
+    return list
+  end
+
+
+  # set up @manifest
+
+  def handle_manifest manifest
+
+    if manifest.is_a? Manifest
+      @manifest = manifest
+    else
+      @manifest = Utils.get_manifest @config, @directory_path
+    end
+
+    if @manifest.errors? or not @manifest.valid?
+      error "The package #{@directory_name} doesn't have a valid manifest file."
+      error @manifest.errors
+    end
+
+    if @manifest.embargo
+      if @config.test_mode
+        warning "Can't check the drupal database for valid embargo rangeNames in test mode."
+      elsif not @drupal_db.check_range_name(@manifest.embargo['rangeName'])
+        error "The manifest has a undefined embargo rangeName \"#{@manifest.embargo['rangeName']}\" - valid embargo rangeNames (case insensitive) are \"#{DrupalDataBase.list_ranges.keys.sort.join('", "')}\"."
+      end
+    end
+
+    return valid?
+  end
+
+
+  def handle_marc
+    marc_file = File.join(@directory_path, 'marc.xml')
+    @marc = File.read(marc_file) if File.exists?(marc_file)
+    return true
+  end
+
+
+  def handle_mods
+    @mods = Utils.get_mods @config, @directory_path
+
+    if not @mods.valid?
+      error "The package #{@directory_name} doesn't have a valid MODS file."
+      error @mods.errors
+      return false
+    end
+
+    # Because we get a segv fault when trying to add an IID to MODS at this point, we defer inserting it into the MODS XML until later
+
+    iids = @mods.iids
+
+    if iids.length == 1  and iids.first != @directory_name
+      error "The MODS file in package #{@directory_name} declares an IID of #{iids.first} which doesn't match the package name."
+    elsif iids.length > 1
+      error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
+    elsif iids.length == 1
+      @iid = iids.first
+    elsif iids.nil? or iids.length == 0
+      # warning "MODS file doesn't include an IID, using the package name #{@directory_name}."
+      @iid = @directory_name
+    end
+
+    if pid = Utils.get_pre_existing_islandora_pid_for_iid(@config, @iid)
+      error "The IID for this package, #{@iid}, is alreading being used for islandora object #{pid}. The IID must be unique."
+    end
+
+    return valid?
+  end
+
+  # A MetdataChecker mediates specialized metadata checks, for instance, rules
+  # for digitool migrations vs. prospective ingests.
+  #
+  # @updator.post_initialization will at least supply a package label,
+  # supply the islandora owner, and perhaps run specialized checks. It
+  # should be run after all mods, manifest, and marc processing.
+  #
+  # There is an @updator.post_ingest hook as well.
+
+  def handle_updator
+    @updator.post_initialization
+    return valid?
+  end
+
+
+
+  def handle_misc
+    return valid? if @config.test_mode
+
+    users = @drupal_db.users
+    if not users.include? @owner
+      error "The digital object owner, '#{@owner}', is not one of the valid drupal users: '#{users.join("', '")}'"
+    end
+    return valid?
+  end
+
 end # of Package base class
 
 
