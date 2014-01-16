@@ -77,7 +77,7 @@ class Package
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
   attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid, :mods_type_of_resource, :owning_institution
 
-  attr_accessor :purls, :iid, :label, :owner
+  attr_accessor :iid, :label, :owner
 
   def initialize config, directory, manifest, updator_class
 
@@ -85,7 +85,6 @@ class Package
     @iid               = nil
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
-    @purls             = []
     @policy_collections = []   # list of collections with POLICY datastreams and matching namespace
     @pid               = nil
     @config            = config
@@ -176,11 +175,13 @@ class Package
     @mods.add_flvc_extension_elements @manifest
 
     #if not @mods.type_of_resource.include? @mods_type_of_resource
+
     if @mods.type_of_resource.empty?
       @mods.add_type_of_resource @mods_type_of_resource
     end
 
     @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
+
 
     raise PackageError, "Invalid MODS file" unless @mods.valid?
 
@@ -286,6 +287,10 @@ class Package
   def digitool_id
     return nil if @mods.nil?
     return @mods.digitool_ids.first
+  end
+
+  def purls
+    return @mods.purls
   end
 
   private
@@ -511,6 +516,7 @@ class BasicImagePackage < Package
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
+    @updator.post_ingest
   end
 end
 
@@ -614,7 +620,7 @@ class LargeImagePackage < Package
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
-    @updator.post_inget
+    @updator.post_ingest
   end
 
 
@@ -776,7 +782,7 @@ class PdfPackage < Package
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
-    @updator.post_inget
+    @updator.post_ingest
   end
 end
 
@@ -960,7 +966,7 @@ class BookPackage < Package
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
     @image.destroy! if @image.class == Magick::Image
-    @updator.post_inget
+    @updator.post_ingest
   end
 
 

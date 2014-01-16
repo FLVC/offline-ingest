@@ -93,7 +93,7 @@ class Purlz
     @server_uri = URI.parse(server_uri)
     @username   = username
     @password   = password
-    @http       = Net::HTTP.new(@server_uri.hostname, @server_uri.port)
+    @http       = Net::HTTP.new(@server_uri.host, @server_uri.port)
     @cookie     = get_login_cookie()
   end
 
