@@ -78,20 +78,35 @@ class ProspectiveMetadataChecker < MetadataChecker
 
       unless ALLOWED_PURL_SERVERS.include? puri.host.downcase
         package.error "PURL was #{purl}, but the server must be one of #{ALLOWED_PURL_SERVERS}."
+        next
+      end
+
+      if purl_server.tombstoned?(puri.path)
+        package.error "PURL #{puri.path} was tombstoned and cannot be recreated."
+        next
+      end
+
+      institution_code = package.owning_institution.downcase
+
+      if puri.path !~ /^\/#{institution_code}\//i
+        package.error "PURL #{puri.path} must have the institution code as the domain (first component) of the PURL path: http://#{puri.host}/#{institution_code}/...."
+        next
       end
 
       target = sprintf("http://%s/islandora/object/%s", package.config.site,  package.pid)
 
+      STDERR.puts target, package.config.purl_server.sub(/\/+$/, '') + puri.path
+
       # The purl server we use is from config.purl_server above, which may not actuually match the purl from the package metadata.
 
-      result = purl_server.set(puri.path, target, 'flvc', 'fcla', package.owning_institution.downcase)
+      result = purl_server.set(puri.path, target, 'flvc', 'fcla', institution_code)
 
       unless result
-        package.error "PURL #{purl} with owning_institution #{package.owning_institution} and target #{target} could not be created (perhaps bad owning_institution or tombstoned purl?)."
+        package.error "PURL #{purl} with owning_institution #{package.owning_institution} and target #{target} could not be created (perhaps bad owning_institution?)."
       end
     end
 
-    raise PackageError "Failure in post-ingest PURL creation." unless package.valid?
+    raise PackageError, "Failure in post-ingest PURL creation." unless package.valid?
 
     # TODO: over time, classify errors returned and sort out which
     # should be system errors (e.g. network connection to purl server
