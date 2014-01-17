@@ -156,7 +156,7 @@ class Mods
   end
 
   def purls
-    return @xml_document.xpath("//mods:location[translate(@displayLabel, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"PURL\"]/mods:url", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s }
+    return @xml_document.xpath("//mods:location[translate(@displayLabel, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"PURL\"]/mods:url", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s.strip }
   rescue => e
     return []
   end
