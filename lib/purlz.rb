@@ -3,6 +3,17 @@ require 'uri'
 require 'net/http'
 require 'nokogiri'
 
+
+# Our purl requirements:
+# https://docs.google.com/document/d/1TrFsFfAiqpQSCpitDMb6fMblGHcB-_rnEJhUpAtAO0g
+#
+# Various docs:
+# http://purl.oclc.org/docs/help.html
+# http://code.google.com/p/persistenturls/wiki/PURLFAQ
+#
+# TODO: get list of admin groups, existing domains,
+
+
 class SaxDocument < Nokogiri::XML::SAX::Document
 
   # Parse this kind of XML:
