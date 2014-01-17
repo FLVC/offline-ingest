@@ -48,7 +48,7 @@ end
 
 
 class ProspectiveMetadataChecker < MetadataChecker
-  ALLOWED_PURL_SERVERS = [ 'purl.flvc.org', 'purl.fcla.edu' ]   # presumably, @config.purl_server maps to one of these
+  ALLOWED_PURL_SERVERS = [ 'purl.flvc.org', 'purl.fcla.edu' ]   # presumably, @config.purl_server maps to one of these, but it doesn't have to
 
 
   def initialize package
@@ -82,7 +82,7 @@ class ProspectiveMetadataChecker < MetadataChecker
 
       target = sprintf("http://%s/islandora/object/%s", package.config.site,  package.pid)
 
-      # The purl server we use is from config.purl_server above, which may not actuually match the purl above (to allow us to use testing servers)
+      # The purl server we use is from config.purl_server above, which may not actuually match the purl from the package metadata.
 
       result = purl_server.set(puri.path, target, 'flvc', 'fcla', package.owning_institution.downcase)
 
