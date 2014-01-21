@@ -42,8 +42,8 @@ end
 
 class Utils
 
-  TESSERACT_TIMEOUT = 60 # tesseract can waste a lot of time on certain kinds of images
-
+  TESSERACT_TIMEOUT = 60   # tesseract can waste a lot of time on certain kinds of images
+  QUICKLY_TIMEOUT   = 10   # seconds before giving up on fedora
 
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
@@ -69,7 +69,6 @@ class Utils
     chars.each { |c| str.gsub!(c, '\\' + c) }
     return str
   end
-
 
   # This is mostly to silence the "require 'datamapper'" that causes the annoying warning "CSV constant redefined".
 
@@ -117,12 +116,12 @@ class Utils
     return texts.join(', ')
   end
 
-  def Utils.quickly
-    Timeout.timeout(2) do
+  def Utils.quickly time = QUICKLY_TIMEOUT
+    Timeout.timeout(time) do
       yield
     end
   rescue Timeout::Error => e
-    raise 'timed out after 2 seconds'
+    raise "Timed out after #{time} seconds"
   end
 
   def Utils.get_pre_existing_islandora_pid_for_iid config, iid
@@ -216,7 +215,6 @@ class Utils
 
   def Utils.get_datastream_names config, pid
     doc = quickly do
-      # RestClient.get(fedora_url.sub(/\/+$/, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
       RestClient.get("http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
     end
     xml = Nokogiri::XML(doc)
