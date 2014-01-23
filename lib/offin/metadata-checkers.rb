@@ -4,17 +4,13 @@ require 'offin/manifest'
 require 'offin/mods'
 require 'purlz'
 
-
 # The metadata updater class wraps behavior; we have packages arriving
 # from many sources, and metadata may arrive embedded in a
 # manifest.xml file, a MODS file, METS, MARC, DC or other set.   This
 # class is meant to organize such behavoir.
 
-
-
 # Currently we have digitool-specified behavoirs and a slightly less
 # restrictive prospective set.
-
 
 class MetadataChecker
 
@@ -26,7 +22,7 @@ class MetadataChecker
     @package = package
   end
 
-  def post_initialization
+  def post_initialization                               # TODO: rename to pre_ingest
     if package.manifest and package.manifest.label
       package.label = package.manifest.label
 
@@ -46,10 +42,8 @@ class MetadataChecker
 
 end
 
-
 class ProspectiveMetadataChecker < MetadataChecker
   ALLOWED_PURL_SERVERS = [ 'purl.flvc.org', 'purl.fcla.edu' ]   # presumably, @config.purl_server maps to one of these, but it doesn't have to
-
 
   def initialize package
     super(package)
@@ -64,7 +58,6 @@ class ProspectiveMetadataChecker < MetadataChecker
       package.error "#{self.class} can't determine owner for this package."
     end
   end
-
 
   def post_ingest
     super
@@ -82,29 +75,40 @@ class ProspectiveMetadataChecker < MetadataChecker
       end
 
       if purl_server.tombstoned?(puri.path)
-        package.error "PURL #{puri.path} was tombstoned and cannot be recreated."
+        package.error "PURL #{purl} was tombstoned and cannot be recreated."
+        next
+      end
+
+      if puri.path =~ /^\/#{flca}\//i
+        package.error "PURL #{puri} must have the owning institution code as the domain (first component) of the PURL path: http://#{puri.host}/#{institution_code}/...."
         next
       end
 
       institution_code = package.owning_institution.downcase
 
       if puri.path !~ /^\/#{institution_code}\//i
-        package.error "PURL #{puri.path} must have the institution code as the domain (first component) of the PURL path: http://#{puri.host}/#{institution_code}/...."
+        package.error "PURL #{purl} must have the owning institution code as the domain (first component) of the PURL path: http://#{puri.host}/#{institution_code}/...."
         next
       end
 
-      target = sprintf("http://%s/islandora/object/%s", package.config.site,  package.pid)
+      target      = sprintf("http://%s/islandora/object/%s", package.config.site,  package.pid)
+      maintainers = [ 'flvc', institution_code ]
 
-      STDERR.puts target, package.config.purl_server.sub(/\/+$/, '') + puri.path
+      if data = get(puri.path)
+        pre_existing_maintainers = data[:uids] + data[:gids]
+        potential_surprises = pre_existing_maintainers - maintainers
+        package.warning "When creating prospective PURL #{purl}, found an existing purl. Keeping existing maintainers #{potential_surprises})." unless potential_surprises.empty?
+        maintainers += pre_existing_maintainers
+      end
 
       # The purl server we use is from config.purl_server above, which may not actuually match the purl from the package metadata.
 
-      result = purl_server.set(puri.path, target, 'flvc', 'fcla', institution_code)
-
-      unless result
-        package.error "PURL #{purl} with owning_institution #{package.owning_institution} and target #{target} could not be created (perhaps bad owning_institution?)."
+      unless purl_server.set(puri.path, target, *maintainers)
+        package.error "PURL #{purl} with owning institution #{package.owning_institution} and target #{target} could not be created (perhaps owning institution in not a purl group for this server?)."
+        next
       end
-    end
+
+    end  # of package.purls.each do |purl|
 
     raise PackageError, "Failure in post-ingest PURL creation." unless package.valid?
 
@@ -122,8 +126,6 @@ class ProspectiveMetadataChecker < MetadataChecker
   end
 
 end
-
-
 
 class DigitoolMetadataChecker < MetadataChecker
 

@@ -25,6 +25,7 @@ class SaxDocument < Nokogiri::XML::SAX::Document
   #
   #   <maintainers>
   #       <uid>admin</uid>
+  #       <uid>fischer</uid>
   #       <gid>FCLA</gid>
   #       <gid>FLVC</gid>
   #       <gid>FSU</gid>
@@ -37,18 +38,19 @@ class SaxDocument < Nokogiri::XML::SAX::Document
   #
   # ...into this kind of hash:
   #
-  # { :id          => "/flvc/fd/fischer003",
-  #   :maintainers => [ "FCLA", "FLVC", "FSU" ],
-  #   :status      => "1",
-  #   :target      => "http://islandora7d.fcla.edu/islandora/object/fischer003",
-  #   :type        => "302" }
+  # { :id      => "/flvc/fd/fischer003",
+  #   :gids    => [ "FCLA", "FLVC", "FSU" ],
+  #   :uids    => [ "admin", "fischer" ],
+  #   :status  => "1",
+  #   :target  => "http://islandora7d.fcla.edu/islandora/object/fischer003",
+  #   :type    => "302" }
 
   attr_reader :record
 
   def initialize
     @current_string = ''
     @status = nil
-    @record = { :id => nil,    :type => nil,    :maintainers => [],    :target => nil,   :status => nil }
+    @record = { :id => nil,    :type => nil,    :gids => [],    :uids => [],    :target => nil,   :status => nil }
     super()
   end
 
@@ -70,7 +72,8 @@ class SaxDocument < Nokogiri::XML::SAX::Document
     when 'id';      record[:id] = @current_string;
     when 'type';    record[:type] = @current_string;
     when 'url';     record[:target] = @current_string;
-    when 'gid';     record[:maintainers].push @current_string;
+    when 'gid';     record[:gids].push @current_string;
+    when 'uid';     record[:uids].push @current_string;
     when 'purl';    record[:status] = @status
     end
     @current_string = ''
@@ -126,19 +129,19 @@ class Purlz
 
   # request_helper(PURL_ID, optional TARGET_URL, optional *MAINTAINERS) => Struct::PurlInfo
   #
-  # Utility function to bundle up http request parameters.
+  # Utility function to bundle up http request parameters.  Note that
+  # the maintainters parameter can have both users and groups.
 
-  Struct.new('PurlInfo', :purl_id, :target_url, :redirect_type, :maintainers)
+  Struct.new('PurlInfo', :admin_url, :target_url, :redirect_type, :maintainers)
 
   def request_helper purl_id, target_url = '', *maintainers
 
-    purl_id    = '/admin/purl/' + purl_id.sub(/^\/+/, '')
-    target_url = target_url
-    gids       = maintainers.uniq.join(',')
+    admin_url  = '/admin/purl/' + purl_id.sub(/^\/+/, '')
+    all_ids    = maintainers.map{ |g| g.strip.downcase }.uniq.join(',')  # includes both gids and uids
 
     # I can't really imagine ever using anything but 302 here, for a purl server
 
-    return Struct::PurlInfo.new(purl_id, target_url, REDIRECT_TYPE, gids)
+    return Struct::PurlInfo.new(admin_url, target_url, REDIRECT_TYPE, all_ids)
   end
 
   # assemble_params(DATA) => STRING
@@ -176,20 +179,20 @@ class Purlz
   def create purl_id, target_url, *maintainers
     data = request_helper(purl_id, target_url, *maintainers)
     params = assemble_params(data)
-    response = http.request_post(data.purl_id,  params,  cookie)
+    response = http.request_post(data.admin_url,  params,  cookie)
     return (response.code == "200")
   end
 
   def modify purl_id, target_url, *maintainers
     data = request_helper(purl_id, target_url, *maintainers)
     params = assemble_params(data)
-    response = http.request_put(data.purl_id + '?' + params, '', cookie)
+    response = http.request_put(data.admin_url + '?' + params, '', cookie)
     return (response.code == "200")
   end
 
   def delete purl_id
     data = request_helper(purl_id)
-    response = http.delete(CGI.escape(data.purl_id), cookie)
+    response = http.delete(CGI.escape(data.admin_url), cookie)
     return (response.code == "200")
   end
 
@@ -227,17 +230,10 @@ class Purlz
   # can't be re-created (yuck: do better here).
 
   def set purl_id, target_url, *maintainers
-
-    return if tombstoned? purl_id    # TODO: throw error here instead?
-
-    if exists? purl_id
-      modify purl_id, target_url, *maintainers
-    else
-      create purl_id, target_url, *maintainers
-    end
-
-    return get purl_id
+    return if tombstoned? purl_id
+    return (exists?(purl_id) ? modify(purl_id, target_url, *maintainers) : create(purl_id, target_url, *maintainers))
   end
+
 
   # get(PURL_ID) => HASH
   #
@@ -245,18 +241,19 @@ class Purlz
   # maintainers, redirect_type, and id) returned as a hash (entirely
   # string-valued).  Returns nil if the purl doesn't exist. Example:
   #
-  #   :id          => "/flvc/fd/fischer003"
-  #   :type        => "302"
-  #   :maintainers => [ "FCLA", "FLVC", "FSU" ]
-  #   :target      => "http://islandora7d.fcla.edu/islandora/object/fischer003"
-  #   :status      => "1"
+  #   :id      => "/flvc/fd/fischer003"
+  #   :type    => "302"
+  #   :uids    => [ 'fischer', 'admin' ]
+  #   :gids    => [ "FCLA", "FLVC", "FSU", ]
+  #   :target  => "http://islandora7d.fcla.edu/islandora/object/fischer003"
+  #   :status  => "1"
   #
-  # Note: :status == "2" if the purl used to be alive, but no longer
-  # exists.  "1" indicates it is live.
+  # Note: :status == "2" if the purl was deleted, 'tombstoned' in PURL parlance.
 
   def get purl_id
     data = request_helper(purl_id)
-    response = http.request_get(data.purl_id)
+    response = http.request_get(data.admin_url)
     return (response.code == '200' ? xml_to_hash(response.body) : nil)
   end
+
 end # of class Purlz
