@@ -1,4 +1,4 @@
- TODO: rename as script-support
+# TODO: rename as script-support
 
 require 'fileutils'
 require 'socket'

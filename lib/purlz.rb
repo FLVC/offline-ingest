@@ -177,16 +177,20 @@ class Purlz
   # methods are also publicly available.  Returns true on success.
 
   def create purl_id, target_url, *maintainers
+    # STDERR.puts "create: #{purl_id}, #{target_url}, #{maintainers.inspect}"
     data = request_helper(purl_id, target_url, *maintainers)
     params = assemble_params(data)
     response = http.request_post(data.admin_url,  params,  cookie)
-    return (response.code == "200")
+    # STDERR.puts "create: #{response.inspect}"
+    return (response.code == "201")
   end
 
   def modify purl_id, target_url, *maintainers
+    # STDERR.puts "modify: #{purl_id}, #{target_url}, #{maintainers.inspect}"
     data = request_helper(purl_id, target_url, *maintainers)
     params = assemble_params(data)
     response = http.request_put(data.admin_url + '?' + params, '', cookie)
+    # STDERR.puts "modify: #{response.inspect}"
     return (response.code == "200")
   end
 
@@ -230,6 +234,7 @@ class Purlz
   # can't be re-created (yuck: do better here).
 
   def set purl_id, target_url, *maintainers
+    # STDERR.puts "set: #{purl_id}, #{target_url}, #{maintainers.inspect}"
     return if tombstoned? purl_id
     return (exists?(purl_id) ? modify(purl_id, target_url, *maintainers) : create(purl_id, target_url, *maintainers))
   end
@@ -237,9 +242,10 @@ class Purlz
 
   # get(PURL_ID) => HASH
   #
-  # Given a purl, get it's relevant information (status, target,
-  # maintainers, redirect_type, and id) returned as a hash (entirely
-  # string-valued).  Returns nil if the purl doesn't exist. Example:
+  # Given a PURL_ID such as '/fsu/fd/FSDT36939', get it's relevant
+  # information (status, target, maintainers, redirect_type, and id)
+  # returned as a hash (entirely string-valued).  Returns nil if the
+  # purl doesn't exist. Example:
   #
   #   :id      => "/flvc/fd/fischer003"
   #   :type    => "302"
@@ -251,8 +257,13 @@ class Purlz
   # Note: :status == "2" if the purl was deleted, 'tombstoned' in PURL parlance.
 
   def get purl_id
+    # STDERR.puts "get: #{purl_id}"
     data = request_helper(purl_id)
+    # STDERR.puts "get: #{data.inspect}"
     response = http.request_get(data.admin_url)
+    # STDERR.puts "get: #{response.inspect}"
+    # STDERR.puts "get: #{response.body.strip}"
+    # STDERR.puts "get: #{xml_to_hash(response.body).inspect}", ''
     return (response.code == '200' ? xml_to_hash(response.body) : nil)
   end
 

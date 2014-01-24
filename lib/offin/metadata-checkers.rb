@@ -70,17 +70,17 @@ class ProspectiveMetadataChecker < MetadataChecker
       puri = URI.parse(purl)
 
       unless ALLOWED_PURL_SERVERS.include? puri.host.downcase
-        package.error "PURL was #{purl}, but the server must be one of #{ALLOWED_PURL_SERVERS}."
+        package.error "The server for PURL #{purl} must be one of #{ALLOWED_PURL_SERVERS.inspect}."
         next
       end
 
       if purl_server.tombstoned?(puri.path)
-        package.error "PURL #{purl} was tombstoned and cannot be recreated."
+        package.error "The PURL #{purl} was tombstoned and cannot be recreated."
         next
       end
 
-      if puri.path =~ /^\/#{flca}\//i
-        package.error "PURL #{puri} must have the owning institution code as the domain (first component) of the PURL path: http://#{puri.host}/#{institution_code}/...."
+      if puri.path =~ /^\/fcla\//i
+        package.error "PURL #{puri} is using 'fcla' as the domain (first component) of the PURL #{purl}, which is not supported."
         next
       end
 
@@ -94,10 +94,10 @@ class ProspectiveMetadataChecker < MetadataChecker
       target      = sprintf("http://%s/islandora/object/%s", package.config.site,  package.pid)
       maintainers = [ 'flvc', institution_code ]
 
-      if data = get(puri.path)
+      if data = purl_server.get(puri.path)
         pre_existing_maintainers = data[:uids] + data[:gids]
-        potential_surprises = pre_existing_maintainers - maintainers
-        package.warning "When creating prospective PURL #{purl}, found an existing purl. Keeping existing maintainers #{potential_surprises})." unless potential_surprises.empty?
+        potential_surprises = pre_existing_maintainers.map{ |x| x.strip.downcase } - maintainers.map{ |y| y.strip.downcase }
+        package.warning "When creating prospective PURL #{purl}, found an existing purl. Keeping existing maintainers #{potential_surprises.inspect})." unless potential_surprises.empty?
         maintainers += pre_existing_maintainers
       end
 
