@@ -42,7 +42,8 @@ end
 
 class Utils
 
-  TESSERACT_TIMEOUT = 60 # tesseract can waste a lot of time on certain kinds of images
+  TESSERACT_TIMEOUT = 60   # tesseract can waste a lot of time on certain kinds of images
+  QUICKLY_TIMEOUT   = 10   # seconds before giving up on fedora
 
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
@@ -58,6 +59,15 @@ class Utils
 
   def Utils.xml_escape str
     return str.gsub('&', '&amp;').gsub("'", '&apos;').gsub('<', '&lt;').gsub('>', '&gt;')
+  end
+
+
+  # For creating a solr query string, we need to escape some characters with "\".
+
+  def Utils.solr_escape str
+    chars = [ '\\', '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '"', ';', ' ' ]
+    chars.each { |c| str.gsub!(c, '\\' + c) }
+    return str
   end
 
   # This is mostly to silence the "require 'datamapper'" that causes the annoying warning "CSV constant redefined".
@@ -106,12 +116,12 @@ class Utils
     return texts.join(', ')
   end
 
-  def Utils.quickly
-    Timeout.timeout(2) do
+  def Utils.quickly time = QUICKLY_TIMEOUT
+    Timeout.timeout(time) do
       yield
     end
   rescue Timeout::Error => e
-    raise 'timed out after 2 seconds'
+    raise "Timed out after #{time} seconds"
   end
 
   def Utils.get_pre_existing_islandora_pid_for_iid config, iid
@@ -144,7 +154,7 @@ class Utils
 
     return if config.test_mode and not config.solr_url   # user specified testing mode without specifying server - technicaly OK?
 
-    url = "#{config.solr_url}/select/?q=mods_identifier_iid_mls:#{iid}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms"
+    url = "#{config.solr_url}/select/?q=mods_identifier_iid_mls:#{Utils.solr_escape(iid)}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms"
     doc = quickly do
       RestClient.get(url)
     end
@@ -205,7 +215,6 @@ class Utils
 
   def Utils.get_datastream_names config, pid
     doc = quickly do
-      # RestClient.get(fedora_url.sub(/\/+$/, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
       RestClient.get("http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
     end
     xml = Nokogiri::XML(doc)
@@ -272,7 +281,7 @@ class Utils
 
 
   # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
-  # Kakadu only produces uncomressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
+  # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
 
   def Utils.careful_with_that_jp2 config, jp2k_filepath
     Utils.silence_streams(STDERR) do
@@ -552,10 +561,12 @@ class Utils
   end
 
 
+  # if not dates, FROM and TO will be nulls.
+
   def Utils.parse_dates from, to
-    from, to = (from or to), (to or from)  # if only one provide, start with both
+    from, to = (from or to), (to or from)  # if only one provided, start with both the saem
     return unless from
-    from, to = (from < to ? from : to), (to > from ? to : from)  # reorder if necessaet
+    from, to = (from < to ? from : to), (to > from ? to : from)  # reorder if necessary
     t1 = Time.parse(from)
     return  if t1.strftime('%F') != from
     t2 = Time.parse(to)
@@ -565,7 +576,7 @@ class Utils
     return
   end
 
-  # return hash of collection codes offline ingest has actually used
+  # Returns hash HASH of collection codes offline ingest has actually used.
 
   def Utils.available_collection_codes
     sql = SqlAssembler.new

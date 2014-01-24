@@ -10,10 +10,8 @@ require 'offin/packages'
 Utils.silence_warnings { require 'offin/db' }   # csv constant redefinition deep in datamapper
 
 
-
 # This file has a loose collection of functions used by the .../tools/package
 # script, and perhaps other similar tools.
-
 
 
 def get_config_filename
@@ -29,7 +27,10 @@ end
 def record_to_database site, package, status, start_time, finish_time
 
   site = DataBase::IslandoraSite.first_or_create(:hostname => site)
-  rec  = DataBase::IslandoraPackage.new(:title          => package.label[0, 255],
+
+  # in case of errors, some of the following may be nil
+
+  rec  = DataBase::IslandoraPackage.new(:title          => (package.label || '')[0, 255],
                                         :package_name   => package.name,
                                         :islandora_pid  => package.pid,
                                         :time_started   => start_time,
@@ -102,8 +103,6 @@ def package_ingest_parse_command_line args
     raise SystemError, "Bad server ID: use one of #{server_sections.join(', ')}" unless server_sections.include? command_options.server_id
   end
 
-
-
   case
   when (command_options.test_mode and command_options.server_id)
     config = Datyl::Config.new(get_config_filename, "default", command_options.server_id)
@@ -116,14 +115,17 @@ def package_ingest_parse_command_line args
   end
 
   if command_options.dump_directory
-    raise SystemError, "The directory #{command_options.dump_directory} isn't really a directory" unless File.directory? command_options.dump_directory
-    raise SystemError, "Can't write to directory #{command_options.dump_directory}"               unless File.writable? command_options.dump_directory
+    case
+    when File.exists?(command_options.dump_directory)
+      raise SystemError, "The directory #{command_options.dump_directory} isn't really a directory" unless File.directory? command_options.dump_directory
+      raise SystemError, "Can't write to directory #{command_options.dump_directory}"  unless File.writable? command_options.dump_directory
+    else
+      FileUtils.mkdir_p command_options.dump_directory
+    end
     config[:dump_directory] = command_options.dump_directory
   end
 
   config[:digitool_rules] = command_options.digitool_rules
-
-
   raise SystemError, "No packages specified." if args.empty?
 
 rescue => e

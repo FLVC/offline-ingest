@@ -1,6 +1,6 @@
 <manifest xmlns="info:/flvc/manifest/v1">
 <contentModel>islandora:sp_large_image_cmodel</contentModel>
 <owningUser>Sal Supervisor</owningUser>
-<collection>fsu:92</collection>
+<collection>fsu:p1</collection>
 <owningInstitution>FSU</owningInstitution>
 </manifest>
