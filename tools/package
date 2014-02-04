@@ -14,8 +14,11 @@ require 'rubygems'
 require 'socket'
 
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
-Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+
+Kernel.trap('HUP')  { "IGNORE" }
+
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
