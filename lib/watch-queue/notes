@@ -1,0 +1,159 @@
+god - a process monitoring daemon - somewhat half-baked:
+
+   gem install god
+
+resque - ruby library for
+
+
+
+# #<ThreadError: can't be called from trap context>
+#
+# require 'log4r'
+# include Log4r
+# mylog = Logger.new 'mylog'
+# mylog.outputters = Outputter.stdout
+# mylog.level = Logger::INFO
+# Resque.logger = mylog
+
+
+add 'require yaml' to
+/opt/ruby/lib/ruby/gems/2.0.0/gems/resque-1.25.1/lib/resque/server.rb
+
+
+need to document kill signals (there are two families)
+
+
+
+
+/etc/init.d/redis  - hacked together from various sources, set startup order
+
+   redis:# chkconfig: - 92 8
+
+/usr/local/etc/redis.conf   --- todo: change to /etc/
+
+touch /var/log/redis.log
+adjust /etc/rsyslog.conf
+
+    # redis
+    local0.*   /var/log/redis.log
+
+
+chkconfig --add redis
+chkconfig redis on
+
+redis
+god
+
+
+
+
+
+
+
+
+candidate god startup scripts....
+
+
+
+#!/bin/bash
+ #
+ # God
+ #
+ # chkconfig: 2345 85 15
+ # description: start, stop, restart God
+ #
+ # Also consider adding this line (kills god weekly) to your crontab (sudo crontab -e):
+ #
+ #    # deicide is painless
+ #    0 1 * * 0 god quit; sleep 1; killall god; sleep 1; killall -9 god; sleep 1; /etc/init.d/god start
+ #
+
+ . /etc/rc.d/init.d/functions
+
+ RETVAL=0
+ prog="god"
+
+ CONF="/etc/god.conf"
+ PID_FILE="/var/run/god/god.pid" ; mkdir -p `dirname $PID_FILE`
+ LOG_FILE="/var/log/god/god.log" ; mkdir -p `dirname $LOG_FILE`
+ GOD="/usr/local/rvm/bin/boot_god"
+
+ start()
+ {
+   echo -n $"Starting $prog: "
+   $GOD -c "$CONF" -P "$PID_FILE" -l "$LOG_FILE" && success || failure
+   RETVAL=$?
+   echo
+ }
+
+ stop()
+ {
+   echo -n $"Stopping $prog: "
+   kill `cat $PID_FILE` && success || failure
+   RETVAL=$?
+   echo
+ }
+
+ case "$1" in
+     start)
+       start
+   ;;
+     stop)
+       stop
+   ;;
+     restart)
+       stop
+       start
+   ;;
+     status)
+       status -p $PID_FILE $prog
+       RETVAL=$?
+   ;;
+     *)
+       echo "Usage: $prog {start|stop|restart|status}"
+       exit 1
+   ;;
+ esac
+
+ exit $RETVAL
+
+
+
+
+#!/bin/bash
+#
+# God
+#
+# chkconfig: - 85 15
+# description: start, stop, restart god
+#
+
+RETVAL=0
+
+case "$1" in
+    start)
+      /usr/bin/god -P /var/run/god.pid -l /var/log/god.log
+      /usr/bin/god load /etc/god.conf
+      RETVAL=$?
+      ;;
+    stop)
+      kill `cat /var/run/god.pid`
+      RETVAL=$?
+      ;;
+    restart)
+      kill `cat /var/run/god.pid`
+      /usr/bin/god -P /var/run/god.pid -l /var/log/god.log
+      /usr/bin/god load /etc/god.conf
+      RETVAL=$?
+      ;;
+    status)
+      /usr/bin/god status
+      RETVAL=$?
+      ;;
+    *)
+      echo "Usage: god {start|stop|restart|status}"
+      exit 1
+  ;;
+esac
+
+exit $RETVAL
