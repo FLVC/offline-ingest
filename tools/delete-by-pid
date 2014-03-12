@@ -11,7 +11,7 @@ require 'optparse'
 $LOAD_PATH.unshift case Socket.gethostname
                    when /alpo/i;                                "/home/fischer/WorkProjects/offline-ingest/lib/"
                    when /romeo-foxtrot|flvc-rfischer.local/i;   "/Users/fischer/WorkProjects/offline-ingest/lib/"
-                   when /islandora[dtp]/i;                      "/usr/local/islandora/offline-ingest/lib/"
+                   when /islandora[dtp]\.fcla\.edu|tlhlxftp01-.*\.flvc\.org/i;      "/usr/local/islandora/offline-ingest/lib"
                    else
                      STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
                      exit -1
