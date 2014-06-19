@@ -25,21 +25,37 @@ need to document kill signals (there are two families)
 
 
 
-/etc/init.d/redis  - hacked together from various sources, set startup order
+install /etc/init.d/redis  - from repository
 
    redis:# chkconfig: - 92 8
 
-/usr/local/etc/redis.conf   --- todo: change to /etc/
+/usr/local/etc/redis.conf   --- todo: change to /etc/ ?
 
-touch /var/log/redis.log
-adjust /etc/rsyslog.conf
+edit and add to /etc/rsyslog.conf
 
     # redis
     local0.*   /var/log/redis.log
 
+Now:
 
-chkconfig --add redis
-chkconfig redis on
+
+   touch /var/log/redis.log
+   kill -HUP <rsyslog-pid-here>
+   chkconfig --add redis
+   chkconfig redis on
+
+
+install /etc/init.d/god  - from repository
+
+   god: # chkconfig: - 93 7
+
+we want redis running first
+
+
+
+   chkconfig --add god
+   chkconfig god on
+
 
 redis
 god
@@ -116,44 +132,3 @@ candidate god startup scripts....
  esac
 
  exit $RETVAL
-
-
-
-
-#!/bin/bash
-#
-# God
-#
-# chkconfig: - 85 15
-# description: start, stop, restart god
-#
-
-RETVAL=0
-
-case "$1" in
-    start)
-      /usr/bin/god -P /var/run/god.pid -l /var/log/god.log
-      /usr/bin/god load /etc/god.conf
-      RETVAL=$?
-      ;;
-    stop)
-      kill `cat /var/run/god.pid`
-      RETVAL=$?
-      ;;
-    restart)
-      kill `cat /var/run/god.pid`
-      /usr/bin/god -P /var/run/god.pid -l /var/log/god.log
-      /usr/bin/god load /etc/god.conf
-      RETVAL=$?
-      ;;
-    status)
-      /usr/bin/god status
-      RETVAL=$?
-      ;;
-    *)
-      echo "Usage: god {start|stop|restart|status}"
-      exit 1
-  ;;
-esac
-
-exit $RETVAL
