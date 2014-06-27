@@ -1,5 +1,6 @@
 require 'data_mapper'
 require 'dm-migrations'
+require 'dm-types'
 require 'time'
 require 'offin/exceptions'
 
@@ -13,6 +14,7 @@ module DataBase
 
   FEDORA_INFO_REGEXP = /^info:fedora\//i
 
+
   class IslandoraSite
     include DataMapper::Resource
 
@@ -20,6 +22,8 @@ module DataBase
     property  :hostname,    String,   :required => true, :index => true, :unique => true;
 
     has n, :islandora_packages
+    has n, :ftp_packages
+    has n, :ftp_containers
 
     before :update do
       self.hostname.downcase!
@@ -28,6 +32,41 @@ module DataBase
     before :save do
       self.hostname.downcase!
     end
+  end
+
+
+  class FtpPackage
+    include DataMapper::Resource
+
+    property :id,                  Serial
+    property :time_submitted,      DateTime,    :required => true, :index => true
+    property :time_processed,      DateTime,    :required => true, :index => true
+
+    property :package_name,        String
+    property :status,              Enum[ :error, :warning, :success ]
+
+    belongs_to :islandora_site;
+  end
+
+  class FtpContainer
+    include DataMapper::Resource
+
+    property :id,                 Serial
+    property :container_name,     String
+
+    belongs_to :islandora_site
+
+    def self.next_container_name hostname
+      rec = first_or_create(:islandora_site => DataBase::IslandoraSite.first_or_create(:hostname => hostname))
+      if not rec.container_name
+        rec.container_name = 'aaaa'
+      else
+        rec.container_name = rec.container_name.succ
+      end
+      rec.save
+      return rec.container_name
+    end
+
   end
 
 
@@ -213,8 +252,6 @@ module DataBase
     # ping database so we can fail fast
 
     return dm.select('select 1 + 1') == [ 2 ]
-  rescue => e
-    raise SystemError, "Fatal error: can't connect to database: #{e.class}: #{e.message}"
   end
 
   def self.create config
@@ -222,6 +259,8 @@ module DataBase
     DataMapper.auto_migrate!
     DataMapper.repository(:default).adapter.execute("ALTER TABLE islandora_packages ALTER time_started TYPE timestamp with time zone")
     DataMapper.repository(:default).adapter.execute("ALTER TABLE islandora_packages ALTER time_finished TYPE timestamp with time zone")
+    DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_submitted TYPE timestamp with time zone")
+    DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_processed TYPE timestamp with time zone")
   end
 
   def self.dump
@@ -240,5 +279,16 @@ module DataBase
 
       puts ''
     end
-  end
-end
+
+  end # of class component object
+end   # of module database
+
+
+
+# The FtpPackage logs information
+
+
+module DataBase
+
+
+end # of module Database

@@ -1,3 +1,14 @@
+see http://hone.heroku.com/resque/2012/08/21/resque-signals.html
+
+
+users:
+
+      ftpXXXX in ftpil group
+      ftpil user, executes scripts (?),  needs to read configfile
+      processing - needs to be r/o for users (writable for ftpil)
+
+
+
 god - a process monitoring daemon - somewhat half-baked:
 
    gem install god
