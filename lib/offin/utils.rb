@@ -42,8 +42,8 @@ end
 
 class Utils
 
-  TESSERACT_TIMEOUT = 60   # tesseract can waste a lot of time on certain kinds of images
-  QUICKLY_TIMEOUT   = 10   # seconds before giving up on fedora
+  TESSERACT_TIMEOUT = 300   # tesseract can waste a lot of time on certain kinds of images
+  QUICKLY_TIMEOUT   =  10   # seconds before giving up on fedora
 
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
