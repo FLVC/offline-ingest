@@ -1,29 +1,29 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + "/../lib")
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
+
+require 'rubygems'
+require 'offin/packages'
+require 'offin/db'
+require 'offin/config'
+require 'watch-queue/utils'
+require 'watch-queue/watch-directory'
 
 
 CONFIG_FILE = "/usr/local/islandora/offline-ingest/config.yml"
-STANZA      = "islandora7d"
+REREAD = 60
+PAUSE  = 5    # PAUSE should divide REREAD evenly
 
-require 'rubygems'
-require 'offin/config'
-require 'offin/packages'
-require 'offin/db'
-require 'watch-queue/watch-directory'
 
-config = Datyl::Config.new(CONFIG_FILE, 'default')
-DataBase.setup(config)
+DataBase.setup(Datyl::Config.new(CONFIG_FILE, 'default'))
 
-# TODO: go through all of the stanzas in the config file, adding all sites that have an ftp_root.
-# we'd like to do this every so often, to pick up changes
+counter = 0
 
-# TODO: handle errors gracefully?  Or queueing system will properly log somehow?
-
-config = Datyl::Config.new(CONFIG_FILE, 'default', STANZA)
-wd = WatchDirectory.new(config.site, config.ftp_root)
+# TODO: catch format errors in the config file
 
 while true
-  sleep 1
-  wd.enqueue_incoming_packages
+  wds = watch_these_directories(CONFIG_FILE)  if (counter % REREAD == 0)   # we'll re-read config file every REREAD seconds or so to catch changes
+  wds.each { |wd|  wd.enqueue_incoming_packages }
+  sleep(PAUSE)
+  counter += PAUSE
 end

@@ -9,7 +9,6 @@ $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 
 require 'rubygems'
 require 'resque'
-require 'mono_logger'
 require 'watch-queue/utils'
 require 'watch-queue/ingest-job'          # the actual handler corresponding to the 'ingest' queue specified below; the work happens here
 
@@ -26,7 +25,7 @@ begin
   worker.term_timeout = 4.0
   worker.term_child   = 1
   #  worker.run_at_exit_hooks = ....
-rescue Resque::NoQueueError        # TODO: catch and report other errors? Let the god process monitor handle it?
+rescue Resque::NoQueueError
   abort "no queue specified"
 end
 

@@ -254,6 +254,8 @@ module DataBase
     return dm.select('select 1 + 1') == [ 2 ]
   end
 
+  # Warning: deletes all data in database.
+
   def self.create config
     self.setup config
     DataMapper.auto_migrate!

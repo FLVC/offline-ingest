@@ -1,20 +1,16 @@
 $LOAD_PATH.unshift  File.join(File.dirname(__FILE__), '../../lib')
 
-
-### TODO: create subdirectories insofar as we can...
+### TODO: create subdirectories insofar as we can?
+###
 
 require 'resque'
 require 'fileutils'
-require 'watch-queue/exceptions'
+require 'offin/exceptions'
 require 'watch-queue/ingest-job'
 require 'mono_logger'
 
-# TODO:
-# def initialize institution_directories
-# institution_directories  is a hash, using valid institution codes (e.g. 'fsu', 'fau'...)
-
-
-# Assumes that the ingest database has been initialilzed
+# We assume that the ingest database has been initialized at this
+# point; see new_processing_directory().
 
 class WatchDirectory
 
@@ -22,37 +18,47 @@ class WatchDirectory
     STDERR.puts message
   end
 
-  # Ideally these are all on the same filesystem
+  ERRORS_SUBDIRECTORY      = 'errors'
+  PROCESSING_SUBDIRECTORY  = 'processing'
+  WARNINGS_SUBDIRECTORY    = 'warnings'
+  INCOMING_SUBDIRECTORY    = 'incoming'
+  SHARED_GROUP             = 'ftpil'
+  DIRECTORY_UNCHANGED_TIME = 10
+# DIRECTORY_UNCHANGED_TIME = 5 * 60
 
-  ERRORS_SUBDIRECTORY         = 'errors'
-  PROCESSING_SUBDIRECTORY     = 'processing'
-  WARNINGS_SUBDIRECTORY       = 'warnings'
-  INCOMING_SUBDIRECTORY       = 'incoming'
+  attr_reader :config_file, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
-  SHARED_GROUP                = 'ftpil'
+  def initialize config_file, config_section
 
-  # DIRECTORY_UNCHANGED_TIME = 5 * 60                 # directory and contents should be unchanged for at least 5 minutes...
+    @config_file    = config_file
+    @config_section = config_section
 
-  DIRECTORY_UNCHANGED_TIME = 10 # seconds - this is the tricky one
+    config = Datyl::Config.new(config_file, 'default', config_section)
 
-  attr_reader :drop_directory, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory
+    root = config.ftp_root
+    sanity_check(root)
 
-  def initialize hostname, dir
-    sanity_check(dir)
-    @hostname = hostname
+    @hostname = config.site
 
-    @incoming_directory   = File.join(dir, INCOMING_SUBDIRECTORY)
-    @processing_directory = File.join(dir, PROCESSING_SUBDIRECTORY)
-    @warnings_directory   = File.join(dir, WARNINGS_SUBDIRECTORY)
-    @errors_directory     = File.join(dir, ERRORS_SUBDIRECTORY)
+    @incoming_directory   = File.join(root, INCOMING_SUBDIRECTORY)
+    @processing_directory = File.join(root, PROCESSING_SUBDIRECTORY)
+    @warnings_directory   = File.join(root, WARNINGS_SUBDIRECTORY)
+    @errors_directory     = File.join(root, ERRORS_SUBDIRECTORY)
   end
-
 
   def enqueue_incoming_packages
     ready_directories.each do |source|
-      destination = new_processing_directory
-      FileUtils.mv source, destination
-      Resque.enqueue(IngestJob, { :package_directory  => destination, :warnings_directory => @warnings_directory, :errors_directory   => @errors_directory })
+      package_directory = source.gsub(/.*\//, '')
+      container_directory = new_processing_directory(hostname)
+      FileUtils.mv source, container_directory
+      Resque.enqueue(IngestJob,
+                     { :config_section      => config_section,
+                       :config_file         => config_file,
+                       :package_directory   => File.join(container_directory, package_directory),
+                       :container_directory => container_directory,
+                       :warnings_directory  => warnings_directory,
+                       :errors_directory    => errors_directory,
+                     })
     end
   end
 
@@ -74,20 +80,19 @@ class WatchDirectory
     FileUtils.chown 0, SHARED_GROUP, dir
   end
 
-
-
-  def new_processing_directory
-    new_directory = File.join(@processing_directory, DataBase::FtpContainer.next_container_name(@hostname))
-    STDERR.puts  "New directory: #{new_directory}"
+  def new_processing_directory(hostname)
+    new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
     FileUtils.mkdir new_directory
     FileUtils.chown nil, SHARED_GROUP, new_directory
     FileUtils.chmod 02775,  new_directory
     return new_directory
+  rescue => e
+    raise SystemError, "Encountered a fatal error when creating a new processing directory for #{hostname}: #{e.class} - #{e.message}"
   end
 
   def not_recently_changed dir
     now = Time.now
-    times = [ File.stat(dir).ctime ]  # ctime, mtime, doesn't matter on directories
+    times = [ File.stat(dir).ctime ]  # ctime, mtime, doesn't matter which we use on directories
 
     # We check one level down, since that's all we really support (no subdirectories in packages)
 
@@ -96,7 +101,7 @@ class WatchDirectory
       times.push File.stat(File.join(dir, fl)).ctime  # ctime catches more changes than mtime on plain files, e.g. rename.
     end
     latest_change = times.sort.pop
-    (now - latest_change) > DIRECTORY_UNCHANGED_TIME
+    return (now - latest_change) > DIRECTORY_UNCHANGED_TIME
   end
 
   # In the drop directory, we expect only subdirectories, each filled
@@ -105,9 +110,9 @@ class WatchDirectory
 
   def ready_directories
     directories = []
-    Dir.open(@incoming_directory).each do |fl|
+    Dir.open(incoming_directory).each do |fl|
       next if [ '.', '..' ].include? fl
-      path = File.join(@incoming_directory, fl)
+      path = File.join(incoming_directory, fl)
       directories.push(path) if File.directory?(path) and not_recently_changed(path)
     end
     return directories.sort {  |a,b|  File.stat(b).ctime <=> File.stat(a).ctime }
@@ -115,6 +120,7 @@ class WatchDirectory
 
 
   def sanity_check directory
+    raise "Bad data: ftp directory is class #{directory.class} instead of a filename string" unless directory.class == String
 
     raise "FTP directory #{directory} doesn't exist."                  unless File.exist? directory
     raise "FTP directory #{directory} isn't actually a directory."     unless File.directory? directory
