@@ -4,10 +4,11 @@ NUMBER_OF_INGESTORS = 2
 GID  = 'ftpil'
 UID  = 'ftpil'
 
-
 #  ftp-handler is very simple, it moves completed ftp uploads to a special
-#  directory and adds a descriptor for them to the "ingest" queue.  The ftp
-#  directories should be owned by UID and GID, see instructions
+#  directory and adds a descriptor for them to the "ingest" queue.
+
+# The associated ftp directories should be writable and readable by
+#  UID and GID, see instructions.
 
 God.watch do |w|
   w.uid      = UID
@@ -20,7 +21,6 @@ end
 
 # ingest-handler pulls off package descriptors from the "ingest" queue and
 # attempts to process those packages.
-
 
 NUMBER_OF_INGESTORS.times do |num|
   God.watch do |w|

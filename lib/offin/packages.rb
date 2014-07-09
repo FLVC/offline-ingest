@@ -38,11 +38,7 @@ class PackageFactory
     raise PackageError, "Package directory '#{directory}' isn't really a directory." unless File.directory? directory
     raise PackageError, "Package directory '#{directory}' isn't readable."           unless File.readable? directory
 
-
-    #### TODO: we need to get problems a manifest into a dummy package with .error slots,  if we want to use existing error reporting code cleanly
-
     manifest = Utils.get_manifest @config, directory
-
 
     return case manifest.content_model
            when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest, @updator_class)
@@ -52,6 +48,12 @@ class PackageFactory
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
+
+  rescue PackageError
+    raise
+
+  rescue => e
+    raise PackageError, "#{e.class}: #{e.message}"
   end
 end
 
@@ -72,7 +74,6 @@ class Package
   TIFF = %r{image/tiff}
   PDF  = %r{application/pdf}
   TEXT = %r{text/}
-
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
   attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid, :mods_type_of_resource, :owning_institution
@@ -112,8 +113,7 @@ class Package
     @collections = list_collections(@manifest)
     @owning_institution = @namespace
 
-
-  rescue SystemError => e
+  rescue SystemError
     raise
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
@@ -550,10 +550,9 @@ class LargeImagePackage < Package
     path = File.join(@directory_path, @image_filename)
     @type = Utils.mime_type(path)   # we need to record the original type since @image may be returned in either TIFF or JP2K
 
-
     case @type
     when JP2
-      @image = Utils.careful_with_that_jp2(@config, path)   # this may return a JP2K, or, if ImageMagick bombs and kakadu succeeds, a TIFF
+      @image = Utils.be_careful_with_that_jp2_now(@config, path)   # this may return a JP2K, or, if ImageMagick bombs and kakadu succeeds, a TIFF
     when TIFF
       @image = Magick::Image.read(path).first
     else

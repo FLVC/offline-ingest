@@ -1,8 +1,5 @@
 $LOAD_PATH.unshift  File.join(File.dirname(__FILE__), '../../lib')
 
-### TODO: create subdirectories insofar as we can?
-###
-
 require 'resque'
 require 'fileutils'
 require 'offin/exceptions'
@@ -22,11 +19,13 @@ class WatchDirectory
   PROCESSING_SUBDIRECTORY  = 'processing'
   WARNINGS_SUBDIRECTORY    = 'warnings'
   INCOMING_SUBDIRECTORY    = 'incoming'
+  SUCCESS_SUBDIRECTORY     = 'success'
+
   SHARED_GROUP             = 'ftpil'
   DIRECTORY_UNCHANGED_TIME = 10
 # DIRECTORY_UNCHANGED_TIME = 5 * 60
 
-  attr_reader :config_file, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
+  attr_reader :config_file, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname, :success_directory
 
   def initialize config_file, config_section
 
@@ -44,6 +43,7 @@ class WatchDirectory
     @processing_directory = File.join(root, PROCESSING_SUBDIRECTORY)
     @warnings_directory   = File.join(root, WARNINGS_SUBDIRECTORY)
     @errors_directory     = File.join(root, ERRORS_SUBDIRECTORY)
+    @success_directory    = File.join(root, SUCCESS_SUBDIRECTORY)
   end
 
   def enqueue_incoming_packages
@@ -58,9 +58,13 @@ class WatchDirectory
                        :container_directory => container_directory,
                        :warnings_directory  => warnings_directory,
                        :errors_directory    => errors_directory,
+                       :success_directory   => success_directory,
                      })
     end
   end
+
+
+
 
   private
 

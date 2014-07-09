@@ -88,6 +88,8 @@ class Utils
   end
 
 
+  # NOTE: this doesn't play well with the process monitor's logger when the stream used for that logging is silenced below.
+
   def Utils.silence_streams(*streams)  # after some rails code by DHH
 
     on_hold = streams.collect { |stream| stream.dup }
@@ -283,7 +285,7 @@ class Utils
   # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
   # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
 
-  def Utils.careful_with_that_jp2 config, jp2k_filepath
+  def Utils.be_careful_with_that_jp2_now config, jp2k_filepath
     Utils.silence_streams(STDERR) do
       return Magick::Image.read(jp2k_filepath).first
     end

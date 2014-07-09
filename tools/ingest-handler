@@ -24,14 +24,14 @@ begin
   worker = Resque::Worker.new('ingest')
   worker.term_timeout = 4.0
   worker.term_child   = 1
-  #  worker.run_at_exit_hooks = ....
+  #  worker.run_at_exit_hooks = ....   add last-chance move to errors directory here?
 rescue Resque::NoQueueError
   abort "no queue specified"
 end
 
 if Process.respond_to?('daemon')   # requires ruby >= 1.9"
-  Process.daemon(true, true)
-  worker.reconnect
+   Process.daemon(true, true)
+   worker.reconnect
 end
 
 worker.log  "Starting worker #{worker}"

@@ -10,20 +10,56 @@ require 'watch-queue/utils'
 require 'watch-queue/watch-directory'
 
 
-CONFIG_FILE = "/usr/local/islandora/offline-ingest/config.yml"
+CONFIG_FILE = "/usr/local/islandora/offline-ingest/config.yml"  # TODO: get out of environment.
 REREAD = 60
 PAUSE  = 5    # PAUSE should divide REREAD evenly
 
 
-DataBase.setup(Datyl::Config.new(CONFIG_FILE, 'default'))
+def main
+  DataBase.setup(Datyl::Config.new(CONFIG_FILE, 'default'))
 
-counter = 0
+  counter = 0
 
-# TODO: catch format errors in the config file
+  # TODO: catch format errors in the config file
+  # TODO: proper logging
 
-while true
-  wds = watch_these_directories(CONFIG_FILE)  if (counter % REREAD == 0)   # we'll re-read config file every REREAD seconds or so to catch changes
-  wds.each { |wd|  wd.enqueue_incoming_packages }
-  sleep(PAUSE)
-  counter += PAUSE
+  while true
+    wds = watch_these_directories(CONFIG_FILE)  if (counter % REREAD == 0)   # we'll re-read config file every REREAD seconds or so to catch changes
+    wds.each { |wd|  wd.enqueue_incoming_packages }
+    sleep(PAUSE)
+    counter += PAUSE
+  end
 end
+
+# Search through various stanzas for declaration of ftp_root; do sanity check and collect up all configs that refer to a valid ftp_site.
+
+def watch_these_directories  config_file
+  wds = []
+  Datyl::Config.new(config_file, 'default').all_sections.each do |section|
+
+    site_config = Datyl::Config.new(config_file, 'default', section)
+    next unless site_config.ftp_root
+
+    if not ftp_root_ok(site_config.ftp_root)
+      STDERR.puts "Permissions error for directory #{site_config.ftp_root}, skipping"
+      next
+    else
+      STDERR.puts "Watching #{site_config.ftp_root} for #{section}"
+    end
+    wd = get_watch_directory(config_file, section)
+    wds.push wd if wd
+  end
+
+  return wds
+end
+
+# TODO: log error
+
+def get_watch_directory config_file, section
+  return WatchDirectory.new(config_file, section)
+rescue
+  return nil
+end
+
+
+main()
