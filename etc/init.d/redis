@@ -13,8 +13,10 @@ PATH=/usr/local/bin:/sbin:/usr/bin:/bin
 REDISPORT=6379
 EXEC=/usr/local/bin/redis-server
 REDIS_CLI=/usr/local/bin/redis-cli
-PIDFILE=/var/run/redis.pid     # default built into redis-server, if started as daemon it's created when started and removed on exit
-CONF=/usr/local/etc/redis.conf # small mods to stock config (daemonize, syslog, start directory)
+CONF=/usr/local/etc/redis.conf     # small mods to stock config (daemonize, syslog, start directory, localhost binding, password)
+REDIS_USER=redis
+REDIS_PASSWORD="`grep ^requirepass $CONF | awk '{print $2}'`"
+PIDFILE="`grep ^pidfile $CONF | awk '{print $2}'`"    # when redis is started as daemon it's created;  it's removed on exit
 
 case "$1" in
     start)
@@ -23,7 +25,7 @@ case "$1" in
 	    echo "$PIDFILE exists, process is already running or crashed\n"
 	else
 	    echo -n "Starting Redis server..."
-	    $EXEC $CONF
+	    su $REDIS_USER -c "$EXEC $CONF"
 	    echo ''
 	fi
 	;;
@@ -34,7 +36,7 @@ case "$1" in
 	else
 	    PID=$(cat $PIDFILE)
 	    echo -n "Stopping ..."
-	    $REDIS_CLI -p $REDISPORT SHUTDOWN
+	    $REDIS_CLI -a "$REDIS_PASSWORD" -p $REDISPORT SHUTDOWN
 	    while [ -x ${PIDFILE} ]
 	    do
 		echo "Waiting for Redis to shutdown ..."

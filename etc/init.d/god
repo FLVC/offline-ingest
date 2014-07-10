@@ -3,39 +3,33 @@
 # God
 #
 # chkconfig: - 93 7
-# description: start, stop, restart god daemon process manager.
+# description: start, stop, restart god
 #
-# fischer: the load command is annoyingly verbose, but the /nev/dull
-# below may obscure config errors, uncomment when fully baked.
-
 
 CONF=/etc/god.conf
 EXEC=/usr/bin/god
 PIDFILE=/var/run/god.pid
-LOGFILE=/var/log/god.log
 RETVAL=0
 
 case "$1" in
     start)
-	if [ -f $PIDFILE ]
-	then
-	    echo "$PIDFILE exists, process is already running or crashed."
-	else
-	    $EXEC -P $PIDFILE -l $LOGFILE
-	    # $EXEC load $CONF > /dev/null
-	    $EXEC load $CONF
-	    RETVAL=$?
-	fi
-	;;
+    if [ -f $PIDFILE ]
+    then
+	echo "$PIDFILE exists, process is already running or crashed\n"
+    else 
+	$EXEC -c $CONF -P $PIDFILE --log-level info
+	RETVAL=$?
+    fi
+    ;;
     stop)
-	if [ ! -f $PIDFILE ]
-	then
-	    echo "$PIDFILE does not exist, process is not running."
-	else
-	    kill `cat $PIDFILE`
-	    rm -f $PIDFILE
-	fi
-	;;
+    if [ ! -f $PIDFILE ]
+    then
+	echo "$PIDFILE does not exist, process is not running."
+    else
+	kill `cat $PIDFILE`
+	rm -f $PIDFILE
+    fi
+    ;;
     restart)
 	$0 stop
 	$0 start
