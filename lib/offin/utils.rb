@@ -311,7 +311,6 @@ class Utils
 
     return Magick::Image.read(temp_image_filename).first
 
-
   ensure
     FileUtils.rm_f(temp_image_filename)
   end
