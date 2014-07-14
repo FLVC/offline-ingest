@@ -9,27 +9,35 @@ require 'offin/config'
 require 'watch-queue/utils'
 require 'watch-queue/watch-directory'
 
+# Note: ftp-handler is run as an independent front end for our
+# queueing system, so it isn't directly running resque worker code, as
+# is the ingest-handler.
+#
+# It *is* started and watched by the 'god' process manager (as is
+# ingest-handler) however.
+#
+# All this is to say that our logging can be different, just writing
+# to STDERR, which gets captured by the process manager and logged.
 
-CONFIG_FILE = "/usr/local/islandora/offline-ingest/config.yml"  # TODO: get this from the environment.
-REREAD = 60
-PAUSE  = 5    # PAUSE should divide REREAD evenly
+REREAD = 60 * 5   # re-read config file this often
+PAUSE  = 5        # PAUSE should divide REREAD evenly
 
+SYSTEM_ERROR_SLEEP    = 60
+UNHANDLED_ERROR_SLEEP = 600
 
-# TODO: capture errors like
-
-def main
-  setup_redis_connection(CONFIG_FILE)
-
-  DataBase.setup(Datyl::Config.new(CONFIG_FILE, 'default'))
-
+def loop_for_incoming config
   counter = 0
-
-  # TODO: catch format errors in the config file
-  # todo: proper logging
-
+  wds = []
   while true
-    wds = watch_these_directories(CONFIG_FILE)  if (counter % REREAD == 0)   # we'll re-read config file every reread seconds or so to catch changes
-    wds.each { |wd|  wd.enqueue_incoming_packages }
+    if (counter % REREAD == 0)
+      wds = watch_these_directories(config)
+      if counter == 0
+        STDERR.puts "INFO: reading configuration file #{config.path}"
+      else
+        STDERR.puts "INFO: rereading configuration file #{config.path}"
+      end
+    end
+    wds.each { |wd| wd.enqueue_incoming_packages }
     sleep(PAUSE)
     counter += PAUSE
   end
@@ -39,34 +47,40 @@ end
 # sanity check and collect up all configs that refer to a valid
 # ftp_site.
 
-def watch_these_directories  config_file
+def watch_these_directories  config
   wds = []
-  Datyl::Config.new(config_file, 'default').all_sections.each do |section|
+  config.all_sections.each do |section|
 
-
-    site_config = Datyl::Config.new(config_file, 'default', section)
+    site_config = Datyl::Config.new(config.path, 'default', section)
     next unless site_config.ftp_root
+    errors = ftp_directory_problems(site_config.ftp_root)
 
-    if not ftp_root_ok(site_config.ftp_root)
-      STDERR.puts "permissions error for directory #{site_config.ftp_root}, skipping"
+    unless errors.empty?
+      STDERR.puts "ERROR: Skipping FTP configuration for #{section}, configuration errors encountered:"
+      errors.each { |line| STDERR.puts "ERROR: " + line }
       next
-    else
-      STDERR.puts "watching #{site_config.ftp_root} for #{section}"
     end
-    wd = get_watch_directory(config_file, section)
-    wds.push wd if wd
+    STDERR.puts "INFO: Watching #{site_config.ftp_root} for #{section}"
+
+    wds.push WatchDirectory.new(site_config, section)
   end
-
-  return wds
+  return wds.compact
 end
 
-# todo: log error
+# A process monitor will restart an instance of this script if we exit on error.
 
-def get_watch_directory config_file, section
-  return watchdirectory.new(config_file, section)
-rescue
-  return nil
+begin
+  config = setup_config()
+  setup_redis_connection(config)
+  setup_ingest_database(config)
+  loop_for_incoming(config)
+rescue SystemError => e
+  STDERR.puts "ERROR: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
+  sleep SYSTEM_ERROR_SLEEP
+  exit
+rescue => e
+  STDERR.puts "ERROR: #{e.class}: #{e.message}; sleeping for #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
+  e.backtrace.each { |line| STDERR.puts "ERROR: " + line }
+  sleep UNHANDLED_ERROR_SLEEP
+  exit
 end
-
-
-main()

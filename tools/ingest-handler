@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 
-# This starts a worker process for ingesting a package listed on a
-# resque queue name :ingest.  Multiple workers are created by invoking
-# this script multiple times.  Normally we'll have a process-monitor
-# such as god manage that startup.  See /etc/god.conf.
+# This script starts a worker process for ingesting a package listed
+# on a resque queue name :ingest.  Multiple workers are created by
+# invoking this script multiple times.  Normally we'll have a
+# process-monitor such as god manage that startup.  See /etc/god.conf.
 
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
-
-CONFIG_FILE = "/usr/local/islandora/offline-ingest/config.yml"  # TODO: please get me from env
 
 require 'watch-queue/utils'
 
@@ -15,16 +13,19 @@ WORKER_SLEEP = 5
 SYSTEM_ERROR_SLEEP = 60
 UNHANDLED_ERROR_SLEEP = 600
 
+# A process monitor will restart an instance of this script if we exit on error.
+
 begin
+  config = setup_config()
   setup_resque_logger()
-  setup_redis_connection(CONFIG_FILE)
+  setup_redis_connection(config)
   start_ingest_worker(WORKER_SLEEP)
 rescue SystemError => e
   Resque.logger.error "System error: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
   sleep SYSTEM_ERROR_SLEEP
   exit
 rescue => e
-  Resque.logger.error "Fatal error: #{e.class}: #{e.message}; sleeping for #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
+  Resque.logger.error "Unexpected error: #{e.class}: #{e.message}; sleeping for #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
   e.backtrace.each { |line| Resque.logger.error line }
   sleep UNHANDLED_ERROR_SLEEP
   exit
