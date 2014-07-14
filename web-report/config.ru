@@ -4,7 +4,9 @@ $LOAD_PATH.unshift '/usr/local/islandora/offline-ingest/lib/'
 
 CONFIG_FILENAME  = '/usr/local/islandora/offline-ingest/config.yml'
 
-# TODO:  we don't need to maintain this mapping if we're smarter about examining the config.yaml file, and assuming 'admin.' tacked on the front.
+# TODO: we don't need to maintain this mapping if we're smarter about
+# examining the config.yaml file, and assuming 'admin.' tacked on the
+# front.
 
 HOST_MAPPING = {
 
@@ -15,8 +17,10 @@ HOST_MAPPING = {
   # test sites:
 
   'admin.islandora-test.digital.flvc.org'  => [ 'islandora-test.digital.flvc.org', 'islandora-test' ],
-  'admin.fsu-test.digital.flvc.org'        => [ 'fsu-test.digital.flvc.org',       'fsu-test'       ],
-  'admin.fau-test.digital.flvc.org'        => [ 'fau-test.digital.flvc.org',       'fau-test'       ],
+  'admin.fsu-test.digital.flvc.org'        => [ 'fsu-test.digital.flvc.org',       'fsu-test' ],
+  'admin.fau-test.digital.flvc.org'        => [ 'fau-test.digital.flvc.org',       'fau-test' ],
+  'admin.ucf-test.digital.flvc.org'        => [ 'ucf-test.digital.flvc.org',       'ucf-test' ],
+  'admin.gcsc-test.digital.flvc.org'       => [ 'gcsc-test.digital.flvc.org',      'gcsc-test' ],
 
   # production sites:
 
