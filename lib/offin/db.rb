@@ -265,6 +265,16 @@ module DataBase
     DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_processed TYPE timestamp with time zone")
   end
 
+  # just add the new ftp tables
+
+  def self.add_ftp_tables config
+    self.setup config
+    FtpPackage.auto_migrate!
+    FtpContainer.auto_migrate!
+    DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_submitted TYPE timestamp with time zone")
+    DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_processed TYPE timestamp with time zone")
+  end
+
   def self.dump
     packages = DataBase::IslandoraPackage.all(:order => [ :time_started.desc ])
     packages.each do |p|
