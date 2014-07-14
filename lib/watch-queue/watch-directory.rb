@@ -11,60 +11,51 @@ require 'mono_logger'
 
 class WatchDirectory
 
-  def log message          # TODO: better logging!
-    STDERR.puts message
-  end
-
   ERRORS_SUBDIRECTORY      = 'errors'
   PROCESSING_SUBDIRECTORY  = 'processing'
   WARNINGS_SUBDIRECTORY    = 'warnings'
   INCOMING_SUBDIRECTORY    = 'incoming'
   SUCCESS_SUBDIRECTORY     = 'success'
 
-  SHARED_GROUP             = 'ftpil'
+  SHARED_GROUP             = 'ftpil'   #### TODO: fixme to proper UID
+
   DIRECTORY_UNCHANGED_TIME = 10
-# DIRECTORY_UNCHANGED_TIME = 5 * 60
+# DIRECTORY_UNCHANGED_TIME = 5 * 60  #### TODO
 
-  attr_reader :config_file, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname, :success_directory
+  attr_reader :config_path, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
-  def initialize config_file, config_section
-
-    @config_file    = config_file
+  def initialize config, config_section
     @config_section = config_section
+    @config_path    = config.path
+    @hostname       = config.site
 
-    config = Datyl::Config.new(config_file, 'default', config_section)
-
-    root = config.ftp_root
-    sanity_check(root)
-
-    @hostname = config.site
-
-    @incoming_directory   = File.join(root, INCOMING_SUBDIRECTORY)
-    @processing_directory = File.join(root, PROCESSING_SUBDIRECTORY)
-    @warnings_directory   = File.join(root, WARNINGS_SUBDIRECTORY)
-    @errors_directory     = File.join(root, ERRORS_SUBDIRECTORY)
-    @success_directory    = File.join(root, SUCCESS_SUBDIRECTORY)
+    @incoming_directory   = File.join(config.ftp_root, INCOMING_SUBDIRECTORY)
+    @processing_directory = File.join(config.ftp_root, PROCESSING_SUBDIRECTORY)
+    @warnings_directory   = File.join(config.ftp_root, WARNINGS_SUBDIRECTORY)
+    @errors_directory     = File.join(config.ftp_root, ERRORS_SUBDIRECTORY)
   end
 
   def enqueue_incoming_packages
     ready_directories.each do |source|
       package_directory = source.gsub(/.*\//, '')
       container_directory = new_processing_directory(hostname)
-      FileUtils.mv source, container_directory
-      Resque.enqueue(IngestJob,
-                     { :config_section      => config_section,
-                       :config_file         => config_file,
-                       :package_directory   => File.join(container_directory, package_directory),
-                       :container_directory => container_directory,
-                       :warnings_directory  => warnings_directory,
-                       :errors_directory    => errors_directory,
-                       :success_directory   => success_directory,
-                     })
+      begin
+        FileUtils.mv source, container_directory
+      rescue => e
+        STDERR.puts "ERROR: Can't move #{package_directory} from #{incoming_directory} to #{container_directory} for processing. Skipping."
+        STDERR.puts "ERROR: #{e.class}: #{e.message}"
+      else
+        Resque.enqueue(IngestJob,
+                       { :config_section      => config_section,
+                         :config_file         => config_path,
+                         :container_directory => container_directory,
+                         :package_directory   => File.join(container_directory, package_directory),
+                         :warnings_directory  => warnings_directory,
+                         :errors_directory    => errors_directory,
+                       })
+      end
     end
   end
-
-
-
 
   private
 
@@ -122,27 +113,5 @@ class WatchDirectory
     return directories.sort {  |a,b|  File.stat(b).ctime <=> File.stat(a).ctime }
   end
 
-
-  def sanity_check directory
-    raise "Bad data: ftp directory is class #{directory.class} instead of a filename string" unless directory.class == String
-
-    raise "FTP directory #{directory} doesn't exist."                  unless File.exist? directory
-    raise "FTP directory #{directory} isn't actually a directory."     unless File.directory? directory
-    raise "FTP Directory #{directory} isn't readable."                 unless File.readable? directory
-
-    dirs = {
-      File.join(directory, INCOMING_SUBDIRECTORY)   => "Incoming directory",
-      File.join(directory, ERRORS_SUBDIRECTORY)     => "Post-processing error directory",
-      File.join(directory, WARNINGS_SUBDIRECTORY)   => "Post-processing warnings directory",
-      File.join(directory, PROCESSING_SUBDIRECTORY) => "Processing directory",
-    }
-
-    dirs.each do |dir, msg|
-      raise "#{msg} #{dir} doesn't exist."                  unless File.exist? dir
-      raise "#{msg} #{dir} isn't actually a directory."     unless File.directory? dir
-      raise "#{msg} #{dir} isn't readable."                 unless File.readable? dir
-      raise "#{msg} #{dir} isn't writable."                 unless File.writable? dir
-    end
-  end
 
 end

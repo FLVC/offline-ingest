@@ -7,23 +7,32 @@ require 'resque'
 require 'watch-queue/ingest-job'          # the actual handler corresponding to the 'ingest' queue specified below; the work happens in ingest-job
 
 
+def setup_config config_file=nil
+  config_file ||= ENV['CONFIG_FILE']
+  raise SystemError, "No configuration file specified (also checked ENV['CONFIG_FILE'])"   if not config_file
+  return Datyl::Config.new(config_file, 'default')
+rescue SystemError
+  raise
+rescue => e
+  raise SystemError, "Can't process the configuration file '#{config_file}';  #{e.class}: #{e.message}"
+end
 
-def setup_redis_connection config_filename
-  begin
-    config = Datyl::Config.new(config_filename, 'default')
-  rescue => e
-    raise SystemError, "Can't parse the config file #{config_filename}: #{e.message}"
-  end
+def setup_ingest_database config
+  DataBase.setup(config)
+rescue => e
+  raise SystemError, "Can't connect to the ingest database; #{e.class}: #{e.message}"
+end
 
-  raise SystemError, "Config doesn't include the required redis_database parameter" if not config.redis_database
+def setup_redis_connection config
+  raise SystemError, "Configuration doesn't include the required redis_database parameter" if not config.redis_database
 
-  begin
-    client = Redis.new(:url => config.redis_database)
-    client.ping # fail fast
-    Resque.redis = client
-  rescue => e
-    raise SystemError, "Can't connect to the redis database: #{e.message}"
-  end
+  client = Redis.new(:url => config.redis_database)
+  client.ping # fail fast
+  Resque.redis = client
+rescue SystemError
+  raise
+rescue => e
+  raise SystemError, "Can't connect to the redis database: #{e.message}"
 end
 
 
@@ -39,23 +48,37 @@ def setup_resque_logger
   Resque.logger = logger
 end
 
-def setup_adhoc_logger
-  logger = MonoLogger.new(STDOUT)
-  logger.formatter = proc { |severity, datetime, progname, msg| "#{progname} #{severity}: #{msg}\n" }
-  logger.level = Logger::INFO
-  return logger
-end
 
-def ftp_root_ok ftp_root
-  return (File.exists? ftp_root and File.directory? ftp_root and File.readable? ftp_root and File.writable? ftp_root)
+def ftp_directory_problems ftp_root
+  errors = []
+  dirs = [ ftp_root ] + [ WatchDirectory::ERRORS_SUBDIRECTORY, WatchDirectory::PROCESSING_SUBDIRECTORY, WatchDirectory::WARNINGS_SUBDIRECTORY, WatchDirectory::INCOMING_SUBDIRECTORY ].map { |sub| File.join(ftp_root, sub) }
+
+  dirs.each do |dir|
+    unless File.exists? dir
+      errors.push "required directory '#{dir}' doesn't exist"
+      next
+    end
+    unless File.directory? dir
+      errors.push "required directory '#{dir}' isn't actually a directory"
+      next
+    end
+    unless File.readable? dir
+      errors.push "required directory '#{dir}' isn't readable"
+      next
+    end
+    unless File.writable? dir
+      errors.push "required directory '#{dir}' isn't writable"
+      next
+    end
+  end
+  return errors
 end
 
 def short_package_container_name container, package
   return File.join(container.sub(/.*\//, ''), package.name)
 end
 
-
-# Start a single ingest worker - invokes IngestJob#perform  as needed. Assumes Resque.logger is setup.
+# Start a single ingest worker - invokes IngestJob#perform  as needed. Resque.logger must first have been setup
 
 def start_ingest_worker sleep_time
   worker = nil
@@ -64,7 +87,7 @@ def start_ingest_worker sleep_time
   worker.term_child        = 1
   worker.run_at_exit_hooks = 1  # ?!
 
-  if Process.respond_to?('daemon')   # requires ruby >= 1.9"
+  if Process.respond_to?('daemon')   # for ruby >= 1.9"
      Process.daemon(true, true)
      worker.reconnect
   end
@@ -72,10 +95,4 @@ def start_ingest_worker sleep_time
   worker.log  "Starting worker #{worker}"
   worker.log  "Worker #{worker.pid} will wakeup every #{sleep_time} seconds"
   worker.work  sleep_time
-
-rescue => e
-  Resque.logger.error "Fatal error: #{e.class}: #{e.message}, backtrace follows"
-  e.backtrace.each { |line| Resque.logger.error line }
-  Resque.logger.error "Please correct the error and restart."
-  exit -1
 end

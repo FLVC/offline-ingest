@@ -6,6 +6,11 @@ require 'offin/ingest-support'
 require 'watch-queue/utils'
 require 'mono_logger'
 
+### TODO: this is going to loop on the condition where a package can't be moved out of the processing directory and
+### it keeps crashing the ingest process.
+
+
+
 class IngestJob
 
   @queue = :ingest
@@ -28,16 +33,13 @@ class IngestJob
 
   rescue SystemError => e
     IngestJob.failsafe(container_directory, errors_directory)
-    Resque.logger.error "System error when processing #{package_directory}, can't continue: #{e.message}"
-    Resque.logger.error "Sleeping for 30 minutes, then will continue processing other packages."
-    sleep 30 * 60
+    Resque.logger.error "System error when processing #{package_directory}, can't continue processing package: #{e.message}"
 
   rescue => e
     IngestJob.failsafe(container_directory, errors_directory)
     Resque.logger.error "Caught unexpected error when processing #{package_directory}: #{e.class} - #{e.message}, backtrace follows:"
     e.backtrace.each { |line| Resque.logger.error line }
-    Resque.logger.error "Please correct the error and restart."
-    exit -1
+    Resque.logger.error "Please correct the error and restart the package.."
 
   ensure
     IngestJob.failsafe(container_directory, errors_directory)
@@ -45,9 +47,12 @@ class IngestJob
 
   def self.failsafe(container_directory, errors_directory)
     return unless File.exists? container_directory
-    Resque.logger.error "Failsafe error handler: moving #{container_directory} to #{errors_directory}"
     FileUtils.mv container_directory, errors_directory
-  rescue
+  rescue => e
+    Resque.logger.error "Failsafe error handler: can't move #{container_directory} to #{errors_directory}"
+    Resque.logger.error "Error was #{e.class}: #{e.message}"
+  else
+    Resque.logger.error "Failsafe error handler: moved #{container_directory} to #{errors_directory}"
   end
 
 end
@@ -63,7 +68,6 @@ class DequeuedPackageIngestor
     container_directory = data['container_directory']
     warnings_directory  = data['warnings_directory']
     errors_directory    = data['errors_directory']
-    success_directory   = data['success_directory']
 
     if config.proxy
       ENV['http_proxy'], ENV['HTTP_PROXY'] = config.proxy, config.proxy
@@ -89,7 +93,7 @@ class DequeuedPackageIngestor
     if package
       DequeuedPackageIngestor.log_summary(package, finished - started)
       package.delete_from_islandora unless package.valid?
-      DequeuedPackageIngestor.disposition(package, container_directory, errors_directory, warnings_directory, success_directory)
+      DequeuedPackageIngestor.disposition(package, container_directory, errors_directory, warnings_directory)
       record_to_database(config.site, package, completed && package.valid?, started, finished)
     end # if package
 
@@ -112,7 +116,7 @@ class DequeuedPackageIngestor
 
   # a package object was handled,  now check where it shoulid go
 
-  def self.disposition package, container_directory, errors_directory, warnings_directory, success_directory
+  def self.disposition package, container_directory, errors_directory, warnings_directory
 
     short_name = short_package_container_name(container_directory, package)
 
