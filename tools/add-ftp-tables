@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'socket'
+
+$LOAD_PATH.unshift  "/usr/local/islandora/offline-ingest/lib/"
+
+require 'offin/config'
+require 'offin/db'
+
+cfg = Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", 'default')
+
+DataBase.debug = true
+DataBase.add_ftp_tables cfg
