@@ -59,12 +59,14 @@ Setup islandora load system
    # chown root:redis /etc/redis.conf
    # chmod 640 /etc/redis.conf
 
- Logging: to rsyslog add:
-
-    # redis
-    local0.*   /var/log/redis.log
-
- touch /var/log/redis and send a HUP to the rsyslogd process.
+??? not sure about this anymore; everything seems to go to /var/log/messages regardless.
+???
+??? Logging: to rsyslog add:
+???
+???    # redis
+???    local0.*   /var/log/redis.log
+???
+??? touch /var/log/redis and send a HUP to the rsyslogd process.
 
  Start service:
 
@@ -120,7 +122,7 @@ Setup islandora load system
   The value is in units of seconds, and is used to wait until an ftp directory has been left alone for that much time
   before its contents are processed.  It is set low for local testing, 10 seconds works fine.
 
-7) Add tables to the ingest database
+7) Add recent ftp tables to the ingest database
 
    tools/add-ftp-tables
 
