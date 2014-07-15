@@ -74,7 +74,7 @@ begin
   setup_redis_connection(config)
   setup_ingest_database(config)
   loop_for_incoming(config)
-rescue SystemError => e
+rescue Redis::CannotConnectError, SystemError => e
   STDERR.puts "ERROR: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
   sleep SYSTEM_ERROR_SLEEP
   exit

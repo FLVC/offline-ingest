@@ -9,7 +9,7 @@ Setup islandora load system
      > # fischer: islandload-tst must connect
      > host    islandora_test islandora               192.168.36.30/32        md5
 
-2) Add to config.yml,  for each institution using ftp, an entry "ftp-root: 'path'" where path is the home ftp directory.
+2) Add to config.yml,  for each institution using ftp, an entry "ftp-root: path" where path is the home ftp directory.
 
  e.g.
 
@@ -20,7 +20,10 @@ Setup islandora load system
         ftp_root:               /home/ftp/islandorad/
 	....
 
-  Note the ftp requirements below.
+  If there is no ftp_root declared for a host, that host will be ignored.  The config file is checked every few minutes
+  and if an ftp_root variable is added (or removed), it will be added (removed) to the ftp drops checked.
+
+  There need to be a standard set of subdirectories under the ftp_root; note the ftp requirements below.
 
 2) Redis is a column oriented database that keeps queueing information.
 
@@ -35,7 +38,7 @@ Setup islandora load system
    # adduser -d /var/db/redis redis
    # rm /var/db/redis/.??*             # won't need these..
 
- Note: we really need to pick a reserved UID/GID for daemon redis here from the ldap master list, TBD
+ TODO: we really need to pick a reserved UID/GID for daemon redis here from the ldap master list
 
  In the /usr/local/islandora/offline-ingest/config.yml file, add a global entry (under defaults stanza) for redis database:
 
@@ -126,6 +129,16 @@ Setup islandora load system
 
    tools/add-ftp-tables
 
+8) logging
+
+   /var/log/messages - will have four different entries:
+
+   god - process monitoring, it restarts ftp-handler and ingest-handler as necessary
+   redis - the backend database used for
+   ftp-handler - moves incoming/ packages to processing/ directories
+   ingest-handler - ingests packages from processing/ and on successful ingest deletes them; otherwise the
+   		    packages are moved to warnings/ or errors/ directories as appropriate
+
 -----------------
 
 1) user profile: several users share an institutional home ftp
@@ -208,3 +221,5 @@ TODO
 document god restarting/monitoring etc
 
 see http://hone.heroku.com/resque/2012/08/21/resque-signals.html
+
+rescue-web should be started on reboot with its own /etc/init.d/ script.

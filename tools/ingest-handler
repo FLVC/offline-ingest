@@ -7,6 +7,10 @@
 
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 
+require 'rubygems'
+require 'offin/config'
+require 'offin/exceptions'
+require 'resque'
 require 'watch-queue/utils'
 
 WORKER_SLEEP = 5
@@ -20,7 +24,7 @@ begin
   setup_resque_logger()
   setup_redis_connection(config)
   start_ingest_worker(WORKER_SLEEP)
-rescue SystemError => e
+rescue Redis::CannotConnectError, SystemError => e
   Resque.logger.error "System error: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
   sleep SYSTEM_ERROR_SLEEP
   exit
