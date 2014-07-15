@@ -38,13 +38,13 @@ Setup islandora load system
    # adduser -d /var/db/redis redis
    # rm /var/db/redis/.??*             # won't need these..
 
- TODO: we really need to pick a reserved UID/GID for daemon redis here from the ldap master list
+ These instructions assume there is a redis:redis user in ldap.
 
  In the /usr/local/islandora/offline-ingest/config.yml file, add a global entry (under defaults stanza) for redis database:
 
     redis_database:  redis://:9fab4b6d2578550bedc537e8e17c9efb@localhost:6379
 
- change the password for each install, I use a randomish md5 above.
+ Change the password for each install, I use a randomish md5 above.
 
  Copy the offline-ingest/etc/init.d/redis to /etc/init.d
 
@@ -62,14 +62,9 @@ Setup islandora load system
    # chown root:redis /etc/redis.conf
    # chmod 640 /etc/redis.conf
 
-??? not sure about this anymore; everything seems to go to /var/log/messages regardless.
-???
-??? Logging: to rsyslog add:
-???
-???    # redis
-???    local0.*   /var/log/redis.log
-???
-??? touch /var/log/redis and send a HUP to the rsyslogd process.
+ Tweak VM settings (see http://redis.io/topics/faq and http://www.redhat.com/magazine/001nov04/features/vm/)
+
+   # echo 1 > /proc/sys/vm/overcommit_memory
 
  Start service:
 
@@ -85,7 +80,7 @@ Setup islandora load system
 
    # gem install resque
 
- There is a utility, resque-web, that is occasionaly useful.  Open up port 5678 to hosts of interest, e.g.
+ There is a utility, resque-web, that is occasionally useful.  Open up port 5678 to hosts of interest, e.g.
 
    -A RH-Firewall-1-INPUT -m tcp -p tcp --dport 5678 -s  192.168.0.0/16 -j ACCEPT
 
@@ -98,6 +93,9 @@ Setup islandora load system
     http://islandload-tst.flvc.org:5678/overview
 
 
+
+
+
 4) Install 'god', a process monitoring daemon:
 
    # gem install god
@@ -106,11 +104,7 @@ Setup islandora load system
    # chkconfig --add /etc/init.d/god
    # chkconfig god on
 
- In /etc/god.conf,  change UID and GID to that of the user allowed to move ftp data around (see ftp requirements, below)
-
    # /etc/init.d/god start
-
- In offline-ingest/lib/watch-queue/watch-directory.rb, change the constant SHARED_GROUP to the GID that was selected above.
 
  Currently, all of the logging information for god and the ftp and ingest worker processes it starts goes to /var/log/messages.
 

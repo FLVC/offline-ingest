@@ -88,7 +88,7 @@ def start_ingest_worker sleep_time
   worker.run_at_exit_hooks = 1  # ?!
 
   if Process.respond_to?('daemon')   # for ruby >= 1.9"
-     Process.daemon(true, true)
+     Process.daemon(true, true)      # note: likely we'd have to tweak god process monitor, esp. pidfile and restart behavior
      worker.reconnect
   end
 
