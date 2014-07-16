@@ -704,4 +704,29 @@ class Utils
     return str
   end
 
+  # find_appropriate_admin_config(config_file, server_name) is used
+  # by the admin web service code.
+  #
+  # By convention, we are running a web service as
+  # 'admin.school.digital.flvc.org' where 'school.digital.flvc.org' is
+  # the drupal server.  So we delete the leading 'admin.' to find the
+  # appropriate server.  The we read the config file for all sections
+  # and probe each section in turn for "site:
+  # school.digital.flvc.org".  Once we have a hit, we return the
+  # appropriate config object.  We return nil if not found or on error.
+
+  def Utils.find_appropriate_admin_config config_file, server_name
+    site = server_name.sub(/^admin\./, '')
+
+    Datyl::Config.new(config_file, 'default').all_sections do |section|
+      site_config = Datyl::Config.new(config_file, 'default', section)
+      return site_config if site_config.site.downcase == site.downcase
+    end
+    return nil
+  rescue => e
+    STDERR.puts "Error reading config file for #{site} section: #{e.class}: #{e.message}"
+    return nil
+  end
+
+
 end # of class Utils

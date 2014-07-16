@@ -27,7 +27,6 @@ configure do
   set :raise_errors, false        # Let our app handle the exceptions.
   set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
 
-  ignored, section_name = HOST_MAPPING[ENV['SERVER_NAME']]
 
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
@@ -37,7 +36,7 @@ configure do
       # connection to the drupal databases; we are only using the ingest db.
 
       if forked
-        config = Datyl::Config.new(CONFIG_FILENAME, 'default',  section_name || ENV['SERVER_NAME'])
+        config = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
         DataBase.debug = true
         DataBase.setup(config)
       end
@@ -115,14 +114,18 @@ end # of helpers
 
 
 before do
+  # By convention, we are running the web service as
+  # 'admin.school.digital.flvc.org' where 'school.digital.flvc.org' is
+  # the drupal server.  So we delete the leading 'admin.' to find
+  # the appropriate server.
 
-  @hostname, section = HOST_MAPPING[ENV['SERVER_NAME']]
+  @hostname = ENV['SERVER_NAME'].sub(/^admin\./, '')
+  @config   = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
 
-  # STDERR.puts "BEFORE:  server #{ENV['SERVER_NAME']};  section: #{section};  @hostname: #{@hostname};"
+  STDERR.puts "BEFORE:  server #{ENV['SERVER_NAME']};  section: #{section};  @hostname: #{@hostname};"
 
-  halt 500, "Don't know how to configure for server #{ENV['SERVER_NAME']}"  unless @hostname
+  halt 500, "Don't know how to configure for server '#{ENV['SERVER_NAME']}', using '#{CONFIG_FILENAME}'"  unless @config
 
-  @config = Datyl::Config.new(CONFIG_FILENAME, 'default', section)
   @site   = DataBase::IslandoraSite.first(:hostname => @hostname)
 
 end # of before
