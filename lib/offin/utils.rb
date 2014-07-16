@@ -5,6 +5,7 @@ require 'RMagick'
 require 'fileutils'
 require 'iconv'
 require 'offin/exceptions'
+require 'offin/config'
 require 'open3'
 require 'stringio'
 require 'tempfile'
@@ -718,9 +719,9 @@ class Utils
   def Utils.find_appropriate_admin_config config_file, server_name
     site = server_name.sub(/^admin\./, '')
 
-    Datyl::Config.new(config_file, 'default').all_sections do |section|
+    Datyl::Config.new(config_file, 'default').all_sections.each do |section|
       site_config = Datyl::Config.new(config_file, 'default', section)
-      return site_config if site_config.site.downcase == site.downcase
+      return site_config if (site_config.site and site_config.site.downcase == site.downcase)
     end
     return nil
   rescue => e

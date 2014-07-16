@@ -33,7 +33,7 @@ configure do
 
       # When we fork a new ruby process under apache, re-connect to
       # the ingest database.  This web service doesn't require a
-      # connection to the drupal databases; we are only using the ingest db.
+      # connection to the drupal databases
 
       if forked
         config = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
@@ -117,12 +117,10 @@ before do
   # By convention, we are running the web service as
   # 'admin.school.digital.flvc.org' where 'school.digital.flvc.org' is
   # the drupal server.  So we delete the leading 'admin.' to find
-  # the appropriate server.
+  # the appropriate server configuration (for db connection info).
 
   @hostname = ENV['SERVER_NAME'].sub(/^admin\./, '')
   @config   = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
-
-  STDERR.puts "BEFORE:  server #{ENV['SERVER_NAME']};  section: #{section};  @hostname: #{@hostname};"
 
   halt 500, "Don't know how to configure for server '#{ENV['SERVER_NAME']}', using '#{CONFIG_FILENAME}'"  unless @config
 
