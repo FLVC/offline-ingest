@@ -1,13 +1,16 @@
 Setup islandora load system
 ============================
 
-1) Setup access from load host to corresponding presentation hosts:
+1) Setup access from load host to corresponding presentation (drupal) hosts, e.g.
 
  islandload-tst  needs to be able to connect to the islandora-test ingest and drupal databases.
  For the ingest database, for example, as the postgres user edit /var/lib/pgsql/data/pg5432
 
      > # fischer: islandload-tst must connect
      > host    islandora_test islandora               192.168.36.30/32        md5
+
+ Test that postgres connections from load host to drupal hosts work
+ for both ingest and drupal databases.
 
 2) Add to config.yml,  for each institution using ftp, an entry "ftp-root: path" where path is the home ftp directory.
 
@@ -20,12 +23,17 @@ Setup islandora load system
         ftp_root:               /home/ftp/islandorad/
 	....
 
-  If there is no ftp_root declared for a host, that host will be ignored.  The config file is checked every few minutes
-  and if an ftp_root variable is added (or removed), it will be added (removed) to the ftp drops checked.
+  If there is no ftp_root declared for a host, that host will be
+  ignored.  The config file is checked every few minutes and if an
+  ftp_root variable is added (or removed), it will be added (removed)
+  to the ftp drops checked.
 
-  There need to be a standard set of subdirectories under the ftp_root; note the ftp requirements below.
+  There need to be a standard set of subdirectories under the
+  ftp_root; note the ftp requirements below.
 
-2) Redis is a column oriented database that keeps queueing information.
+2) Redis is a column oriented database that keeps queueing
+   information; it is used by ftp-handler (which adds to the
+   queue) and ingest-handler (which removes from the queue)
 
    # cd /usr/local/src/
    # tar xzf redis-2.8.6.tar.gz
@@ -38,13 +46,15 @@ Setup islandora load system
    # adduser -d /var/db/redis redis
    # rm /var/db/redis/.??*             # won't need these..
 
- TODO: we really need to pick a reserved UID/GID for daemon redis here from the ldap master list
+ These instructions assume there is a redis:redis user in ldap.
 
- In the /usr/local/islandora/offline-ingest/config.yml file, add a global entry (under defaults stanza) for redis database:
+ In the /usr/local/islandora/offline-ingest/config.yml file, add a
+ global entry (under defaults stanza) for redis database:
 
     redis_database:  redis://:9fab4b6d2578550bedc537e8e17c9efb@localhost:6379
 
- change the password for each install, I use a randomish md5 above.
+
+ Change the password for each install, I use a randomish md5 above.
 
  Copy the offline-ingest/etc/init.d/redis to /etc/init.d
 
@@ -55,37 +65,34 @@ Setup islandora load system
 
    > requirepass 9fab4b6d2578550bedc537e8e17c9efb
 
- Make sure there are no leading spaces before "requirepass"
+ Make sure there are no leading spaces before "requirepass"; this
+ password is extracted from the redis.conf file by the /etc/redis
+ startup script.
 
  Minimal security steps:
 
    # chown root:redis /etc/redis.conf
    # chmod 640 /etc/redis.conf
 
-??? not sure about this anymore; everything seems to go to /var/log/messages regardless.
-???
-??? Logging: to rsyslog add:
-???
-???    # redis
-???    local0.*   /var/log/redis.log
-???
-??? touch /var/log/redis and send a HUP to the rsyslogd process.
+ Tweak VM settings (see http://redis.io/topics/faq and
+ http://www.redhat.com/magazine/001nov04/features/vm/ for details)
 
- Start service:
-
-   # /etc/init.d/redis
+   # echo 1 > /proc/sys/vm/overcommit_memory
 
  Make sure it starts on reboot
 
    # chkconfig --add /etc/init.d/redis
    # chkconfig redis on
 
+ Start it up:
+
+   # service redis start
 
 3) Install resque,  a queueing system that uses redis as its db back-end
 
    # gem install resque
 
- There is a utility, resque-web, that is occasionaly useful.  Open up port 5678 to hosts of interest, e.g.
+ There is a utility, resque-web, that is occasionally useful.  Open up port 5678 to hosts of interest, e.g.
 
    -A RH-Firewall-1-INPUT -m tcp -p tcp --dport 5678 -s  192.168.0.0/16 -j ACCEPT
 
@@ -93,9 +100,11 @@ Setup islandora load system
 
     # resque-web -r redis://:9fab4b6d2578550bedc537e8e17c9efb@localhost:6379
 
-  view the status web page at (for instance)
+ view the status web page at (for instance)
 
     http://islandload-tst.flvc.org:5678/overview
+
+ TODO: start this up automatically and securely.
 
 
 4) Install 'god', a process monitoring daemon:
@@ -106,16 +115,23 @@ Setup islandora load system
    # chkconfig --add /etc/init.d/god
    # chkconfig god on
 
- In /etc/god.conf,  change UID and GID to that of the user allowed to move ftp data around (see ftp requirements, below)
+ Currently, all of the logging information for god and the ftp and
+ ingest worker processes it starts goes to /var/log/messages.
 
-   # /etc/init.d/god start
+ The process monitor god starts scripts as user 'ingestor', which have
+ been set up via ldap; create a home directory for it:
 
- In offline-ingest/lib/watch-queue/watch-directory.rb, change the constant SHARED_GROUP to the GID that was selected above.
+   # mkdir /var/lib/ingestor
+   # chown ingestor:ingestor /var/lib/ingestor
 
- Currently, all of the logging information for god and the ftp and ingest worker processes it starts goes to /var/log/messages.
+ Start it up:
+
+   # service god start
 
 5) Create new tables for the ingest database:
 
+   # cd offline-ingest/tools
+   # ./add-ftp-tables
 
 6) There is a parameter to set in one of the files (arguably this should be in config.yml); in
 
@@ -123,23 +139,26 @@ Setup islandora load system
 
   there is a constant, DIRECTORY_UNCHANGED_TIME,  set to a low value for testing.  Change this to 300 for production.
   The value is in units of seconds, and is used to wait until an ftp directory has been left alone for that much time
-  before its contents are processed.  It is set low for local testing, 10 seconds works fine.
+  before its contents are processed.  It is set low for local testing, 10 seconds seems to work fine.
 
-7) Add recent ftp tables to the ingest database
 
-   tools/add-ftp-tables
+7) logging
 
-8) logging
+   /var/log/messages - will have four different entries from this system:
 
-   /var/log/messages - will have four different entries:
+   * god - process monitor, it starts ftp-handler and ingest-handler,
+     restarting as necessary
 
-   god - process monitoring, it restarts ftp-handler and ingest-handler as necessary
-   redis - the backend database used for
-   ftp-handler - moves incoming/ packages to processing/ directories
-   ingest-handler - ingests packages from processing/ and on successful ingest deletes them; otherwise the
-   		    packages are moved to warnings/ or errors/ directories as appropriate
+   * redis - the backend database used for queueing
 
------------------
+   * ftp-handler - moves incoming/ packages to processing/ directories
+
+   * ingest-handler - ingests packages from processing/ and on
+     successful ingest deletes them; otherwise the packages are moved
+     to warnings/ or errors/ directories as appropriate
+
+
+----------------
 
 1) user profile: several users share an institutional home ftp
    directory (denoted ~ftp below); there are on the order of a

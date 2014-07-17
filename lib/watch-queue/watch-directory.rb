@@ -23,7 +23,7 @@ class WatchDirectory
   INCOMING_SUBDIRECTORY    = 'incoming'
   SUCCESS_SUBDIRECTORY     = 'success'
 
-  SHARED_GROUP             = 'ftpil'   #### TODO: fixme to proper GID
+  SHARED_GROUP             = 'ingestor'
 
   DIRECTORY_UNCHANGED_TIME = 10
 # DIRECTORY_UNCHANGED_TIME = 5 * 60  #### TODO

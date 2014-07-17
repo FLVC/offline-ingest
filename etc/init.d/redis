@@ -25,7 +25,7 @@ case "$1" in
 	    echo "$PIDFILE exists, process is already running or crashed\n"
 	else
 	    echo -n "Starting Redis server..."
-	    su $REDIS_USER -c "$EXEC $CONF"
+	    su -s /bin/sh $REDIS_USER -c "$EXEC $CONF"
 	    echo ''
 	fi
 	;;

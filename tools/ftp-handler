@@ -20,7 +20,7 @@ require 'watch-queue/watch-directory'
 # to STDERR, which gets captured by the process manager and logged.
 
 REREAD = 60 * 5   # re-read config file this often
-PAUSE  = 5        # PAUSE should divide REREAD evenly
+PAUSE  = 5        # PAUSE must divide REREAD evenly
 
 SYSTEM_ERROR_SLEEP    = 60
 UNHANDLED_ERROR_SLEEP = 600
