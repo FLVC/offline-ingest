@@ -42,23 +42,25 @@ class WatchDirectory
   end
 
   def enqueue_incoming_packages
+    new_container_directory = new_processing_directory(hostname)
+
     ready_directories.each do |source|
       package_directory = source.gsub(/.*\//, '')
-      container_directory = new_processing_directory(hostname)
       begin
-        FileUtils.mv source, container_directory
+        FileUtils.mv source, new_container_directory
       rescue => e
-        STDERR.puts "ERROR: Can't move #{package_directory} from #{incoming_directory} to #{container_directory} for processing. Skipping."
+        STDERR.puts "ERROR: Can't move #{package_directory} from #{incoming_directory} to #{new_container_directory} for processing. Skipping."
         STDERR.puts "ERROR: #{e.class}: #{e.message}"
       else
         Resque.enqueue(IngestJob,
                        { :config_section      => config_section,
                          :config_file         => config_path,
-                         :container_directory => container_directory,
-                         :package_directory   => File.join(container_directory, package_directory),
+                         :container_directory => new_container_directory,
+                         :package_directory   => File.join(new_container_directory, package_directory),
                          :warnings_directory  => warnings_directory,
                          :errors_directory    => errors_directory,
                        })
+        new_container_directory = new_processing_directory(hostname)
       end
     end
   end
@@ -80,6 +82,7 @@ class WatchDirectory
     FileUtils.chmod 02755, dir
     FileUtils.chown 0, SHARED_GROUP, dir
   end
+
 
   def new_processing_directory(hostname)
     new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
