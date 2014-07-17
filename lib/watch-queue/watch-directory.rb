@@ -9,6 +9,12 @@ require 'mono_logger'
 # We assume that the ingest database has been initialized at this
 # point; see new_processing_directory().
 
+# TODO: setup for subclassing into WatchProspectiveDirectory,
+# WatchDigitoolDirectory this will probably be hoisting Resque.enqueue
+# into 'def enqueue ..' and let the subclass do IngestProspectiveJob
+# (currently IngestJob) and IngestDigitoolJob (TBD), presumably
+# subclasses themselves
+
 class WatchDirectory
 
   ERRORS_SUBDIRECTORY      = 'errors'
@@ -17,7 +23,7 @@ class WatchDirectory
   INCOMING_SUBDIRECTORY    = 'incoming'
   SUCCESS_SUBDIRECTORY     = 'success'
 
-  SHARED_GROUP             = 'ftpil'   #### TODO: fixme to proper UID
+  SHARED_GROUP             = 'ftpil'   #### TODO: fixme to proper GID
 
   DIRECTORY_UNCHANGED_TIME = 10
 # DIRECTORY_UNCHANGED_TIME = 5 * 60  #### TODO
