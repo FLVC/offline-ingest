@@ -42,15 +42,16 @@ class WatchDirectory
   end
 
   def enqueue_incoming_packages
-    new_container_directory = new_processing_directory(hostname)
-
     ready_directories.each do |source|
+      new_container_directory = new_processing_directory(hostname)
       package_directory = source.gsub(/.*\//, '')
       begin
         FileUtils.mv source, new_container_directory
       rescue => e
-        STDERR.puts "ERROR: Can't move #{package_directory} from #{incoming_directory} to #{new_container_directory} for processing. Skipping."
+        STDERR.puts "ERROR: Can't move #{package_directory} from #{incoming_directory} to newly created #{new_container_directory} for processing. Skipping."
         STDERR.puts "ERROR: #{e.class}: #{e.message}"
+        STDERR.puts "ERROR: removing unused #{new_container_directory}"
+        cleanup_unused_container new_container_directory
       else
         Resque.enqueue(IngestJob,
                        { :config_section      => config_section,
@@ -60,7 +61,6 @@ class WatchDirectory
                          :warnings_directory  => warnings_directory,
                          :errors_directory    => errors_directory,
                        })
-        new_container_directory = new_processing_directory(hostname)
       end
     end
   end
@@ -83,6 +83,11 @@ class WatchDirectory
     FileUtils.chown 0, SHARED_GROUP, dir
   end
 
+  def cleanup_unused_container dir
+    FileUtils.rmdir dir
+  rescue => e
+    STDERR.puts "ERROR: Can't remove unused directory #{dir} - #{e.class}: #{e.message}"
+  end
 
   def new_processing_directory(hostname)
     new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
