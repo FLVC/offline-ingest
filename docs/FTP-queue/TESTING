@@ -1,0 +1,55 @@
+1)  Get some prosepctive packages suitable for FAU in a local directory
+
+
+2) Set up filezilla with these parameters in the site manager:
+
+Host   		 islandload-test.flvc.org
+Protocol	 FTP
+Encryption	 Require explicit FTP over TLS
+User		 ftpdlfarf
+Password	 ********
+
+Connect, and change the local directory to the one set up in 1) above
+
+
+
+3) Get a window on islandload-tst.flvc.org; cd to /var/log/ and run
+
+    tail -f messages | grep -v FIREWALL
+
+to see the logs as ingest progresses
+
+
+4) Change the remote directory to /incoming and upload a package; view
+   log activity (it will take ten seconds or so to pick up the
+   directory)
+
+5) test behaviors - you'll want to check admin.fau-test.digital.flvc.org
+   as you go...
+
+   When the system detects a package in incoming, a new container
+   directory is created in /processing, of the form /processing/aaaa/
+   - the uploaded package is copied to it.
+
+   N.B. Filezilla will display what it thinks are in the remote
+   directories.  You'll have to refresh the directory explicitly
+   (there's an icon with two horizontal arrows on it that does this).
+
+   Properly ingested packages should be deleted; well-formed packages
+   with errors are placed in /errors; those with warnings are placed
+   in /warnings.  This is so the affiliate can check, retrieve and
+   correct problems.
+
+   You should not be able to modify anything in /processing; there
+   should be no junk left in /processing once the system has dispensed
+   processing ot.
+
+   You should be able to retreive and delete materials in /errors and
+   /warnings at your whim. (delete appears to be temporarily
+   unavailable)
+
+6) Break it.
+
+   What happens when the ingest process fails crashes?  Find some
+   really egregious examples that Lydia's reported for the package
+   program, and modify them so they are prospective-ready.  Try these.
