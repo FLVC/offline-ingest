@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 #
 # God
 #
@@ -16,7 +16,7 @@ case "$1" in
     if [ -f $PIDFILE ]
     then
 	echo "$PIDFILE exists, process is already running or crashed\n"
-    else
+    else 
 	$EXEC -c $CONF -P $PIDFILE --log-level info
 	RETVAL=$?
     fi
@@ -26,7 +26,8 @@ case "$1" in
     then
 	echo "$PIDFILE does not exist, process is not running."
     else
-	kill `cat $PIDFILE`
+	$EXEC terminate
+	[ -f $PIDFILE ] && kill `cat $PIDFILE`
 	rm -f $PIDFILE
     fi
     ;;
