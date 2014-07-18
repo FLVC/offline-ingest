@@ -79,6 +79,10 @@ Setup islandora load system
 
    # echo 1 > /proc/sys/vm/overcommit_memory
 
+??? It also needs to go into /etc/sysctl.conf
+???
+???   > vm.overcommit_memory = 1
+
  Make sure it starts on reboot
 
    # chkconfig --add /etc/init.d/redis

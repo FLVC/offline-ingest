@@ -26,7 +26,8 @@ case "$1" in
     then
 	echo "$PIDFILE does not exist, process is not running."
     else
-	kill `cat $PIDFILE`
+	$EXEC terminate
+	[ -f $PIDFILE ] && kill `cat $PIDFILE`
 	rm -f $PIDFILE
     fi
     ;;
