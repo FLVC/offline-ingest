@@ -238,6 +238,18 @@ Setup islandora load system
  In addition, ~daemon must be able to read the config.yml file.
 
 
+3) Install adore djatoka from production site:
+
+   prod# cd /
+   prod# tar cvzf /tmp/kdu.tar.gz /opt/adore-djatoka-1.1/ /etc/ld.so.conf.d/djatoka.conf /usr/bin/kdu_*
+
+   load# cd /
+   load# scp user@prod:/tmp/kdu.tar.gz /tmp/
+   load# tar xzvf /tmp/kdu.tar.gz
+   load# ldconfig -v
+
+
+
 TODO
 ====
 
