@@ -41,18 +41,13 @@ Setup islandora load system
    # make
    # make install
 
- Add a user to run it:
-
-   # adduser -d /var/db/redis redis
-   # rm /var/db/redis/.??*             # won't need these..
-
- These instructions assume there is a redis:redis user in ldap.
+ These instructions assume there is a redis:redis user in ldap with
+ home directory /var/db/redis;  make the home, chmod 755, chown redis:redis.
 
  In the /usr/local/islandora/offline-ingest/config.yml file, add a
  global entry (under defaults stanza) for redis database:
 
     redis_database:  redis://:9fab4b6d2578550bedc537e8e17c9efb@localhost:6379
-
 
  Change the password for each install, I use a randomish md5 above.
 
