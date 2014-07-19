@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+# TODO: expire the errors/ and warnings/ directories in here.
+
 # This script starts a worker process for ingesting a package listed
 # on a resque queue name :ingest.  Multiple workers are created by
 # invoking this script multiple times.  Normally we'll have a

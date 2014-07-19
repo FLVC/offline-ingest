@@ -37,9 +37,10 @@ end
 
 
 # Resque requires a specialized logger due to interrupt race
-# conditions. Meh. Also: application code does a temporary dup/reopen
-# of STDERR, which confuses MonoLogger; luckily we can get away with
-# using STDOUT.
+# conditions. Meh. Also: our application code does a temporary
+# dup/reopen of STDERR when processing certain image content-types,
+# which confuses MonoLogger; luckily we can get away with using
+# STDOUT.
 
 def setup_resque_logger
   logger = MonoLogger.new(STDOUT)   # Don't use STDERR here, it gets redirected & reopened under some conditions (ImageMagick error handling) and the logger never recovers the original STDERR stream.

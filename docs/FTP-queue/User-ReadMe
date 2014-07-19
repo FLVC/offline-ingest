@@ -1,0 +1,25 @@
+FTP instructions for prospective ingest.
+
+There are four directories under your FTP home with the following
+names and purposes:
+
+ * incoming: the directory to place your packages. Only one level of
+   directories is permissible here, which should be the package name.
+
+ * processing: packages awaiting processing - you should never modify
+   the contents of this directory.  You’ll notice that packages have
+   been moved to  unique container directories of the form 'aaaa',
+   'aaab', etc.
+
+ * errors: processed packages that generated errors;  these are in
+   the container directories created for processing above. You
+   may retrieve these packages to examine and correct them, if
+   necessary.
+
+   To avoid filling up the FTP filesystems, please remove these
+   packages (including their container directories) in a timely
+   manner. They may be removed after a certain period automatically
+   by the system.
+
+ * warnings: processed packages that generated warnings.  See the
+   guidelines for the errors directories above.
