@@ -13,19 +13,6 @@ require 'mono_logger'
 
 class BaseIngestJob
 
-  # @queue = :ingest
-
-  # # class#perform is the one required class method for the resque
-  # # system.  data is a hash with config filename, config section, and
-  # # various directories:
-  # # {container,errors,warnings,package}_directory.
-
-  # def self.perform(data)
-  #   PackageIngestor.process(data)
-  # rescue => e
-  #   Resque.logger.error "Received #{e.class}: #{e.message}"
-  # end
-
   def self.around_perform (data)
 
     container_directory = data['container_directory']   # in processing_directory
