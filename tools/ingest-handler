@@ -2,8 +2,6 @@
 
 # TODO: expire the errors/ and warnings/ directories in here.
 
-# TODO: take arguments letting us know what queues we should process (digitool, ftp)
-
 # This script starts a worker process for ingesting a package listed
 # on a resque queue name :ingest.  Multiple workers are created by
 # invoking this script multiple times.  Normally we'll have a

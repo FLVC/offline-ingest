@@ -3,7 +3,7 @@ require 'offin/config'
 require 'offin/packages'
 require 'offin/exceptions'
 require 'offin/ingest-support'
-require 'watch-queue/utils'
+require 'watch-queue/watch-utils'
 require 'mono_logger'
 
 ### TODO: Deal with this: infinite loop on the hopefully-rare
