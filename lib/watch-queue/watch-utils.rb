@@ -53,7 +53,7 @@ class WatchUtils
 
   def WatchUtils.directory_problems root_dir
     errors = []
-    dirs = [ root_dirs ] + [ BaseWatchDirectory::ERRORS_SUBDIRECTORY, BaseWatchDirectory::PROCESSING_SUBDIRECTORY, BaseWatchDirectory::WARNINGS_SUBDIRECTORY, BaseWatchDirectory::INCOMING_SUBDIRECTORY ].map { |sub| File.join(root_dir, sub) }
+    dirs = [ root_dir ] + [ BaseWatchDirectory::ERRORS_SUBDIRECTORY, BaseWatchDirectory::PROCESSING_SUBDIRECTORY, BaseWatchDirectory::WARNINGS_SUBDIRECTORY, BaseWatchDirectory::INCOMING_SUBDIRECTORY ].map { |sub| File.join(root_dir, sub) }
 
     dirs.each do |dir|
       unless File.exists? dir
