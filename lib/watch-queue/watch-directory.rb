@@ -5,6 +5,8 @@ require 'fileutils'
 require 'offin/exceptions'
 require 'watch-queue/ingest-job'
 require 'mono_logger'
+require 'socket'
+
 
 # We assume that the ingest database has been initialized at this
 # point; see new_processing_directory().
@@ -15,7 +17,7 @@ require 'mono_logger'
 # (currently IngestJob) and IngestDigitoolJob (TBD), presumably
 # subclasses themselves
 
-class WatchDirectory
+class BaseWatchDirectory
 
   ERRORS_SUBDIRECTORY      = 'errors'
   PROCESSING_SUBDIRECTORY  = 'processing'
@@ -30,15 +32,10 @@ class WatchDirectory
 
   attr_reader :config_path, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
-  def initialize config, config_section
-    @config_section = config_section
+  def initialize config, config_section = nil
+    @config_section = config_section   # nil when global/default :digitool queue
     @config_path    = config.path
-    @hostname       = config.site
-
-    @incoming_directory   = File.join(config.ftp_root, INCOMING_SUBDIRECTORY)
-    @processing_directory = File.join(config.ftp_root, PROCESSING_SUBDIRECTORY)
-    @warnings_directory   = File.join(config.ftp_root, WARNINGS_SUBDIRECTORY)
-    @errors_directory     = File.join(config.ftp_root, ERRORS_SUBDIRECTORY)
+    @hostname       = config.site || Socket.gethostname   # nil when global/default :digitool queue
   end
 
   def enqueue_incoming_packages
@@ -53,14 +50,7 @@ class WatchDirectory
         STDERR.puts "ERROR: removing unused #{new_container_directory}"
         cleanup_unused_container new_container_directory
       else
-        Resque.enqueue(IngestJob,
-                       { :config_section      => config_section,
-                         :config_file         => config_path,
-                         :container_directory => new_container_directory,
-                         :package_directory   => File.join(new_container_directory, package_directory),
-                         :warnings_directory  => warnings_directory,
-                         :errors_directory    => errors_directory,
-                       })
+        resque_enque
       end
     end
   end
@@ -127,5 +117,48 @@ class WatchDirectory
     return directories.sort {  |a,b|  File.stat(b).ctime <=> File.stat(a).ctime }
   end
 
+end # class WatchDirectory
+
+
+class FtpWatchDirectory < BaseWatchDirectory
+  def initialize config, config_section
+    super(config, config_section)
+    @incoming_directory   = File.join(config.ftp_root, INCOMING_SUBDIRECTORY)
+    @processing_directory = File.join(config.ftp_root, PROCESSING_SUBDIRECTORY)
+    @warnings_directory   = File.join(config.ftp_root, WARNINGS_SUBDIRECTORY)
+    @errors_directory     = File.join(config.ftp_root, ERRORS_SUBDIRECTORY)
+  end
+
+  def resque_enqueue
+    Resque.enqueue(FtpIngestJob,
+                   { :config_section      => config_section,
+                     :config_file         => config_path,
+                     :container_directory => new_container_directory,
+                     :package_directory   => File.join(new_container_directory, package_directory),
+                     :warnings_directory  => warnings_directory,
+                     :errors_directory    => errors_directory,
+                   })
+  end
+
+end
+
+class DigiToolWatchDirectory < BaseWatchDirectory
+  def initialize config
+    super(config, nil)
+    @incoming_directory   = File.join(config.digitool_root, INCOMING_SUBDIRECTORY)
+    @processing_directory = File.join(config.digitool_root, PROCESSING_SUBDIRECTORY)
+    @warnings_directory   = File.join(config.digitool_root, WARNINGS_SUBDIRECTORY)
+    @errors_directory     = File.join(config.digitool_root, ERRORS_SUBDIRECTORY)
+  end
+
+  def resque_enqueue
+    Resque.enqueue(DigiToolIngestJob,
+                   { :config_file         => config_path,
+                     :container_directory => new_container_directory,
+                     :package_directory   => File.join(new_container_directory, package_directory),
+                     :warnings_directory  => warnings_directory,
+                     :errors_directory    => errors_directory,
+                   })
+  end
 
 end

@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
 
 require 'rubygems'
@@ -9,10 +8,8 @@ require 'offin/config'
 require 'watch-queue/watch-utils'
 require 'watch-queue/watch-directory'
 
-
 ## TODO: use a logger pointing to STDERR instead of just writing to it
 ## (so we can assign/ignore severity levels)
-
 
 # Note: ftp-handler is run as an independent front end for our
 # queueing system, so it isn't directly running resque worker code, as
@@ -21,9 +18,9 @@ require 'watch-queue/watch-directory'
 # It *is* started and watched by the 'god' process manager (as is
 # ingest-handler) however.
 #
-# All this is to say that our logging must be different form
-# ingest-handler. For now, we simply write to STDERR, which gets
-# captured by the process manager and logged.
+# All this is to say that our logging must be different from
+# ingest-handler (which uses Resque::Logger). For now, we simply write
+# to STDERR, which gets captured by the process manager and logged.
 
 REREAD = 60 * 5   # re-read config file this often
 PAUSE  = 5        # PAUSE must divide REREAD evenly
@@ -51,25 +48,38 @@ end
 
 # Search through various website stanzas in the config file for
 # declaration of ftp_root; do sanity check and collect up all configs
-# that refer to a valid ftp_site.
+# that refer to a valid ftp_site.  Also check for system digitool
+# directory.
 
 def watch_these_directories  config
   wds = []
+
+  if config.digitool_root
+    errors = WatchUtils.directory_problems(config.digitool_root)
+    if errors.empty?
+      STDERR.puts "INFO: Watching digitool incoming directory in #{config.digitool_root}"
+      wds.push DigiToolWatchDirectory.new(config)
+    else
+      STDERR.puts "ERROR: Skipping watching DigiTool directory #{config.digitool_root}, these configuration errors were encountered:"
+      errors.each { |line| STDERR.puts "ERROR: " + line }
+    end
+  end
+
   config.all_sections.each do |section|
 
     site_config = Datyl::Config.new(config.path, 'default', section)
     next unless site_config.ftp_root
-    errors = ftp_directory_problems(site_config.ftp_root)
+    errors = WatchUtils.directory_problems(site_config.ftp_root)
 
     if errors.empty?
-      STDERR.puts "INFO: Watching #{site_config.ftp_root} for #{section}"
+      STDERR.puts "INFO: Watching FTP incoming directory in #{site_config.ftp_root} for #{section}"
     else
-      STDERR.puts "ERROR: Skipping FTP configuration for #{section}, configuration errors encountered:"
+      STDERR.puts "ERROR: Skipping watching FTP directory #{site_config.ftp_root} for #{section}, these configuration errors were encountered:"
       errors.each { |line| STDERR.puts "ERROR: " + line }
       next
     end
 
-    wds.push WatchDirectory.new(site_config, section)
+    wds.push FtpWatchDirectory.new(site_config, section)
   end
   return wds.compact
 end

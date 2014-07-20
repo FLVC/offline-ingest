@@ -51,15 +51,13 @@ class WatchUtils
     Resque.logger = logger
   end
 
-  def WatchUtils.ftp_directory_problems ftp_root
+  def WatchUtils.directory_problems root_dir
     errors = []
-    dirs = [ ftp_root ] + [ WatchDirectory::ERRORS_SUBDIRECTORY, WatchDirectory::PROCESSING_SUBDIRECTORY, WatchDirectory::WARNINGS_SUBDIRECTORY, WatchDirectory::INCOMING_SUBDIRECTORY ].map { |sub| File.join(ftp_root, sub) }
+    dirs = [ root_dirs ] + [ BaseWatchDirectory::ERRORS_SUBDIRECTORY, BaseWatchDirectory::PROCESSING_SUBDIRECTORY, BaseWatchDirectory::WARNINGS_SUBDIRECTORY, BaseWatchDirectory::INCOMING_SUBDIRECTORY ].map { |sub| File.join(root_dir, sub) }
 
     dirs.each do |dir|
       unless File.exists? dir
-        errors.push "required directory
-
- '#{di'WatchUtils.setup_r doesn't exist"
+        errors.push "required directory '#{dir}' doesn't exist"
         next
       end
       unless File.directory? dir
@@ -78,6 +76,7 @@ class WatchUtils
     return errors
   end
 
+
   def WatchUtils.short_package_container_name container, package
     return File.join(container.sub(/.*\//, ''), package.name)
   end
@@ -85,15 +84,17 @@ class WatchUtils
   # Start a single ingest worker - invokes IngestJob#perform  as needed. Resque.logger must first have been setup
 
   def WatchUtils.start_ingest_worker sleep_time, *queues
+    raise SystemError, "configuration error: ingest worker didn't receive any queues to watch" if queues.empty?
+
     worker = nil
-    worker = Resque::Worker.new(*queues)   # 'ftp', 'digitool' to be supported
+    worker = Resque::Worker.new(*queues)   # 'ftp', 'digitool' currently supported
     worker.term_timeout      = 4.0
     worker.term_child        = 1
     worker.run_at_exit_hooks = 1  # ?!
 
-    if Process.respond_to?('daemon')   # for ruby >= 1.9"
-      Process.daemon(true, true)      # note: likely we'd have to tweak god process monitor, esp. pidfile and restart behavior
-      worker.reconnect
+    if Process.respond_to?('daemon')  # for ruby >= 1.9"
+      Process.daemon(true, true)      # note: likely we'd have to tweak god process monitor
+      worker.reconnect                # config, esp. pidfile and restart behavior
     end
 
     worker.log  "Starting worker #{worker}"

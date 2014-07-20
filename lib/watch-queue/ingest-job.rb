@@ -83,8 +83,11 @@ class PackageIngestor
 
   def self.process data, updator_class
 
-    config = Datyl::Config.new(data['config_file'], 'default', data['config_section'])
-
+    config = if data['config_section']
+               Datyl::Config.new(data['config_file'], 'default', data['config_section'])
+             else
+               Datyl::Config.new(data['config_file'], 'default')
+             end
     package_directory   = data['package_directory']
     container_directory = data['container_directory']
     warnings_directory  = data['warnings_directory']
@@ -128,7 +131,7 @@ class PackageIngestor
                           package.collections.empty? ?  'no collections' : 'collection: ' + package.collections.join(', '),
                           package.label)
   rescue => e
-    Resque.logger.error "Can't do summary:  #{e.class}: #{e.message}"
+    Resque.logger.error "Can't log summary data for package #{package.name}:  #{e.class}: #{e.message}"
   end
 
   # a package object was handled,  now check where it shoulid go
@@ -139,14 +142,14 @@ class PackageIngestor
 
     if package.errors?
       package.errors.each   { |line| Resque.logger.error line.strip } if package.errors
-      Resque.logger.error "Moving #{short_name} to #{errors_directory}"
+      Resque.logger.error "Moving from FTP directory #{short_name} to #{errors_directory}"
       FileUtils.mv container_directory, errors_directory
     elsif package.warnings?
       package.warnings.each { |line| Resque.logger.warn  line.strip } if package.warnings
-      Resque.logger.warn "Moving #{short_name} to #{warnings_directory}"
+      Resque.logger.warn "Moving from FTP directory #{short_name} to #{warnings_directory}"
       FileUtils.mv container_directory, warnings_directory
     else
-      Resque.logger.info "Deleting successfully ingested package #{short_name}"
+      Resque.logger.info "Deleting successfully ingested package from FTP directory #{short_name}"
       FileUtils.rm_rf container_directory
     end
 
