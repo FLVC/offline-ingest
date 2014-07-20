@@ -60,7 +60,7 @@ class BaseIngestJob
 end
 
 class ProspectiveIngestJob < BaseIngestJob
-  @queue = :ingest
+  @queue = :ftp
 
   def self.perform(data)
     ProspectivePackageIngestor.process(data, ProspectiveMetadataChecker)
@@ -94,7 +94,7 @@ class PackageIngestor
 
     (ENV['http_proxy'], ENV['HTTP_PROXY'] = config.proxy, config.proxy) if config.proxy
 
-    setup_ingest_database(config)
+    WatchUtils.setup_ingest_database(config)
 
     package = PackageFactory.new(config, updator_class).new_package(package_directory)
 

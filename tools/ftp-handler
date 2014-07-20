@@ -6,7 +6,7 @@ require 'rubygems'
 require 'offin/packages'
 require 'offin/db'
 require 'offin/config'
-require 'watch-queue/utils'
+require 'watch-queue/watch-utils'
 require 'watch-queue/watch-directory'
 
 
@@ -78,9 +78,9 @@ end
 # when we exit on error.
 
 begin
-  config = setup_config()
-  setup_redis_connection(config)
-  setup_ingest_database(config)
+  config = WatchUtils.setup_config()
+  WatchUtils.setup_redis_connection(config)
+  WatchUtils.setup_ingest_database(config)
   loop_for_incoming(config)
 rescue Redis::CannotConnectError, SystemError => e
   STDERR.puts "ERROR: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."

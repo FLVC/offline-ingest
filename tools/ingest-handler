@@ -2,6 +2,9 @@
 
 # TODO: expire the errors/ and warnings/ directories in here.
 
+# TODO: take arguments letting us know what queues we should process (digitool, ftp)
+
+
 # This script starts a worker process for ingesting a package listed
 # on a resque queue name :ingest.  Multiple workers are created by
 # invoking this script multiple times.  Normally we'll have a
@@ -13,7 +16,7 @@ require 'rubygems'
 require 'offin/config'
 require 'offin/exceptions'
 require 'resque'
-require 'watch-queue/utils'
+require 'watch-queue/watch-utils'
 
 WORKER_SLEEP = 5
 SYSTEM_ERROR_SLEEP = 60
@@ -22,10 +25,10 @@ UNHANDLED_ERROR_SLEEP = 600
 # A process monitor will restart an instance of this script if we exit on error.
 
 begin
-  config = setup_config()
-  setup_resque_logger()
-  setup_redis_connection(config)
-  start_ingest_worker(WORKER_SLEEP)
+  config = WatchUtils.setup_config()
+  WatchUtils.setup_resque_logger()
+  WatchUtils.setup_redis_connection(config)
+  WatchUtils.start_ingest_worker(WORKER_SLEEP)
 rescue Redis::CannotConnectError, SystemError => e
   Resque.logger.error "System error: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
   sleep SYSTEM_ERROR_SLEEP
