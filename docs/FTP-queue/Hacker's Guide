@@ -1,0 +1,38 @@
+* Notes on how the ftp queueing system hangs together internally, for programmers
+
+
+** The 'god' process manager starts (and aurtomaticaly restarts) the ftp-handler and ingest-handler ruby scripts
+
+   The 'god' start-up scripts are in /etc/init.d/god and
+   /etc/god.conf.  Oddly, it's the latter where the code-action
+   happens.
+
+** ingest-handler is a ruby script that's started as a separate process to ingest packages
+
+*** ingest-handler is started with one or more command line arguments from the set [ ftp, digitool ]
+
+   The initial idea is to have one ingest-handler process digitool and
+   ftp queues, in that order, and a second ingest-handler process only
+   the ftp queue.
+
+
+** ftp-handler is a ruby script that's started as a separate
+
+*** ftp-handler uses the config.yml file to determine the roots of the incoming directories.
+
+
+
+
+  def self.setup_directories parent
+    [ INCOMING_SUBDIRECTORY, WARNINGS_SUBDIRECTORY, ERRORS_SUBDIRECTORY ].each do |sub|
+      dir = File.join parent, sub
+      FileUtils.mkdir_p dir
+      FileUtils.chmod 02775, dir
+      FileUtils.chown 0, SHARED_GROUP, dir
+    end
+    dir = File.join parent, PROCESSING_DIRECTORY
+
+    FileUtils.mkdir_p dir
+    FileUtils.chmod 02755, dir
+    FileUtils.chown 0, SHARED_GROUP, dir
+  end

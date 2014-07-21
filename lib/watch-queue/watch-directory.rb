@@ -20,15 +20,15 @@ require 'socket'
 class BaseWatchDirectory
 
   ERRORS_SUBDIRECTORY      = 'errors'
-  PROCESSING_SUBDIRECTORY  = 'processing'
-  WARNINGS_SUBDIRECTORY    = 'warnings'
   INCOMING_SUBDIRECTORY    = 'incoming'
+  PROCESSING_SUBDIRECTORY  = 'processing'
   SUCCESS_SUBDIRECTORY     = 'success'
+  WARNINGS_SUBDIRECTORY    = 'warnings'
 
   SHARED_GROUP             = 'ingestor'
 
   DIRECTORY_UNCHANGED_TIME = 10
-# DIRECTORY_UNCHANGED_TIME = 5 * 60  #### TODO
+# DIRECTORY_UNCHANGED_TIME = 5 * 60  #### Use this variable on launch
 
   attr_reader :config_path, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
@@ -50,27 +50,16 @@ class BaseWatchDirectory
         STDERR.puts "ERROR: removing unused #{new_container_directory}"
         cleanup_unused_container new_container_directory
       else
-        resque_enque
+        resque_enqueue new_container_directory, package_directory
       end
     end
   end
 
+
   private
 
-  # Setup directories,  utility
-
-  def self.setup_directories parent
-    [ INCOMING_SUBDIRECTORY, WARNINGS_SUBDIRECTORY, ERRORS_SUBDIRECTORY ].each do |sub|
-      dir = File.join parent, sub
-      FileUtils.mkdir_p dir
-      FileUtils.chmod 02775, dir
-      FileUtils.chown 0, SHARED_GROUP, dir
-    end
-    dir = File.join parent, PROCESSING_DIRECTORY
-
-    FileUtils.mkdir_p dir
-    FileUtils.chmod 02755, dir
-    FileUtils.chown 0, SHARED_GROUP, dir
+  def resque_enqueue container_directory, package_directory
+    raise "INVALID PROGRAMMER ERROR:  resque_enqueue called from base class (don't instantiate the #{self} base class)"
   end
 
   def cleanup_unused_container dir
@@ -122,21 +111,22 @@ end # class WatchDirectory
 
 class FtpWatchDirectory < BaseWatchDirectory
   def initialize config, config_section
+
     super(config, config_section)
+    @errors_directory     = File.join(config.ftp_root, ERRORS_SUBDIRECTORY)
     @incoming_directory   = File.join(config.ftp_root, INCOMING_SUBDIRECTORY)
     @processing_directory = File.join(config.ftp_root, PROCESSING_SUBDIRECTORY)
     @warnings_directory   = File.join(config.ftp_root, WARNINGS_SUBDIRECTORY)
-    @errors_directory     = File.join(config.ftp_root, ERRORS_SUBDIRECTORY)
   end
 
-  def resque_enqueue
-    Resque.enqueue(FtpIngestJob,
+  def resque_enqueue container_directory, package_directory
+    Resque.enqueue(ProspectiveIngestJob,
                    { :config_section      => config_section,
                      :config_file         => config_path,
-                     :container_directory => new_container_directory,
-                     :package_directory   => File.join(new_container_directory, package_directory),
-                     :warnings_directory  => warnings_directory,
+                     :container_directory => container_directory,
                      :errors_directory    => errors_directory,
+                     :package_directory   => File.join(container_directory, package_directory),
+                     :warnings_directory  => warnings_directory,
                    })
   end
 
@@ -144,20 +134,21 @@ end
 
 class DigiToolWatchDirectory < BaseWatchDirectory
   def initialize config
+
     super(config, nil)
+    @errors_directory     = File.join(config.digitool_root, ERRORS_SUBDIRECTORY)
     @incoming_directory   = File.join(config.digitool_root, INCOMING_SUBDIRECTORY)
     @processing_directory = File.join(config.digitool_root, PROCESSING_SUBDIRECTORY)
     @warnings_directory   = File.join(config.digitool_root, WARNINGS_SUBDIRECTORY)
-    @errors_directory     = File.join(config.digitool_root, ERRORS_SUBDIRECTORY)
   end
 
-  def resque_enqueue
+  def resque_enqueue container_directory, package_directory
     Resque.enqueue(DigiToolIngestJob,
                    { :config_file         => config_path,
-                     :container_directory => new_container_directory,
-                     :package_directory   => File.join(new_container_directory, package_directory),
-                     :warnings_directory  => warnings_directory,
+                     :container_directory => container_directory,
                      :errors_directory    => errors_directory,
+                     :package_directory   => File.join(container_directory, package_directory),
+                     :warnings_directory  => warnings_directory,
                    })
   end
 

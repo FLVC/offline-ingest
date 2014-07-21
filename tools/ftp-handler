@@ -28,20 +28,31 @@ PAUSE  = 5        # PAUSE must divide REREAD evenly
 SYSTEM_ERROR_SLEEP    = 60
 UNHANDLED_ERROR_SLEEP = 600
 
-def loop_for_incoming config
+def loop_for_incoming config_file
   counter = 0
-  wds = []
+
   while true
+
+    # maybe re-read the config file:
+
     if (counter % REREAD == 0)
-      wds = watch_these_directories(config)
+
       if counter == 0
-        STDERR.puts "INFO: reading configuration file #{config.path}"
+        STDERR.puts "INFO: reading configuration file #{config_file}"
       else
-        STDERR.puts "INFO: rereading configuration file #{config.path}"
+        STDERR.puts "INFO: rereading configuration file #{config_file}"
       end
+
+      watched_directories = watch_configured_directories(config_file)
     end
-    wds.each { |wd| wd.enqueue_incoming_packages }
-    sleep(PAUSE)
+
+    # check for incoming packages on all watched directories
+
+    watched_directories.each { |wd| wd.enqueue_incoming_packages }
+
+    # keep track of when to re-read the config file
+
+    sleep PAUSE
     counter += PAUSE
   end
 end
@@ -49,16 +60,20 @@ end
 # Search through various website stanzas in the config file for
 # declaration of ftp_root; do sanity check and collect up all configs
 # that refer to a valid ftp_site.  Also check for system digitool
-# directory.
+# directory.  We re-read the configuation file every time we're
+# called, to catch changes.
 
-def watch_these_directories  config
-  wds = []
+def watch_configured_directories  config_file
+
+  watched_directories = []
+
+  config = Datyl::Config.new(config_file, 'default')
 
   if config.digitool_root
     errors = WatchUtils.directory_problems(config.digitool_root)
     if errors.empty?
       STDERR.puts "INFO: Watching digitool incoming directory in #{config.digitool_root}"
-      wds.push DigiToolWatchDirectory.new(config)
+      watched_directories.push DigiToolWatchDirectory.new(config)
     else
       STDERR.puts "ERROR: Skipping watching DigiTool directory #{config.digitool_root}, these configuration errors were encountered:"
       errors.each { |line| STDERR.puts "ERROR: " + line }
@@ -67,7 +82,7 @@ def watch_these_directories  config
 
   config.all_sections.each do |section|
 
-    site_config = Datyl::Config.new(config.path, 'default', section)
+    site_config = Datyl::Config.new(config_file, 'default', section)
     next unless site_config.ftp_root
     errors = WatchUtils.directory_problems(site_config.ftp_root)
 
@@ -78,26 +93,29 @@ def watch_these_directories  config
       errors.each { |line| STDERR.puts "ERROR: " + line }
       next
     end
-
-    wds.push FtpWatchDirectory.new(site_config, section)
+    watched_directories.push FtpWatchDirectory.new(site_config, section)
   end
-  return wds.compact
+
+  return watched_directories.compact
 end
 
 # The 'god' process monitor will restart an instance of this script
 # when we exit on error.
 
 begin
+
   config = WatchUtils.setup_config()
   WatchUtils.setup_redis_connection(config)
   WatchUtils.setup_ingest_database(config)
-  loop_for_incoming(config)
+  loop_for_incoming(config.path)
+
 rescue Redis::CannotConnectError, SystemError => e
   STDERR.puts "ERROR: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
   sleep SYSTEM_ERROR_SLEEP
   exit
+
 rescue => e
-  STDERR.puts "ERROR: #{e.class}: #{e.message}; sleeping for #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
+  STDERR.puts "ERROR: Unhandled #{e.class}: #{e.message}; sleeping for #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
   e.backtrace.each { |line| STDERR.puts "ERROR: " + line }
   sleep UNHANDLED_ERROR_SLEEP
   exit

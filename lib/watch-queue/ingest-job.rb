@@ -25,9 +25,13 @@ class BaseIngestJob
     self.failsafe(container_directory, errors_directory)
     Resque.logger.error "System error when processing #{package_directory}, can't continue processing package: #{e.message}"
 
+  rescue PackageError => e
+    self.failsafe(container_directory, errors_directory)
+    Resque.logger.error "Package error when processing #{package_directory}, can't continue processing package: #{e.message}"
+
   rescue => e
     self.failsafe(container_directory, errors_directory)
-    Resque.logger.error "Caught unexpected error when processing #{package_directory}: #{e.class} - #{e.message}, backtrace follows:"
+    Resque.logger.error "Caught unhandled error when processing #{package_directory}: #{e.class} - #{e.message}, backtrace follows:"
     e.backtrace.each { |line| Resque.logger.error line }
     Resque.logger.error "Please correct the error and restart the package.."
 
@@ -50,7 +54,7 @@ class ProspectiveIngestJob < BaseIngestJob
   @queue = :ftp
 
   def self.perform(data)
-    ProspectivePackageIngestor.process(data, ProspectiveMetadataChecker)
+    PackageIngestor.process(data, ProspectiveMetadataChecker)
   rescue => e
     Resque.logger.error "#{self} received #{e.class}: #{e.message}"
   end
@@ -125,7 +129,7 @@ class PackageIngestor
 
   def self.disposition package, container_directory, errors_directory, warnings_directory
 
-    short_name = short_package_container_name(container_directory, package)
+    short_name = WatchUtils.short_package_container_name(container_directory, package)
 
     if package.errors?
       package.errors.each   { |line| Resque.logger.error line.strip } if package.errors
