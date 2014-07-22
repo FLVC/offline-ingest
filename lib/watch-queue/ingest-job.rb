@@ -3,46 +3,40 @@ require 'offin/config'
 require 'offin/packages'
 require 'offin/exceptions'
 require 'offin/ingest-support'
-require 'watch-queue/utils'
+require 'watch-queue/watch-utils'
 require 'mono_logger'
 
-### TODO: this is going to loop on the condition where a package can't be moved out of the processing directory and
-### it keeps crashing the ingest process.
+### TODO: Deal with this: infinite loop on the hopefully-rare
+### condition where a package both can't be moved out of the
+### processing directory (configuration error) and it keeps
+### hard-crashing the ingest process (e.g. memory)
 
-
-
-class IngestJob
-
-  @queue = :ingest
-
-  # data is a hash with config filename, config section, and various directories.
-
-  def self.perform(data)
-    DequeuedPackageIngestor.process(data)
-  rescue => e
-    Resque.logger.error "Received #{e.class}: #{e.message}"
-  end
+class BaseIngestJob
 
   def self.around_perform (data)
 
-    container_directory = data['container_directory']   # in processing
+    container_directory = data['container_directory']   # in processing_directory
     errors_directory    = data['errors_directory']
     package_directory   = data['package_directory']
 
     yield
 
   rescue SystemError => e
-    IngestJob.failsafe(container_directory, errors_directory)
+    self.failsafe(container_directory, errors_directory)
     Resque.logger.error "System error when processing #{package_directory}, can't continue processing package: #{e.message}"
 
+  rescue PackageError => e
+    self.failsafe(container_directory, errors_directory)
+    Resque.logger.error "Package error when processing #{package_directory}, can't continue processing package: #{e.message}"
+
   rescue => e
-    IngestJob.failsafe(container_directory, errors_directory)
-    Resque.logger.error "Caught unexpected error when processing #{package_directory}: #{e.class} - #{e.message}, backtrace follows:"
+    self.failsafe(container_directory, errors_directory)
+    Resque.logger.error "Caught unhandled error when processing #{package_directory}: #{e.class} - #{e.message}, backtrace follows:"
     e.backtrace.each { |line| Resque.logger.error line }
     Resque.logger.error "Please correct the error and restart the package.."
 
   ensure
-    IngestJob.failsafe(container_directory, errors_directory)
+    self.failsafe(container_directory, errors_directory)
   end
 
   def self.failsafe(container_directory, errors_directory)
@@ -54,30 +48,49 @@ class IngestJob
   else
     Resque.logger.error "Failsafe error handler: moved #{container_directory} to #{errors_directory}"
   end
-
 end
 
+class ProspectiveIngestJob < BaseIngestJob
+  @queue = :ftp
 
-class DequeuedPackageIngestor
+  def self.perform(data)
+    PackageIngestor.process(data, ProspectiveMetadataChecker)
+  rescue => e
+    Resque.logger.error "#{self} received #{e.class}: #{e.message}"
+  end
+end
 
-  def self.process data
+class DigitoolIngestJob < BaseIngestJob
+  @queue = :digitool
 
-    config = Datyl::Config.new(data['config_file'], 'default', data['config_section'])
+  def self.perform(data)
+    PackageIngestor.process(data, DigitoolMetadataChecker)
+  rescue => e
+    Resque.logger.error "#{self} received #{e.class}: #{e.message}"
+  end
+end
 
+class PackageIngestor
+
+  def self.process data, updator_class
+
+    config = if data['config_section']
+               Datyl::Config.new(data['config_file'], 'default', data['config_section'])
+             else
+               Datyl::Config.new(data['config_file'], 'default')
+             end
     package_directory   = data['package_directory']
     container_directory = data['container_directory']
     warnings_directory  = data['warnings_directory']
     errors_directory    = data['errors_directory']
 
-    if config.proxy
-      ENV['http_proxy'], ENV['HTTP_PROXY'] = config.proxy, config.proxy
-    end
-
     completed, started, finished  = false, Time.now, Time.now
 
-    setup_ingest_database(config)
+    (ENV['http_proxy'], ENV['HTTP_PROXY'] = config.proxy, config.proxy) if config.proxy
 
-    package = PackageFactory.new(config, ProspectiveMetadataChecker).new_package(package_directory)
+    WatchUtils.setup_ingest_database(config)
+
+    package = PackageFactory.new(config, updator_class).new_package(package_directory)
 
     raise PackageError, "Invalid package in #{package_directory}." unless package and package.valid?
 
@@ -91,14 +104,13 @@ class DequeuedPackageIngestor
   ensure  # we're run in a wrapper, which handles non-package errors
 
     if package
-      DequeuedPackageIngestor.log_summary(package, finished - started)
+      self.log_summary(package, finished - started)
       package.delete_from_islandora unless package.valid?
-      DequeuedPackageIngestor.disposition(package, container_directory, errors_directory, warnings_directory)
+      self.disposition(package, container_directory, errors_directory, warnings_directory)
       record_to_database(config.site, package, completed && package.valid?, started, finished)
     end # if package
 
   end # self.ingest
-
 
   def self.log_summary  package, elapsed_time
     Resque.logger.info  sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => %s, "%s"',
@@ -110,26 +122,25 @@ class DequeuedPackageIngestor
                           package.collections.empty? ?  'no collections' : 'collection: ' + package.collections.join(', '),
                           package.label)
   rescue => e
-    Resque.logger.error "Can't do summary:  #{e.class}: #{e.message}"
+    Resque.logger.error "Can't log summary data for package #{package.name}:  #{e.class}: #{e.message}"
   end
-
 
   # a package object was handled,  now check where it shoulid go
 
   def self.disposition package, container_directory, errors_directory, warnings_directory
 
-    short_name = short_package_container_name(container_directory, package)
+    short_name = WatchUtils.short_package_container_name(container_directory, package)
 
     if package.errors?
       package.errors.each   { |line| Resque.logger.error line.strip } if package.errors
-      Resque.logger.error "Moving #{short_name} to #{errors_directory}"
+      Resque.logger.error "Moving from FTP directory #{short_name} to #{errors_directory}"
       FileUtils.mv container_directory, errors_directory
     elsif package.warnings?
       package.warnings.each { |line| Resque.logger.warn  line.strip } if package.warnings
-      Resque.logger.warn "Moving #{short_name} to #{warnings_directory}"
+      Resque.logger.warn "Moving from FTP directory #{short_name} to #{warnings_directory}"
       FileUtils.mv container_directory, warnings_directory
     else
-      Resque.logger.info "Deleting successfully ingested package #{short_name}"
+      Resque.logger.info "Deleting successfully ingested package from FTP directory #{short_name}"
       FileUtils.rm_rf container_directory
     end
 

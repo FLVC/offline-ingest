@@ -263,7 +263,7 @@ class Utils
     manifest_filename = File.join(directory, 'manifest.xml')
 
     if not File.exists? manifest_filename
-      raise PackageError, "Package directory #{directory} does not contain a manifest file."
+      raise PackageError, "Package directory #{directory} does not contain a manifest.xml file."
     end
 
     return Manifest.new(config, manifest_filename)

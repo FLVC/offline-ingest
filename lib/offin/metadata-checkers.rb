@@ -55,7 +55,7 @@ class ProspectiveMetadataChecker < MetadataChecker
     if (package.manifest and package.manifest.owning_user)
       package.owner = package.manifest.owning_user
     else
-      package.error "#{self.class} can't determine owner for this package."
+      package.error "#{self.class} can't determine owner for this package (this is normally <owningUser> in the manifest.xml file. <owningUser refers to a valid drupal account)."
     end
   end
 
