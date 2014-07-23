@@ -1,13 +1,12 @@
 * Notes on how the ftp queueing system hangs together internally, for programmers
 
-
-** The 'god' process manager starts (and aurtomaticaly restarts) the ftp-handler and ingest-handler ruby scripts
+** The 'god' process manager starts (and automaticaly restarts) the ftp-handler and ingest-handler ruby scripts
 
    The 'god' start-up scripts are in /etc/init.d/god and
    /etc/god.conf.  Oddly, it's the latter where the code-action
    happens.
 
-** ingest-handler is a ruby script that's started as a separate process to ingest packages
+** ingest-handler is a ruby script that's started from /etc/god.conf as a separate process to ingest a package at a time
 
 *** ingest-handler is started with one or more command line arguments from the set [ ftp, digitool ]
 
@@ -15,13 +14,14 @@
    ftp queues, in that order, and a second ingest-handler process only
    the ftp queue.
 
+** ftp-handler is a ruby script that's started as a separate process by /etc/god.conf
 
-** ftp-handler is a ruby script that's started as a separate
+*** ftp-handler uses the config.yml file to determine the roots of the incoming FTP directories and their associated servers.
 
-*** ftp-handler uses the config.yml file to determine the roots of the incoming directories.
+    It re-reads the config.yml file every few minutes to pick up or
+    remove these FTP directories.
 
-
-
+*** makes a container directory in the processing/ directory, for each complete package found in incoming/; move the package to it
 
   def self.setup_directories parent
     [ INCOMING_SUBDIRECTORY, WARNINGS_SUBDIRECTORY, ERRORS_SUBDIRECTORY ].each do |sub|
