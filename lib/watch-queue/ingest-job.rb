@@ -6,11 +6,6 @@ require 'offin/ingest-support'
 require 'watch-queue/watch-utils'
 require 'mono_logger'
 
-### TODO: Deal with this: infinite loop on the hopefully-rare
-### condition where a package both can't be moved out of the
-### processing directory (configuration error) and it keeps
-### hard-crashing the ingest process (e.g. memory)
-
 class BaseIngestJob
 
   def self.around_perform (data)
@@ -145,7 +140,7 @@ class PackageIngestor
     end
 
   rescue => e
-    Resque.logger.error "Error in package disposition for package #{short_name}: #{e.class}: #{e.message.strip}"
+    Resque.logger.error "Error during final package disposition for #{short_name}: #{e.class}: #{e.message.strip}"
   end
 
 end

@@ -110,11 +110,13 @@ begin
   loop_for_incoming(config.path)
 
 rescue Redis::CannotConnectError, SystemError => e
+
   STDERR.puts "ERROR: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
   sleep SYSTEM_ERROR_SLEEP
   exit
 
 rescue => e
+
   STDERR.puts "ERROR: Unhandled #{e.class}: #{e.message}; sleeping for #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
   e.backtrace.each { |line| STDERR.puts "ERROR: " + line }
   sleep UNHANDLED_ERROR_SLEEP
