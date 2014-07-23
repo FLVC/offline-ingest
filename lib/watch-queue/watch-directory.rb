@@ -25,7 +25,7 @@ class BaseWatchDirectory
   SUCCESS_SUBDIRECTORY     = 'success'
   WARNINGS_SUBDIRECTORY    = 'warnings'
 
-  SHARED_GROUP             = 'ingestor'
+#### SHARED_GROUP             = 'ftpdl'
 
   DIRECTORY_UNCHANGED_TIME = 10
 # DIRECTORY_UNCHANGED_TIME = 5 * 60  #### Use this variable on launch
@@ -71,7 +71,7 @@ class BaseWatchDirectory
   def new_processing_directory(hostname)
     new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
     FileUtils.mkdir new_directory
-    FileUtils.chown nil, SHARED_GROUP, new_directory
+####   FileUtils.chown nil, SHARED_GROUP, new_directory          # we don't really need to do this; set-gid on directory should get this right
     FileUtils.chmod 02775,  new_directory
     return new_directory
   rescue => e
