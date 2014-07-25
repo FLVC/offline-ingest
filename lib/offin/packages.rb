@@ -290,6 +290,7 @@ class Package
   end
 
   def purls
+    return [] if @mods.nil?
     return @mods.purls
   end
 
@@ -392,8 +393,10 @@ class Package
 
     if iids.length == 1  and iids.first != @directory_name
       error "The MODS file in package #{@directory_name} declares an IID of #{iids.first} which doesn't match the package name."
+      return
     elsif iids.length > 1
       error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
+      return
     elsif iids.length == 1
       @iid = iids.first
     elsif iids.nil? or iids.length == 0

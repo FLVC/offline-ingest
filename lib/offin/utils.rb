@@ -171,7 +171,7 @@ class Utils
     raise SystemError, "Can't obtain IID from solr at '#{url}': #{e.class} #{e.message}"
 
   rescue => e
-    raise SystemError, "Can't process IID from solr: : #{e.class} #{e.message}"
+    raise SystemError, "Can't process IID obtained from solr at '#{@url}': : #{e.class} #{e.message}"
   end
 
 
