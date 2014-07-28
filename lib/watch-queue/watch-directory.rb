@@ -11,11 +11,8 @@ require 'socket'
 # We assume that the ingest database has been initialized at this
 # point; see new_processing_directory().
 
-# TODO: setup for subclassing into WatchProspectiveDirectory,
-# WatchDigitoolDirectory this will probably be hoisting Resque.enqueue
-# into 'def enqueue ..' and let the subclass do IngestProspectiveJob
-# (currently IngestJob) and IngestDigitoolJob (TBD), presumably
-# subclasses themselves
+# TODO: design bug,  we want to be able to sort a variety of subdirectories across several 'watch directories'.  Pluralize!
+
 
 class BaseWatchDirectory
 
