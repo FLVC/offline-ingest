@@ -290,6 +290,7 @@ class Package
   end
 
   def purls
+    return [] if @mods.nil?
     return @mods.purls
   end
 
@@ -392,8 +393,10 @@ class Package
 
     if iids.length == 1  and iids.first != @directory_name
       error "The MODS file in package #{@directory_name} declares an IID of #{iids.first} which doesn't match the package name."
+      return
     elsif iids.length > 1
       error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
+      return
     elsif iids.length == 1
       @iid = iids.first
     elsif iids.nil? or iids.length == 0
@@ -879,7 +882,7 @@ class BookPackage < Package
     @page_filenames.each do |file_name|
       path = File.join(@directory_path, file_name)
       type = Utils.mime_type(path)
-      issues.push "Page file #{file_name} is of unsupported type #{type}, but must be image/jp2 or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
+      issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
     end
 
     unless issues.empty?
