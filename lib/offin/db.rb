@@ -24,6 +24,7 @@ module DataBase
     has n, :islandora_packages
     has n, :ftp_packages
     has n, :ftp_containers
+    has n, :ftp_users
 
     before :update do
       self.hostname.downcase!
@@ -32,6 +33,16 @@ module DataBase
     before :save do
       self.hostname.downcase!
     end
+  end
+
+
+  class FtpUser
+    include DataMapper::Resource
+    property :id, 			Serial
+    property :name,         String
+
+    has n,     :ftp_packages
+    belongs_to :islandora_site
   end
 
 
@@ -45,6 +56,7 @@ module DataBase
     property :package_name,        String
     property :status,              Enum[ :error, :warning, :success ]
 
+    belongs_to :ftp_user
     belongs_to :islandora_site;
   end
 
@@ -271,6 +283,7 @@ module DataBase
     self.setup config
     FtpPackage.auto_migrate!
     FtpContainer.auto_migrate!
+    FtpUser.auto_migrate!
     DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_submitted TYPE timestamp with time zone")
     DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_processed TYPE timestamp with time zone")
   end
