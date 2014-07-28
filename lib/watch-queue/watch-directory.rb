@@ -25,8 +25,6 @@ class BaseWatchDirectory
   SUCCESS_SUBDIRECTORY     = 'success'
   WARNINGS_SUBDIRECTORY    = 'warnings'
 
-#### SHARED_GROUP             = 'ftpdl'
-
   DIRECTORY_UNCHANGED_TIME = 30
 # DIRECTORY_UNCHANGED_TIME = 5 * 60  #### Use this variable on launch
 
