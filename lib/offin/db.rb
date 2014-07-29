@@ -93,7 +93,7 @@ module DataBase
     property  :success,           Boolean,     :required => true, :index => true, :default => false
     property  :bytes_ingested,    Integer,     :default => 0, :index => true, :min => 0, :max => 2**48
 
-    # NULL means inapplicable for these (e.g., it was never ingested, or there was no content_type declared, etc)
+    # NULL means inapplicable for these (e.g., it was never ingested, or there was no content_model declared, etc)
 
     property  :digitool_id,       Integer,     :min => 0, :max => 2**48, :index => true
     property  :islandora_pid,     String,      :index => true
