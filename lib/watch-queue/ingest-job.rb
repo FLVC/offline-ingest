@@ -16,6 +16,14 @@ class BaseIngestJob
 
     yield
 
+
+    # experimental control-c /sigterm handling...
+
+  rescue SystemExit, Interrupt => e
+    self.failsafe(container_directory, errors_directory)
+    Resque.logger.error "Terminating #{package_directory}: #{e.message}"
+    raise e
+
   rescue SystemError => e
     self.failsafe(container_directory, errors_directory)
     Resque.logger.error "System error when processing #{package_directory}, can't continue processing package: #{e.message}"

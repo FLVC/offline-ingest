@@ -46,7 +46,7 @@ class WatchUtils
 
   def WatchUtils.setup_resque_logger
     logger = MonoLogger.new(STDOUT)   # Don't use STDERR here, it gets redirected & reopened under some conditions (ImageMagick error handling) and the logger never recovers the original STDERR stream.
-    logger.formatter = proc { |severity, datetime, progname, msg| "#{progname} #{severity}: #{msg}\n" }
+    logger.formatter = proc { |severity, datetime, progname, msg| "#{progname}[#{$$}] #{severity}: #{msg}\n" }
     logger.level = Logger::INFO
     Resque.logger = logger
   end
@@ -101,5 +101,10 @@ class WatchUtils
     worker.log  "Worker #{worker.pid} will wakeup every #{sleep_time} seconds"
     worker.work  sleep_time
   end
+
+  def WatchUtils.setup_environment config
+    (ENV['http_proxy'], ENV['HTTP_PROXY'] = config.proxy, config.proxy) if config.proxy
+  end
+
 
 end # of class WatchUtils
