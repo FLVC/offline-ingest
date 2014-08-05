@@ -96,7 +96,6 @@ class Package
     @directory_path    = directory
     @datafiles         = list_other_files()
     @updator           = updator_class.send :new, self
-
     @drupal_db         = DrupalDataBase.new(config) unless config.test_mode
 
     @mods_type_of_resource = nil
@@ -129,7 +128,6 @@ class Package
     return ([ @pid ] + @component_objects.clone)
   end
 
-
   # Attempt to delete this package (and all its component objects) from islandora.
 
   def delete_from_islandora
@@ -147,13 +145,11 @@ class Package
     end
   end
 
-
   def name
     @directory_name
   end
 
   # base classes should re-implement ingest.
-
   def ingest
     raise PackageError, 'Attempt to ingest an invalid package.' unless valid?
   end
@@ -181,13 +177,9 @@ class Package
     end
 
     @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
-
-
     raise PackageError, "Invalid MODS file" unless @mods.valid?
 
-
     # TODO: do we ever need to check that @mods is valid after adding manifest?
-
     # Somewhat order dependent:
 
     ingestor.label         = @label
@@ -199,7 +191,7 @@ class Package
 
     if @marc
       ingestor.datastream('MARCXML') do |ds|
-        ds.dsLabel  = "Archived Digitool MarcXML"
+        ds.dsLabel  = "Archived MarcXML"
         ds.content  = @marc
         ds.mimeType = 'text/xml'
       end
@@ -220,6 +212,7 @@ class Package
 
     # set POLICY if there is only one collection with same namespace and POLICY datastream
     # if none or more than one collection, do not set POLICY
+
     if @policy_collections.count == 1
       collection_pid = @policy_collections[0]
       policy_contents = Utils.get_datastream_contents(@config, collection_pid, 'POLICY')
@@ -230,10 +223,10 @@ class Package
         ds.mimeType = 'text/xml'
         ds.controlGroup = 'X'
       end
-
     end
 
     # if collection POLICY set or pageProgression in manifest, must create RELS-EXT with islandora fields
+
     if @policy_collections.count == 1 or @manifest.page_progression
 
       ingestor.datastream('RELS-EXT') do |ds|
@@ -950,7 +943,7 @@ class BookPackage < Package
       end
 
       ingestor.datastream('DT-METS') do |ds|
-        ds.dsLabel  = 'Archived DigiTool METS for future reference'
+        ds.dsLabel  = 'Archived METS for future reference'
         ds.content  = @mets.text
         ds.mimeType = 'text/xml'
       end
@@ -1204,7 +1197,6 @@ class BookPackage < Package
       </rdf:Description>
     </rdf:RDF>
   XML
-
     return str
   end
 
@@ -1223,7 +1215,6 @@ class BookPackage < Package
     </oai_dc:dc>
   XML
   end
-
 
   def ingest_page pagename, sequence
 
@@ -1277,9 +1268,7 @@ class BookPackage < Package
           ds.mimeType = 'text/xml'
           ds.controlGroup = 'X'
         end
-
       end
-
     end
 
     @bytes_ingested += ingestor.size
