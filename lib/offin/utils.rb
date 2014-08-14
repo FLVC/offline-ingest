@@ -212,9 +212,9 @@ class Utils
   #   <datastream dsid="DC" label="Dublin Core Record" mimeType="text/xml"/>
   #   <datastream dsid="RELS-EXT" label="Relationships" mimeType="application/rdf+xml"/>
   #   <datastream dsid="MODS" label="MODS Record" mimeType="text/xml"/>
-  #   <datastream dsid="MARCXML" label="Archived Digitool MarcXML" mimeType="text/xml"/>
+  #   <datastream dsid="MARCXML" label="Archived MarcXML" mimeType="text/xml"/>
   #   <datastream dsid="TN" label="Thumbnail" mimeType="image/jpeg"/>
-  #   <datastream dsid="DT-METS" label="Archived DigiTool METS for future reference" mimeType="text/xml"/>
+  #   <datastream dsid="DT-METS" label="Archived METS for future reference" mimeType="text/xml"/>
   #   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
   # </objectDatastreams>
 
