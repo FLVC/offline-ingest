@@ -138,9 +138,13 @@ class Ingestor
   end
 
   def datastream name
+    trials ||= 0
     yield @fedora_object.datastreams[name]
     @size += @fedora_object.datastreams[name].content.size
     @fedora_object.datastreams[name].save
+  rescue
+    trials += 1
+    trials < 3 ? retry : raise
   end
 
   # def add_relationship predicate, object

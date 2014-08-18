@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # TODO: expire the errors/ and warnings/ directories in here.
-
+#
 # This script starts a worker process for ingesting a package listed
 # on a resque queue name :ingest.  Multiple workers are created by
 # invoking this script multiple times.  Normally we'll have a
@@ -25,6 +25,8 @@ queues = ARGV
 
 begin
   config = WatchUtils.setup_config()
+
+  WatchUtils.setup_environment(config)
   WatchUtils.setup_resque_logger()
   WatchUtils.setup_redis_connection(config)
   WatchUtils.start_ingest_worker(WORKER_SLEEP, *queues)
