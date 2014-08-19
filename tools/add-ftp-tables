@@ -8,4 +8,4 @@ require 'offin/config'
 require 'offin/db'
 
 DataBase.debug = true
-DataBase.add_ftp_tables(Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", 'default'))
+DataBase.add_ftp_tables(Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", 'default', 'islandora7d'))

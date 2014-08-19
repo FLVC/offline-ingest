@@ -20,10 +20,35 @@ class WatchUtils
   end
 
   def WatchUtils.setup_ingest_database config
+    DataBase.debug = true
     DataBase.setup(config)
   rescue => e
     raise SystemError, "Can't connect to the ingest database; #{e.class}: #{e.message}"
   end
+
+  # This is used by the ftp-handler, so we don't have a
+
+  def WatchUtils.record_ftp_user site_hostname,  file_path
+
+    user = WatchUtils.file_owner(file_path)
+    site_record = DataBase::IslandoraSite.first_or_create(:hostname => site_hostname)
+    user_record = DataBase::FtpUser.first_or_create(:name => user, :islandora_site => site_record)
+
+    unless user_record.save
+      errs = []
+      site_record.errors.each { |e| errs.push e }
+      user_record.errors.each { |e| errs.push e }
+      raise SystemError, "Can't save new #{site_hostname} FTP user to database for file #{file_path}: #{errs.join(';')}"
+    end
+
+    return user_record
+
+  rescue SystemError
+    raise
+  rescue => e
+    raise SystemError, "Can't determine #{site_hostname} FTP user for file #{file_path}: #{e.class} #{e.message}"
+  end
+
 
   def WatchUtils.setup_redis_connection config
     raise SystemError, "Configuration doesn't include the required redis_database parameter" if not config.redis_database
@@ -106,5 +131,12 @@ class WatchUtils
     (ENV['http_proxy'], ENV['HTTP_PROXY'] = config.proxy, config.proxy) if config.proxy
   end
 
+
+  def WatchUtils.file_owner filepath
+    uid = File.stat(filepath).uid
+    return Etc.getpwuid(uid).name
+  rescue => e
+    return 'unknown'
+  end
 
 end # of class WatchUtils

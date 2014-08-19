@@ -35,8 +35,14 @@ class BaseWatchDirectory
 
   def enqueue_incoming_packages
     ready_directories.each do |source|
+
+      record = WatchUtils.record_ftp_user(hostname, source)
+
+      # need islandora site here, then with package name we mane a new FtpPackage for it.
+
       new_container_directory = new_processing_directory(hostname)
       package_directory = source.gsub(/.*\//, '')
+
       begin
         FileUtils.mv source, new_container_directory
       rescue => e
@@ -66,7 +72,6 @@ class BaseWatchDirectory
   def new_processing_directory(hostname)
     new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
     FileUtils.mkdir new_directory
-####   FileUtils.chown nil, SHARED_GROUP, new_directory          # we don't really need to do this; set-gid on directory should get this right
     FileUtils.chmod 02775,  new_directory
     return new_directory
   rescue => e

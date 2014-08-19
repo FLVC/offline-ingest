@@ -60,6 +60,8 @@ module DataBase
     belongs_to :islandora_site;
   end
 
+  # Here we're keeping track of uniquely-named working directories (on a per-site basis), into which we put FTP'd packages.
+
   class FtpContainer
     include DataMapper::Resource
 

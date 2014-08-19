@@ -7,7 +7,10 @@
 #
 # and there are similar warnings, warning, and warnings? methods.
 #
-# These are both logged (so Resque.Logger must have been initialized) and entered into a database (so DB
+
+# These are both logged (so Resque.Logger must have been initialized)
+# and entered into a database (so the ingest DB must have been
+# initialized)
 
 
 module ResqueErrors
