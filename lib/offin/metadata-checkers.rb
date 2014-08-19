@@ -101,10 +101,10 @@ class ProspectiveMetadataChecker < MetadataChecker
         maintainers += pre_existing_maintainers
       end
 
-      # The purl server we use is from config.purl_server above, which may not actuually match the purl from the package metadata.
+      # The purl server we use is from config.purl_server above, which may not actually match the purl from the package metadata.
 
       unless purl_server.set(puri.path, target, *maintainers)
-        package.error "PURL #{purl} with owning institution #{package.owning_institution} and target #{target} could not be created (perhaps owning institution in not a purl group for this server?)."
+        package.error "PURL #{purl} with owning institution #{package.owning_institution} and target #{target} could not be created (perhaps owning institution is not a purl group for this server?)."
         next
       end
 
