@@ -85,11 +85,13 @@ class Utils
   def Utils.field_system_error message = ''
     yield
   rescue => e
-    raise SystemError,  message + ': ' + e.message # ick
+    raise SystemError,  "#{e.class} - #{message}: #{e.message}"  # ick
   end
 
 
-  # NOTE: this doesn't play well with the process monitor's logger when the stream used for that logging is silenced below.
+  # NOTE: this doesn't play well with the process monitor's logger
+  # when the stream used for that logging is silenced below; the
+  # process monitor never gets the original on reopen.
 
   def Utils.silence_streams(*streams)  # after some rails code by DHH
 

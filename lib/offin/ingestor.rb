@@ -144,7 +144,12 @@ class Ingestor
     @fedora_object.datastreams[name].save
   rescue
     trials += 1
-    trials < 3 ? retry : raise
+    if trials < 3
+      sleep trials
+      retry
+    else
+      raise
+    end
   end
 
   # def add_relationship predicate, object
@@ -190,10 +195,10 @@ class Ingestor
 
   def create_new_collection_if_necessary collection_pid
 
-    label = 'digitool collection: ' + collection_pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
+    label = 'collection ' + collection_pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
     return if existing_collections.include? collection_pid
 
-    warning "Creating new digitool collection #{collection_pid} for object #{@pid}."
+    warning "Creating new collection named '#{label}' for object #{@pid}."
 
     collection_object = @repository.create(collection_pid)
 
