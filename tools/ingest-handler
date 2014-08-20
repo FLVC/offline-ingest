@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+# TODO: expire the errors/ and warnings/ directories in here.
+#
+# This script starts a worker process for ingesting a package listed
+# on a resque queue name :ingest.  Multiple workers are created by
+# invoking this script multiple times.  Normally we'll have a
+# process-monitor such as god manage that startup.  See /etc/god.conf.
+
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
+
+require 'rubygems'
+require 'offin/config'
+require 'offin/exceptions'
+require 'resque'
+require 'watch-queue/watch-utils'
+
+WORKER_SLEEP          = 5      # TODO: try to increase to 10 seconds - does 'god terminate' still work reliably?
+SYSTEM_ERROR_SLEEP    = 60     # increase to 120 in production
+UNHANDLED_ERROR_SLEEP = 600    # five minutes
+
+# A process monitor will restart an instance of this script if we exit on error.
+
+queues = ARGV
+
+begin
+  config = WatchUtils.setup_config()
+
+  WatchUtils.setup_environment(config)
+  WatchUtils.setup_resque_logger()
+  WatchUtils.setup_redis_connection(config)
+  WatchUtils.start_ingest_worker(WORKER_SLEEP, *queues)
+  Resque.logger.info "Process #{$$} Exiting...."
+
+rescue Redis::CannotConnectError, PackageError, SystemError => e
+  Resque.logger.error "System error: #{e.class}: #{e.message}; will restart after #{SYSTEM_ERROR_SLEEP} seconds."
+  sleep SYSTEM_ERROR_SLEEP
+
+rescue => e
+  Resque.logger.error "Unhandled error: #{e.class}: #{e.message}; will restart after #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
+  e.backtrace.each { |line| Resque.logger.error line }
+  sleep UNHANDLED_ERROR_SLEEP
+
+end

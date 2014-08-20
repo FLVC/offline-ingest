@@ -1,0 +1,255 @@
+Setup islandora load system
+============================
+
+1) Setup access from load host to corresponding presentation (drupal) hosts, e.g.
+
+ islandload-tst  needs to be able to connect to the islandora-test ingest and drupal databases.
+ For the ingest database, for example, as the postgres user edit /var/lib/pgsql/data/pg5432
+
+     > # fischer: islandload-tst must connect
+     > host    islandora_test islandora               192.168.36.30/32        md5
+
+ Test that postgres connections from load host to drupal hosts work
+ for both ingest and drupal databases.
+
+2) Add to config.yml,  for each institution using ftp, an entry "ftp-root: path" where path is the home ftp directory.
+
+ e.g.
+
+   islandora7d:
+        root_collection:        info:fedora/offline:collection
+        site:                   islandora7d.fcla.edu
+        site_namespace:         islandora
+        ftp_root:               /home/ftp/islandorad/
+	....
+
+  If there is no ftp_root declared for a host, that host will be
+  ignored.  The config file is checked every few minutes and if an
+  ftp_root variable is added (or removed), it will be added (removed)
+  to the ftp drops checked.
+
+  There need to be a standard set of subdirectories under the
+  ftp_root; note the ftp requirements below.
+
+2) Redis is a column oriented database that keeps queueing
+   information; it is used by ftp-handler (which adds to the
+   queue) and ingest-handler (which removes from the queue)
+
+   # cd /usr/local/src/
+   # tar xzf redis-2.8.6.tar.gz
+   # cd redis-2.8.6
+   # make
+   # make install
+
+ These instructions assume there is a redis:redis user in ldap with
+ home directory /var/db/redis;  make the home, chmod 755, chown redis:redis.
+
+ In the /usr/local/islandora/offline-ingest/config.yml file, add a
+ global entry (under defaults stanza) for redis database:
+
+    redis_database:  redis://:9fab4b6d2578550bedc537e8e17c9efb@localhost:6379
+
+ Change the password for each install, I use a randomish md5 above.
+
+ Copy the offline-ingest/etc/init.d/redis to /etc/init.d
+
+   # cp offline-ingest/etc/init.d/redis /etc/init.d
+   # cp offline-ingest/etc/redis.conf /etc/
+
+ Edit /etc/redis.conf,  find the line  with "requirepass" and change the password to the one selected above:
+
+   > requirepass 9fab4b6d2578550bedc537e8e17c9efb
+
+ Make sure there are no leading spaces before "requirepass"; this
+ password is extracted from the redis.conf file by the /etc/redis
+ startup script.
+
+ Minimal security steps:
+
+   # chown root:redis /etc/redis.conf
+   # chmod 640 /etc/redis.conf
+
+ Tweak VM settings (see http://redis.io/topics/faq and
+ http://www.redhat.com/magazine/001nov04/features/vm/ for details)
+
+   # echo 1 > /proc/sys/vm/overcommit_memory
+
+??? It also needs to go into /etc/sysctl.conf
+???
+???   > vm.overcommit_memory = 1
+
+ Make sure it starts on reboot
+
+   # chkconfig --add /etc/init.d/redis
+   # chkconfig redis on
+
+ Start it up:
+
+   # service redis start
+
+3) Install resque,  a queueing system that uses redis as its db back-end
+
+   # gem install resque
+
+ There is a utility, resque-web, that is occasionally useful.  Open up port 5678 to hosts of interest, e.g.
+
+   -A RH-Firewall-1-INPUT -m tcp -p tcp --dport 5678 -s  192.168.0.0/16 -j ACCEPT
+
+ When starting resque-web,  use the connection string set in the config.yml file above:
+
+    # resque-web -r redis://:9fab4b6d2578550bedc537e8e17c9efb@localhost:6379
+
+ view the status web page at (for instance)
+
+    http://islandload-tst.flvc.org:5678/overview
+
+ TODO: start this up automatically and securely.
+
+
+4) Install 'god', a process monitoring daemon:
+
+   # gem install god
+   # cp offline-ingest/etc/init.d/god /etc/init.d
+   # cp offline-ingest/etc/god.conf /etc/
+   # chkconfig --add /etc/init.d/god
+   # chkconfig god on
+
+ Currently, all of the logging information for god and the ftp and
+ ingest worker processes it starts goes to /var/log/messages.
+
+ The process monitor god starts scripts as user 'ingestor', which have
+ been set up via ldap; create a home directory for it:
+
+   # mkdir /var/lib/ingestor
+   # chown ingestor:ingestor /var/lib/ingestor
+
+ Start it up:
+
+   # service god start
+
+5) Create new tables for the ingest database:
+
+   # cd offline-ingest/tools
+   # ./add-ftp-tables
+
+6) There is a parameter to set in one of the files (arguably this should be in config.yml); in
+
+      offline-ingest/lib/watch-queue/watch-directory.rb
+
+  there is a constant, DIRECTORY_UNCHANGED_TIME,  set to a low value for testing.  Change this to 300 for production.
+  The value is in units of seconds, and is used to wait until an ftp directory has been left alone for that much time
+  before its contents are processed.  It is set low for local testing, 10 seconds seems to work fine.
+
+
+7) logging
+
+   /var/log/messages - will have four different entries from this system:
+
+   * god - process monitor, it starts ftp-handler and ingest-handler,
+     restarting as necessary
+
+   * redis - the backend database used for queueing
+
+   * ftp-handler - moves incoming/ packages to processing/ directories
+
+   * ingest-handler - ingests packages from processing/ and on
+     successful ingest deletes them; otherwise the packages are moved
+     to warnings/ or errors/ directories as appropriate
+
+
+----------------
+
+1) user profile: several users share an institutional home ftp
+   directory (denoted ~ftp below); there are on the order of a
+   dozen institutions and one to several users per institution.
+   The ftp directory exists for institutions to upload islandora
+   packages.  These mirror the users currently using dlftp on
+   eclipsep
+
+2) daemon profile: two process classes are running on the ftp server.
+   The daemon user (denoted ~daemon below) has permissions to move
+   files within each of ~ftp institutional directories, and, on
+   successful ingest, delete them.
+
+   ftp-handler
+   -----------
+   moves packages (directories) from ~ftp/incoming to a
+   newly created unique directory in ~ftp/processing/xxxx/,
+   when packages are completely uploaded.  A descriptor for
+   the moved package is placed on a queue. Note: 'xxxx'
+   above is a placeholder for the succession 'aaaa', 'aaab',
+   'aaac', etc, uniquely generated on a per-institutional
+   basis.
+
+
+   ingest-handler
+   --------------
+   removes a package descriptor from the queue, and
+   attempts to ingest the associated package from the
+   directory ~ftp/processing/xxxx/, in place. If
+   successful, the directory ~ftp/processing/xxxx is
+   deleted. If warnings or errors are encountered, the
+   directory ~ftp/processing/xxxx is moved to
+   ~ftp/warnings or ~ftp/errors, respectively
+
+   A fully operating system might have the following running
+   processes:
+
+   ~daemon    16099  0.0  7.0 220368 44472 ?        Ss   Jun30   0:05 ruby /usr/local/islandora/offline-ingest/tools/ftp-handler
+   ~daemon    16101  0.0  0.0   4060   588 ?        S    Jun30   0:00 /bin/logger -t ftp-handler
+   ~daemon    16103  0.0  6.6 180568 42224 ?        Ss   Jun30   0:12 resque-1.25.1: Waiting for ingest
+   ~daemon    16104  0.0  6.6 180504 42224 ?        Ss   Jun30   0:11 resque-1.25.1: Waiting for ingest
+   ~daemon    16105  0.0  0.0   4060   588 ?        S    Jun30   0:00 /bin/logger -t ingest-handler-0
+   ~daemon    16106  0.0  0.0   4060   584 ?        S    Jun30   0:00 /bin/logger -t ingest-handler-1
+
+   The processes relabeled 'resque-1.25.1..' are
+   ingest-handler processes; here we have two servicing
+   queue.
+
+
+2)  The ftp directory should have the following structure
+
+
+    ~ftp/.                ideally, the users cannot write to the root
+                          of their home ftp directory (the is not a
+                          hard requirement)
+
+    ~ftp/incoming         users should be able to upload packages to
+                          this directory. they will typically be
+                          moved within 5 minutes of being uploaded
+
+    ~ftp/errors           users should be able to retrieve and delete
+                          directories from this directory
+
+    ~ftp/warnings         ditto ~ftp/errors
+
+    ~ftp/processing       users should be able to view, but not delete,
+                          directories and files in this directory.
+
+ As indicated above,  ~daemon is able to move and delete
+ directories within ~ftp/{incoming,errors,warnings,processing}
+ for each institution.
+
+ In addition, ~daemon must be able to read the config.yml file.
+
+
+3) Install adore djatoka from production site:
+
+   prod# cd /
+   prod# tar cvzf /tmp/kdu.tar.gz /opt/adore-djatoka-1.1/ /etc/ld.so.conf.d/djatoka.conf /usr/bin/kdu_*
+
+   load# cd /
+   load# scp user@prod:/tmp/kdu.tar.gz /tmp/
+   load# tar xzvf /tmp/kdu.tar.gz
+   load# ldconfig -v
+
+
+
+TODO
+====
+
+document god restarting/monitoring etc
+
+see http://hone.heroku.com/resque/2012/08/21/resque-signals.html
+
+rescue-web should be started on reboot with its own /etc/init.d/ script.

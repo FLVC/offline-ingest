@@ -15,10 +15,9 @@ require 'socket'
 
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
-
-
 Kernel.trap('HUP')  { "IGNORE" }
 
+INDENT = ' ' * 4
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
@@ -40,7 +39,7 @@ else
 end
 
 
-indent = ' ' * 4
+
 
 list = ARGV.sort
 
@@ -85,9 +84,9 @@ list.each do |directory|
 
       package.delete_from_islandora if not package.valid?
 
-      puts indent + 'Errors:',   package.errors.map   { |line|  indent + line }, '' if package.errors?
+      puts INDENT + 'Errors:',   package.errors.map   { |line|  INDENT + line }, '' if package.errors?
 
-      puts indent + 'Warnings:', package.warnings.map { |line|  indent + line }, '' if package.warnings?
+      puts INDENT + 'Warnings:', package.warnings.map { |line|  INDENT + line }, '' if package.warnings?
 
       record_to_database(config.site, package, completed && package.valid?, started, finished) unless config.test_mode
 

@@ -29,7 +29,7 @@ def parse_command_line args
 
   opts   = OptionParser.new do |opt|
     opt.banner = "Usage: delete-by-pid --server ID pid pid..."
-    opt.on("--server ID",   String,  "delete from server by id of #{server_sections.join(', ')}.")  { |sid| server_id = sid }
+    opt.on("--server ID",   String,  "delete from server by id, where id is one of the set [#{server_sections.join(', ')}].")  { |sid| server_id = sid }
   end
 
   opts.parse!(args)

@@ -41,18 +41,18 @@ module Datyl
     # @param [String] yaml_path, a filepath to a YAML configuration file
     # @param [Array] sections, a list of sections, Strings, to include in our configuration object.
 
-    attr_reader :all_sections
+    attr_reader :all_sections, :path
 
     def initialize yaml_path, *sections
-
+      @path = yaml_path
 
       # We try to be very specific with our error messages here, since
       # configuration is a pain point for new installers.
 
-      raise SystemError, "Configuration setup wasn't supplied a valid YAML file path - instead it got a #{yaml_path.class}" unless yaml_path.class == String
-      raise SystemError, "Configuration setup can't find the specified YAML file #{yaml_path}" unless File.exists? yaml_path
-      raise SystemError, "Configuration setup can't read the specified YAML file #{yaml_path}" unless File.readable? yaml_path
-      raise SystemError, "Configuration setup must be supplied with one or more sections for the yaml file #{yaml_path}" if sections.empty?
+      raise SystemError, "Configuration setup wasn't supplied a valid YAML file path - instead it got a #{path.class}" unless path.class == String
+      raise SystemError, "Configuration setup can't find the specified YAML file #{path}" unless File.exists? path
+      raise SystemError, "Configuration setup can't read the specified YAML file #{path}" unless File.readable? path
+      raise SystemError, "Configuration setup must be supplied with one or more sections for the yaml file #{path}" if sections.empty?
 
       # handles nil value, an easy-to-make error when a missing environment variable is used for a section name:
 
@@ -61,13 +61,13 @@ module Datyl
       end
 
       begin
-        @yaml = YAML.load_file yaml_path
+        @yaml = YAML.load_file path
       rescue => e
-        raise SystemError, "Configuration setup did not correctly parse the specified YAML file #{yaml_path}: #{e.message}"
+        raise SystemError, "Configuration setup did not correctly parse the specified YAML file #{path}: #{e.message}"
       end
 
       if @yaml.class != Hash
-        raise SystemError, "Configuration setup parsed the specified YAML file #{yaml_path}, but it's not the expected simple hash (it's a #{@yaml.class})"
+        raise SystemError, "Configuration setup parsed the specified YAML file #{path}, but it's not the expected simple hash (it's a #{@yaml.class})"
       end
 
       @all_sections = @yaml.keys.sort { |a,b|  a.downcase <=> b.downcase }
@@ -82,12 +82,12 @@ module Datyl
         next if data.nil? and @yaml.keys.include? sect     # catch empty section
 
         if data.nil?
-          raise SystemError, "Configuration setup could not find a section named #{sect} in the specified YAML file #{yaml_path}: allowed sections are #{@yaml.keys.sort{ |a,b| a.to_s.downcase <=> b.to_s.downcase }.join(', ') }"
+          raise SystemError, "Configuration setup could not find a section named #{sect} in the specified YAML file #{path}: allowed sections are #{@yaml.keys.sort{ |a,b| a.to_s.downcase <=> b.to_s.downcase }.join(', ') }"
         end
 
         data = @yaml[sect]
         if data.class != Hash
-          raise SystemError, "Configuration setup expected that the section named #{sect} from the specified YAML file #{yaml_path} would be a hash, but instead it's a #{data.class}"
+          raise SystemError, "Configuration setup expected that the section named #{sect} from the specified YAML file #{path} would be a hash, but instead it's a #{data.class}"
         end
         data.each { |k,v|  @hash[k] = v }
       end
