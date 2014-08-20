@@ -27,17 +27,16 @@ configure do
   set :raise_errors, false        # Let our app handle the exceptions.
   set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
 
-  ignored, section_name = HOST_MAPPING[ENV['SERVER_NAME']]
 
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
 
       # When we fork a new ruby process under apache, re-connect to
       # the ingest database.  This web service doesn't require a
-      # connection to the drupal databases; we are only using the ingest db.
+      # connection to the drupal databases
 
       if forked
-        config = Datyl::Config.new(CONFIG_FILENAME, 'default',  section_name || ENV['SERVER_NAME'])
+        config = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
         DataBase.debug = true
         DataBase.setup(config)
       end
@@ -93,7 +92,8 @@ helpers do
 
   def list_datastream_links config, package, css = ''
     links = []
-    Utils.get_datastream_names(config.fedora_url, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
+    Utils.get_datastream_names(config, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
+      ### TODO: escape name? escape label?
       links.push "<a #{css} href=\"http://#{config.site}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
     end
     return links
@@ -115,14 +115,16 @@ end # of helpers
 
 
 before do
+  # By convention, we are running the web service as
+  # 'admin.school.digital.flvc.org' where 'school.digital.flvc.org' is
+  # the drupal server.  So we delete the leading 'admin.' to find
+  # the appropriate server configuration (for db connection info).
 
-  @hostname, section = HOST_MAPPING[ENV['SERVER_NAME']]
+  @hostname = ENV['SERVER_NAME'].sub(/^admin\./, '')
+  @config   = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
 
-  # STDERR.puts "BEFORE:  server #{ENV['SERVER_NAME']};  section: #{section};  @hostname: #{@hostname};"
+  halt 500, "Don't know how to configure for server '#{ENV['SERVER_NAME']}', using '#{CONFIG_FILENAME}'"  unless @config
 
-  halt 500, "Don't know how to configure for server #{ENV['SERVER_NAME']}"  unless @hostname
-
-  @config = Datyl::Config.new(CONFIG_FILENAME, 'default', section)
   @site   = DataBase::IslandoraSite.first(:hostname => @hostname)
 
 end # of before

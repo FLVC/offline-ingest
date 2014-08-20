@@ -38,11 +38,7 @@ class PackageFactory
     raise PackageError, "Package directory '#{directory}' isn't really a directory." unless File.directory? directory
     raise PackageError, "Package directory '#{directory}' isn't readable."           unless File.readable? directory
 
-
-    #### TODO: we need to get problems a manifest into a dummy package with .error slots,  if we want to use existing error reporting code cleanly
-
     manifest = Utils.get_manifest @config, directory
-
 
     return case manifest.content_model
            when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest, @updator_class)
@@ -52,6 +48,12 @@ class PackageFactory
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
+
+  rescue PackageError
+    raise
+
+  rescue => e
+    raise PackageError, "#{e.class}: #{e.message}"
   end
 end
 
@@ -72,7 +74,6 @@ class Package
   TIFF = %r{image/tiff}
   PDF  = %r{application/pdf}
   TEXT = %r{text/}
-
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
   attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid, :mods_type_of_resource, :owning_institution
@@ -95,7 +96,6 @@ class Package
     @directory_path    = directory
     @datafiles         = list_other_files()
     @updator           = updator_class.send :new, self
-
     @drupal_db         = DrupalDataBase.new(config) unless config.test_mode
 
     @mods_type_of_resource = nil
@@ -112,8 +112,7 @@ class Package
     @collections = list_collections(@manifest)
     @owning_institution = @namespace
 
-
-  rescue SystemError => e
+  rescue SystemError
     raise
   rescue PackageError => e
     error "Exception for package #{@directory_name}: #{e.message}"
@@ -128,7 +127,6 @@ class Package
     return [] unless @pid
     return ([ @pid ] + @component_objects.clone)
   end
-
 
   # Attempt to delete this package (and all its component objects) from islandora.
 
@@ -147,13 +145,11 @@ class Package
     end
   end
 
-
   def name
     @directory_name
   end
 
   # base classes should re-implement ingest.
-
   def ingest
     raise PackageError, 'Attempt to ingest an invalid package.' unless valid?
   end
@@ -181,13 +177,9 @@ class Package
     end
 
     @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
-
-
     raise PackageError, "Invalid MODS file" unless @mods.valid?
 
-
     # TODO: do we ever need to check that @mods is valid after adding manifest?
-
     # Somewhat order dependent:
 
     ingestor.label         = @label
@@ -199,7 +191,7 @@ class Package
 
     if @marc
       ingestor.datastream('MARCXML') do |ds|
-        ds.dsLabel  = "Archived Digitool MarcXML"
+        ds.dsLabel  = "Archived MarcXML"
         ds.content  = @marc
         ds.mimeType = 'text/xml'
       end
@@ -220,6 +212,7 @@ class Package
 
     # set POLICY if there is only one collection with same namespace and POLICY datastream
     # if none or more than one collection, do not set POLICY
+
     if @policy_collections.count == 1
       collection_pid = @policy_collections[0]
       policy_contents = Utils.get_datastream_contents(@config, collection_pid, 'POLICY')
@@ -230,10 +223,10 @@ class Package
         ds.mimeType = 'text/xml'
         ds.controlGroup = 'X'
       end
-
     end
 
     # if collection POLICY set or pageProgression in manifest, must create RELS-EXT with islandora fields
+
     if @policy_collections.count == 1 or @manifest.page_progression
 
       ingestor.datastream('RELS-EXT') do |ds|
@@ -290,6 +283,7 @@ class Package
   end
 
   def purls
+    return [] if @mods.nil?
     return @mods.purls
   end
 
@@ -392,8 +386,10 @@ class Package
 
     if iids.length == 1  and iids.first != @directory_name
       error "The MODS file in package #{@directory_name} declares an IID of #{iids.first} which doesn't match the package name."
+      return
     elsif iids.length > 1
       error "The MODS file in package #{@directory_name} declares too many IIDs: #{iids.join(', ')}: only one is allowed."
+      return
     elsif iids.length == 1
       @iid = iids.first
     elsif iids.nil? or iids.length == 0
@@ -550,10 +546,9 @@ class LargeImagePackage < Package
     path = File.join(@directory_path, @image_filename)
     @type = Utils.mime_type(path)   # we need to record the original type since @image may be returned in either TIFF or JP2K
 
-
     case @type
     when JP2
-      @image = Utils.careful_with_that_jp2(@config, path)   # this may return a JP2K, or, if ImageMagick bombs and kakadu succeeds, a TIFF
+      @image = Utils.be_careful_with_that_jp2_now(@config, path)   # this may return a JP2K, or, if ImageMagick bombs and kakadu succeeds, a TIFF
     when TIFF
       @image = Magick::Image.read(path).first
     else
@@ -880,7 +875,7 @@ class BookPackage < Package
     @page_filenames.each do |file_name|
       path = File.join(@directory_path, file_name)
       type = Utils.mime_type(path)
-      issues.push "Page file #{file_name} is of unsupported type #{type}, but must be image/jp2 or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
+      issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
     end
 
     unless issues.empty?
@@ -948,7 +943,7 @@ class BookPackage < Package
       end
 
       ingestor.datastream('DT-METS') do |ds|
-        ds.dsLabel  = 'Archived DigiTool METS for future reference'
+        ds.dsLabel  = 'Archived METS for future reference'
         ds.content  = @mets.text
         ds.mimeType = 'text/xml'
       end
@@ -1202,7 +1197,6 @@ class BookPackage < Package
       </rdf:Description>
     </rdf:RDF>
   XML
-
     return str
   end
 
@@ -1221,7 +1215,6 @@ class BookPackage < Package
     </oai_dc:dc>
   XML
   end
-
 
   def ingest_page pagename, sequence
 
@@ -1275,9 +1268,7 @@ class BookPackage < Package
           ds.mimeType = 'text/xml'
           ds.controlGroup = 'X'
         end
-
       end
-
     end
 
     @bytes_ingested += ingestor.size

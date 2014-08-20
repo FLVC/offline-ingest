@@ -5,6 +5,7 @@ require 'RMagick'
 require 'fileutils'
 require 'iconv'
 require 'offin/exceptions'
+require 'offin/config'
 require 'open3'
 require 'stringio'
 require 'tempfile'
@@ -42,8 +43,8 @@ end
 
 class Utils
 
-  TESSERACT_TIMEOUT = 60   # tesseract can waste a lot of time on certain kinds of images
-  QUICKLY_TIMEOUT   = 10   # seconds before giving up on fedora
+  TESSERACT_TIMEOUT = 300   # tesseract can waste a lot of time on certain kinds of images
+  QUICKLY_TIMEOUT   =  10   # seconds before giving up on fedora
 
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
@@ -84,9 +85,13 @@ class Utils
   def Utils.field_system_error message = ''
     yield
   rescue => e
-    raise SystemError,  message + ': ' + e.message # ick
+    raise SystemError,  "#{e.class} - #{message}: #{e.message}"  # ick
   end
 
+
+  # NOTE: this doesn't play well with the process monitor's logger
+  # when the stream used for that logging is silenced below; the
+  # process monitor never gets the original on reopen.
 
   def Utils.silence_streams(*streams)  # after some rails code by DHH
 
@@ -168,7 +173,7 @@ class Utils
     raise SystemError, "Can't obtain IID from solr at '#{url}': #{e.class} #{e.message}"
 
   rescue => e
-    raise SystemError, "Can't process IID from solr: : #{e.class} #{e.message}"
+    raise SystemError, "Can't process IID obtained from solr at '#{@url}': : #{e.class} #{e.message}"
   end
 
 
@@ -207,9 +212,9 @@ class Utils
   #   <datastream dsid="DC" label="Dublin Core Record" mimeType="text/xml"/>
   #   <datastream dsid="RELS-EXT" label="Relationships" mimeType="application/rdf+xml"/>
   #   <datastream dsid="MODS" label="MODS Record" mimeType="text/xml"/>
-  #   <datastream dsid="MARCXML" label="Archived Digitool MarcXML" mimeType="text/xml"/>
+  #   <datastream dsid="MARCXML" label="Archived MarcXML" mimeType="text/xml"/>
   #   <datastream dsid="TN" label="Thumbnail" mimeType="image/jpeg"/>
-  #   <datastream dsid="DT-METS" label="Archived DigiTool METS for future reference" mimeType="text/xml"/>
+  #   <datastream dsid="DT-METS" label="Archived METS for future reference" mimeType="text/xml"/>
   #   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
   # </objectDatastreams>
 
@@ -260,7 +265,7 @@ class Utils
     manifest_filename = File.join(directory, 'manifest.xml')
 
     if not File.exists? manifest_filename
-      raise PackageError, "Package directory #{directory} does not contain a manifest file."
+      raise PackageError, "Package directory #{directory} does not contain a manifest.xml file."
     end
 
     return Manifest.new(config, manifest_filename)
@@ -283,7 +288,7 @@ class Utils
   # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
   # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
 
-  def Utils.careful_with_that_jp2 config, jp2k_filepath
+  def Utils.be_careful_with_that_jp2_now config, jp2k_filepath
     Utils.silence_streams(STDERR) do
       return Magick::Image.read(jp2k_filepath).first
     end
@@ -308,7 +313,6 @@ class Utils
     raise PackageError, "Image processing error: could not process JP2 image #{jp2k_filepath.sub(/.*\//, '')}:#{message}#{error.gsub("\n", ' ')}" unless error.empty?
 
     return Magick::Image.read(temp_image_filename).first
-
 
   ensure
     FileUtils.rm_f(temp_image_filename)
@@ -702,5 +706,30 @@ class Utils
 
     return str
   end
+
+  # find_appropriate_admin_config(config_file, server_name) is used
+  # by the admin web service code.
+  #
+  # By convention, we are running a web service as
+  # 'admin.school.digital.flvc.org' where 'school.digital.flvc.org' is
+  # the drupal server.  So we delete the leading 'admin.' to find the
+  # appropriate server.  The we read the config file for all sections
+  # and probe each section in turn for "site:
+  # school.digital.flvc.org".  Once we have a hit, we return the
+  # appropriate config object.  We return nil if not found or on error.
+
+  def Utils.find_appropriate_admin_config config_file, server_name
+    site = server_name.sub(/^admin\./, '')
+
+    Datyl::Config.new(config_file, 'default').all_sections.each do |section|
+      site_config = Datyl::Config.new(config_file, 'default', section)
+      return site_config if (site_config.site and site_config.site.downcase == site.downcase)
+    end
+    return nil
+  rescue => e
+    STDERR.puts "Error reading config file for #{site} section: #{e.class}: #{e.message}"
+    return nil
+  end
+
 
 end # of class Utils

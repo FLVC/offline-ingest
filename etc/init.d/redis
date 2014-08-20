@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+# redis Startup script for Redis Server
+#
+# chkconfig: - 92 8
+# description: Redis is an open source, advanced key-value store.
+#
+# processname: redis-server
+# config: /usr/local/etc/redis.conf
+# pidfile: /var/run/redis.pid
+
+PATH=/usr/local/bin:/sbin:/usr/bin:/bin
+REDISPORT=6379
+EXEC=/usr/local/bin/redis-server
+REDIS_CLI=/usr/local/bin/redis-cli
+CONF=/etc/redis.conf     # small mods to stock config (daemonize, syslog, start directory, localhost binding, password)
+REDIS_USER=redis
+REDIS_PASSWORD="`grep ^requirepass $CONF | awk '{print $2}'`"
+PIDFILE="`grep ^pidfile $CONF | awk '{print $2}'`"    # when redis is started as daemon it's created;  it's removed on exit
+
+case "$1" in
+    start)
+	if [ -f $PIDFILE ]
+	then
+	    echo "$PIDFILE exists, process is already running or crashed\n"
+	else
+	    echo -n "Starting Redis server..."
+	    su -s /bin/sh $REDIS_USER -c "$EXEC $CONF"
+	    echo ''
+	fi
+	;;
+    stop)
+	if [ ! -f $PIDFILE ]
+	then
+	    echo "$PIDFILE does not exist, process is not running."
+	else
+	    PID=$(cat $PIDFILE)
+	    echo -n "Stopping ..."
+	    $REDIS_CLI -a "$REDIS_PASSWORD" -p $REDISPORT SHUTDOWN
+	    while [ -x ${PIDFILE} ]
+	    do
+		echo "Waiting for Redis to shutdown ..."
+		sleep 1
+	    done
+	    echo "Redis stopped"
+	fi
+	;;
+esac

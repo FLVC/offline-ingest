@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+# God
+#
+# chkconfig: - 93 7
+# description: start, stop, restart god
+#
+
+CONF=/etc/god.conf
+EXEC=/usr/bin/god
+PIDFILE=/var/run/god.pid
+RETVAL=0
+
+case "$1" in
+    start)
+    if [ -f $PIDFILE ]
+    then
+	echo "$PIDFILE exists, process is already running or crashed\n"
+    else 
+	$EXEC -c $CONF -P $PIDFILE --log-level info
+	RETVAL=$?
+    fi
+    ;;
+    stop)
+    if [ ! -f $PIDFILE ]
+    then
+	echo "$PIDFILE does not exist, process is not running."
+    else
+	$EXEC terminate
+	[ -f $PIDFILE ] && kill `cat $PIDFILE`
+	rm -f $PIDFILE
+    fi
+    ;;
+    restart)
+	$0 stop
+	$0 start
+	;;
+    status)
+	$EXEC status
+	RETVAL=$?
+	;;
+    *)
+	echo "Usage: god {start|stop|restart|status}"
+	exit 1
+	;;
+esac
+
+exit $RETVAL
