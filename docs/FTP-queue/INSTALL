@@ -12,7 +12,12 @@ Setup islandora load system
  Test that postgres connections from load host to drupal hosts work
  for both ingest and drupal databases.
 
+## Check both firewall and pg_conf
+
+
 2) Add to config.yml,  for each institution using ftp, an entry "ftp-root: path" where path is the home ftp directory.
+
+  config.yml from prod to islandload-prd, check for changes 
 
  e.g.
 
@@ -114,6 +119,8 @@ Setup islandora load system
    # chkconfig --add /etc/init.d/god
    # chkconfig god on
 
+### double check redis start first stop last
+
  Currently, all of the logging information for god and the ftp and
  ingest worker processes it starts goes to /var/log/messages.
 
@@ -156,6 +163,7 @@ Setup islandora load system
      successful ingest deletes them; otherwise the packages are moved
      to warnings/ or errors/ directories as appropriate
 
+## Double check this is how we want his stuff to log
 
 ----------------
 
