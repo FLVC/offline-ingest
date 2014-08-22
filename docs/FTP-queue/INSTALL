@@ -3,8 +3,9 @@ Setup islandora load system
 
 1) Setup access from load host to corresponding presentation (drupal) hosts, e.g.
 
- islandload-tst  needs to be able to connect to the islandora-test ingest and drupal databases.
- For the ingest database, for example, as the postgres user edit /var/lib/pgsql/data/pg5432
+ islandload-tst needs to be able to connect to the islandora-test
+ ingest and drupal databases.  For the ingest database, for example,
+ as the postgres user edit /var/lib/pgsql/data/pg5432/pg_hba.conf
 
      > # fischer: islandload-tst must connect
      > host    islandora_test islandora               192.168.36.30/32        md5
@@ -17,7 +18,7 @@ Setup islandora load system
 
 2) Add to config.yml,  for each institution using ftp, an entry "ftp-root: path" where path is the home ftp directory.
 
-  config.yml from prod to islandload-prd, check for changes 
+  config.yml from prod to islandload-prd, check for changes
 
  e.g.
 
@@ -36,7 +37,7 @@ Setup islandora load system
   There need to be a standard set of subdirectories under the
   ftp_root; note the ftp requirements below.
 
-2) Redis is a column oriented database that keeps queueing
+3) Redis is a column oriented database that keeps queueing
    information; it is used by ftp-handler (which adds to the
    queue) and ingest-handler (which removes from the queue)
 
@@ -74,11 +75,13 @@ Setup islandora load system
    # chown root:redis /etc/redis.conf
    # chmod 640 /etc/redis.conf
 
- Tweak VM settings (see http://redis.io/topics/faq and
- http://www.redhat.com/magazine/001nov04/features/vm/ for details)
+ Not sure about the following.
 
-   # echo 1 > /proc/sys/vm/overcommit_memory
-
+??? Tweak VM settings (see http://redis.io/topics/faq and
+??? http://www.redhat.com/magazine/001nov04/features/vm/ for details)
+???
+???   # echo 1 > /proc/sys/vm/overcommit_memory
+???
 ??? It also needs to go into /etc/sysctl.conf
 ???
 ???   > vm.overcommit_memory = 1
@@ -92,7 +95,7 @@ Setup islandora load system
 
    # service redis start
 
-3) Install resque,  a queueing system that uses redis as its db back-end
+4) Install resque,  a queueing system that uses redis as its db back-end
 
    # gem install resque
 
@@ -111,7 +114,7 @@ Setup islandora load system
  TODO: start this up automatically and securely.
 
 
-4) Install 'god', a process monitoring daemon:
+5) Install 'god', a process monitoring daemon:
 
    # gem install god
    # cp offline-ingest/etc/init.d/god /etc/init.d
@@ -134,12 +137,12 @@ Setup islandora load system
 
    # service god start
 
-5) Create new tables for the ingest database:
+6) Create new tables for the ingest database:
 
    # cd offline-ingest/tools
    # ./add-ftp-tables
 
-6) There is a parameter to set in one of the files (arguably this should be in config.yml); in
+7) There is a parameter to set in one of the files (arguably this should be in config.yml); in
 
       offline-ingest/lib/watch-queue/watch-directory.rb
 
@@ -148,7 +151,7 @@ Setup islandora load system
   before its contents are processed.  It is set low for local testing, 10 seconds seems to work fine.
 
 
-7) logging
+8) logging
 
    /var/log/messages - will have four different entries from this system:
 
@@ -164,6 +167,14 @@ Setup islandora load system
      to warnings/ or errors/ directories as appropriate
 
 ## Double check this is how we want his stuff to log
+
+
+9) Make sure required JP2K processing programs are in place:
+
+   cd /usr/bin
+   ln -s /opt/adore-djatoka-1.1/bin/Linux-x86-64/kdu_compress
+   ln -s /opt/adore-djatoka-1.1/bin/Linux-x86-64/kdu_expand
+
 
 ----------------
 
