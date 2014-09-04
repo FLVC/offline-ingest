@@ -49,6 +49,30 @@ ARGV.each do |filename|
 
   next unless mets.valid?
 
+  # all of the candidate structmaps
+
+  structmaps = mets.sax_document.structmaps
+  STDERR.puts "", "Structmap Data for the #{structmaps.count}  #{structmaps.count == 0 ? 'structmap' : 'structmaps'}", ""
+
+  count = 1
+  structmaps.each do |sm|
+    puts "StructMap Number #{count}"
+    sm.each do |elt|
+      line = '. ' * elt.level
+      case
+      when elt.is_page
+        line += '. ' + '"' + elt.title + '"'
+        elt.files.each { |file| line = "#{line} [#{file.sequence}] -- #{file.href}  "  }
+      else # is a section heading
+        line += '* ' + '"' +  elt.title + '"'
+      end
+      puts line
+    end
+    puts ""
+    count += 1
+  end
+  puts ""
+
   # mets.structmap.print
 
   toc  = TableOfContents.new(mets.structmap)

@@ -9,6 +9,12 @@ require 'json'
 Struct.new('Page',    :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype)
 Struct.new('Chapter', :title, :level)
 
+# Class TableOfContents is initialized by a METS structmap, which is
+# provided by a Mets object method.  The Package object makes use of
+# TableOfContents, in particular to produce json output for the page
+# turning application.
+
+
 class TableOfContents
 
   include Errors  # because I don't have enough of my own.
@@ -221,6 +227,9 @@ class TableOfContents
   end
 end # of class TableOfContents
 
+
+
+
 class Mets
 
   include Errors
@@ -352,7 +361,7 @@ class Mets
 
     if scores.values.uniq == scores.values
       max = scores.values.max
-      warning "Multiple structMaps found in METS file, discarding the shortest (least number of files)."
+      warning "Multiple structMaps found in METS file, discarding the shortest (least number of referenced files)."
       scores.each { |sm,num| return sm if num == max }
     end
 
