@@ -11,8 +11,10 @@ require 'offin/errors'
 # TODO: do a sanity check on @config. Failure should throw an error that will stop all processing at the top level:
 #
 #    @config.mods_to_dc_transform_filename must exist and be readable
-#    @schema_directory must exist and have the expected complement of schemas
-
+#    @config.schema_directory must exist and have the expected complement of schemas
+#
+#    @config.mods_to_title_transform_filename
+#    @config.mods_post_processing_filename
 
 class Mods
 
