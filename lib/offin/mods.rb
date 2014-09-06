@@ -93,6 +93,7 @@ class Mods
   # as a side effect.
 
   def post_process_cleanup
+
     newdoc = Nokogiri::XML(@xml_document.to_xml)
     mods_cleanup = File.read(@config.mods_post_processing_filename)
     xslt = Nokogiri::XSLT(mods_cleanup)
@@ -292,6 +293,30 @@ class Mods
 
   rescue => e
     error "Can't add extension elements to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
+  end
+
+  # Like above, but we only add the OwningInstitution
+
+  def add_flvc_owner_extension inst
+    flvc_prefix = get_prefix_for_flvc_extension
+
+    if flvc_extensions?
+        mods_flvc_extension = @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE)
+        mods_flvc_extension.remove()
+    end
+
+    str = <<-XML.gsub(/^        /, '')
+        <#{format_prefix}extension>
+          <#{flvc_prefix}:flvc>
+             <#{flvc_prefix}:owningInstitution>#{manifest.owning_institution}</#{flvc_prefix}:owningInstitution>
+          </#{flvc_prefix}:flvc>
+        </#{format_prefix}extension>
+    XML
+
+    @xml_document.root.add_child(str)
+
+  rescue => e
+    error "Can't add extension add OwningInstitution extension element to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
   end
 
 

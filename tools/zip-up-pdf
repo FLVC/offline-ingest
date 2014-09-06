@@ -18,10 +18,9 @@
 #      3170510_85no4/3170510_85no4.xml
 #
 #  Note the zip-package is named after the PDF found in the directory,
-#  as is the MODS xml file.  Certain data is added to the MODS file
-#  via the XSLT transform "modify-serial-mods.xsl" (TODO: what data
-#  exactly?).  In addtion, an extension element is added to the MODS
-#  file to include the institution code from the manifest.
+#  as is the MODS xml file.  Certain data are added to the MODS file
+#  via the XSLT transform "modify-serial-mods.xsl" (serials metadata)
+#  and via XPath (extension elements and ?? IID ??)
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
@@ -167,11 +166,13 @@ def create_zip_file mods_data, package_info, destination_directory
     io.put_next_entry(File.join(name, name + ".pdf"))
     io.write File.read(package_info.pdf_path)
   end
-
+  return zip_filename
 end
 
 
-# TODO: should really use offline ingest's config (YAML) file and rewrite some files when necessary
+# TODO: should really use offline ingest's config (YAML) file and
+# over-ride mods_post_processing_filename to the
+# modify-serial-mods.xsl file
 
 Struct.new('Config', :schema_directory, :mods_to_dc_transform_filename, :mods_to_title_transform_filename, :mods_post_processing_filename)
 
@@ -180,27 +181,30 @@ CONFIG = Struct::Config.new('/usr/local/islandora/offline-ingest/lib/include/',
                             '/usr/local/islandora/offline-ingest/lib/include/extract-mods-title.xslt',
                             '/usr/local/islandora/offline-ingest/lib/include/modify-serial-mods.xsl')
 
+def rewrite_mods mods_path, manifest_path, unused_config
 
-def rewrite_mods mods_path, manifest_path
+  manifest = Manifest.new(CONFIG, manifest_path)
+  raise "Manifest file #{manifest_path} is not valid: " + manifest.errors.join('; ') unless manifest.valid?
+  raise "Manifest file #{manifest_path} does not contain an owningInstitution"       unless manifest.owning_institution
+
   mods = Mods.new(CONFIG, mods_path)
-  mods.post_process_cleanup
-  puts '------', mods.to_s
-
-
   raise "MODS file #{mods_path} is not valid: " + mods.errors.join('; ') unless mods.valid?
+
+  mods.add_flvc_owner_extension manifest.owning_institution
+  mods.post_process_cleanup
 
   return mods.text
 end
 
 
 def process package_directory, destination_directory
+
   info = check_directory(package_directory)
-  # STDERR.puts info.inspect
+  mods_data = rewrite_mods(info.mods_path, info.manifest_path, CONFIG)
+  zip_filename = create_zip_file(mods_data, info, destination_directory)
 
-  # mods_data = File.read(info.mods_path)
+  puts File.basename(package_directory) + ' => ' + File.basename(zip_filename)
 
-  mods_data = rewrite_mods(info.mods_path, CONFIG)
-  create_zip_file(mods_data, info, destination_directory)
 rescue => e
   STDERR.puts "Can't process #{package_directory} (#{e.class}); #{e.message}"
 end
@@ -211,5 +215,4 @@ options, package_directories = get_command_line_arguments(ARGV)
 
 package_directories.each do |package_directory|
   process package_directory, options.destination_directory
-  puts File.basename package_directory
 end
