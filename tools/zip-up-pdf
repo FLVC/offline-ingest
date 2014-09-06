@@ -29,7 +29,10 @@ require 'zip'
 require 'optparse'
 require 'zip/zip'
 require 'offin/mods'
+require 'offin/manifest'
+require 'offin/config'
 
+CONFIG_FILENAME = "/usr/local/islandora/offline-ingest/config.yml"
 
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
@@ -170,24 +173,13 @@ def create_zip_file mods_data, package_info, destination_directory
 end
 
 
-# TODO: should really use offline ingest's config (YAML) file and
-# over-ride mods_post_processing_filename to the
-# modify-serial-mods.xsl file
+def rewrite_mods mods_path, manifest_path, config
 
-Struct.new('Config', :schema_directory, :mods_to_dc_transform_filename, :mods_to_title_transform_filename, :mods_post_processing_filename)
-
-CONFIG = Struct::Config.new('/usr/local/islandora/offline-ingest/lib/include/',
-                            '/usr/share/drupal7/sites/all/modules/islandora_xml_forms/builder/transforms/mods_to_dc.xsl',
-                            '/usr/local/islandora/offline-ingest/lib/include/extract-mods-title.xslt',
-                            '/usr/local/islandora/offline-ingest/lib/include/modify-serial-mods.xsl')
-
-def rewrite_mods mods_path, manifest_path, unused_config
-
-  manifest = Manifest.new(CONFIG, manifest_path)
+  manifest = Manifest.new(config, manifest_path)
   raise "Manifest file #{manifest_path} is not valid: " + manifest.errors.join('; ') unless manifest.valid?
   raise "Manifest file #{manifest_path} does not contain an owningInstitution"       unless manifest.owning_institution
 
-  mods = Mods.new(CONFIG, mods_path)
+  mods = Mods.new(config, mods_path)
   raise "MODS file #{mods_path} is not valid: " + mods.errors.join('; ') unless mods.valid?
 
   mods.add_flvc_owner_extension manifest.owning_institution
@@ -197,10 +189,10 @@ def rewrite_mods mods_path, manifest_path, unused_config
 end
 
 
-def process package_directory, destination_directory
+def process package_directory, destination_directory, config
 
   info = check_directory(package_directory)
-  mods_data = rewrite_mods(info.mods_path, info.manifest_path, CONFIG)
+  mods_data = rewrite_mods(info.mods_path, info.manifest_path, config)
   zip_filename = create_zip_file(mods_data, info, destination_directory)
 
   puts File.basename(package_directory) + ' => ' + File.basename(zip_filename)
@@ -209,10 +201,15 @@ rescue => e
   STDERR.puts "Can't process #{package_directory} (#{e.class}); #{e.message}"
 end
 
+
+
+
+# MAIN
+
 options, package_directories = get_command_line_arguments(ARGV)
 
-
+config = Datyl::Config.new(CONFIG_FILENAME, "default", "zip_serialize_pdfs")
 
 package_directories.each do |package_directory|
-  process package_directory, options.destination_directory
+  process package_directory, options.destination_directory, config
 end
