@@ -185,7 +185,7 @@ def rewrite_mods mods_path, manifest_path, config
   mods.add_flvc_owner_extension manifest.owning_institution
   mods.post_process_cleanup
 
-  return mods.text
+  return mods.to_s
 end
 
 
