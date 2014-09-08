@@ -5,7 +5,7 @@ require 'offin/config'
 require 'mono_logger'
 require 'resque'
 require 'watch-queue/ingest-job'          # the actual handler corresponding to the 'ingest' queue specified below; the work happens in ingest-job
-
+require 'date'
 
 class WatchUtils
 
@@ -26,7 +26,7 @@ class WatchUtils
     raise SystemError, "Can't connect to the ingest database; #{e.class}: #{e.message}"
   end
 
-  # This is used by the ftp-handler, so we don't have a
+  # used by the ftp-handler
 
   def WatchUtils.record_ftp_user site_hostname,  file_path
 
@@ -41,12 +41,42 @@ class WatchUtils
       raise SystemError, "Can't save new #{site_hostname} FTP user to database for file #{file_path}: #{errs.join(';')}"
     end
 
-    return user_record
+    return [ user_record, site_record ]
 
   rescue SystemError
     raise
   rescue => e
     raise SystemError, "Can't determine #{site_hostname} FTP user for file #{file_path}: #{e.class} #{e.message}"
+  end
+
+
+
+  # to do: make this do all-in-one, with ftp-user
+
+  def WatchUtils.record_ftp_package site_hostname,  file_path
+
+    user_record, site_record = WatchUtils.record_ftp_user(site_hostname, file_path)
+
+    time_submitted = File.stat(file_path).ctime
+
+    package_name = file_path.sub(/\/+$/, '').sub(/.*\//, '')
+
+    package_record = DataBase::FtpPackage.first_or_create(:package_name => package_name,  :time_submitted => time_submitted,
+                                                          :islandora_site => site_record, :ftp_user => user_record)
+
+    unless package_record.save
+      errs = []
+      package_record.errors.each { |e| errs.push e }
+      user_record.errors.each { |e| errs.push e }
+      raise SystemError, "Can't save new #{site_hostname} FTP package to database for file #{file_path}: #{errs.join(';')}"
+    end
+
+    return package_record
+
+  rescue SystemError
+    raise
+  rescue => e
+    raise SystemError, "Can't determine #{site_hostname} FTP site for file #{file_path}: #{e.class} #{e.message}"
   end
 
 

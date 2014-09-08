@@ -239,8 +239,8 @@ class Purlz
   #
   # Given a PURL_ID such as '/fsu/fd/FSDT36939', get it's relevant
   # information (status, target, maintainers, redirect_type, and id)
-  # returned as a hash (entirely string-valued).  Returns nil if the
-  # purl doesn't exist. Example:
+  # returned as a hash (values are strings or arrays of strings).
+  # Returns nil if the purl doesn't exist. Example:
   #
   #   :id      => "/flvc/fd/fischer003"
   #   :type    => "302"

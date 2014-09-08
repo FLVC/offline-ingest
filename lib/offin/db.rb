@@ -51,10 +51,10 @@ module DataBase
 
     property :id,                  Serial
     property :time_submitted,      DateTime,    :required => true, :index => true
-    property :time_processed,      DateTime,    :required => true, :index => true
+    property :time_processed,      DateTime,    :index => true
+    property :package_name,        String,      :required => true, :index => true
 
-    property :package_name,        String
-    property :status,              Enum[ :error, :warning, :success ]
+    property :status,              Enum[ :error, :warning, :success, :unprocessed ], :default => :error
 
     belongs_to :ftp_user
     belongs_to :islandora_site;
