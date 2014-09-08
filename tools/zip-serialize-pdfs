@@ -1,0 +1,212 @@
+#!/usr/bin/env ruby
+
+# This command-line script examines a d2i-produced export of a PDF of
+# the form:
+#
+#   .../SN00154113_0085_004 -  contents of this source directory:
+#
+#      3170510_85no4.pdf
+#      SN00154113_0085_004.xml
+#      manifest.xml
+#
+# and creates a zip file suitable for uploading into the islandora GUI
+# zip-importer as a serial package.
+#
+#  3170510_85no4.zip -    contents of this produced zipfile:
+#
+#      3170510_85no4/3170510_85no4.pdf
+#      3170510_85no4/3170510_85no4.xml
+#
+#  Note the zip-package is named after the PDF found in the directory,
+#  as is the MODS xml file.  Certain data are added to the MODS file
+#  via the XSLT transform "modify-serial-mods.xsl" (serials metadata)
+#  and via XPath (extension elements and ?? IID ??)
+
+$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+
+require 'rubygems'
+require 'zip'
+require 'optparse'
+require 'zip/zip'
+require 'offin/mods'
+require 'offin/manifest'
+require 'offin/config'
+
+CONFIG_FILENAME = "/usr/local/islandora/offline-ingest/config.yml"
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+Kernel.trap('HUP')  { "IGNORE" }
+
+
+def me
+  return $0.sub(/.*\//, '')
+end
+
+Struct.new('Options', :destination_directory)
+
+# options
+
+def get_command_line_arguments args
+
+  banner = <<-EOF.gsub(/^    /, '')
+    Usage:  #{me} [ --destination-directory dir ] package-directories*
+    EOF
+
+  command_options = Struct::Options.new(nil)
+
+  opts   = OptionParser.new do |opt|
+    opt.banner = banner
+    command_options.destination_directory = '.'
+    opt.on("--destination-directory DIR", String, "Deposit the created zipfiles into DIR instead of the current working directory.") { |dir| command_options.destination_directory = dir.sub(/\/+$/, '/') }
+  end
+
+  opts.parse!(args)
+
+  if command_options.destination_directory
+    raise  "The directory #{command_options.destination_directory} doesn't exist"            unless File.exists?    command_options.destination_directory
+    raise  "The directory #{command_options.destination_directory} isn't really a directory" unless File.directory? command_options.destination_directory
+    raise  "Can't write to directory #{command_options.destination_directory}"               unless File.writable?  command_options.destination_directory
+  end
+
+  raise "No packages specified." if args.empty?
+
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+else
+  return command_options, args
+end
+
+
+# Utils:
+
+def check_directory_permissions dir
+  raise  "The directory #{dir} doesn't exist"            unless File.exists?    dir
+  raise  "The directory #{dir} isn't really a directory" unless File.directory? dir
+  raise  "Can't read fron directory #{dir}"              unless File.readable?  dir
+end
+
+
+# check_directory makes sure directory DIR has the correct
+# permissions, and returns a Struct::Package object with path and
+# naming info.
+
+Struct.new('Package', :manifest_path, :pdf_path, :mods_path, :new_name)
+
+def check_directory dir
+
+  check_directory_permissions(dir)
+
+  package_name  = File.basename(dir)
+  all_files = Dir["#{dir}/*"]
+
+  left_over = []
+
+  package_data = Struct::Package.new()
+
+  all_files.each do |f|
+    bn = File.basename(f)
+
+    next if ['.', '..'].include?(bn)
+
+    if File.directory?(f)
+      left_over.push(f)
+      next
+    end
+
+    case
+    when (bn == "#{package_name}.xml")   # found our mods file
+      package_data.mods_path = f
+
+    when (bn =~ /^(.*)\.pdf$/i)          # found our pdf
+
+      raise "There are more than one PDF files in #{dir},  can't proceed with this package" if package_data.pdf_path
+      package_data.new_name = $1
+      package_data.pdf_path = f
+
+    when (bn == "manifest.xml")
+      package_data.manifest_path = f
+
+    else
+      left_over.push f
+    end
+
+  end # of directory loop
+
+  raise "Directory #{dir} doesn't contain a PDF, skipping"       unless package_data.pdf_path
+  raise "Directory #{dir} doesn't contain a manifest, skipping"  unless package_data.manifest_path
+  raise "Directory #{dir} doesn't contain a MODS file, skipping" unless package_data.mods_path
+
+  raise "Can't read PDF file #{package_data.pdf_path}"           unless File.readable?(package_data.pdf_path)
+  raise "Can't read manifest file #{package_data.manifest_path}" unless File.readable?(package_data.manifest_path)
+  raise "Can't read MODS file #{package_data.mods_path}"         unless File.readable?(package_data.mods_path)
+
+  STDERR.puts "Warning: #{dir} contains these unaccounted-for files: " + left_over.jpoin(', ')  if not left_over.empty?
+
+  return package_data
+end
+
+
+# create_zip_file writes the zipfile; two files (MODS and PDF) under a directory.
+
+
+def create_zip_file mods_data, package_info, destination_directory
+  name = package_info.new_name
+  zip_filename = File.join(destination_directory, name + ".zip")
+
+  raise "Can't write #{zip_filename}, it already exists." if File.exists?(zip_filename)
+
+  Zip::ZipOutputStream::open(zip_filename) do |io|
+
+    io.put_next_entry(File.join(name, name + ".xml"))
+    io.write mods_data
+
+    io.put_next_entry(File.join(name, name + ".pdf"))
+    io.write File.read(package_info.pdf_path)
+  end
+  return zip_filename
+end
+
+
+def rewrite_mods mods_path, manifest_path, config
+
+  manifest = Manifest.new(config, manifest_path)
+  raise "Manifest file #{manifest_path} is not valid: " + manifest.errors.join('; ') unless manifest.valid?
+  raise "Manifest file #{manifest_path} does not contain an owningInstitution"       unless manifest.owning_institution
+
+  mods = Mods.new(config, mods_path)
+  raise "MODS file #{mods_path} is not valid: " + mods.errors.join('; ') unless mods.valid?
+
+  mods.add_flvc_owner_extension manifest
+  mods.post_process_cleanup
+
+  raise "Errors rewriting MODS: " + mods.errors.join('; ') unless mods.errors.empty?
+  return mods.to_s
+end
+
+
+def process package_directory, destination_directory, config
+
+  info = check_directory(package_directory)
+  mods_data = rewrite_mods(info.mods_path, info.manifest_path, config)
+  zip_filename = create_zip_file(mods_data, info, destination_directory)
+
+  puts File.basename(package_directory) + ' => ' + File.basename(zip_filename)
+
+rescue => e
+  STDERR.puts "Can't process #{package_directory} (#{e.class}); #{e.message}"
+end
+
+
+
+
+# MAIN
+
+options, package_directories = get_command_line_arguments(ARGV)
+
+config = Datyl::Config.new(CONFIG_FILENAME, "default", "zip_serialize_pdfs")
+
+package_directories.each do |package_directory|
+  process package_directory, options.destination_directory, config
+end
