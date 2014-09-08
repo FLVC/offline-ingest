@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+require 'rubygems'
+require 'socket'
+require 'optparse'
+
+$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+
+require 'offin/ingest-support'
+require 'offin/utils'
+require 'rubydora'
+
+include Rubydora
+
+
+def parse_command_line args
+  server_id = nil
+  server_sections = get_config_server_sections
+
+  opts   = OptionParser.new do |opt|
+    opt.banner = "Usage: collection-ids --server ID"
+    opt.on("--server ID",   String,  "delete from server by id of #{server_sections.join(', ')}.")  { |sid| server_id = sid }
+  end
+
+  opts.parse!(args)
+
+  raise "No server ID supplied." unless server_id
+  raise "Invalid server ID; use one of #{server_sections.join(', ')}" unless server_sections.include? server_id
+
+
+
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+else
+  return config
+end
+
+config = Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", "default")
+
+# config = parse_command_line(ARGV)
+repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+
+collection_records = Utils.get_collection_names config
+
+collection_ids = collection_records.keys.sort { |a,b| a.downcase <=> b.downcase }
+
+max_width = (collection_ids.map{ |k| k.length }).max
+
+
+collection_ids.each do |collection_id|
+  dots  = '.' * (max_width - collection_id.length) + '..'
+  title = collection_records[collection_id]
+  issue = collection_id.downcase == collection_id ? '   ' : ' * '
+  puts issue + collection_id + dots + title
+end
