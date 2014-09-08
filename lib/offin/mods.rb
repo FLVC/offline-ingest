@@ -151,7 +151,7 @@ class Mods
   end
 
   def to_s
-    @xml_document.to_xml
+    @xml_document.to_s
   end
 
   def valid?   # we'll have warnings and errors if not
@@ -265,8 +265,8 @@ class Mods
     flvc_prefix = get_prefix_for_flvc_extension
 
     if flvc_extensions?
-        mods_flvc_extension = @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE)
-        mods_flvc_extension.remove()
+      mods_flvc_extension = @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE)
+      mods_flvc_extension.remove()
     end
 
     str = <<-XML.gsub(/^        /, '')
@@ -297,12 +297,12 @@ class Mods
 
   # Like above, but we only add the OwningInstitution
 
-  def add_flvc_owner_extension inst
+  def add_flvc_owner_extension manifest
     flvc_prefix = get_prefix_for_flvc_extension
 
     if flvc_extensions?
-        mods_flvc_extension = @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE)
-        mods_flvc_extension.remove()
+      mods_flvc_extension = @xml_document.xpath("//mods:extension/flvc:flvc", 'mods' => MODS_NAMESPACE, 'flvc' => MANIFEST_NAMESPACE)
+      mods_flvc_extension.remove()
     end
 
     str = <<-XML.gsub(/^        /, '')
@@ -316,7 +316,7 @@ class Mods
     @xml_document.root.add_child(str)
 
   rescue => e
-    error "Can't add extension add OwningInstitution extension element to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
+    error "Can't add extension OwningInstitution extension element to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
   end
 
 

@@ -38,6 +38,11 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 Kernel.trap('HUP')  { "IGNORE" }
 
+
+def me
+  return $0.sub(/.*\//, '')
+end
+
 Struct.new('Options', :destination_directory)
 
 # options
@@ -45,9 +50,7 @@ Struct.new('Options', :destination_directory)
 def get_command_line_arguments args
 
   banner = <<-EOF.gsub(/^    /, '')
-    Usage:  zip-up-pdf [ --destination-directory dir ] [ --prospective ] d2i-directories*
-    If no desitnation directory is supplied, the current working directory is used to
-    deposit the produced zipfile(s).  The flag "-d" can be used instead.
+    Usage:  #{me} [ --destination-directory dir ] package-directories*
     EOF
 
   command_options = Struct::Options.new(nil)
@@ -55,7 +58,7 @@ def get_command_line_arguments args
   opts   = OptionParser.new do |opt|
     opt.banner = banner
     command_options.destination_directory = '.'
-    opt.on("--destination-directory DIR", String, "deposit produced zipfiles into DIR instead of the current working directory.") { |dir| command_options.destination_directory = dir.sub(/\/+$/, '/') }
+    opt.on("--destination-directory DIR", String, "Deposit the created zipfiles into DIR instead of the current working directory.") { |dir| command_options.destination_directory = dir.sub(/\/+$/, '/') }
   end
 
   opts.parse!(args)
@@ -85,19 +88,9 @@ def check_directory_permissions dir
 end
 
 
-
-
-
-
-#  Layers:
-#
-#  top level loop on directory, catch errors, print stderr and got to next one
-#     check_directory,
-
-
-
-
-# check_directory
+# check_directory makes sure directory DIR has the correct
+# permissions, and returns a Struct::Package object with path and
+# naming info.
 
 Struct.new('Package', :manifest_path, :pdf_path, :mods_path, :new_name)
 
@@ -155,6 +148,9 @@ def check_directory dir
 end
 
 
+# create_zip_file writes the zipfile; two files (MODS and PDF) under a directory.
+
+
 def create_zip_file mods_data, package_info, destination_directory
   name = package_info.new_name
   zip_filename = File.join(destination_directory, name + ".zip")
@@ -182,9 +178,10 @@ def rewrite_mods mods_path, manifest_path, config
   mods = Mods.new(config, mods_path)
   raise "MODS file #{mods_path} is not valid: " + mods.errors.join('; ') unless mods.valid?
 
-  mods.add_flvc_owner_extension manifest.owning_institution
+  mods.add_flvc_owner_extension manifest
   mods.post_process_cleanup
 
+  raise "Errors rewriting MODS: " + mods.errors.join('; ') unless mods.errors.empty?
   return mods.to_s
 end
 
