@@ -33,25 +33,6 @@
   <xsl:template
       match="*[not(node())] | *[not(node()[2]) and node()/self::text() and not(normalize-space())]"/>
 
-
-  <!--  almost works... basedirectory is set to where this transform is, though, and not the source MODS file (which is where the manifest.xml file, yo!)
-
-  <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
-  <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
-
-  <xsl:template name="owningInst">
-    <extension>
-	  <flvc:flvc>
-		<flvc:owningInstitution>
-          <xsl:value-of select="normalize-space(translate((document('manifest.xml')/flvc:manifest/flvc:owningInstitution), $uppercase, $smallcase))"/>
-        </flvc:owningInstitution>
-	  </flvc:flvc>
-	</extension>
-  </xsl:template>
-
-  -->
-
-
   <xsl:template match="mods:titleInfo[@type='alternative']">
 	<titleInfo type="alternative">
 	  <title><xsl:value-of select="."/></title>
