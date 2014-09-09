@@ -20,12 +20,11 @@
 #  Note the zip-package is named after the PDF found in the directory,
 #  as is the MODS xml file.  Certain data are added to the MODS file
 #  via the XSLT transform "modify-serial-mods.xsl" (serials metadata)
-#  and via XPath (extension elements and ?? IID ??)
+#  and via XPath (owningInstitution extension element, IID, etc.)
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
 require 'rubygems'
-require 'zip'
 require 'optparse'
 require 'zip/zip'
 require 'offin/mods'
@@ -189,7 +188,8 @@ def rewrite_mods mods_path, manifest_path, old_name, config
 end
 
 
-# Process handles one directory of PDF/XML/Manifest files, all exceptions are caught here.
+# Process handles one directory of PDF/XML/Manifest files producing
+# the zip file. All exceptions should be caught here.
 
 def process package_directory, destination_directory, config
 
