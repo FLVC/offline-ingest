@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+
+# update-datastream --server ID object datastream filename
+
+require 'rubygems'
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+Kernel.trap('HUP')  { "IGNORE" }
+
+$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+
+require 'optparse'
+require 'offin/ingest-support'
+require 'rubydora'
+
+Struct.new('CommandOptions', :server_id, :object_pid, :datastream_name, :filename)
+
+def get_options args
+
+  server_sections = get_config_server_sections()
+  config = Struct::CommandOptions.new()
+  opts   = OptionParser.new do |opt|
+    opt.banner = "usage: #{$0.sub(/.*\//, '')} --server ID object-pid datastream-name filename"
+    opt.on("--server ID", String, "look in fedora repository for server ID - one of: [ #{server_sections.join(', ')} ]")  { |sid| config.server_id = sid }
+  end
+  opts.parse!(args)
+
+  raise "No server specified." unless config.server_id
+  raise "No object-pid, datastream-name or filename specified." if args.empty?
+  config.object_pid = "info:fedora/" + args.shift
+
+  raise "No datastream-name or filename specified." if args.empty?
+  config.datastream_name = args.shift
+
+  raise "No filename specified." if args.empty?
+  config.filename = args.shift
+  raise "File #{config.filename} doesn't exist (or is in an unreadble directory)." unless File.exists? config.filename
+  raise "File #{config.filename} isn't readble." unless File.readable? config.filename
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+else
+  return config
+end
+
+
+def connect config
+  repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+  repository.ping
+  return repository
+end
+
+command_line_options = get_options(ARGV)
+config = get_config('default', command_line_options.server_id)
+
+repo   = connect(config)
+object = repo.find(command_line_options.object_pid)
+
+if not object
+  puts "No such object ${command_line_options.object_pid} in the fedora repository for #{command_line_options.server_id}"
+  exit -1
+end
+
+if not object.datastreams.keys.include? command_line_options.datastream_name
+  puts "No such datastream #{command_line_options.datastream_name} for object #{command_line_options.object_pid} - nothing to update!"
+  puts "Available datastreams: #{object.datastreams.keys.sort.join(', ')}"
+  exit -1
+end
+
+ds = object.datastreams[command_line_options.datastream_name]
+ds.content = File.read(command_line_options.filename)
+ds.save
