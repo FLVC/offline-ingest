@@ -10,7 +10,7 @@
 #      manifest.xml
 #
 # and creates a zip file suitable for uploading into the islandora GUI
-# zip-importer as a serial package.
+# zip-importer as a serials package:
 #
 #  3170510_85no4.zip -    contents of this produced zipfile:
 #
@@ -18,9 +18,10 @@
 #      3170510_85no4/3170510_85no4.xml
 #
 #  Note the zip-package is named after the PDF found in the directory,
-#  as is the MODS xml file.  Certain data are added to the MODS file
-#  via the XSLT transform "modify-serial-mods.xsl" (serials metadata)
-#  and via XPath (owningInstitution extension element, IID, etc.)
+#  and is used to rename the MODS xml file.  Certain data are added to
+#  the MODS file via the post-processing XSLT transform indicated in
+#  the config.yml file (serials metadata) and via direct XPath
+#  manipulations (owningInstitution extension element, IID, etc.)
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
@@ -53,22 +54,20 @@ def get_command_line_arguments args
     EOF
 
   command_options = Struct::Options.new(nil)
+  command_options.destination_directory = '.'
 
   opts   = OptionParser.new do |opt|
     opt.banner = banner
-    command_options.destination_directory = '.'
     opt.on("--destination-directory DIR", String, "Deposit the created zipfiles into DIR instead of the current working directory.") { |dir| command_options.destination_directory = dir.sub(/\/+$/, '/') }
   end
 
   opts.parse!(args)
 
-  if command_options.destination_directory
-    raise  "The directory #{command_options.destination_directory} doesn't exist"            unless File.exists?    command_options.destination_directory
-    raise  "The directory #{command_options.destination_directory} isn't really a directory" unless File.directory? command_options.destination_directory
-    raise  "Can't write to directory #{command_options.destination_directory}"               unless File.writable?  command_options.destination_directory
-  end
+  raise  "The directory #{command_options.destination_directory} doesn't exist"            unless File.exists?    command_options.destination_directory
+  raise  "The directory #{command_options.destination_directory} isn't really a directory" unless File.directory? command_options.destination_directory
+  raise  "Can't write to directory #{command_options.destination_directory}"               unless File.writable?  command_options.destination_directory
 
-  raise "No packages specified." if args.empty?
+  raise  "No packages specified." if args.empty?
 
 rescue => e
   STDERR.puts e, opts
@@ -87,9 +86,9 @@ def check_directory_permissions dir
 end
 
 
-# check_directory makes sure directory DIR has the correct
+# check_directory(DIR) makes sure directory DIR has the correct
 # permissions, and returns a Struct::Package object with path and
-# naming info.
+# name info.
 
 Struct.new('Package', :manifest_path, :pdf_path, :mods_path, :new_name, :old_name)
 
@@ -97,13 +96,10 @@ def check_directory dir
 
   check_directory_permissions(dir)
 
-  package_name  = File.basename(dir)
-  all_files = Dir["#{dir}/*"]
-
-  left_over = []
-
-  package_data = Struct::Package.new()
-
+  all_files             = Dir["#{dir}/*"]
+  left_overs            = []
+  package_name          = File.basename(dir)
+  package_data          = Struct::Package.new()
   package_data.old_name = package_name
 
   all_files.each do |f|
@@ -112,7 +108,7 @@ def check_directory dir
     next if ['.', '..'].include?(bn)
 
     if File.directory?(f)
-      left_over.push(f)
+      left_overs.push(f)
       next
     end
 
@@ -126,14 +122,16 @@ def check_directory dir
       package_data.new_name = $1
       package_data.pdf_path = f
 
-    when (bn == "manifest.xml")
+    when (bn == "manifest.xml")          # found our manifest
       package_data.manifest_path = f
 
     else
-      left_over.push f
+      left_overs.push f                  # whoops
     end
 
   end # of directory loop
+
+  STDERR.puts "Warning: #{dir} contains these unaccounted-for files: " + left_overs.join(', ')  if not left_overs.empty?
 
   raise "Directory #{dir} doesn't contain a PDF, skipping"       unless package_data.pdf_path
   raise "Directory #{dir} doesn't contain a manifest, skipping"  unless package_data.manifest_path
@@ -143,20 +141,19 @@ def check_directory dir
   raise "Can't read manifest file #{package_data.manifest_path}" unless File.readable?(package_data.manifest_path)
   raise "Can't read MODS file #{package_data.mods_path}"         unless File.readable?(package_data.mods_path)
 
-  STDERR.puts "Warning: #{dir} contains these unaccounted-for files: " + left_over.jpoin(', ')  if not left_over.empty?
-
   return package_data
 end
 
 
-# create_zip_file writes the zipfile; two files (MODS and PDF) under a directory.
+# create_zip_file(...) writes the zipfile; two files (MODS and PDF)
+# under a directory.
 
 
 def create_zip_file mods_data, package_info, destination_directory
   name = package_info.new_name
   zip_filename = File.join(destination_directory, name + ".zip")
 
-  raise "Can't write #{zip_filename}, it already exists." if File.exists?(zip_filename)
+  raise "Won't write #{zip_filename}, it already exists." if File.exists?(zip_filename)
 
   Zip::ZipOutputStream::open(zip_filename) do |io|
 
@@ -169,6 +166,10 @@ def create_zip_file mods_data, package_info, destination_directory
   return zip_filename
 end
 
+# Extract the owning institution from the manifest.xml file and add it
+# to the MODS file; use the original directory name as an IID if there
+# isn't one; finally, apply the config file's  "mods_post_processing_filename"
+# XSLT when everything else is done.
 
 def rewrite_mods mods_path, manifest_path, old_name, config
 
@@ -182,20 +183,20 @@ def rewrite_mods mods_path, manifest_path, old_name, config
   mods.add_iid_identifier(old_name)  if mods.iids.empty?
   mods.add_flvc_owner_extension(manifest)
   mods.post_process_cleanup()
-
   raise "Errors rewriting MODS: " + mods.errors.join('; ') unless mods.errors.empty?
+
   return mods.to_s
 end
 
 
-# Process handles one directory of PDF/XML/Manifest files producing
-# the zip file. All exceptions should be caught here.
+# process(...) handles one directory of PDF/XML/Manifest files
+# producing the zip file. All exceptions should be caught here.
 
 def process package_directory, destination_directory, config
 
-  info = check_directory(package_directory)
-  mods_data = rewrite_mods(info.mods_path, info.manifest_path, info.old_name, config)
-  zip_filename = create_zip_file(mods_data, info, destination_directory)
+  directory_data = check_directory(package_directory)
+  mods_data      = rewrite_mods(directory_data.mods_path, directory_data.manifest_path, directory_data.old_name, config)
+  zip_filename   = create_zip_file(mods_data, directory_data, destination_directory)
 
   puts File.basename(package_directory) + ' => ' + File.basename(zip_filename)
 
