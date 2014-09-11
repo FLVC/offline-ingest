@@ -20,12 +20,11 @@
 #  Note the zip-package is named after the PDF found in the directory,
 #  as is the MODS xml file.  Certain data are added to the MODS file
 #  via the XSLT transform "modify-serial-mods.xsl" (serials metadata)
-#  and via XPath (extension elements and ?? IID ??)
+#  and via XPath (owningInstitution extension element, IID, etc.)
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
 require 'rubygems'
-require 'zip'
 require 'optparse'
 require 'zip/zip'
 require 'offin/mods'
@@ -92,7 +91,7 @@ end
 # permissions, and returns a Struct::Package object with path and
 # naming info.
 
-Struct.new('Package', :manifest_path, :pdf_path, :mods_path, :new_name)
+Struct.new('Package', :manifest_path, :pdf_path, :mods_path, :new_name, :old_name)
 
 def check_directory dir
 
@@ -104,6 +103,8 @@ def check_directory dir
   left_over = []
 
   package_data = Struct::Package.new()
+
+  package_data.old_name = package_name
 
   all_files.each do |f|
     bn = File.basename(f)
@@ -169,7 +170,7 @@ def create_zip_file mods_data, package_info, destination_directory
 end
 
 
-def rewrite_mods mods_path, manifest_path, config
+def rewrite_mods mods_path, manifest_path, old_name, config
 
   manifest = Manifest.new(config, manifest_path)
   raise "Manifest file #{manifest_path} is not valid: " + manifest.errors.join('; ') unless manifest.valid?
@@ -178,18 +179,22 @@ def rewrite_mods mods_path, manifest_path, config
   mods = Mods.new(config, mods_path)
   raise "MODS file #{mods_path} is not valid: " + mods.errors.join('; ') unless mods.valid?
 
-  mods.add_flvc_owner_extension manifest
-  mods.post_process_cleanup
+  mods.add_iid_identifier(old_name)  if mods.iids.empty?
+  mods.add_flvc_owner_extension(manifest)
+  mods.post_process_cleanup()
 
   raise "Errors rewriting MODS: " + mods.errors.join('; ') unless mods.errors.empty?
   return mods.to_s
 end
 
 
+# Process handles one directory of PDF/XML/Manifest files producing
+# the zip file. All exceptions should be caught here.
+
 def process package_directory, destination_directory, config
 
   info = check_directory(package_directory)
-  mods_data = rewrite_mods(info.mods_path, info.manifest_path, config)
+  mods_data = rewrite_mods(info.mods_path, info.manifest_path, info.old_name, config)
   zip_filename = create_zip_file(mods_data, info, destination_directory)
 
   puts File.basename(package_directory) + ' => ' + File.basename(zip_filename)
@@ -206,6 +211,11 @@ end
 options, package_directories = get_command_line_arguments(ARGV)
 
 config = Datyl::Config.new(CONFIG_FILENAME, "default", "zip_serialize_pdfs")
+
+if config.proxy
+  ENV['http_proxy'] = config.proxy
+  ENV['HTTP_PROXY'] = config.proxy
+end
 
 package_directories.each do |package_directory|
   process package_directory, options.destination_directory, config
