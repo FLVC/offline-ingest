@@ -14,6 +14,7 @@ require 'optparse'
 require 'offin/ingest-support'
 require 'rubydora'
 
+
 Struct.new('CommandOptions', :server_id, :object_pid, :datastream_name, :filename)
 
 def get_options args
@@ -44,6 +45,7 @@ else
   return config
 end
 
+# TODO: catch error and exit
 
 def connect config
   repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
@@ -58,16 +60,19 @@ repo   = connect(config)
 object = repo.find(command_line_options.object_pid)
 
 if not object
-  puts "No such object ${command_line_options.object_pid} in the fedora repository for #{command_line_options.server_id}"
+  STDERR.puts "No such object #{command_line_options.object_pid} in the fedora repository for #{command_line_options.server_id}"
   exit -1
 end
 
 if not object.datastreams.keys.include? command_line_options.datastream_name
-  puts "No such datastream #{command_line_options.datastream_name} for object #{command_line_options.object_pid} - nothing to update!"
-  puts "Available datastreams: #{object.datastreams.keys.sort.join(', ')}"
+  STDERR.puts "No such datastream #{command_line_options.datastream_name} for object #{command_line_options.object_pid} - nothing to update!"
+  STDERR.puts "Available datastreams: #{object.datastreams.keys.sort.join(', ')}"
   exit -1
 end
 
+
+# main()
+
 ds = object.datastreams[command_line_options.datastream_name]
-ds.content = File.read(command_line_options.filename)
+ds.content = (command_line_options.filename == '-' ? STDIN : open(command_line_options.filename))
 ds.save
