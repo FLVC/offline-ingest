@@ -166,7 +166,7 @@
 
             %td
               - if p.success
-                %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{p.islandora_pid}" }
+                %a{ :target => "islandora", :href => "https://#{@hostname}/islandora/object/#{p.islandora_pid}" }
                   #{p.package_name.to_s + " &rArr;"}
               - else
                 #{p.package_name}
