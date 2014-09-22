@@ -33,14 +33,6 @@ class TableOfContents
     @valid = true
     @structmap = structmap
 
-
-
-    puts '+' * 100
-    @structmap.each { |elt| puts elt.inspect }
-    puts '-' * 100
-    puts '', ''
-
-
     @structmap.each do |div_data|
       if div_data.is_page
 
@@ -66,10 +58,6 @@ class TableOfContents
 
       @sequence.push entry
     end
-
-    puts '+' * 100
-    @sequence.each { |elt| puts elt.inspect }
-    puts '-' * 100
 
 
     check_for_page_images
