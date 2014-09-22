@@ -121,7 +121,9 @@ class TableOfContents
   #
 
 
-  # All we do here is discard the first occurences of pages if there are multiple occurences of that page
+  # All we do here is discard the first occurences of pages if there
+  # are multiple occurences of that page, and merge titles of adjacent
+  # chapters.
 
   def telescope_pages
     page_records = {}
