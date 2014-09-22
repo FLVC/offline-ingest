@@ -4,32 +4,42 @@ require 'offin/errors'
 require 'json'
 
 
-# Helper classes for analyzing METS data.
+# This file contains helper classes/structs for analyzing METS data.
 
-Struct.new('Page',    :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype)
-Struct.new('Chapter', :title, :level)
 
 # Class TableOfContents is initialized by a METS structmap, which is
 # provided by a Mets object method.  The Package object makes use of
-# TableOfContents, in particular to produce json output for the page
+# TableOfContents to produce json output for the page
 # turning application.
+#
+# The structmap object (class MetsStructMap) provides an ordered list of these objects:
+#    <Struct:MetsDivData  :level, :title, :is_page, :fids, :files>
+# where :files is a list of
+#    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
+#
+# We're transforming this into a sequence of Struct::Page and Struct::Chapter objects
+# that are slightly more uniform.
 
+Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype)
+Struct.new('Chapter',       :title, :level)
 
 class TableOfContents
 
   include Errors  # because I don't have enough of my own.
 
   def initialize structmap
+
     @sequence = []
     @valid = true
     @structmap = structmap
 
-    # The structmap object (class MetsStructMap) provides an ordered list of these objects:
-    #    <Struct:MetsDivData  :level, :title, :is_page, :fids, :files>
-    # where :files is a list of
-    #    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
-    #
-    # we're transforming this into a sequence of Page and Chapter structs that are slightly more uniform.
+
+
+    puts '+' * 100
+    @structmap.each { |elt| puts elt.inspect }
+    puts '-' * 100
+    puts '', ''
+
 
     @structmap.each do |div_data|
       if div_data.is_page
@@ -57,11 +67,99 @@ class TableOfContents
       @sequence.push entry
     end
 
-    cleanup_chapter_titles
-    cleanup_page_titles
+    puts '+' * 100
+    @sequence.each { |elt| puts elt.inspect }
+    puts '-' * 100
+
+
     check_for_page_images
     nip_it_in_the_bud
+    telescope_pages
+    cleanup_chapter_titles
+    cleanup_page_titles
    end
+
+
+  # We can sometimes have structmaps that repeat pages, notably for the case where there are two chapters on one page.  For instance:
+  #
+  # Chapter            <METS:div LABEL="Baby-Land" TYPE="section">
+  #
+  # Page                 <METS:div LABEL="3" TYPE="page">            <METS:fptr FILEID="FID6"/> </METS:div>
+  # Page                 <METS:div LABEL="4" TYPE="page">            <METS:fptr FILEID="FID7"/> </METS:div>        </METS:div>
+  #
+  # Chapter            <METS:div LABEL="Who Is She" TYPE="section">
+  # Page                 <METS:div LABEL="5" TYPE="page">            <METS:fptr FILEID="FID8"/> </METS:div>        </METS:div>
+  #
+  # Chapter            <METS:div LABEL="Niddlety Noddy" TYPE="section">
+  # Page                 <METS:div LABEL="5" TYPE="page">            <METS:fptr FILEID="FID8"/> </METS:div>        </METS:div>
+  #
+  # Chapter            <METS:div LABEL="Little Frogs At School" TYPE="section">
+  # Page                 <METS:div LABEL="6" TYPE="page">            <METS:fptr FILEID="FID10"/> </METS:div>        </METS:div>
+  #
+  # In the above, we have the page with FILEID FID8 (LABEL="5") repeated twice,  which won't do.   More briefly the data look like:
+  #
+  # Chapter  Baby-Land
+  # Page       3
+  # Page       4
+  # Chapter  Who Is She
+  # Page       5
+  # Chapter  Niddlety Noddy
+  # Page       5
+  # Chapter  Little Frogs At School
+  # Page       6
+  #
+  # we telescope the data as so:
+  #
+  # Chapter  Baby-Land
+  # Page       3
+  # Page       4
+  # Chapter  Who Is She
+  # Chapter  Niddlety Noddy
+  # Page       5
+  # Chapter  Little Frogs At School
+  # Page       6
+  #
+
+
+  # All we do here is discard the first occurences of pages if there are multiple occurences of that page
+
+  def telescope_pages
+    page_records = {}
+
+    @sequence.each do |entry|
+      if is_page?(entry)
+        filename = filename(entry)
+        page_records[filename]  = 0 unless page_records[filename]
+        page_records[filename] += 1
+      end
+    end
+
+    telescoped_sequence = []
+    @sequence.each do |entry|
+      case
+      when is_page?(entry)
+        filename = filename(entry)
+        if page_records[filename] > 1
+          page_records[filename] -= 1
+        else
+          telescoped_sequence.push entry
+        end
+
+      when is_chapter?(entry)
+        if is_chapter?(telescoped_sequence[-1])
+          telescoped_sequence[-1].title += "; " + entry.title
+        else
+          telescoped_sequence.push entry
+        end
+
+      # when is_chapter?(entry)                     above collapses chapters... this leave multiple adjancent chapters
+      #     telescoped_sequence.push entry
+
+      end # of case
+
+    end
+    @sequence = telescoped_sequence
+  end
 
 
   def each
@@ -69,11 +167,11 @@ class TableOfContents
   end
 
   def pages
-    @sequence.select{ |elt| elt.class == Struct::Page }
+    @sequence.select{ |elt| is_page? elt }
   end
 
   def chapters
-    @sequence.select{ |elt| elt.class == Struct::Chapter }
+    @sequence.select{ |elt| is_chapter? elt }
   end
 
   def to_json label = nil
@@ -122,6 +220,20 @@ class TableOfContents
   private
 
 
+  def is_page? elt
+    return elt.class == Struct::Page
+  end
+
+  def is_chapter? elt
+    return elt.class == Struct::Chapter
+  end
+
+  def filename elt
+    return unless is_page? elt
+    return elt.image_filename || elt.text_filename
+  end
+
+
   # sometimes we have a TOC structure like this:
   #
   # level-1
@@ -143,13 +255,13 @@ class TableOfContents
   def has_bud? seq
     return false unless seq.length > 1
     return true if  seq[0].level == 1 \
-                and seq[0].class != Struct::Page \
+                and not is_page? seq[0] \
                 and seq[1..-1].all? { |ent| ent.level > 1 }
   end
 
 
-  # TODO: not too sure how to approach this yet.
-  # it is certainly to early to filesystem checks on the files' existance.
+  # TODO: not too sure how to approach this yet.  it is certainly too
+  # early to filesystem checks on the files' existance.
   #
   # So this may be a fatal error (@valid => false) but let's wait and
   # experiment for now; just issue warnings.

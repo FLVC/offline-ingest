@@ -35,7 +35,6 @@ config  = Datyl::Config.new(config_filename, "default")
 
 SaxDocumentExamineMets.debug = false
 
-
 ARGV.each do |filename|
 
   STDERR.puts filename
@@ -52,26 +51,25 @@ ARGV.each do |filename|
   # all of the candidate structmaps
 
   structmaps = mets.sax_document.structmaps
-  STDERR.puts "", "Structmap Data for the #{structmaps.count}  #{structmaps.count == 0 ? 'structmap' : 'structmaps'}", ""
 
-  count = 1
-  structmaps.each do |sm|
-    puts "StructMap Number #{count}"
-    sm.each do |elt|
-      line = '. ' * elt.level
-      case
-      when elt.is_page
-        line += '. ' + '"' + elt.title + '"'
-        elt.files.each { |file| line = "#{line} [#{file.sequence}] -- #{file.href}  "  }
-      else # is a section heading
-        line += '* ' + '"' +  elt.title + '"'
-      end
-      puts line
-    end
-    puts ""
-    count += 1
-  end
-  puts ""
+  # count = 1
+  # structmaps.each do |sm|
+  #   puts "StructMap Number #{count}"
+  #   sm.each do |elt|
+  #     line = '. ' * elt.level
+  #     case
+  #     when elt.is_page
+  #       line += '. ' + '"' + elt.title + '"'
+  #       elt.files.each { |file| line = "#{line} [#{file.sequence}] -- #{file.href}  "  }
+  #     else # is a section heading
+  #       line += '* ' + '"' +  elt.title + '"'
+  #     end
+  #     puts line
+  #   end
+  #   puts ""
+  #   count += 1
+  # end
+  # puts ""
 
   # mets.structmap.print
 
@@ -87,5 +85,5 @@ ARGV.each do |filename|
 
   puts toc.to_json(mets.label)
 
-  # toc.print
+  toc.print
 end
