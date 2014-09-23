@@ -52,7 +52,7 @@ class TableOfContents
 
       else
         entry = Struct::Chapter.new
-        entry.title = div_data.title
+        entry.title = div_data.title || ''
         entry.level = div_data.level
       end
 
@@ -61,7 +61,7 @@ class TableOfContents
 
 
     check_for_page_images
-    nip_it_in_the_bud
+    nip_it_in_the_bud              # TODO: this is proabably mistaken now that we can telescope pages
     telescope_pages
     cleanup_chapter_titles
     cleanup_page_titles
