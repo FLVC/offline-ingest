@@ -71,7 +71,7 @@ def package_ingest_usage
 end
 
 def get_config_server_sections
-  return  Datyl::Config.new(get_config_filename, 'default').all_sections - [ 'default' ]
+  return  Datyl::Config.new(get_config_filename, 'default').all_sections - [ 'default', 'zip_serialize_pdfs' ]
 rescue
   return []
 end

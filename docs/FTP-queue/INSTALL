@@ -47,6 +47,8 @@ Setup islandora load system
    # make
    # make install
 
+### Note: This is probabably going in as 2.8.14, latest patched version of 2.8
+
  These instructions assume there is a redis:redis user in ldap with
  home directory /var/db/redis;  make the home, chmod 755, chown redis:redis.
 

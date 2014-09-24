@@ -14,7 +14,7 @@ when /alpo/
   $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
 
-when /romeo-foxtrot/
+when /flvc-rfischer|romeo-foxtrot/
   $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
   config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
 
@@ -48,6 +48,30 @@ ARGV.each do |filename|
   STDERR.puts 'METS Warnings: ', mets.warnings if mets.warnings?
 
   next unless mets.valid?
+
+  # all of the candidate structmaps
+
+  structmaps = mets.sax_document.structmaps
+  STDERR.puts "", "Structmap Data for the #{structmaps.count}  #{structmaps.count == 0 ? 'structmap' : 'structmaps'}", ""
+
+  count = 1
+  structmaps.each do |sm|
+    puts "StructMap Number #{count}"
+    sm.each do |elt|
+      line = '. ' * elt.level
+      case
+      when elt.is_page
+        line += '. ' + '"' + elt.title + '"'
+        elt.files.each { |file| line = "#{line} [#{file.sequence}] -- #{file.href}  "  }
+      else # is a section heading
+        line += '* ' + '"' +  elt.title + '"'
+      end
+      puts line
+    end
+    puts ""
+    count += 1
+  end
+  puts ""
 
   # mets.structmap.print
 

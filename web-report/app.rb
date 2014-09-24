@@ -47,7 +47,7 @@ end # of configure
 helpers do
 
   def list_component_links package
-    return package.get_components.map { |pid| "<a href=\"http://#{@hostname}/islandora/object/#{pid}\">#{pid}</a>" }
+    return package.get_components.map { |pid| "<a href=\"https://#{@hostname}/islandora/object/#{pid}\">#{pid}</a>" }
   end
 
   def list_purl_links package
@@ -85,7 +85,7 @@ helpers do
     collections = package.get_collections.each do |pid|
 
       title = collection_titles[pid] ? collection_titles[pid] + " (#{pid})" : pid
-      list.push "<a #{css} href=\"http://#{config.site}/islandora/object/#{pid}\">#{title}</a>"
+      list.push "<a #{css} href=\"https://#{config.site}/islandora/object/#{pid}\">#{title}</a>"
     end
     return list
   end
@@ -94,7 +94,7 @@ helpers do
     links = []
     Utils.get_datastream_names(config, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
       ### TODO: escape name? escape label?
-      links.push "<a #{css} href=\"http://#{config.site}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
+      links.push "<a #{css} href=\"https://#{config.site}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
     end
     return links
   end

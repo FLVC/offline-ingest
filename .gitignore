@@ -23,3 +23,5 @@ junk/
 sample-data/
 sample-metadata/
 src/
+\#*\#
+\.#*
