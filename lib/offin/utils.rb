@@ -234,10 +234,16 @@ class Utils
     return {}
   end
 
+  # This can't quite do what we want anymore, since we're checking
+  # HTTPS but not logged in.  We could use an admin account and
+  # include the https://login:password@site/ but I hate hate hate
+  # that.  It would of course come out of the config file in that
+  # case.
+
   def Utils.ping_islandora_for_object islandora_site, pid
     return :missing unless pid
     response = quickly do
-      RestClient.head "http://#{islandora_site}/islandora/object/#{pid}/"
+      RestClient.head "https://#{islandora_site}/islandora/object/#{pid}/"
     end
     if (response.code > 199 and response.code < 400)
       return :present

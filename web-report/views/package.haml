@@ -45,8 +45,8 @@
 
     - if @package.islandora_pid
       Islandora ID:
-      - if @on_islandora == :present
-        %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
+      - if @on_islandora == :present or @on_islandora == :forbidden
+        %a{ :target => "islandora", :href => "https://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
           #{@package.islandora_pid + " &rArr;"}
       - else
         #{@package.islandora_pid}
@@ -55,11 +55,9 @@
 
     - if @package.success
       - case @on_islandora
-      - when :present
-        %a{ :target => "islandora", :href => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
-          %img{ :src => "http://#{@hostname}/islandora/object/#{@package.islandora_pid}/datastream/TN/view" }
-      - when :forbidden
-        You are not authorizied to retreive information about this package from Islandora at this time.
+      - when :present, :forbidden
+        %a{ :target => "islandora", :href => "https://#{@hostname}/islandora/object/#{@package.islandora_pid}" }
+          %img{ :src => "https://#{@hostname}/islandora/object/#{@package.islandora_pid}/datastream/TN/view" }
       - when :missing
         This package is no longer present on islandora.
       - when :error
