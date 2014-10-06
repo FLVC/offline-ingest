@@ -67,7 +67,7 @@ class BaseWatchDirectory
     new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
     FileUtils.mkdir new_directory
 ####   FileUtils.chown nil, SHARED_GROUP, new_directory          # we don't really need to do this; set-gid on directory should get this right
-    FileUtils.chmod 02775,  new_directory
+###    FileUtils.chmod 02775,  new_directory
     return new_directory
   rescue => e
     raise SystemError, "Encountered a fatal error when creating a new processing directory for #{hostname}: #{e.class} - #{e.message}"
