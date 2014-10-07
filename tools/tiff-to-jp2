@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
+
+require 'offin/ingest-support'
+require 'offin/utils'
+
+
+def me
+  return $*.sub(/^.*\//, '')
+end
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+
+GIF  = %r{image/gif}
+JP2  = %r{image/jp2}
+PNG  = %r{image/png}
+JPEG = %r{image/jpeg}
+TIFF = %r{image/tiff}
+PDF  = %r{application/pdf}
+TEXT = %r{text/}
+
+
+config  = get_config()
+
+tiff_filename = ARGV[0]
+
+if tiff_filename.nil? or not File.exists? tiff_filename
+  STDERR.outs "Usage: #{me} tiff-filename"
+  exit 1
+end
+
+type = Utils.mime_type(tiff_filename)
+
+unless type =~ TIFF
+  STDERR.outs "Usage: #{me} TIFF-filename"
+  exit 1
+end
+
+image = Magick::Image.read(tiff_filename).first
+
+jp2k_filename = tiff_filename.sub(/\.tif.*$/i, '') + '.jp2k'
+
+image.format = 'JP2'
+
+open(jp2k_filename, 'rw') do |fh|
+  fh.write image.to_blob
+end
