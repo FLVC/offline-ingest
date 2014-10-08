@@ -10,7 +10,8 @@ require 'open3'
 require 'stringio'
 require 'tempfile'
 require 'timeout'
-require 'rest_client'
+require 'restclient'
+require 'uri'
 require 'nokogiri'
 require 'time'
 
@@ -160,11 +161,10 @@ class Utils
     return if config.test_mode and not config.solr_url   # user specified testing mode without specifying server - technicaly OK?
 
     url = "#{config.solr_url}/select/?q=mods_identifier_iid_mls:#{Utils.solr_escape(iid)}&version=2.2&indent=on&fl=PID,mods_identifier_iid_ms"
-    doc = quickly do
-      RestClient.get(url)
-    end
-
+    uri = URI.encode(url)
+    doc = quickly { RestClient.get(uri) }
     xml = Nokogiri::XML(doc)
+
     element = xml.xpath("//result/doc/str[@name='PID']")[0]
     return element.child.text if element and element.child
     return nil
@@ -173,11 +173,11 @@ class Utils
     raise SystemError, "Can't obtain IID from solr at '#{url}': #{e.class} #{e.message}"
 
   rescue => e
-    raise SystemError, "Can't process IID obtained from solr at '#{@url}': : #{e.class} #{e.message}"
+    raise SystemError, "Can't process IID obtained from solr at '#{url}': : #{e.class} #{e.message}"
   end
 
 
-  # return a mapping from short islandpora pids (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles
+  # Return a mapping from short islandora PIDs (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles.
 
   def Utils.get_collection_names config
     query = "select $object $title from <#ri> " +
