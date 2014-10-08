@@ -181,8 +181,8 @@ class Utils
 
   def Utils.get_collection_names config
     query = "select $object $title from <#ri> " +
-             "where $object <fedora-model:label> $title " +
-               "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
+      "where $object <fedora-model:label> $title " +
+      "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
 
     repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
 
@@ -220,7 +220,9 @@ class Utils
 
   def Utils.get_datastream_names config, pid
     doc = quickly do
-      RestClient.get("http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml")
+      url = "http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') +
+        "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml"
+      RestClient.get(URI.encode(url))
     end
     xml = Nokogiri::XML(doc)
 
@@ -243,7 +245,7 @@ class Utils
   def Utils.ping_islandora_for_object islandora_site, pid
     return :missing unless pid
     response = quickly do
-      RestClient.head "https://#{islandora_site}/islandora/object/#{pid}/"
+      RestClient.head(URI.encode("https://#{islandora_site}/islandora/object/#{pid}/"))
     end
     if (response.code > 199 and response.code < 400)
       return :present
@@ -640,12 +642,12 @@ class Utils
 
   def Utils.get_datastream_contents config, pid, dsid
 
-      url = "http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid}/datastreams/#{dsid}/content"
-      doc = quickly do
-        RestClient.get(url)
-      end
+    url = "http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid}/datastreams/#{dsid}/content"
+    doc = quickly do
+      RestClient.get(URI.encode(url))
+    end
 
-      return doc
+    return doc
   end
 
   def Utils.rels_ext_get_policy_fields config, collection_pid
@@ -661,21 +663,21 @@ class Utils
     manage_rule_count = 0
 
     rels_ext_xml.xpath("//isViewableByUser").each do |node|
-     view_rule_count += 1
-     if (node.text != 'fedoraAdmin')
-      str += <<-XML.gsub(/^    /, '')
+      view_rule_count += 1
+      if (node.text != 'fedoraAdmin')
+        str += <<-XML.gsub(/^    /, '')
         <islandora:isViewableByUser>#{node.text}</islandora:isViewableByUser>
     XML
-     end
+      end
     end
 
     rels_ext_xml.xpath("//isViewableByRole").each do |node|
-     view_rule_count += 1
-     if (node.text != 'administrator')
-      str += <<-XML.gsub(/^    /, '')
+      view_rule_count += 1
+      if (node.text != 'administrator')
+        str += <<-XML.gsub(/^    /, '')
         <islandora:isViewableByRole>#{node.text}</islandora:isViewableByRole>
     XML
-     end
+      end
     end
 
     if view_rule_count > 0
@@ -686,21 +688,21 @@ class Utils
     end
 
     rels_ext_xml.xpath("//isManageableByUser").each do |node|
-     manage_rule_count += 1
-     if (node.text != 'fedoraAdmin')
-      str += <<-XML.gsub(/^    /, '')
+      manage_rule_count += 1
+      if (node.text != 'fedoraAdmin')
+        str += <<-XML.gsub(/^    /, '')
         <islandora:isManageableByUser>#{node.text}</islandora:isManageableByUser>
     XML
-     end
+      end
     end
 
     rels_ext_xml.xpath("//isManageableByRole").each do |node|
-     manage_rule_count += 1
-     if (node.text != 'administrator')
-      str += <<-XML.gsub(/^    /, '')
+      manage_rule_count += 1
+      if (node.text != 'administrator')
+        str += <<-XML.gsub(/^    /, '')
         <islandora:isManageableByRole>#{node.text}</islandora:isManageableByRole>
     XML
-     end
+      end
     end
 
     if manage_rule_count > 0
@@ -736,6 +738,5 @@ class Utils
     STDERR.puts "Error reading config file for #{site} section: #{e.class}: #{e.message}"
     return nil
   end
-
 
 end # of class Utils
