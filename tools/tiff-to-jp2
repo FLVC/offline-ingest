@@ -8,7 +8,7 @@ require 'offin/utils'
 
 
 def me
-  return $*.sub(/^.*\//, '')
+  return $0.sub(/^.*\//, '')
 end
 
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
@@ -29,14 +29,14 @@ config  = get_config()
 tiff_filename = ARGV[0]
 
 if tiff_filename.nil? or not File.exists? tiff_filename
-  STDERR.outs "Usage: #{me} tiff-filename"
+  STDERR.puts "Usage: #{me} tiff-filename"
   exit 1
 end
 
 type = Utils.mime_type(tiff_filename)
 
 unless type =~ TIFF
-  STDERR.outs "Usage: #{me} TIFF-filename"
+  STDERR.puts "Usage: #{me} TIFF-filename"
   exit 1
 end
 
@@ -44,8 +44,12 @@ image = Magick::Image.read(tiff_filename).first
 
 jp2k_filename = tiff_filename.sub(/\.tif.*$/i, '') + '.jp2k'
 
+support = Magick.formats
+support.keys.sort.each { |k| puts "#{k}  => #{support[k]}" }
+exit
+
 image.format = 'JP2'
 
-open(jp2k_filename, 'rw') do |fh|
+open(jp2k_filename, 'w+') do |fh|
   fh.write image.to_blob
 end
