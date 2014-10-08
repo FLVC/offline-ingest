@@ -13,14 +13,17 @@ require 'json'
 # turning application.
 #
 # The structmap object (class MetsStructMap) provides an ordered list of these objects:
+#
 #    <Struct:MetsDivData  :level, :title, :is_page, :fids, :files>
-# where :files is a list of
+#
+# where :files is an array of
+#
 #    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
 #
 # We're transforming this into a sequence of Struct::Page and Struct::Chapter objects
 # that are slightly more uniform.
 
-Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype)
+Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype, :fid)
 Struct.new('Chapter',       :title, :level)
 
 class TableOfContents
@@ -37,16 +40,18 @@ class TableOfContents
       if div_data.is_page
 
         entry = Struct::Page.new
-        entry.title = div_data.title
+        entry.title = (div_data.title || '').strip
         entry.level = div_data.level
 
         div_data.files.each do |f|
           if f.mimetype =~ /image/
             entry.image_filename = f.href
             entry.image_mimetype = f.mimetype
+            entry.fid = f.fid
           elsif f.mimetype =~ /text/             # what was I thinking here? no way this is going to work....
             entry.text_filename = f.href
             entry.text_mimetype = f.mimetype
+            entry.fid = f.fid
           end
         end
 
@@ -62,7 +67,7 @@ class TableOfContents
 
     check_for_page_images
     nip_it_in_the_bud              # TODO: this is proabably mistaken now that we can telescope pages
-    telescope_pages
+    # telescope_pages
     cleanup_chapter_titles
     cleanup_page_titles
    end
@@ -109,9 +114,9 @@ class TableOfContents
   #
 
 
-  # All we do here is discard the first occurences of pages if there
-  # are multiple occurences of that page, and merge titles of adjacent
-  # chapters.
+  # All we do in telescope_pages is discard the first occurences of
+  # pages if there are multiple occurences of that page, and merge
+  # titles of adjacent chapters (or not -)
 
   def telescope_pages
     page_records = {}
@@ -135,15 +140,15 @@ class TableOfContents
           telescoped_sequence.push entry
         end
 
-      when is_chapter?(entry)
-        if is_chapter?(telescoped_sequence[-1])
-          telescoped_sequence[-1].title += "; " + entry.title
-        else
-          telescoped_sequence.push entry
-        end
-
-      # when is_chapter?(entry)                     above collapses chapters... this leave multiple adjancent chapters
+      # when is_chapter?(entry)
+      #   if is_chapter?(telescoped_sequence[-1])
+      #     telescoped_sequence[-1].title += "; " + entry.title
+      #   else
       #     telescoped_sequence.push entry
+      #   end
+
+      when is_chapter?(entry)                    # above collapses chapters... this leaves multiple adjancent chapters
+        telescoped_sequence.push entry
 
       end # of case
 
@@ -172,14 +177,14 @@ class TableOfContents
     toc = []
     seq = 1
     @sequence.each do |entry|
-      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => seq.to_s }
-      case entry
-      when Struct::Chapter
-        rec['type'] = 'chapter'
-      when Struct::Page
-        rec['type'] = 'page'
-        seq += 1
-      end
+      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => entry.pagenum }
+      # case entry
+      # when Struct::Chapter
+      #   rec['type'] = 'chapter'
+      # when Struct::Page
+      #   rec['type'] = 'page'
+      #   seq += 1
+      # end
       toc.push rec
     end
 
@@ -251,7 +256,7 @@ class TableOfContents
 
 
   # TODO: not too sure how to approach this yet.  it is certainly too
-  # early to filesystem checks on the files' existance.
+  # early to do actual filesystem checks for the files' existence.
   #
   # So this may be a fatal error (@valid => false) but let's wait and
   # experiment for now; just issue warnings.
@@ -278,47 +283,59 @@ class TableOfContents
   # be unique for the IA book reader to treat table of contents
   # correctly. Here we'll make that so.
 
+
   def cleanup_page_titles
 
-    # First, if there isn't a title for a page, try to use the image filename first, and if that doesn't exist, use the sequence number instead
+    # This is a little tricky - depends on the fact that Hash uses EQL to determine membership.
 
-    sequence = 1
+    dups = Hash.new()
+
     pages.each do |p|
-      p.title.strip!
-      case
-      when (p.title.empty? and p.image_filename);          p.title = file_name(p.image_filename)
-      when (p.title.empty?);                               p.title = sequence.to_s
+      dups[p] = [] unless dups[p]
+      dups[p].push p
+    end
+
+    # dups.keys now gives us identical pages.
+
+    sequence = 0
+    already_processed = Hash.new(false)
+
+    pages.each do |page|
+
+      next if already_processed[page]
+
+      dups[page].each do |p|   # repeated pages must get identical titles
+
+        case
+        when (p.title.empty? and p.image_filename)
+          p.title = file_name(p.image_filename)
+        when (p.title.empty?)
+          p.title = sequence.to_s
+        end
+
+        already_processed[p] = true
       end
-      sequence += 1
     end
 
-    # Now every page must have a unique name, so let's generate a hash of the number of occurrences of each title:
+    # But if they are *not* repeated pages, and they have identical titles, we have to differentiate them
 
-    occurrence = {}
-    pages.each  { |p| occurrence[p.title] = occurrence.fetch(p.title, 0) + 1 }
-
-    # Remove unique titles and reset the values of the remainder to zero so we can use it as a counter.
-
-    occurrence.keys.each do |page_title|
-      if occurrence[page_title] == 1
-        occurrence.delete(page_title)
-      else
-        occurrence[page_title] = 0
+    we_have_issues = []
+    already_processed = {}
+    title_counts = {}
+    pages.each do |page|
+      dups[page].each do |p|
+        next unless title_counts[p]
+        next if already_processed[p]
+        p.title += " (#{title_counts[p]})"
+        we_have_issues.push p.title
       end
+      already_processed[page] = true
+      title_counts[page] ||= 0
+      title_counts[page]  += 1
     end
 
-    # Increment counter for repeated page titles and append " (counter)" to the title
-
-    issues = []
-    pages.each do |p|
-      next unless occurrence[p.title]
-      occurrence[p.title] += 1
-      p.title += " (#{occurrence[p.title]})"
-      issues.push p.title
-    end
-
-    if not issues.empty?
-      warning "Not all page labels in the METS file were unique; a parenthesized number was appended for these labels: '" + issues.join("', '") + "'."
+    if not we_have_issues.empty?
+       warning "Not all page labels in the METS file were unique; a parenthesized number was appended for these labels: '" + we_have_issues.join("', '") + "'."
     end
   end
 
@@ -327,6 +344,7 @@ class TableOfContents
   def cleanup_chapter_titles
     chapters.each { |c| c.title = 'Chapter' if (not c.title or c.title.empty?) }
   end
+
 end # of class TableOfContents
 
 
