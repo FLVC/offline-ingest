@@ -47,7 +47,7 @@
 	<relatedItem>
 	  <part>
 		<detail type="title">
-		  <title><xsl:value-of select="substring-before(substring-after(mods:titleInfo/mods:title,'1. '),'.')"/><xsl:value-of select="substring-after(mods:titleInfo/mods:title,'2. ')"/><xsl:value-of select="substring-after(mods:titleInfo/mods:title,'3. ')"/><xsl:value-of select="substring-after(mods:titleInfo/mods:title,'4. ')"/></title>
+		  <title><xsl:value-of select="substring-before(substring-after(mods:titleInfo/mods:title,'1. '),'.')"/><xsl:value-of select="substring-before(substring-after(mods:titleInfo/mods:title,'2. '),'.')"/><xsl:value-of select="substring-before(substring-after(mods:titleInfo/mods:title,'3. '),'.')"/><xsl:value-of select="substring-before(substring-after(mods:titleInfo/mods:title,'4. '),'.')"/></title>
 		</detail>
 		<detail type="issue">
 		  <caption>Issue</caption>

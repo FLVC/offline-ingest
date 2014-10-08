@@ -875,7 +875,9 @@ class BookPackage < Package
     @page_filenames.each do |file_name|
       path = File.join(@directory_path, file_name)
       type = Utils.mime_type(path)
-      issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
+      unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
+        issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" \
+      end
     end
 
     unless issues.empty?
