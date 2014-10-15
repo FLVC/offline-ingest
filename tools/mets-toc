@@ -6,32 +6,14 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
+
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
+
 require 'socket'
-
-case Socket.gethostname
-
-when /alpo/
-  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
-
-when /flvc-rfischer|romeo-foxtrot/
-  $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
-
-when /islandorad/, /islandorat/, /islandorap/
-
-  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
-  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
-
-else
-  STDERR.puts "#{$0} Doesn't know how to configure for this environment, quitting."
-  exit -1
-end
-
 require 'offin/mets'
 require 'offin/config'
 
-config  = Datyl::Config.new(config_filename, "default")
+config  = Datyl::Config.new(ENV['CONFIG'] || "/usr/local/islandora/offline-ingest/config.yml", "default")
 
 SaxDocumentExamineMets.debug = false
 

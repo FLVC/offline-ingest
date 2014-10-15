@@ -36,6 +36,20 @@ class TableOfContents
     @valid = true
     @structmap = structmap
 
+
+    structmap.each do |elt|
+      str = sprintf("%-9s %-50s ", '* ' * elt.level, elt.title)
+
+      if elt.is_page
+        files = elt.files.map{ |e| e.href  }.join(', ')
+        fids  = elt.fids.join(', ')
+        # str +=  "   FIDS: [#{fids}] - FILES: [#{files}]"
+        str +=  "   [#{files}]"
+      end
+      puts str
+    end
+
+
     @structmap.each do |div_data|
       if div_data.is_page
 
