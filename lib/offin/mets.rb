@@ -4,6 +4,30 @@ require 'offin/errors'
 require 'json'
 
 
+class MetsUtils
+
+  def MetsUtils.pretty_print_structmap structmap
+
+    len = 0
+    structmap.each { |elt|  len = [ len, elt.title.length + 2 * elt.level ].max  }
+
+    structmap.each do |elt|
+
+      if elt.is_page
+        str = sprintf("%-#{len}s ", '. ' * elt.level + elt.title)
+        files = elt.files.map{ |e| e.href  }.join(', ')
+        fids  = elt.fids.join(', ')
+        str +=  "   FIDS: [#{fids}] - FILES: [#{files}]"
+      else
+        str = sprintf("%-#{len}s ", '* ' * elt.level + elt.title)
+      end
+      puts str
+    end
+  end
+
+
+end
+
 # This file contains helper classes/structs for analyzing METS data.
 
 
@@ -23,8 +47,8 @@ require 'json'
 # We're transforming this into a sequence of Struct::Page and Struct::Chapter objects
 # that are slightly more uniform.
 
-Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype, :fid)
-Struct.new('Chapter',       :title, :level)
+Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :fid, :pagenum)
+Struct.new('Chapter',       :title, :level, :pagenum)
 
 class TableOfContents
 
@@ -35,56 +59,78 @@ class TableOfContents
     @sequence = []
     @valid = true
     @structmap = structmap
-
-
-    structmap.each do |elt|
-      str = sprintf("%-9s %-50s ", '* ' * elt.level, elt.title)
-
-      if elt.is_page
-        files = elt.files.map{ |e| e.href  }.join(', ')
-        fids  = elt.fids.join(', ')
-        # str +=  "   FIDS: [#{fids}] - FILES: [#{files}]"
-        str +=  "   [#{files}]"
-      end
-      puts str
-    end
-
-
-    @structmap.each do |div_data|
-      if div_data.is_page
-
-        entry = Struct::Page.new
-        entry.title = (div_data.title || '').strip
-        entry.level = div_data.level
-
-        div_data.files.each do |f|
-          if f.mimetype =~ /image/
-            entry.image_filename = f.href
-            entry.image_mimetype = f.mimetype
-            entry.fid = f.fid
-          elsif f.mimetype =~ /text/             # what was I thinking here? no way this is going to work....
-            entry.text_filename = f.href
-            entry.text_mimetype = f.mimetype
-            entry.fid = f.fid
-          end
-        end
-
-      else
-        entry = Struct::Chapter.new
-        entry.title = div_data.title || ''
-        entry.level = div_data.level
-      end
-
-      @sequence.push entry
-    end
-
+    @sequence = create_entries_sequence(structmap)
 
     check_for_page_images
     nip_it_in_the_bud              # TODO: this is proabably mistaken now that we can telescope pages
-    # telescope_pages
+    telescope_pages
     cleanup_chapter_titles
     cleanup_page_titles
-   end
+    number_pages
+  end
+
+
+  def each
+    @sequence.each { |entry| yield entry }
+  end
+
+  def pages
+    @sequence.select{ |elt| is_page? elt }
+  end
+
+  def chapters
+    @sequence.select{ |elt| is_chapter? elt }
+  end
+
+  def to_json label = nil
+
+    container = {}
+    container['title'] = label  unless label.nil? || label.empty?
+
+    toc = []
+    @sequence.each do |entry|
+      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => entry.pagenum }
+      case entry
+      when Struct::Chapter
+        rec['type'] = 'chapter'
+      when Struct::Page
+        rec['type'] = 'page'
+      end
+      toc.push rec
+    end
+
+    container['table_of_contents'] = toc  unless toc.empty?
+
+    return JSON.pretty_generate container
+  end
+
+  def valid?
+    @valid and not errors?
+  end
+
+  def print
+    @sequence.each do |entry|
+      case entry
+      when Struct::Chapter
+        indent = '* ' * entry.level
+      when Struct::Page
+        indent = '- ' * entry.level
+      end
+      puts indent + entry.title
+    end
+  end
+
+
+  private
+
+
+  def is_page? elt
+    return elt.class == Struct::Page
+  end
+
+  def is_chapter? elt
+    return elt.class == Struct::Chapter
+  end
 
 
   # We can sometimes have structmaps that repeat pages, notably for the case where there are two chapters on one page.  For instance:
@@ -129,117 +175,60 @@ class TableOfContents
 
 
   # All we do in telescope_pages is discard the first occurences of
-  # pages if there are multiple occurences of that page, and merge
-  # titles of adjacent chapters (or not -)
+  # identical pages when there are multiple occurrences of that page
 
   def telescope_pages
-    page_records = {}
 
+    # find the last occurence of a page
+
+    index = 0
+    last_occurrence = {}
     @sequence.each do |entry|
-      if is_page?(entry)
-        filename = filename(entry)
-        page_records[filename]  = 0 unless page_records[filename]
-        page_records[filename] += 1
-      end
+      last_occurrence[entry.fid] = index  if is_page?(entry)
+      index += 1
     end
 
-    telescoped_sequence = []
+    # recreate our sequence by pruning out earlier occurrences
+
+    new_seq = []
+    index = 0
     @sequence.each do |entry|
-      case
-      when is_page?(entry)
-        filename = filename(entry)
-        if page_records[filename] > 1
-          page_records[filename] -= 1
-        else
-          telescoped_sequence.push entry
+      if is_page? entry
+        new_seq.push entry if last_occurrence[entry.fid] == index
+      else # chapter
+        new_seq.push entry
+      end
+      index += 1
+    end
+    @sequence = new_seq
+  end
+
+
+  def create_entries_sequence structmap
+    seq = []
+    structmap.each do |div_data|
+      if div_data.is_page
+
+        entry = Struct::Page.new
+        entry.title = (div_data.title || '').strip
+        entry.level = div_data.level
+
+        div_data.files.each do |f|
+          next unless f.mimetype =~ /image/
+          entry.image_filename = f.href
+          entry.image_mimetype = f.mimetype
+          entry.fid = f.fid
         end
 
-      # when is_chapter?(entry)
-      #   if is_chapter?(telescoped_sequence[-1])
-      #     telescoped_sequence[-1].title += "; " + entry.title
-      #   else
-      #     telescoped_sequence.push entry
-      #   end
-
-      when is_chapter?(entry)                    # above collapses chapters... this leaves multiple adjancent chapters
-        telescoped_sequence.push entry
-
-      end # of case
-
-    end
-    @sequence = telescoped_sequence
-  end
-
-
-  def each
-    @sequence.each { |entry| yield entry }
-  end
-
-  def pages
-    @sequence.select{ |elt| is_page? elt }
-  end
-
-  def chapters
-    @sequence.select{ |elt| is_chapter? elt }
-  end
-
-  def to_json label = nil
-
-    container = {}
-    container['title'] = label  unless label.nil? || label.empty?
-
-    toc = []
-    seq = 1
-    @sequence.each do |entry|
-      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => entry.pagenum }
-      # case entry
-      # when Struct::Chapter
-      #   rec['type'] = 'chapter'
-      # when Struct::Page
-      #   rec['type'] = 'page'
-      #   seq += 1
-      # end
-      toc.push rec
-    end
-
-    container['table_of_contents'] = toc  unless toc.empty?
-
-    return JSON.pretty_generate container
-  end
-
-  def valid?
-    @valid and not errors?
-  end
-
-
-  def print
-    @sequence.each do |entry|
-      case entry
-      when Struct::Chapter
-        indent = '* ' * entry.level
-      when Struct::Page
-        indent = '- ' * entry.level
+      else
+        entry = Struct::Chapter.new
+        entry.title = div_data.title || ''
+        entry.level = div_data.level
       end
-      puts indent + entry.title
+
+      seq.push entry
     end
-
-  end
-
-
-  private
-
-
-  def is_page? elt
-    return elt.class == Struct::Page
-  end
-
-  def is_chapter? elt
-    return elt.class == Struct::Chapter
-  end
-
-  def filename elt
-    return unless is_page? elt
-    return elt.image_filename || elt.text_filename
+    return seq
   end
 
 
@@ -269,11 +258,7 @@ class TableOfContents
   end
 
 
-  # TODO: not too sure how to approach this yet.  it is certainly too
-  # early to do actual filesystem checks for the files' existence.
-  #
-  # So this may be a fatal error (@valid => false) but let's wait and
-  # experiment for now; just issue warnings.
+  # Create warnings for pages that do not have associated image files.
 
   def check_for_page_images
 
@@ -354,10 +339,21 @@ class TableOfContents
   end
 
 
-
   def cleanup_chapter_titles
     chapters.each { |c| c.title = 'Chapter' if (not c.title or c.title.empty?) }
   end
+
+  # last thing to do is to assign pagenums
+
+  def number_pages
+
+    pagenum = 1
+    @sequence.each do |entry|
+      entry.pagenum = pagenum
+      pagenum += 1 if is_page?(entry)
+    end
+  end
+
 
 end # of class TableOfContents
 
