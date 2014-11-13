@@ -47,7 +47,7 @@ end
 # We're transforming this into a sequence of Struct::Page and Struct::Chapter objects
 # that are slightly more uniform.
 
-Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :fid, :pagenum)
+Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :fid, :pagenum, :valid_repeat)
 Struct.new('Chapter',       :title, :level, :pagenum)
 
 class TableOfContents
@@ -62,8 +62,9 @@ class TableOfContents
     @sequence = create_entries_sequence(structmap)
 
     check_for_page_images
-    nip_it_in_the_bud              # TODO: this is proabably mistaken now that we can telescope pages
-    telescope_pages
+    nip_it_in_the_bud
+    mark_valid_repeat_pages
+    # telescope_pages
     cleanup_chapter_titles
     cleanup_page_titles
     number_pages
@@ -174,8 +175,6 @@ class TableOfContents
   #
 
 
-  # All we do in telescope_pages is discard the first occurences of
-  # identical pages when there are multiple occurrences of that page
 
   def telescope_pages
 
@@ -201,6 +200,28 @@ class TableOfContents
       index += 1
     end
     @sequence = new_seq
+  end
+
+  def mark_valid_repeat_pages
+
+    # find the last occurence of a page; we'll check previous pages later.
+
+    index = 0
+    last_occurrence = {}
+    @sequence.each do |entry|
+      last_occurrence[entry.fid] = index  if is_page?(entry)
+      index += 1
+    end
+
+    # mark any pages that are repeat pages
+
+    @sequence.each_index do |i|
+      entry = @sequence[i]
+      next unless is_page? entry
+      if last_occurrence[entry.fid] > i
+        entry.valid_repeat = true
+      end
+    end
   end
 
 
@@ -324,6 +345,7 @@ class TableOfContents
     pages.each do |page|
       dups[page].each do |p|
         next unless title_counts[p]
+        next if p.valid_repeat
         next if already_processed[p]
         p.title += " (#{title_counts[p]})"
         we_have_issues.push p.title
@@ -350,6 +372,7 @@ class TableOfContents
     pagenum = 1
     @sequence.each do |entry|
       entry.pagenum = pagenum
+      next if (is_page? entry and entry.valid_repeat)
       pagenum += 1 if is_page?(entry)
     end
   end
