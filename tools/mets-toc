@@ -67,5 +67,5 @@ ARGV.each do |filename|
 
   puts toc.to_json(mets.label)
 
-  toc.print
+  # toc.print
 end

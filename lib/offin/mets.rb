@@ -204,24 +204,19 @@ class TableOfContents
 
   def mark_valid_repeat_pages
 
-    # find the last occurence of a page; we'll check previous pages later.
-
-    index = 0
-    last_occurrence = {}
+    fids = {}
     @sequence.each do |entry|
-      last_occurrence[entry.fid] = index  if is_page?(entry)
-      index += 1
+      next unless is_page? entry
+      fids[entry.fid] ||= []
+      fids[entry.fid].push entry
     end
 
-    # mark any pages that are repeat pages
-
-    @sequence.each_index do |i|
-      entry = @sequence[i]
-      next unless is_page? entry
-      if last_occurrence[entry.fid] > i
-        entry.valid_repeat = true
+    fids.keys.each do |k|
+      if fids[k].length > 1
+        fids[k][0..-2].each { |e| e.valid_repeat = true }  # don't mark the last one, it's the one we will eventually include in the sequence to ingest
       end
     end
+
   end
 
 
@@ -239,6 +234,7 @@ class TableOfContents
           entry.image_filename = f.href
           entry.image_mimetype = f.mimetype
           entry.fid = f.fid
+          entry.title = file_name(f.href) if entry.title.empty?
         end
 
       else
@@ -298,61 +294,46 @@ class TableOfContents
   end
 
 
-
   # Clean up page titles - the sequence of pages titles must exist and
   # be unique for the IA book reader to treat table of contents
   # correctly. Here we'll make that so.
 
-
   def cleanup_page_titles
 
-    # This is a little tricky - depends on the fact that Hash uses EQL to determine membership.
-
-    dups = Hash.new()
-
-    pages.each do |p|
-      dups[p] = [] unless dups[p]
-      dups[p].push p
+    fids = {}                           # an array of entries, NOTE BENE: these entries are shared structures into @sequence
+    @sequence.each do |entry|           # anything with the same FID gets the same title (the entries will have the same values)
+      next unless is_page? entry
+      fids[entry.fid] ||= []
+      fids[entry.fid].push entry
     end
 
-    # dups.keys now gives us identical pages.
+    fid_seq = pages.map { |entry| entry.fid }   # we need to process in @sequence order to re-number pages
 
-    sequence = 0
-    already_processed = Hash.new(false)
+    titles = {}
+    seen = {}
 
-    pages.each do |page|
-
-      next if already_processed[page]
-
-      dups[page].each do |p|   # repeated pages must get identical titles
-
-        case
-        when (p.title.empty? and p.image_filename)
-          p.title = file_name(p.image_filename)
-        when (p.title.empty?)
-          p.title = sequence.to_s
-        end
-
-        already_processed[p] = true
-      end
+    fid_seq.each do |fid|
+      next if seen[fid]
+      seen[fid] = true
+      title = fids[fid][0].title
+      titles[title] ||= 0
+      titles[title] += 1
     end
 
-    # But if they are *not* repeated pages, and they have identical titles, we have to differentiate them
 
     we_have_issues = []
-    already_processed = {}
-    title_counts = {}
-    pages.each do |page|
-      dups[page].each do |p|
-        next unless title_counts[p]
-        next if p.valid_repeat
-        next if already_processed[p]
-        p.title += " (#{title_counts[p]})"
-        we_have_issues.push p.title
+
+    fid_seq.reverse.each do |fid|
+      title = fids[fid][0].title
+      n = titles[title]
+
+      if n and n > 1
+        fids[fid].each do |entry|
+          entry.title = entry.title + " (#{n})"
+          we_have_issues.push entry.title
+        end
+        titles[title] -= 1
       end
-      already_processed[page] = true
-      title_counts[page] ||= 0
-      title_counts[page]  += 1
     end
 
     if not we_have_issues.empty?
@@ -368,7 +349,6 @@ class TableOfContents
   # last thing to do is to assign pagenums
 
   def number_pages
-
     pagenum = 1
     @sequence.each do |entry|
       entry.pagenum = pagenum
