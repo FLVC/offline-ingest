@@ -1,0 +1,351 @@
+<METS:mets LABEL="Gee whoa!" OBJID="../sgm/FS66750001/FS66750001.sgm" xmlns:METS="http://www.loc.gov/METS/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/version14/mets.xsd http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/simpledc20021212.xsd http://www.loc.gov/mods/v3 http://www.loc.orv/standards/mods/v3/mods-3-0.xsd" TYPE="book">
+
+  <METS:metsHdr CREATEDATE="2009-09-25T18:07:15-04:00">
+    <METS:agent OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE" ROLE="OTHER" TYPE="OTHER">
+      <METS:name>DigiTool METS Maker</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+
+  <METS:dmdSec ID="DMD1">
+    <METS:mdWrap MDTYPE="MARC" MIMETYPE="text/xml">
+      <METS:xmlData>
+
+<record xmlns="http://www.loc.gov/MARC21/slim"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.loc.gov/MARC21/slim
+http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+  <leader>     fam  2200241Ia 4500</leader>
+  <controlfield tag="001">000007226</controlfield>
+  <controlfield tag="008">991207s1894    ilua   js     0   0 eng d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)42949383</subfield>
+  </datafield>
+  <datafield tag="035" ind1="9" ind2=" ">
+    <subfield code="a">AAA4543  QF</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FDA</subfield>
+    <subfield code="c">FDA</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FDAA</subfield>
+  </datafield>
+  <datafield tag="090" ind1=" " ind2=" ">
+    <subfield code="a">PS645</subfield>
+    <subfield code="b">.G44 1894</subfield>
+  </datafield>
+  <datafield tag="245" ind1="0" ind2="0">
+    <subfield code="a">Gee whoa!</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Chicago :</subfield>
+    <subfield code="b">W.B. Conkey,</subfield>
+    <subfield code="c">c1894.</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">1 v. (unpaged) :</subfield>
+    <subfield code="b">ill. ;</subfield>
+    <subfield code="c">27 cm.</subfield>
+  </datafield>
+  <datafield tag="590" ind1=" " ind2=" ">
+    <subfield code="a">Literature for Children Collection.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Children&apos;s stories, American.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2="0">
+    <subfield code="b">juv</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2="0">
+    <subfield code="u">http://purl.fcla.edu/fcla/dl/FS66750001.jpg</subfield>
+    <subfield code="y">Electronic resource (JPEG)</subfield>
+  </datafield>
+  <datafield tag="856" ind1="4" ind2="0">
+    <subfield code="u">http://purl.fcla.edu/fcla/dl/FS66750001.pdf</subfield>
+    <subfield code="y">Electronic resource (PDF)</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Book</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Online Resource</subfield>
+  </datafield>
+  <datafield tag="598" ind1=" " ind2=" ">
+    <subfield code="a">FS66750001</subfield>
+  </datafield>
+</record>      </METS:xmlData>
+    </METS:mdWrap>
+  </METS:dmdSec>
+
+  <METS:fileSec>
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="Cover1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID2" ID="FID2" SEQ="2" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="Cover2.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID3" ID="FID3" SEQ="3" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="title1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID4" ID="FID4" SEQ="4" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID5" ID="FID5" SEQ="5" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="2.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID6" ID="FID6" SEQ="6" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="3.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID7" ID="FID7" SEQ="7" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="4.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID8" ID="FID8" SEQ="8" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="5.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID10" ID="FID10" SEQ="10" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="6.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID11" ID="FID11" SEQ="11" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="7.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID12" ID="FID12" SEQ="12" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="8.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID14" ID="FID14" SEQ="14" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="9.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID15" ID="FID15" SEQ="15" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="10.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID16" ID="FID16" SEQ="16" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="11.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID17" ID="FID17" SEQ="17" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="12.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID18" ID="FID18" SEQ="18" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="13.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID19" ID="FID19" SEQ="19" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="14.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID20" ID="FID20" SEQ="20" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="15.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID21" ID="FID21" SEQ="21" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="Cover3.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID22" ID="FID22" SEQ="22" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="Cover4.jpg" />
+      </METS:file>
+    </METS:fileGrp>
+
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID23" ID="FID23" SEQ="23" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file1.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID24" ID="FID24" SEQ="24" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file2.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID25" ID="FID25" SEQ="25" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file3.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID26" ID="FID26" SEQ="26" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file4.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID27" ID="FID27" SEQ="27" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file5.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID28" ID="FID28" SEQ="28" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file6.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID29" ID="FID29" SEQ="29" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file7.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID30" ID="FID30" SEQ="30" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file8.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID31" ID="FID31" SEQ="31" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file9.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID32" ID="FID32" SEQ="32" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file10.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID33" ID="FID33" SEQ="33" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file11.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID34" ID="FID34" SEQ="34" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file12.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID35" ID="FID35" SEQ="35" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file13.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID36" ID="FID36" SEQ="36" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file14.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID37" ID="FID37" SEQ="37" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file15.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID38" ID="FID38" SEQ="38" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file16.pdf" />
+      </METS:file>
+    </METS:fileGrp>
+  </METS:fileSec>
+
+  <METS:structMap LABEL="View" TYPE="PDF">
+    <METS:div DMDID="DMD1" LABEL="Gee whoa!">
+        <METS:div LABEL="Front Cover" TYPE="cover">
+          <METS:fptr FILEID="FID23"/>
+        </METS:div>
+        <METS:div LABEL="Title Page" TYPE="section">
+          <METS:fptr FILEID="FID24"/>
+        </METS:div>
+        <METS:div LABEL="Uncle Dick's Boy" TYPE="section">
+          <METS:fptr FILEID="FID25"/>
+        </METS:div>
+        <METS:div LABEL="Playing Horse" TYPE="section">
+          <METS:fptr FILEID="FID26"/>
+        </METS:div>
+        <METS:div LABEL="Baby-Land" TYPE="section">
+          <METS:fptr FILEID="FID27"/>
+        </METS:div>
+        <METS:div LABEL="Who Is She" TYPE="section">
+          <METS:fptr FILEID="FID28"/>
+        </METS:div>
+        <METS:div LABEL="Niddlety Noddy" TYPE="section">
+          <METS:fptr FILEID="FID29"/>
+        </METS:div>
+        <METS:div LABEL="Little Frogs At School" TYPE="section">
+          <METS:fptr FILEID="FID30"/>
+        </METS:div>
+        <METS:div LABEL="Pictures That Tell Their Own Story" TYPE="section">
+          <METS:fptr FILEID="FID31"/>
+        </METS:div>
+        <METS:div LABEL="A Successful Raid" TYPE="section">
+          <METS:fptr FILEID="FID32"/>
+        </METS:div>
+        <METS:div LABEL="Not So Easy After All" TYPE="section">
+          <METS:fptr FILEID="FID33"/>
+        </METS:div>
+        <METS:div LABEL="Nep And The Baby" TYPE="section">
+          <METS:fptr FILEID="FID34"/>
+        </METS:div>
+        <METS:div LABEL="Baby Bo- Peep And Little Jack Horner" TYPE="section">
+          <METS:fptr FILEID="FID35"/>
+        </METS:div>
+        <METS:div LABEL="A Practical Joke" TYPE="section">
+          <METS:fptr FILEID="FID36"/>
+        </METS:div>
+        <METS:div LABEL="Blowing Bubbles" TYPE="section">
+          <METS:fptr FILEID="FID37"/>
+        </METS:div>
+        <METS:div LABEL="Back Cover" TYPE="cover">
+          <METS:fptr FILEID="FID38"/>
+        </METS:div>
+    </METS:div>
+  </METS:structMap>
+
+  <METS:structMap LABEL="View" TYPE="JPEG">
+    <METS:div DMDID="DMD1" LABEL="Gee whoa!">
+        <METS:div LABEL="Front Cover" TYPE="cover">
+          <METS:div LABEL="Cover1" TYPE="page">
+            <METS:fptr FILEID="FID1"/>
+          </METS:div>
+          <METS:div LABEL="Cover2" TYPE="page">
+            <METS:fptr FILEID="FID2"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Title Page" TYPE="section">
+          <METS:div LABEL="title1" TYPE="page">
+            <METS:fptr FILEID="FID3"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Uncle Dick's Boy" TYPE="section">
+          <METS:div LABEL="1" TYPE="page">
+            <METS:fptr FILEID="FID4"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Playing Horse" TYPE="section">
+          <METS:div LABEL="2" TYPE="page">
+            <METS:fptr FILEID="FID5"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Baby-Land" TYPE="section">
+          <METS:div LABEL="3" TYPE="page">
+            <METS:fptr FILEID="FID6"/>
+          </METS:div>
+          <METS:div LABEL="4" TYPE="page">
+            <METS:fptr FILEID="FID7"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Who Is She" TYPE="section">
+          <METS:div LABEL="5" TYPE="page">
+            <METS:fptr FILEID="FID8"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Niddlety Noddy" TYPE="section">
+          <METS:div LABEL="5" TYPE="page">
+            <METS:fptr FILEID="FID8"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Little Frogs At School" TYPE="section">
+          <METS:div LABEL="6" TYPE="page">
+            <METS:fptr FILEID="FID10"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Pictures That Tell Their Own Story" TYPE="section">
+          <METS:div LABEL="7" TYPE="page">
+            <METS:fptr FILEID="FID11"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="A Successful Raid" TYPE="section">
+          <METS:div LABEL="8" TYPE="page">
+            <METS:fptr FILEID="FID12"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Not So Easy After All" TYPE="section">
+          <METS:div LABEL="8" TYPE="page">
+            <METS:fptr FILEID="FID12"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Nep And The Baby" TYPE="section">
+          <METS:div LABEL="9" TYPE="page">
+            <METS:fptr FILEID="FID14"/>
+          </METS:div>
+          <METS:div LABEL="10" TYPE="page">
+            <METS:fptr FILEID="FID15"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Baby Bo- Peep And Little Jack Horner" TYPE="section">
+          <METS:div LABEL="11" TYPE="page">
+            <METS:fptr FILEID="FID16"/>
+          </METS:div>
+          <METS:div LABEL="12" TYPE="page">
+            <METS:fptr FILEID="FID17"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="A Practical Joke" TYPE="section">
+          <METS:div LABEL="13" TYPE="page">
+            <METS:fptr FILEID="FID18"/>
+          </METS:div>
+          <METS:div LABEL="14" TYPE="page">
+            <METS:fptr FILEID="FID19"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Blowing Bubbles" TYPE="section">
+          <METS:div LABEL="15" TYPE="page">
+            <METS:fptr FILEID="FID20"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Back Cover" TYPE="cover">
+          <METS:div LABEL="Cover3" TYPE="page">
+            <METS:fptr FILEID="FID21"/>
+          </METS:div>
+          <METS:div LABEL="Cover4" TYPE="page">
+            <METS:fptr FILEID="FID22"/>
+          </METS:div>
+        </METS:div>
+    </METS:div>
+  </METS:structMap>
+</METS:mets>
