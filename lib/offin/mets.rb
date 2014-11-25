@@ -25,7 +25,7 @@ class TableOfContents
     @structmap = structmap
 
     # The structmap object (class MetsStructMap) provides an ordered list of these objects:
-    #    <Struct:MetsDivData  :level, :title, :is_page, :fids, :files>
+    #    <Struct::MetsDivData  :level, :title, :is_page, :fids, :files>
     # where :files is a list of
     #    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
     #
