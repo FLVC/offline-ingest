@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="info:flvc/manifest/v1">
+    <contentModel>islandora:bookCModel</contentModel>
+    <collection>fcl:juv</collection>
+    <submittingInstitution>FSU</submittingInstitution>
+    <owningInstitution>FSU</owningInstitution>
+    <owningUser>Randy Fischer</owningUser>
+    <objectHistory source="digitool">admin_unit="FCL01", ingest_id="ing4319", creator="null:staff", creation_date="2009-09-25 18:19:27", modified_by="super:TWEATHER", modification_date="2011-02-03 14:23:32"</objectHistory>
+</manifest>
