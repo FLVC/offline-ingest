@@ -1223,6 +1223,11 @@ class BookPackage < Package
     path  = File.join(@directory_path, pagename)
     image = Magick::Image.read(path).first
 
+    unless (image and image.mime_type)
+      raise PackageError, "Can't determine the mime type of the page #{pagename} in Book package #{@directory_name}."
+    end
+
+
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       ingestor.label         = pagename
@@ -1276,6 +1281,9 @@ class BookPackage < Package
     @bytes_ingested += ingestor.size
     return ingestor.pid
 
+  rescue PackageError => e
+    error e
+    raise e
   rescue => e
     error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{e.message}.", e.backtrace
     raise e
