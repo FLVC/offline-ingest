@@ -38,7 +38,7 @@ end
 #
 # The structmap object (class MetsStructMap) provides an ordered list of these objects:
 #
-#    <Struct:MetsDivData  :level, :title, :is_page, :fids, :files>
+#    <Struct::MetsDivData  :level, :title, :is_page, :fids, :files>
 #
 # where :files is an array of
 #
