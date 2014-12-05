@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+require 'open3'
+
+def shellescape(str)
+  return "''" if str.empty?
+  str = str.dup
+  str.gsub!(/([^A-Za-z0-9_\-.,:\/@\n])/n, "\\\\\\1")
+  str.gsub!(/\n/, "'\n'")
+  return str
+end
+
+
+
+def find_tiffinfo?
+  prog = 'tiffinfo'
+  return `which #{prog} 2>&1` !~ /no #{prog} in/
+end
+
+
+def tiff_ok? filename
+
+  text   = ""
+  errors = []
+
+  Open3.popen3("tiffinfo #{shellescape(filename)}")  do |stdin, stdout, stderr|
+    stdin.close
+    stdout.read   # flush
+    text = stderr.read
+  end
+
+  text.split(/\n/).each { |t|  errors.push t unless t =~ /Warning/ }
+
+  return errors.empty?
+
+rescue => e
+  puts e
+  exit -1
+end
+
+
+
+unless find_tiffinfo?
+  STDERR.puts "The program tiffinfo wasn't found.  This script requires that the tiffinfo program be installed and be on your path."
+  exit -1
+end
+
+
+
+
+ARGV.each do |filename|
+  unless File.exists? filename
+    STDERR.puts "File #{filename} doesn't exist - skipping."
+    next
+  end
+
+  unless File.readable? filename
+    STDERR.puts "File #{filename} isn't readable - skipping."
+    next
+  end
+
+  if File.directory? filename
+    STDERR.puts "File #{filename} is a directory - skipping."
+    next
+  end
+
+  puts "Problem with #{filename}" unless tiff_ok? filename
+end
