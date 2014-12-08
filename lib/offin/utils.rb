@@ -393,17 +393,35 @@ class Utils
 
   end
 
+  # To help us create a smaller RAM footprint when processing huge files,  we use a lot of temporary files;  this lets us pass around a file object
+
+  def Utils.temp_file         # creat an anonymous file handle
+    tempfile = Tempfile.new('rspec')
+    return open(tempfile, 'w+')
+  ensure
+    File.unlink tempfile.path
+  end
+
+  # run the convert command on an image file
 
   def Utils.image_to_pdf config, image_filepath
-    pdf = nil
     error = nil
     errors = []
+    stdout = nil
+    pdf = Utils.temp_file
     Open3.popen3("#{config.image_to_pdf_command} #{Utils.shellescape(image_filepath)} pdf:-") do |stdin, stdout, stderr|
       stdin.close
-      pdf = stdout.read
+      while (data = stdout.read(1024*1024))
+        pdf.write data
+      end
+      pdf.rewind
       error = stderr.read
     end
-    return pdf
+    if not error.nil? and not error.empty?
+      errors = [ "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_to_pdf_command}' the following message was produced:" ]
+      errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
+    end
+    return pdf, errors
   end
 
 
@@ -411,17 +429,20 @@ class Utils
     image = nil
     error = nil
     errors = []
+    stdout = nil
     Open3.popen3("#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
       stdin.close
-      image = stdout.read
       error = stderr.read
     end
     if not error.nil? and not error.empty?
-      errors = [ "When creating a thumbnail image from the PDF with command '#{config.pdf_convert_command}' the following message was produced:" ]
+      errors = [ "When creating a thumbnail image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:" ]
       errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
     end
-    return image, errors
+    return stdout, errors
   end
+
+
+
 
   def Utils.pdf_to_preview config, pdf_filepath
 
@@ -542,12 +563,13 @@ class Utils
 
         file.rewind if file.methods.include? 'rewind'
 
-        stdin.write file.read(1024 ** 2)  # don't need too much of this...
+        stdin.write file.read(1024 * 8)  # don't need too much of this...
         stdin.close
 
         type   = stdout.read
         error  = stderr.read
       end
+
       file.rewind if file.methods.include? 'rewind'
 
     when file.is_a?(String)  # presumed a filename
