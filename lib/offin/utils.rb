@@ -344,7 +344,13 @@ class Utils
 
   def Utils.temp_file         # creat an anonymous file handle
     tempfile = Tempfile.new('rspec')
-    return open(tempfile, 'w+b')
+
+    if RUBY_VERSION < '2.0.0'   # actually, I don't have 1.9.x version to test against, only a 1.8.7 system
+      return tempfile.open
+    else
+      return open(tempfile, 'w+b')
+    end
+
   ensure
     File.unlink tempfile.path
   end
