@@ -293,40 +293,6 @@ class Utils
   end
 
 
-  # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
-  # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
-
-  def Utils.be_careful_with_that_jp2_now config, jp2k_filepath
-    Utils.silence_streams(STDERR) do
-      return Magick::Image.read(jp2k_filepath).first
-    end
-  rescue Magick::ImageMagickError => e
-    return Utils.kakadu_jp2k_to_tiff(config, jp2k_filepath, "ImageMagick: #{e.message}")
-  end
-
-  def Utils.kakadu_jp2k_to_tiff config, jp2k_filepath, previous_error_message = ''
-    temp_image_filename = Tempfile.new('image-kakadu-').path + '.tiff'
-    text  = ''
-    error = ''
-
-    Open3.popen3("#{config.kakadu_expand_command} -i #{Utils.shellescape(jp2k_filepath)} -o #{temp_image_filename}") do |stdin, stdout, stderr|
-      stdin.close
-      text  = stdout.read
-      error = stderr.read
-    end
-    error.strip!
-
-    message = " #{previous_error_message}; " if not previous_error_message.empty?
-
-    raise PackageError, "Image processing error: could not process JP2 image #{jp2k_filepath.sub(/.*\//, '')}:#{message}#{error.gsub("\n", ' ')}" unless error.empty?
-
-    return Magick::Image.read(temp_image_filename).first
-
-  ensure
-    FileUtils.rm_f(temp_image_filename)
-  end
-
-
   if RUBY_VERSION < "1.9.0"
     CLEANUP_REGEXP = eval '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\xEF\xFF]/m'    # disallowed control characters and embedded deletes.
   else
@@ -405,6 +371,8 @@ class Utils
 
   public
 
+
+
   # run the convert command on an image file
 
   def Utils.image_to_pdf config, image_filepath
@@ -416,14 +384,14 @@ class Utils
 
   def Utils.pdf_to_thumbnail config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
-                                          "#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
-                                          "When creating a thumbnail image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
+                                  "#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
+                                  "When creating a thumbnail image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
   end
 
   def Utils.pdf_to_preview config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_convert_command} -resize #{config.pdf_preview_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
-                                  "When creating a preview image from the PDF with command '#{config.pdf_convert_command}' the following message was produced:")
+                                  "When creating a preview image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
   end
 
 
@@ -432,6 +400,54 @@ class Utils
                                   "#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -",
                                   "When extracting texy from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
   end
+
+
+  def Utils.image_magick_to_tiff config,  image_filepath
+    return Utils.image_processing(config, image_filepath,
+                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
+                                  "When creating a TIFF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+
+
+  end
+
+
+  # kdu_expand on jp2k
+
+  def Utils.kakadu_jp2k_to_tiff config, jp2k_filepath
+
+    temp_image_filename = Tempfile.new('image-kakadu-').path + '.tiff'
+
+    unused, errors = Utils.image_processing(config, jp2k_filepath,
+                                            "#{config.kakadu_expand_command} -i #{Utils.shellescape(jp2k_filepath)} -o #{temp_image_filename}",
+                                            "Image processing error: could not process JP2 image '#{jp2k_filepath}'")
+
+    if File.exists? temp_image_filename
+      file = open(temp_image_filename, 'r+b')
+    else
+      file = open('/dev/null', 'r+b')
+    end
+    return file, errors
+  ensure
+    unused.close if unused and unused.respond_to? :close
+    FileUtils.rm_f(temp_image_filename)
+  end
+
+
+
+  # TODO: fold this into something....
+
+  # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
+  # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
+
+  def Utils.be_careful_with_that_jp2_now config, jp2k_filepath
+    Utils.silence_streams(STDERR) do
+      return Magick::Image.read(jp2k_filepath).first
+    end
+  rescue Magick::ImageMagickError => e
+    return Utils.kakadu_jp2k_to_tiff(config, jp2k_filepath, "ImageMagick: #{e.message}")
+  end
+
+
 
 
 

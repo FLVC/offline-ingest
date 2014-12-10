@@ -4,11 +4,15 @@ require 'open3'
 
 # TODO: move following to helper (does @config get recreated?)
 
-Struct::new 'MockConfig',  'image_to_pdf_command', 'pdf_convert_command',  'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry'
+Struct::new 'MockConfig',
+            'image_to_pdf_command', 'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command',
+             'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry'
 
 def config
   return Struct::MockConfig::new("convert -compress LZW",                # image_to_pdf_command
                                  "convert -quality 75 -colorspace RGB",  # pdf_convert_command
+                                 "/usr/bin/kdu_expand",                  # kakadu_expand_command
+                                 "convert",                              # image_convert_command
                                  "pdftotext -nopgbrk",                   # pdf_to_text_command
                                  "500x700",                              # pdf_preview_geometry
                                  "200x200")                              # thumbnail_geometry
@@ -20,15 +24,18 @@ end
 
 def jpeg_size file
   info = ""
-  Open3.popen3("jpegtopnm | pnmfile") do |stdin, stdout, stderr|
-    while (data = file.read(1024 * 8))
-      stdin.write data
-    end
+  errs = ""
+  temp = Tempfile.new('pnm-chain-')
+
+  while (data = file.read(1024))  do; temp.write data; end
+  temp.close
+
+  Open3.popen3("jpegtopnm '#{temp.path}' | pnmfile") do |stdin, stdout, stderr|
     stdin.close
-    while (data = stdout.read(1024))
-      info += data
-    end
-    stderr.read
+    while (data = stdout.read(1024)) do;  info += data; end
+    while (data = stderr.read(1024)) do;  errs += data; end
+    stdout.close
+    stderr.close
   end
 
   if info =~ /(\d+)\s+by\s+(\d+)/
@@ -36,6 +43,8 @@ def jpeg_size file
   else
     return
   end
+ensure
+  File.unlink temp.path
 end
 
 
@@ -113,7 +122,7 @@ RSpec.describe Utils do
 
   describe "#mime_type"  do
     it "recognizes JP2 files from an open JP2 File object" do
-      pending('limitations in /usr/bin/file only allow return octet-type')
+      pending('Limitations of /usr/bin/file returns octet mime-type for JP2 on STDIN')
       type = Utils.mime_type(open(test_data("sample01.jp2")))
       expect(type).to  eq('image/jp2')
     end
@@ -256,6 +265,45 @@ RSpec.describe Utils do
       expect(height).to be <= 700
     end
   end
+
+  describe "#kakadu_jp2k_to_tiff" do
+    it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
+      file, errors = Utils.kakadu_jp2k_to_tiff(config, test_data("sample01.jp2"))
+      expect(errors).to be_empty
+      expect(file).to be_a_kind_of(File)
+      expect(Utils.mime_type(file)).to  eq('image/tiff')
+    end
+  end
+
+  describe "#kakadu_jp2k_to_tiff" do
+    it "returns an array of error diagnostic messages for an invalid file" do
+      file, errors = Utils.kakadu_jp2k_to_tiff(config, test_data("garbage.rand"))
+      expect(errors.length).to be > 1
+      expect(file.stat.size).to be == 0
+    end
+  end
+
+
+  describe "#image_magick_to_tiff" do
+    it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
+
+      pending("convert doesn't support TIFFs on Mac OS X?!") if RUBY_PLATFORM =~ /darwin/i
+
+      file, errors = Utils.image_magick_to_tiff(config, test_data("sample01.jp2"))
+      expect(errors).to be_empty
+      expect(file).to be_a_kind_of(File)
+      expect(Utils.mime_type(file)).to  eq('image/tiff')
+    end
+  end
+
+  describe "#image_magick_to_tiff" do
+    it "returns an array of error diagnostic messages for an invalid file" do
+      file, errors = Utils.image_magick_to_tiff(config, test_data("garbage.rand"))
+      expect(errors.length).to be > 1
+      expect(file.stat.size).to be == 0
+    end
+  end
+
 
 
 
