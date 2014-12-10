@@ -327,27 +327,6 @@ class Utils
   end
 
 
-  def Utils.pdf_to_text config, pdf_filepath
-
-    text = nil
-    error = nil
-
-    Open3.popen3("#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -") do |stdin, stdout, stderr|
-      stdin.close
-      text  = stdout.read
-      error = stderr.read
-    end
-
-    #  raise PackageError, "Processing #{pdf_filepath} resulted in these errors: #{error}" if not error.empty?
-
-    # TODO: capture errors.  We occasionally get things like "Bad
-    # Annotation Destination" that are warnings. We'd like to add
-    # these to the generated warnings, perhaps.
-
-    return text if text.length > 50   # pretty arbitrary...
-    return nil
-  end
-
   if RUBY_VERSION < "1.9.0"
     CLEANUP_REGEXP = eval '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\xEF\xFF]/m'    # disallowed control characters and embedded deletes.
   else
@@ -393,73 +372,69 @@ class Utils
 
   end
 
+  private
+
   # To help us create a smaller RAM footprint when processing huge files,  we use a lot of temporary files;  this lets us pass around a file object
 
   def Utils.temp_file         # creat an anonymous file handle
     tempfile = Tempfile.new('rspec')
-    return open(tempfile, 'w+')
+    return open(tempfile, 'w+b')
   ensure
     File.unlink tempfile.path
   end
 
-  # run the convert command on an image file
 
-  def Utils.image_to_pdf config, image_filepath
+  def Utils.image_processing config, image_filepath, command, error_title
     error = nil
     errors = []
-    stdout = nil
-    pdf = Utils.temp_file
-    Open3.popen3("#{config.image_to_pdf_command} #{Utils.shellescape(image_filepath)} pdf:-") do |stdin, stdout, stderr|
+    image = Utils.temp_file
+    Open3.popen3(command) do |stdin, stdout, stderr|
       stdin.close
       while (data = stdout.read(1024*1024))
-        pdf.write data
+          image.write data
       end
-      pdf.rewind
+      image.rewind
       error = stderr.read
     end
     if not error.nil? and not error.empty?
-      errors = [ "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_to_pdf_command}' the following message was produced:" ]
-      errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
-    end
-    return pdf, errors
-  end
-
-
-  def Utils.pdf_to_thumbnail config, pdf_filepath
-    image = nil
-    error = nil
-    errors = []
-    stdout = nil
-    Open3.popen3("#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
-      stdin.close
-      error = stderr.read
-    end
-    if not error.nil? and not error.empty?
-      errors = [ "When creating a thumbnail image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:" ]
-      errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
-    end
-    return stdout, errors
-  end
-
-
-
-
-  def Utils.pdf_to_preview config, pdf_filepath
-
-    image = nil
-    error = nil
-    errors = []
-    Open3.popen3("#{config.pdf_convert_command} -resize #{config.pdf_preview_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-") do |stdin, stdout, stderr|
-      stdin.close
-      image = stdout.read
-      error = stderr.read
-    end
-    if not error.nil? and not error.empty?
-      errors  = [ "When creating a preview image from the PDF with command '#{config.pdf_convert_command}' the following message was produced:" ]
+      errors = [ error_title ]
       errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
     end
     return image, errors
   end
+
+  public
+
+  # run the convert command on an image file
+
+  def Utils.image_to_pdf config, image_filepath
+    return Utils.image_processing(config, image_filepath,
+                                  "#{config.image_to_pdf_command} #{Utils.shellescape(image_filepath)} pdf:-",
+                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_to_pdf_command}' the following message was produced:" )
+  end
+
+
+  def Utils.pdf_to_thumbnail config, pdf_filepath
+    return Utils.image_processing(config, pdf_filepath,
+                                          "#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
+                                          "When creating a thumbnail image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
+  end
+
+  def Utils.pdf_to_preview config, pdf_filepath
+    return Utils.image_processing(config, pdf_filepath,
+                                  "#{config.pdf_convert_command} -resize #{config.pdf_preview_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
+                                  "When creating a preview image from the PDF with command '#{config.pdf_convert_command}' the following message was produced:")
+  end
+
+
+  def Utils.pdf_to_text config, pdf_filepath
+    return Utils.image_processing(config, pdf_filepath,
+                                  "#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -",
+                                  "When extracting texy from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
+  end
+
+
+
 
   # expects image or pathname, image must be a format understood by tesseract (no jp2)
 
@@ -679,7 +654,9 @@ class Utils
 
     rels_ext_content = Utils.get_datastream_contents(config, collection_pid, 'RELS-EXT')
     rels_ext_xml = Nokogiri::XML(rels_ext_content)
+
     # I know this is very bad but I can't get my head around the errors with multiple namespaces
+
     rels_ext_xml.remove_namespaces!
     view_rule_count = 0
     manage_rule_count = 0
