@@ -1,55 +1,13 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__), '../lib')
-require 'offin/utils'
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
+
 require 'open3'
-
-# TODO: move following to helper (does @config get recreated?)
-
-Struct::new('MockConfig',
-            'image_to_pdf_command', 'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command',
-            'tesseract_command', 'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry')
-
-def config
-  return Struct::MockConfig::new("convert -compress LZW",                # image_to_pdf_command
-                                 "convert -quality 75 -colorspace RGB",  # pdf_convert_command
-                                 "kdu_expand",                           # kakadu_expand_command
-                                 "convert -compress LZW",                # image_convert_command
-                                 "tesseract -l eng",                     # tesseract_command
-                                 "pdftotext -nopgbrk",                   # pdf_to_text_command
-                                 "500x700",                              # pdf_preview_geometry
-                                 "200x200")                              # thumbnail_geometry
-end
-
-def test_data base_name
-  return File.expand_path(File.join(File.dirname(__FILE__), 'test-data', base_name))
-end
-
-def jpeg_size file
-  info = ""
-  errs = ""
-  temp = Tempfile.new('pnm-chain-')
-
-  while (data = file.read(1024 ** 2))  do; temp.write data; end
-  temp.close
-
-  Open3.popen3("jpegtopnm '#{temp.path}' | pnmfile") do |stdin, stdout, stderr|
-    stdin.close
-    while (data = stdout.read(1024)) do;  info += data; end
-    while (data = stderr.read(1024)) do;  errs += data; end
-    stdout.close
-    stderr.close
-  end
-
-  if info =~ /(\d+)\s+by\s+(\d+)/
-    return $1.to_i, $2.to_i
-  else
-    return
-  end
-ensure
-  File.unlink temp.path
-end
-
+require 'offin/utils'
+require 'helpers'
 
 RSpec.describe Utils do
+
+  include UtilRSpecHelpers
 
   describe "#mime_type"  do
     it "recognizes JPEG files from an open JPEG File object" do
@@ -249,7 +207,6 @@ RSpec.describe Utils do
     end
   end
 
-
   describe "#pdf_to_preview"  do
     it "returns without errors a File object on the JPEG preview produced from a valid PDF file" do
       file, errors = Utils.pdf_to_preview(config, test_data("practical-sailor.pdf"))
@@ -300,7 +257,6 @@ RSpec.describe Utils do
     end
   end
 
-
   describe "#image_magick_to_tiff" do
     it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
 
@@ -310,7 +266,6 @@ RSpec.describe Utils do
       expect(errors).to be_empty
       expect(file).to be_a_kind_of(File)
       expect(Utils.mime_type(file)).to  eq('image/tiff')
-
     end
   end
 
@@ -322,10 +277,11 @@ RSpec.describe Utils do
     end
   end
 
-
   # TODO: we need two different kids of JP2K images here, one that
   # ImageMagick can't handle (so it punts to kakadu) and one that it
-  # can.
+  # can.  When that is the case, we can make the methods
+  # kakadu_jp2k_to_tiff and image_magick_to_tiff private and stop
+  # testing them above.
 
   describe "#image_to_tiff" do
     it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
@@ -368,5 +324,4 @@ RSpec.describe Utils do
     end
   end
 
-
-end
+end # of "RSpec.describe Utils do"
