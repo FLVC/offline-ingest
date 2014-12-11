@@ -652,7 +652,7 @@ class Utils
 
   def Utils.rels_ext_get_policy_fields config, collection_pid
     str = <<-XML.gsub(/^    /, '')
-        <islandora:inheritXacmlFrom>#{collection_pid}</islandora:inheritXacmlFrom>
+        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{collection_pid}"/>
     XML
 
     rels_ext_content = Utils.get_datastream_contents(config, collection_pid, 'RELS-EXT')
