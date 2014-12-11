@@ -28,7 +28,7 @@ def jpeg_size file
   errs = ""
   temp = Tempfile.new('pnm-chain-')
 
-  while (data = file.read(1024))  do; temp.write data; end
+  while (data = file.read(1024 ** 2))  do; temp.write data; end
   temp.close
 
   Open3.popen3("jpegtopnm '#{temp.path}' | pnmfile") do |stdin, stdout, stderr|
@@ -211,7 +211,8 @@ RSpec.describe Utils do
       file, errors = Utils.pdf_to_thumbnail(config, test_data("practical-sailor.pdf"))
       expect(file).to be_a_kind_of(File)
       expect(Utils.mime_type(file)).to  eq('image/jpeg')
-      if RUBY_PLATFORM =~ /linux/
+
+      if RUBY_PLATFORM !~ /linux/
         # The linux convert command can produce warning messages on successful conversions - they show up in the error log.
         # For example:
         #
@@ -222,7 +223,6 @@ RSpec.describe Utils do
         # **** Please notify the author of the software that produced this
         # **** file that it does not conform to Adobe's published PDF
         # **** specification
-      else
         expect(errors).to be_empty
       end
     end
@@ -255,9 +255,8 @@ RSpec.describe Utils do
       file, errors = Utils.pdf_to_preview(config, test_data("practical-sailor.pdf"))
       expect(file).to be_a_kind_of(File)
       expect(Utils.mime_type(file)).to  eq('image/jpeg')
-      if RUBY_PLATFORM =~ /linux/
+      if RUBY_PLATFORM !~ /linux/
         # See note on #pdf_to_thumbnail above
-      else
         expect(errors).to be_empty
       end
     end
@@ -353,6 +352,13 @@ RSpec.describe Utils do
     end
   end
 
+  describe "#ocr" do
+    it "returns nil when  attempting to extract text from an unsupported file" do
+      text = Utils.hocr(config, test_data("garbage.rand"))
+      expect(text).to be_nil
+    end
+  end
+
   describe "#hocr" do
     it "returns a String of text extracted from an image" do
       text = Utils.hocr(config, test_data("edward-text.tiff"))
@@ -362,9 +368,5 @@ RSpec.describe Utils do
     end
   end
 
-  # describe "#"  do
-  #   it "" do
-  #   end
-  # end
 
 end
