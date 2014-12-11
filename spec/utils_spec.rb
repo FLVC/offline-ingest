@@ -4,15 +4,16 @@ require 'open3'
 
 # TODO: move following to helper (does @config get recreated?)
 
-Struct::new 'MockConfig',
+Struct::new('MockConfig',
             'image_to_pdf_command', 'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command',
-             'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry'
+            'tesseract_command', 'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry')
 
 def config
   return Struct::MockConfig::new("convert -compress LZW",                # image_to_pdf_command
                                  "convert -quality 75 -colorspace RGB",  # pdf_convert_command
-                                 "/usr/bin/kdu_expand",                  # kakadu_expand_command
-                                 "convert",                              # image_convert_command
+                                 "kdu_expand",                           # kakadu_expand_command
+                                 "convert -compress LZW",                # image_convert_command
+                                 "tesseract -l eng",                     # tesseract_command
                                  "pdftotext -nopgbrk",                   # pdf_to_text_command
                                  "500x700",                              # pdf_preview_geometry
                                  "200x200")                              # thumbnail_geometry
@@ -304,7 +305,7 @@ RSpec.describe Utils do
   describe "#image_magick_to_tiff" do
     it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
 
-      pending("convert doesn't support TIFFs on Mac OS X?!") if RUBY_PLATFORM =~ /darwin/i
+      pending("Huh. convert doesn't support TIFF output on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
 
       file, errors = Utils.image_magick_to_tiff(config, test_data("sample01.jp2"))
       expect(errors).to be_empty
@@ -323,7 +324,43 @@ RSpec.describe Utils do
   end
 
 
+  # TODO: we need two different kids of JP2K images here, one that
+  # ImageMagick can't handle (so it punts to kakadu) and one that it
+  # can.
 
+  describe "#image_to_tiff" do
+    it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
+      file, errors = Utils.image_to_tiff(config, test_data("sample01.jp2"))
+      expect(errors).to be_empty
+      expect(file).to be_a_kind_of(File)
+      expect(Utils.mime_type(file)).to  eq('image/tiff')
+    end
+  end
+
+  describe "#image_to_tiff" do
+    it "returns an array of error diagnostic messages for an invalid file" do
+      file, errors = Utils.image_to_tiff(config, test_data("garbage.rand"))
+      expect(errors.length).to be > 1
+      expect(file.stat.size).to be == 0
+    end
+  end
+
+  describe "#ocr" do
+    it "returns a String of text extracted from an image" do
+      text = Utils.ocr(config, test_data("edward-text.tiff"))
+      expect(text).to be_a_kind_of(String)
+      expect(text).to match(/glorious summer/i)
+    end
+  end
+
+  describe "#hocr" do
+    it "returns a String of text extracted from an image" do
+      text = Utils.hocr(config, test_data("edward-text.tiff"))
+      expect(text).to be_a_kind_of(String)
+      expect(text).to match(/glorious<\/span>/i)
+      expect(text).to match(/summer.<\/span>/i)
+    end
+  end
 
   # describe "#"  do
   #   it "" do

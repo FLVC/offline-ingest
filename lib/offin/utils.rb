@@ -438,47 +438,39 @@ class Utils
     FileUtils.rm_f(temp_image_filename)
   end
 
+  # ImageMagick sometimes fails on JP2K,  so we punt to kakadu in that case.
+  # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
+
+  def Utils.image_to_tiff config, image_filepath
+    file, errors = Utils.image_magick_to_tiff(config, image_filepath)
+    if (not file) or (file.stat.size < 1) or (Utils.mime_type(file) != 'image/tiff')
+      file, errors = Utils.kakadu_jp2k_to_tiff(config, image_filepath)
+    end
+    return file, errors
+  end
 
 
-  # TODO: fold this into something....
+  # TODO: remove this
 
   # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
   # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
 
   def Utils.be_careful_with_that_jp2_now config, jp2k_filepath
-    Utils.silence_streams(STDERR) do
-      return Magick::Image.read(jp2k_filepath).first
-    end
-  rescue Magick::ImageMagickError => e
-    return Utils.kakadu_jp2k_to_tiff(config, jp2k_filepath, "ImageMagick: #{e.message}")
+    raise "YIKES:  replace Utils.be_careful_with_that_jp2_now"
   end
 
 
+  private
 
-
-
-
-  # expects image or pathname, image must be a format understood by tesseract (no jp2)
-
-  def Utils.tesseract config, image_or_filename, hocr = nil
+  def Utils.tesseract config, image_filepath, hocr = nil
 
     tempfiles = []
-
-    image_filepath =   case image_or_filename
-                       when String
-                         image_or_filename
-                       when Magick::Image
-                         tempfiles.push  temp_image_filename = Tempfile.new('image-magick-').path
-                         image_or_filename.write temp_image_filename
-                         temp_image_filename
-                       else
-                         return
-                       end
 
     tempfiles.push base_filename = Tempfile.new('tesseract-').path
     tempfiles.push text_filename = base_filename + (hocr ? '.html' : '.txt')
 
-    error = nil
+    errors = []
+    err = ""
 
     cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (hocr ? ' hocr' : '')
 
@@ -486,33 +478,48 @@ class Utils
       Open3.popen3(cmdline) do |stdin, stdout, stderr|
         stdin.close
         stdout.close
-        error = stderr.read
+        while (data = stderr.read(1024 * 8)) do; err += data; end
+        stderr.close
+      end
+      if not err.nil? and not err.empty?
+        errors = [ "When producing OCR output from the command '#{cmdline}', the following errors were produced:" ]
+        errors += err.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
       end
     end
 
-    return unless File.exists?(text_filename)
-    return if (text = File.read(text_filename).strip).empty?
-    return text
+    if not File.exists? text_filename
+      return nil, errors
+    end
+
+    return File.read(text_filename).strip, errors
 
   rescue Timeout::Error => e
-    return
+    errors.push "Tesseract command '#{cmdline}' timed-out after #{TESSERACT_TIMEOUT} seconds"
+    return nil, errors
   ensure
     FileUtils.rm_f(tempfiles)
   end
 
 
+  public
+
   # use tesseract to create an HOCR file; strip out the DOCTYPE to avoid hitting w3c for the DTD:
 
   def Utils.hocr config, image_filepath
-    text = Utils.tesseract(config, image_filepath, :hocr)
+    text, errors = Utils.tesseract(config, image_filepath, :hocr)
+
     return unless text.class == String
+    return if text.empty?
     return text.gsub(/<!DOCTYPE\s+html.*?>\s+/mi, '')
   end
 
   # use tesseract to create an OCR file
 
   def Utils.ocr config, image_filepath
-    return Utils.tesseract(config, image_filepath)
+    text, errors = Utils.tesseract(config, image_filepath)
+    return unless text.class == String
+    return if text.empty?
+    return text
   end
 
 
