@@ -458,22 +458,19 @@ class BasicImagePackage < Package
 
     @image_filename = @datafiles.first
     path = File.join(@directory_path, @image_filename)
-    type = Utils.mime_type(path)
+    @mime_type = Utils.mime_type(path)
 
-    case type
+    case @mime_type
     when GIF, JPEG, PNG
-      @image = Magick::Image.read(path).first
+      @image = File.open(path, 'rb')
 
-      # TODO: add special support for TIFFs (not needed for digitool migration)
-
+    # TODO: add special support for TIFFs (not needed for digitool migration)
     when TIFF
       raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles.first}, which is currently unsupported (coming soon)."
     else
       raise PackageError, "The Basic Image package #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{type}."
     end
 
-  rescue Magick::ImageMagickError => e
-    error "Image processing error for Basic Image package #{@directory_name}: #{e.class}, #{e.message}"
   rescue PackageError => e
     error "Exception for Basic Image package #{@directory_name}: #{e.message}"
   rescue => e
@@ -481,8 +478,11 @@ class BasicImagePackage < Package
   end
 
   def ingest
+    medium, thumbnail = nil
 
     return if @config.test_mode
+
+    @image.rewind
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -490,28 +490,37 @@ class BasicImagePackage < Package
 
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @image_filename
-        ds.content  = File.open(File.join(@directory_path, @image_filename))
-        ds.mimeType = @image.mime_type
+        ds.content  = @image
+        ds.mimeType = @mime_type
       end
+
+      medium, medium_error_messages = Utils.image_resize(@config, @image, @config.medium_geometry)
 
       ingestor.datastream('MEDIUM_SIZE') do |ds|
         ds.dsLabel  = "Medium Size Image"
-        ds.content  = @image.change_geometry(@config.medium_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = @image.mime_type
+        ds.content  = medium
+        ds.mimeType = @mime_type
       end
+
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image, @config.thumbnail_geometry)
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"
-        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = @image.mime_type
+        ds.content  = thumbnail
+        ds.mimeType = @mime_type
       end
     end
 
     @bytes_ingested = ingestor.size
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
+
     error   ingestor.errors   if ingestor and ingestor.errors?
-    @image.destroy! if @image.class == Magick::Image
+    error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    error   [ 'Error creating Medium datastream' ]    + medium_error_messagesnn   if medium_error_messages    and not medium_error_messages.empty?
+
+    [ @image, medium, thumbnail ].each { |file| file.close if file.respond_to? :close }
+
     @updator.post_ingest
   end
 end
@@ -574,14 +583,14 @@ class LargeImagePackage < Package
     #  OBJ    reduced sized TIFF from JP2
     #  JP2    original source
     #  JPG    medium image derived from JP2
-    #  TN     thumnail derived from JP2
+    #  TN     thumbnail derived from JP2
     #
     # TIFF-submitted
     #
     #  OBJ    original TIFF
     #  JP2    derived from TIFF
     #  JPG    medium image derived from TIFF
-    #  TN     thumnail derived from TIFF
+    #  TN     thumbnail derived from TIFF
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 

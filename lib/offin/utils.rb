@@ -2,6 +2,7 @@
 
 require 'rubydora'
 require 'RMagick'
+# require 'RMagick'
 require 'fileutils'
 require 'iconv'
 require 'offin/exceptions'
@@ -450,6 +451,35 @@ class Utils
   end
 
 
+  def Utils.image_to_jpg
+
+  end
+
+
+
+  def Utils.open_anonymously filepath
+    newfile = Utils.temp_file
+    open(filepath, 'rb') do |f|
+      while (data = f.read(1024*1024))
+        newfile.write data
+      end
+    end
+    newfile.rewind
+    return newfile
+  end
+
+
+  # geometry is something like "200x200" - resizing preserves the aspect ration (i.e., the image is uniformly scaled down to fit into a 200 x 200 box).
+  # The type of image is preserved.
+
+  def Utils.image_resize config, image_filepath, geometry
+    return Utils.image_processing(config, image_filepath,
+                                  "#{config.image_convert_command} #{shellescape(image_filepath)} -resize #{geometry} -",
+                                  "When creating a resized image (#{geometry}) from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+
+  end
+
+
   # TODO: remove this
 
   # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
@@ -549,17 +579,17 @@ class Utils
     type = error = nil
 
     case
-    when file.is_a?(Magick::Image)
+    # when file.is_a?(Magick::Image)
 
-      error = []
-      type = case file.format
-             when 'GIF'  ; 'image/gif'
-             when 'JP2'  ; 'image/jp2'
-             when 'JPEG' ; 'image/jpeg'
-             when 'PNG'  ; 'image/png'
-             when 'TIFF' ; 'image/tiff'
-             else;         'application/octet-stream'
-             end
+    #   error = []
+    #   type = case file.format
+    #          when 'GIF'  ; 'image/gif'
+    #          when 'JP2'  ; 'image/jp2'
+    #          when 'JPEG' ; 'image/jpeg'
+    #          when 'PNG'  ; 'image/png'
+    #          when 'TIFF' ; 'image/tiff'
+    #          else;         'application/octet-stream'
+    #          end
 
     when file.is_a?(IO)
 
@@ -574,7 +604,7 @@ class Utils
         error  = stderr.read
       end
 
-      file.rewind if file.methods.include? 'rewind'
+      file.rewind if file.respond_to? :rewind
 
     when file.is_a?(String)  # presumed a filename
 

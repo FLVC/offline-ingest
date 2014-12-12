@@ -7,7 +7,7 @@ require 'helpers'
 
 RSpec.describe Utils do
 
-  include UtilRSpecHelpers
+  include UtilsHelpers
 
   describe "#mime_type"  do
     it "recognizes JPEG files from an open JPEG File object" do
@@ -171,10 +171,10 @@ RSpec.describe Utils do
       expect(Utils.mime_type(file)).to  eq('image/jpeg')
 
       if RUBY_PLATFORM !~ /linux/
-        # The linux convert command can produce warning messages on successful conversions - they show up in the error log.
-        # For example:
+        # The ImageMagick convert command under Linux can produce warning messages on successful conversions - they show up in the error log.  For example:
         #
-        # When creating a preview image from the PDF '/usr/local/islandora/offline-ingest/spec/test-data/practical-sailor.pdf' with command 'convert -quality 75 -colorspace RGB' the following message was produced:         # **** Warning:  File has an invalid xref entry:  19.  Rebuilding xref table.
+        # When creating a preview image from the PDF '/usr/local/islandora/offline-ingest/spec/test-data/practical-sailor.pdf' with command 'convert -quality 75 -colorspace RGB' the following message was produced:
+        # **** Warning:  File has an invalid xref entry:  19.  Rebuilding xref table.
         # **** This file had errors that were repaired or ignored.
         # **** The file was produced by:
         # **** >>>> Mac OS X 10.10.1 Quartz PDFContext <<<<
@@ -323,5 +323,33 @@ RSpec.describe Utils do
       expect(text).to match(/summer.<\/span>/i)
     end
   end
+
+
+  describe "#image_resize" do
+    it "returns a uniformly scaled image of the same type" do
+      resized, errors = Utils.image_resize config, test_data("edward-text.tiff"), "50x50"
+      expect(errors).to be_empty
+      expect(resized).to be_a_kind_of(File)
+      expect(Utils.mime_type(resized)).to eq("image/tiff")
+    end
+  end
+
+
+
+  describe "#image_resize" do
+    it "returns a uniformly scaled image to fit in a given geometry" do
+      resized, errors = Utils.image_resize config, test_data("edward-text.tiff"), "50x50"
+      width, height = tiff_size(resized)
+
+      expect(width).to  be_a(Fixnum)
+      expect(height).to be_a(Fixnum)
+
+      expect(width).to  be <= 50
+      expect(height).to be <= 50
+    end
+  end
+
+
+
 
 end # of "RSpec.describe Utils do"
