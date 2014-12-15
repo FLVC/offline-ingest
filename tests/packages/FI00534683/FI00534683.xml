@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:flvc="info:flvc/manifest/v1" xmlns:dcterms="http://purl.org/dc/terms/" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd" version="3.4">
+  <titleInfo>
+    <title>Age, growth and mortality of the common snook, Centropomus undecimalis (Bloch), in Everglades National Park, Florida</title>
+  </titleInfo>
+  <name type="personal" usage="primary">
+    <namePart>Thue, Edith B.</namePart>
+  </name>
+  <name type="personal">
+    <namePart>Rutherford, Edward S. (Edward Stevens)</namePart>
+    <namePart type="date">1954-</namePart>
+  </name>
+  <name type="personal">
+    <namePart>Buker, David G.</namePart>
+  </name>
+  <name type="corporate">
+    <namePart>South Florida Research Center</namePart>
+  </name>
+  <typeOfResource>text</typeOfResource>
+  <genre authority="marcgt">bibliography</genre>
+  <genre authority="marcgt">Technical report.</genre>
+  <originInfo>
+    <place>
+      <placeTerm type="code" authority="marccountry">flu</placeTerm>
+    </place>
+    <place>
+      <placeTerm type="text">Homestead, Fla.</placeTerm>
+    </place>
+    <publisher>National Park Service, South Florida Research Center, Everglades National Park</publisher>
+    <dateIssued>[1982]</dateIssued>
+    <dateIssued encoding="marc">1982</dateIssued>
+    <issuance>monographic</issuance>
+  </originInfo>
+  <language>
+    <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+  </language>
+  <physicalDescription>
+    <form authority="marcform">electronic</form>
+    <form authority="gmd">electronic resource</form>
+    <form authority="marccategory">electronic resource</form>
+    <form authority="marcsmd">remote</form>
+    <extent>v leaves, 32 p. : ill., map ; 28 cm.</extent>
+  </physicalDescription>
+  <abstract>This study focused on the age, growth and mortality of snook, Centropomus undecimalis, collected from sportfishermen in ENP from May 1976 through December 1979. Three hundred twenty-five fish ranged in length from 284-940 mm FL and in weight from 0.7 - 11.6 kg. Mean lengths of fish were largest in spring and smallest in winter. There were no differences in mean length among areas of capture. Annulus formation occurred in spring (March-May). Ages of fish were mainly 4-5 year-olds. Recruitment to the fishery began at age 2 and was completed at age 6.</abstract>
+  <abstract>The overall sex ratio favored males 3/1 and there were no differences in mean age of fish among areas of capture. Mean calculated growth of all snook was 375 mm FL in the first year and 57-90 mm thereafter. Calculated fish lengths at age differed among areas of capture and sexual differences in length-weight relationship were noted. Annual mortality rate of all fully recruited fish was 78%. Sexual differences in mortality rates were discussed.</abstract>
+  <note type="statement of responsibility" altRepGroup="00">Edith B. Thue, Edward S. Rutherford and David G. Buker.</note>
+  <note>"December 1982."</note>
+  <note type="reproduction">Electronic reproduction. [Florida] : State University System of Florida, PALMM Project, 2005. (Everglades online collection) Mode of access: World Wide Web. System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files. Electronically reproduced by Florida International University from a technical report held in the Green Library at Florida International University, Miami.</note>
+  <subject>
+    <geographicCode authority="marcgac">n-us-fl</geographicCode>
+  </subject>
+  <subject authority="lcsh">
+    <topic>Snook</topic>
+    <geographic>Florida</geographic>
+    <geographic>Everglades National Park</geographic>
+  </subject>
+  <subject authority="lcsh">
+    <topic>Snook</topic>
+    <geographic>Florida</geographic>
+    <geographic>Everglades National Park</geographic>
+    <topic>Age</topic>
+  </subject>
+  <subject authority="lcsh">
+    <topic>Snook</topic>
+    <geographic>Florida</geographic>
+    <geographic>Everglades National Park</geographic>
+    <topic>Growth</topic>
+  </subject>
+  <subject authority="lcsh">
+    <topic>Snook</topic>
+    <geographic>Florida</geographic>
+    <geographic>Everglades National Park</geographic>
+    <topic>Mortality</topic>
+  </subject>
+  <subject authority="lcsh">
+    <topic>Fishes</topic>
+    <geographic>Florida</geographic>
+    <geographic>Everglades National Park</geographic>
+  </subject>
+  <subject authority="huc">
+    <geographic>Everglades</geographic>
+    <geographic>3090202</geographic>
+  </subject>
+  <location displayLabel="purl">
+    <url>
+http://purl.flvc.org/fcla/tc/feol/FI00534683.pdf</url>
+  </location>
+  <location displayLabel="purl">
+    <url>
+http://purl.flvc.org/fcla/tc/feol/FI00534683.jpg</url>
+  </location>
+  <relatedItem type="otherFormat">
+    <identifier>(OCoLC)09224614</identifier>
+  </relatedItem>
+  <relatedItem type="series">
+    <titleInfo>
+      <title>Report (South Florida Research Center) ; T-683</title>
+    </titleInfo>
+  </relatedItem>
+  <identifier type="oclc">59669672</identifier>
+  <identifier>AAA7226  QF</identifier>
+  <identifier type="IID">FI00534683</identifier>
+  <identifier type="digitool">
+994342</identifier>
+  <identifier type="stock number">SER-91: (Southeast Regional Office, National Park Service)</identifier>
+  <identifier type="stock number">NRBIB:EVER-5570 (NPS Natural Resources Bibliography Number)</identifier>
+  <recordInfo>
+    <descriptionStandard>aacr</descriptionStandard>
+    <recordContentSource authority="marcorg">FXG</recordContentSource>
+    <recordCreationDate encoding="marc">830215</recordCreationDate>
+    <recordIdentifier>000009604</recordIdentifier>
+    <recordOrigin>Converted from MARCXML to MODS v3.4 using MARC21slim2MODS3-4_FLVC.xsl (LOC rev 1.86 / 20130610) (FLVC v7)</recordOrigin>
+  </recordInfo>
+</mods>

@@ -1,4 +1,4 @@
-FSDT2312742 caused 
+FSDT2312742 caused
 Invalid package in /ssa/temp/islandora/digitool-migrations/fsu_pc/ffp50_pdf/FSDT2312742.
 Errors:
     Exception NoMethodError - private method `gsub' called for nil:NilClass, backtrace follows:
@@ -10,3 +10,9 @@ Errors:
     tools/package:44:in `each'
     tools/package:44
 
+
+
+
+FS66750001rf - original double page issue
+
+FI00534683 - double page,  fixed,   but no numbers!

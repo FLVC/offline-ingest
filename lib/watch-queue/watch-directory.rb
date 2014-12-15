@@ -22,8 +22,8 @@ class BaseWatchDirectory
   SUCCESS_SUBDIRECTORY     = 'success'
   WARNINGS_SUBDIRECTORY    = 'warnings'
 
-  DIRECTORY_UNCHANGED_TIME = 30
-# DIRECTORY_UNCHANGED_TIME = 5 * 60  #### Use this variable on launch
+# DIRECTORY_UNCHANGED_TIME = 30
+  DIRECTORY_UNCHANGED_TIME = 15 * 60  #### Use this variable on launch
 
   attr_reader :config_path, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
@@ -67,7 +67,7 @@ class BaseWatchDirectory
     new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
     FileUtils.mkdir new_directory
 ####   FileUtils.chown nil, SHARED_GROUP, new_directory          # we don't really need to do this; set-gid on directory should get this right
-    FileUtils.chmod 02775,  new_directory
+###    FileUtils.chmod 02775,  new_directory
     return new_directory
   rescue => e
     raise SystemError, "Encountered a fatal error when creating a new processing directory for #{hostname}: #{e.class} - #{e.message}"

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record xmlns="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+  <leader>     fam  2200541Ia 4500</leader>
+  <controlfield tag="001">000009604</controlfield>
+  <controlfield tag="006">m|||     d|s|</controlfield>
+  <controlfield tag="007">cr|gn</controlfield>
+  <controlfield tag="008">830215e198212uufluab   sbt  f0   0 eng d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)59669672</subfield>
+  </datafield>
+  <datafield tag="035" ind1="9" ind2=" ">
+    <subfield code="a">AAA7226  QF</subfield>
+  </datafield>
+  <datafield tag="037" ind1=" " ind2=" ">
+    <subfield code="a">SER-91:</subfield>
+    <subfield code="b">(Southeast Regional Office, National Park Service)</subfield>
+  </datafield>
+  <datafield tag="037" ind1=" " ind2=" ">
+    <subfield code="a">NRBIB:EVER-5570</subfield>
+    <subfield code="b">(NPS Natural Resources Bibliography Number)</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FXG</subfield>
+    <subfield code="c">FXG</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-us-fl</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FXGG</subfield>
+  </datafield>
+  <datafield tag="086" ind1=" " ind2=" ">
+    <subfield code="a">I 29.95:T-683</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Thue, Edith B.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Age, growth and mortality of the common snook, Centropomus undecimalis (Bloch), in Everglades National Park, Florida</subfield>
+    <subfield code="h">[electronic resource] /</subfield>
+    <subfield code="c">Edith B. Thue, Edward S. Rutherford and David G. Buker.</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Homestead, Fla. :</subfield>
+    <subfield code="b">National Park Service, South Florida Research Center, Everglades National Park,</subfield>
+    <subfield code="c">[1982]</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">v leaves, 32 p. :</subfield>
+    <subfield code="b">ill., map ;</subfield>
+    <subfield code="c">28 cm.</subfield>
+  </datafield>
+  <datafield tag="490" ind1="1" ind2=" ">
+    <subfield code="a">Report</subfield>
+    <subfield code="v">T-683</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">"December 1982."</subfield>
+  </datafield>
+  <datafield tag="520" ind1="3" ind2=" ">
+    <subfield code="a">This study focused on the age, growth and mortality of snook, Centropomus undecimalis, collected from sportfishermen in ENP from May 1976 through December 1979. Three hundred twenty-five fish ranged in length from 284-940 mm FL and in weight from 0.7 - 11.6 kg. Mean lengths of fish were largest in spring and smallest in winter. There were no differences in mean length among areas of capture. Annulus formation occurred in spring (March-May). Ages of fish were mainly 4-5 year-olds. Recruitment to the fishery began at age 2 and was completed at age 6.</subfield>
+  </datafield>
+  <datafield tag="520" ind1="3" ind2=" ">
+    <subfield code="a">The overall sex ratio favored males 3/1 and there were no differences in mean age of fish among areas of capture. Mean calculated growth of all snook was 375 mm FL in the first year and 57-90 mm thereafter. Calculated fish lengths at age differed among areas of capture and sexual differences in length-weight relationship were noted. Annual mortality rate of all fully recruited fish was 78%. Sexual differences in mortality rates were discussed.</subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2005.</subfield>
+    <subfield code="f">(Everglades online collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically reproduced by Florida International University from a technical report held in the Green Library at Florida International University, Miami.</subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">s</subfield>
+    <subfield code="b">2005</subfield>
+    <subfield code="d">flu</subfield>
+    <subfield code="e">n</subfield>
+  </datafield>
+  <datafield tag="598" ind1=" " ind2=" ">
+    <subfield code="a">FI00534683</subfield>
+  </datafield>
+  <datafield tag="599" ind1=" " ind2=" ">
+    <subfield code="a">cab</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park</subfield>
+    <subfield code="x">Age.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park</subfield>
+    <subfield code="x">Growth.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park</subfield>
+    <subfield code="x">Mortality.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Fishes</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="7">
+    <subfield code="a">Everglades</subfield>
+    <subfield code="z">3090202</subfield>
+    <subfield code="2">huc</subfield>
+  </datafield>
+  <datafield tag="655" ind1=" " ind2="7">
+    <subfield code="a">Technical report.</subfield>
+    <subfield code="2">marcgt</subfield>
+  </datafield>
+  <datafield tag="700" ind1="1" ind2=" ">
+    <subfield code="a">Rutherford, Edward S.</subfield>
+    <subfield code="q">(Edward Stevens),</subfield>
+    <subfield code="d">1954-</subfield>
+  </datafield>
+  <datafield tag="700" ind1="1" ind2=" ">
+    <subfield code="a">Buker, David G.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">South Florida Research Center.</subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">(Original)</subfield>
+    <subfield code="w">(OCoLC)09224614</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Report (South Florida Research Center) ;</subfield>
+    <subfield code="v">T-683.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">feol</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">eol</subfield>
+  </datafield>
+  
+  
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Book</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Govt Publication</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Online Resource</subfield>
+  </datafield>
+</record>

@@ -6,35 +6,16 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
+
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
+
 require 'socket'
-
-case Socket.gethostname
-
-when /alpo/
-  $LOAD_PATH.unshift "/home/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/home/fischer/WorkProjects/offline-ingest/config.yml"
-
-when /flvc-rfischer|romeo-foxtrot/
-  $LOAD_PATH.unshift "/Users/fischer/WorkProjects/offline-ingest/lib/"
-  config_filename  = "/Users/fischer/WorkProjects/offline-ingest/config.yml"
-
-when /islandorad/, /islandorat/, /islandorap/
-
-  $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
-  config_filename  = "/usr/local/islandora/offline-ingest/config.yml"
-
-else
-  STDERR.puts "#{$0} Doesn't know how to configure for this environment, quitting."
-  exit -1
-end
-
 require 'offin/mets'
 require 'offin/config'
 
-config  = Datyl::Config.new(config_filename, "default")
+config  = Datyl::Config.new(ENV['CONFIG'] || "/usr/local/islandora/offline-ingest/config.yml", "default")
 
 SaxDocumentExamineMets.debug = false
-
 
 ARGV.each do |filename|
 
@@ -52,26 +33,25 @@ ARGV.each do |filename|
   # all of the candidate structmaps
 
   structmaps = mets.sax_document.structmaps
-  STDERR.puts "", "Structmap Data for the #{structmaps.count}  #{structmaps.count == 0 ? 'structmap' : 'structmaps'}", ""
 
-  count = 1
-  structmaps.each do |sm|
-    puts "StructMap Number #{count}"
-    sm.each do |elt|
-      line = '. ' * elt.level
-      case
-      when elt.is_page
-        line += '. ' + '"' + elt.title + '"'
-        elt.files.each { |file| line = "#{line} [#{file.sequence}] -- #{file.href}  "  }
-      else # is a section heading
-        line += '* ' + '"' +  elt.title + '"'
-      end
-      puts line
-    end
-    puts ""
-    count += 1
-  end
-  puts ""
+  # count = 1
+  # structmaps.each do |sm|
+  #   puts "StructMap Number #{count}"
+  #   sm.each do |elt|
+  #     line = '. ' * elt.level
+  #     case
+  #     when elt.is_page
+  #       line += '. ' + '"' + elt.title + '"'
+  #       elt.files.each { |file| line = "#{line} [#{file.sequence}] -- #{file.href}  "  }
+  #     else # is a section heading
+  #       line += '* ' + '"' +  elt.title + '"'
+  #     end
+  #     puts line
+  #   end
+  #   puts ""
+  #   count += 1
+  # end
+  # puts ""
 
   # mets.structmap.print
 

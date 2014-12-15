@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:flvc="info:flvc/manifest/v1" xmlns:dcterms="http://purl.org/dc/terms/" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd" version="3.4">
+  <titleInfo>
+    <title>Gee whoa!</title>
+  </titleInfo>
+  <typeOfResource>text</typeOfResource>
+  <originInfo>
+    <place>
+      <placeTerm type="code" authority="marccountry">ilu</placeTerm>
+    </place>
+    <place>
+      <placeTerm type="text">Chicago</placeTerm>
+    </place>
+    <publisher>W.B. Conkey Co.</publisher>
+    <dateIssued>c1894</dateIssued>
+    <dateIssued encoding="marc">1894</dateIssued>
+    <dateIssued encoding="marc">1894</dateIssued>
+    <issuance>monographic</issuance>
+  </originInfo>
+  <language>
+    <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+  </language>
+  <physicalDescription>
+    <form authority="marcform">electronic</form>
+    <form authority="gmd">electronic resource</form>
+    <form authority="marccategory">electronic resource</form>
+    <form authority="marcsmd">remote</form>
+    <extent>1 online resource ([15] p.) : chiefly ill. (some col.)</extent>
+  </physicalDescription>
+  <targetAudience authority="marctarget">juvenile</targetAudience>
+  <subject authority="lcsh">
+    <topic>Children's stories</topic>
+  </subject>
+  <subject authority="lcsh">
+    <topic>Children's poetry</topic>
+  </subject>
+  <location displayLabel="purl">
+    <url displayLabel="Electronic resource (JPEG)">http://purl.flvc.org/fsu/dl/FS66750001.jpg</url>
+  </location>
+  <location displayLabel="purl">
+    <url displayLabel="Electronic resource (PDF)">http://purl.flvc.org/fsu/dl/FS66750001.pdf</url>
+  </location>
+  <identifier type="oclc">458541050</identifier>
+  <identifier type="IID">FS66750001rf</identifier>
+  <identifier type="digitool">
+229491</identifier>
+  <recordInfo>
+    <descriptionStandard>aacr</descriptionStandard>
+    <recordContentSource authority="marcorg">FDA</recordContentSource>
+    <recordCreationDate encoding="marc">091023</recordCreationDate>
+    <recordChangeDate encoding="iso8601">20091023081156.0</recordChangeDate>
+    <recordIdentifier>002589789</recordIdentifier>
+    <recordOrigin>Converted from MARCXML to MODS v3.4 using MARC21slim2MODS3-4_FLVC.xsl (LOC rev 1.86 / 20130610) (FLVC v7)</recordOrigin>
+  </recordInfo>
+</mods>

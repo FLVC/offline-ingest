@@ -875,7 +875,9 @@ class BookPackage < Package
     @page_filenames.each do |file_name|
       path = File.join(@directory_path, file_name)
       type = Utils.mime_type(path)
-      issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
+      unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
+        issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" \
+      end
     end
 
     unless issues.empty?
@@ -898,12 +900,13 @@ class BookPackage < Package
     # filenames declared in the METS file table of contents (a
     # structmap).  While datafiles is a simple list of filenames, the
     # table of contents provies a Struct::Page with slots :title,
-    # :level, :image_filename, :image_mimetype, :text_filename,
-    # :text_mimetype.
+    # :level, :image_filename, :image_mimetype, and :valid_repeat.
+    # A :valid_repeat file is ignored.
 
     # TODO: handle text files somehow.
 
     @table_of_contents.pages.each do |entry|
+      next if entry.valid_repeat
       expected.push entry.image_filename
       missing.push  entry.image_filename  if @datafiles.grep(entry.image_filename).empty?
     end
@@ -1282,4 +1285,5 @@ class BookPackage < Package
     error   ingestor.errors   if ingestor and ingestor.errors?
     image.destroy! if image.class == Magick::Image
   end
-end
+
+end   #  of class BookPackage
