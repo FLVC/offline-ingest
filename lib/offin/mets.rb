@@ -4,64 +4,71 @@ require 'offin/errors'
 require 'json'
 
 
-# Helper classes for analyzing METS data.
+class MetsUtils
 
-Struct.new('Page',    :title, :level, :image_filename, :image_mimetype, :text_filename, :text_mimetype)
-Struct.new('Chapter', :title, :level)
+  def MetsUtils.pretty_print_structmap structmap
+
+    len = 0
+    structmap.each { |elt|  len = [ len, elt.title.length + 2 * elt.level ].max  }
+
+    structmap.each do |elt|
+
+      if elt.is_page
+        str = sprintf("%-#{len}s ", '. ' * elt.level + elt.title)
+        files = elt.files.map{ |e| e.href  }.join(', ')
+        fids  = elt.fids.join(', ')
+        str +=  "   FIDS: [#{fids}] - FILES: [#{files}]"
+      else
+        str = sprintf("%-#{len}s ", '* ' * elt.level + elt.title)
+      end
+      puts str
+    end
+  end
+
+
+end
+
+# This file contains helper classes/structs for analyzing METS data.
+
 
 # Class TableOfContents is initialized by a METS structmap, which is
 # provided by a Mets object method.  The Package object makes use of
-# TableOfContents, in particular to produce json output for the page
+# TableOfContents to produce json output for the page
 # turning application.
+#
+# The structmap object (class MetsStructMap) provides an ordered list of these objects:
+#
+#    <Struct::MetsDivData  :level, :title, :is_page, :fids, :files>
+#
+# where :files is an array of
+#
+#    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
+#
+# We're transforming this into a sequence of Struct::Page and Struct::Chapter objects
+# that are slightly more uniform.
 
+Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :fid, :pagenum, :valid_repeat)
+Struct.new('Chapter',       :title, :level, :pagenum)
 
 class TableOfContents
 
   include Errors  # because I don't have enough of my own.
 
   def initialize structmap
+
     @sequence = []
     @valid = true
     @structmap = structmap
+    @sequence = create_entries_sequence(structmap)
 
-    # The structmap object (class MetsStructMap) provides an ordered list of these objects:
-    #    <Struct::MetsDivData  :level, :title, :is_page, :fids, :files>
-    # where :files is a list of
-    #    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
-    #
-    # we're transforming this into a sequence of Page and Chapter structs that are slightly more uniform.
-
-    @structmap.each do |div_data|
-      if div_data.is_page
-
-        entry = Struct::Page.new
-        entry.title = div_data.title
-        entry.level = div_data.level
-
-        div_data.files.each do |f|
-          if f.mimetype =~ /image/
-            entry.image_filename = f.href
-            entry.image_mimetype = f.mimetype
-          elsif f.mimetype =~ /text/             # what was I thinking here? no way this is going to work....
-            entry.text_filename = f.href
-            entry.text_mimetype = f.mimetype
-          end
-        end
-
-      else
-        entry = Struct::Chapter.new
-        entry.title = div_data.title
-        entry.level = div_data.level
-      end
-
-      @sequence.push entry
-    end
-
-    cleanup_chapter_titles
-    cleanup_page_titles
     check_for_page_images
     nip_it_in_the_bud
-   end
+    mark_valid_repeat_pages
+    # telescope_pages
+    cleanup_chapter_titles
+    cleanup_page_titles
+    number_pages
+  end
 
 
   def each
@@ -69,11 +76,11 @@ class TableOfContents
   end
 
   def pages
-    @sequence.select{ |elt| elt.class == Struct::Page }
+    @sequence.select{ |elt| is_page? elt }
   end
 
   def chapters
-    @sequence.select{ |elt| elt.class == Struct::Chapter }
+    @sequence.select{ |elt| is_chapter? elt }
   end
 
   def to_json label = nil
@@ -82,15 +89,13 @@ class TableOfContents
     container['title'] = label  unless label.nil? || label.empty?
 
     toc = []
-    seq = 1
     @sequence.each do |entry|
-      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => seq.to_s }
+      rec = { 'level' => entry.level, 'title' => entry.title, 'pagenum' => entry.pagenum }
       case entry
       when Struct::Chapter
         rec['type'] = 'chapter'
       when Struct::Page
         rec['type'] = 'page'
-        seq += 1
       end
       toc.push rec
     end
@@ -104,7 +109,6 @@ class TableOfContents
     @valid and not errors?
   end
 
-
   def print
     @sequence.each do |entry|
       case entry
@@ -115,11 +119,134 @@ class TableOfContents
       end
       puts indent + entry.title
     end
-
   end
 
 
   private
+
+
+  def is_page? elt
+    return elt.class == Struct::Page
+  end
+
+  def is_chapter? elt
+    return elt.class == Struct::Chapter
+  end
+
+
+  # We can sometimes have structmaps that repeat pages, notably for the case where there are two chapters on one page.  For instance:
+  #
+  # Chapter            <METS:div LABEL="Baby-Land" TYPE="section">
+  #
+  # Page                 <METS:div LABEL="3" TYPE="page">            <METS:fptr FILEID="FID6"/> </METS:div>
+  # Page                 <METS:div LABEL="4" TYPE="page">            <METS:fptr FILEID="FID7"/> </METS:div>        </METS:div>
+  #
+  # Chapter            <METS:div LABEL="Who Is She" TYPE="section">
+  # Page                 <METS:div LABEL="5" TYPE="page">            <METS:fptr FILEID="FID8"/> </METS:div>        </METS:div>
+  #
+  # Chapter            <METS:div LABEL="Niddlety Noddy" TYPE="section">
+  # Page                 <METS:div LABEL="5" TYPE="page">            <METS:fptr FILEID="FID8"/> </METS:div>        </METS:div>
+  #
+  # Chapter            <METS:div LABEL="Little Frogs At School" TYPE="section">
+  # Page                 <METS:div LABEL="6" TYPE="page">            <METS:fptr FILEID="FID10"/> </METS:div>        </METS:div>
+  #
+  # In the above, we have the page with FILEID FID8 (LABEL="5") repeated twice,  which won't do.   More briefly the data look like:
+  #
+  # Chapter  Baby-Land
+  # Page       3
+  # Page       4
+  # Chapter  Who Is She
+  # Page       5
+  # Chapter  Niddlety Noddy
+  # Page       5
+  # Chapter  Little Frogs At School
+  # Page       6
+  #
+  # we telescope the data as so:
+  #
+  # Chapter  Baby-Land
+  # Page       3
+  # Page       4
+  # Chapter  Who Is She
+  # Chapter  Niddlety Noddy
+  # Page       5
+  # Chapter  Little Frogs At School
+  # Page       6
+  #
+
+
+
+  def telescope_pages
+
+    # find the last occurence of a page
+
+    index = 0
+    last_occurrence = {}
+    @sequence.each do |entry|
+      last_occurrence[entry.fid] = index  if is_page?(entry)
+      index += 1
+    end
+
+    # recreate our sequence by pruning out earlier occurrences
+
+    new_seq = []
+    index = 0
+    @sequence.each do |entry|
+      if is_page? entry
+        new_seq.push entry if last_occurrence[entry.fid] == index
+      else # chapter
+        new_seq.push entry
+      end
+      index += 1
+    end
+    @sequence = new_seq
+  end
+
+  def mark_valid_repeat_pages
+
+    fids = {}
+    @sequence.each do |entry|
+      next unless is_page? entry
+      fids[entry.fid] ||= []
+      fids[entry.fid].push entry
+    end
+
+    fids.keys.each do |k|
+      if fids[k].length > 1
+        fids[k][0..-2].each { |e| e.valid_repeat = true }  # don't mark the last one, it's the one we will eventually include in the sequence to ingest
+      end
+    end
+
+  end
+
+
+  def create_entries_sequence structmap
+    seq = []
+    structmap.each do |div_data|
+      if div_data.is_page
+
+        entry = Struct::Page.new
+        entry.title = (div_data.title || '').strip
+        entry.level = div_data.level
+
+        div_data.files.each do |f|
+          next unless f.mimetype =~ /image/
+          entry.image_filename = f.href
+          entry.image_mimetype = f.mimetype
+          entry.fid = f.fid
+          entry.title = file_name(f.href) if entry.title.empty?
+        end
+
+      else
+        entry = Struct::Chapter.new
+        entry.title = div_data.title || ''
+        entry.level = div_data.level
+      end
+
+      seq.push entry
+    end
+    return seq
+  end
 
 
   # sometimes we have a TOC structure like this:
@@ -143,16 +270,12 @@ class TableOfContents
   def has_bud? seq
     return false unless seq.length > 1
     return true if  seq[0].level == 1 \
-                and seq[0].class != Struct::Page \
+                and not is_page? seq[0] \
                 and seq[1..-1].all? { |ent| ent.level > 1 }
   end
 
 
-  # TODO: not too sure how to approach this yet.
-  # it is certainly to early to filesystem checks on the files' existance.
-  #
-  # So this may be a fatal error (@valid => false) but let's wait and
-  # experiment for now; just issue warnings.
+  # Create warnings for pages that do not have associated image files.
 
   def check_for_page_images
 
@@ -171,60 +294,70 @@ class TableOfContents
   end
 
 
-
   # Clean up page titles - the sequence of pages titles must exist and
   # be unique for the IA book reader to treat table of contents
   # correctly. Here we'll make that so.
 
   def cleanup_page_titles
 
-    # First, if there isn't a title for a page, try to use the image filename first, and if that doesn't exist, use the sequence number instead
+    fids = {}                           # an array of entries, NOTE BENE: these entries are shared structures into @sequence
+    @sequence.each do |entry|           # anything with the same FID gets the same title (the entries will have the same values)
+      next unless is_page? entry
+      fids[entry.fid] ||= []
+      fids[entry.fid].push entry
+    end
 
-    sequence = 1
-    pages.each do |p|
-      p.title.strip!
-      case
-      when (p.title.empty? and p.image_filename);          p.title = file_name(p.image_filename)
-      when (p.title.empty?);                               p.title = sequence.to_s
+    fid_seq = pages.map { |entry| entry.fid }   # we need to process in @sequence order to re-number pages
+
+    titles = {}
+    seen = {}
+
+    fid_seq.each do |fid|
+      next if seen[fid]
+      seen[fid] = true
+      title = fids[fid][0].title
+      titles[title] ||= 0
+      titles[title] += 1
+    end
+
+
+    we_have_issues = []
+
+    fid_seq.reverse.each do |fid|
+      title = fids[fid][0].title
+      n = titles[title]
+
+      if n and n > 1
+        fids[fid].each do |entry|
+          entry.title = entry.title + " (#{n})"
+          we_have_issues.push entry.title
+        end
+        titles[title] -= 1
       end
-      sequence += 1
     end
 
-    # Now every page must have a unique name, so let's generate a hash of the number of occurrences of each title:
-
-    occurrence = {}
-    pages.each  { |p| occurrence[p.title] = occurrence.fetch(p.title, 0) + 1 }
-
-    # Remove unique titles and reset the values of the remainder to zero so we can use it as a counter.
-
-    occurrence.keys.each do |page_title|
-      if occurrence[page_title] == 1
-        occurrence.delete(page_title)
-      else
-        occurrence[page_title] = 0
-      end
-    end
-
-    # Increment counter for repeated page titles and append " (counter)" to the title
-
-    issues = []
-    pages.each do |p|
-      next unless occurrence[p.title]
-      occurrence[p.title] += 1
-      p.title += " (#{occurrence[p.title]})"
-      issues.push p.title
-    end
-
-    if not issues.empty?
-      warning "Not all page labels in the METS file were unique; a parenthesized number was appended for these labels: '" + issues.join("', '") + "'."
+    if not we_have_issues.empty?
+       warning "Not all page labels in the METS file were unique; a parenthesized number was appended for these labels: '" + we_have_issues.join("', '") + "'."
     end
   end
-
 
 
   def cleanup_chapter_titles
     chapters.each { |c| c.title = 'Chapter' if (not c.title or c.title.empty?) }
   end
+
+  # last thing to do is to assign pagenums
+
+  def number_pages
+    pagenum = 1
+    @sequence.each do |entry|
+      entry.pagenum = pagenum
+      next if (is_page? entry and entry.valid_repeat)
+      pagenum += 1 if is_page?(entry)
+    end
+  end
+
+
 end # of class TableOfContents
 
 
