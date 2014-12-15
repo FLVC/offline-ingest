@@ -1,12 +1,12 @@
 module UtilsHelpers
 
   Struct::new('MockConfig',
-              'image_to_pdf_command', 'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command', 'tesseract_command', 'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry')
+              'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command', 'tesseract_command', 'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry')
 
   # fake the horrible config.yml
 
   def config
-    return Struct::MockConfig::new("convert -compress LZW",                # image_to_pdf_command
+    return Struct::MockConfig::new(
                                    "convert -quality 75 -colorspace RGB",  # pdf_convert_command
                                    "kdu_expand",                           # kakadu_expand_command
                                    "convert -compress LZW",                # image_convert_command
@@ -20,8 +20,8 @@ module UtilsHelpers
 
   # give the whole path to a test data file
 
-  def test_data base_name
-    return File.expand_path(File.join(File.dirname(__FILE__), 'test-data', base_name))
+  def test_data_directory filename
+    return File.expand_path(File.join(File.dirname(__FILE__), 'test-data', filename))
   end
 
   def image_size file, command
@@ -31,7 +31,7 @@ module UtilsHelpers
 
     while (data = file.read(1024 ** 2))  do; temp.write data; end
     temp.close
-    file.rewind
+
 
     cmd = sprintf(command, temp.path)
     Open3.popen3(cmd) do |stdin, stdout, stderr|

@@ -358,6 +358,7 @@ class Utils
 
 
   def Utils.image_processing config, image_filepath, command, error_title
+
     error = nil
     errors = []
     image = Utils.temp_file
@@ -384,8 +385,8 @@ class Utils
 
   def Utils.image_to_pdf config, image_filepath
     return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_to_pdf_command} #{Utils.shellescape(image_filepath)} pdf:-",
-                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_to_pdf_command}' the following message was produced:" )
+                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} pdf:-",
+                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
   end
 
 

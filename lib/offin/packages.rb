@@ -457,12 +457,15 @@ class BasicImagePackage < Package
     return unless valid?
 
     @image_filename = @datafiles.first
-    path = File.join(@directory_path, @image_filename)
-    @mime_type = Utils.mime_type(path)
+    @image_pathname = File.join(@directory_path, @image_filename)
+
+    STDERR.puts '!!!!!!!!!!!!!!!!', @image_filename
+
+    @mime_type = Utils.mime_type(@image_pathname)
 
     case @mime_type
     when GIF, JPEG, PNG
-      @image = File.open(path, 'rb')
+      @image = File.open(@image_pathname, 'rb')
 
     # TODO: add special support for TIFFs (not needed for digitool migration)
     when TIFF
@@ -478,7 +481,7 @@ class BasicImagePackage < Package
   end
 
   def ingest
-    medium, thumbnail = nil
+    medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
 
     return if @config.test_mode
 
@@ -494,7 +497,7 @@ class BasicImagePackage < Package
         ds.mimeType = @mime_type
       end
 
-      medium, medium_error_messages = Utils.image_resize(@config, @image, @config.medium_geometry)
+      medium, medium_error_messages = Utils.image_resize(@config, @image_pathname, @config.medium_geometry)
 
       ingestor.datastream('MEDIUM_SIZE') do |ds|
         ds.dsLabel  = "Medium Size Image"
@@ -502,7 +505,7 @@ class BasicImagePackage < Package
         ds.mimeType = @mime_type
       end
 
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image, @config.thumbnail_geometry)
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry)
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"
@@ -517,9 +520,9 @@ class BasicImagePackage < Package
 
     error   ingestor.errors   if ingestor and ingestor.errors?
     error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    error   [ 'Error creating Medium datastream' ]    + medium_error_messagesnn   if medium_error_messages    and not medium_error_messages.empty?
+    error   [ 'Error creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
 
-    [ @image, medium, thumbnail ].each { |file| file.close if file.respond_to? :close }
+    [ @image, medium, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
 
     @updator.post_ingest
   end
