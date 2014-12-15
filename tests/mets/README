@@ -1,0 +1,40 @@
+
+
+FS66750001rf - original double page issue
+
+FI00534683   - double page,  fixed,   but no numbers!
+
+CF00001566  - need to check this one from Gail:
+
+
+    https://ucf.digital.flvc.org/islandora/object/ucf:8258/datastream/DT-METS/view
+
+    There's a sequence of pages following a chapter div, ending in
+    label="223" fileid="FID226".  Then they start a new chapter div,
+    and the first page after that is label="223" fileid="FID227".
+
+	    <mets:div TYPE="page" LABEL="222">
+	      <mets:fptr FILEID="FID225"/>
+	    </mets:div>
+	    <mets:div TYPE="page" LABEL="223">
+	      <mets:fptr FILEID="FID226"/>
+	    </mets:div>
+	  </mets:div>
+	  <mets:div TYPE="chapter" LABEL="Propagation by Budding, Grafting, Layering, Inarching, Etc.">
+	    <mets:div TYPE="page" LABEL="223">
+	      <mets:fptr FILEID="FID227"/>
+	    </mets:div>
+	    <mets:div TYPE="page" LABEL="224">
+	      <mets:fptr FILEID="FID228"/>
+	    </mets:div>
+
+    Seems to indicate two different files with the same label, but the file pointers both refer to the same jpg.
+
+	  <mets:file ID="FID226" MIMETYPE="image/jpeg" SEQ="226" GROUPID="GID226">
+	    <mets:FLocat xlink:href="223.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+	  </mets:file>
+	  <mets:file ID="FID227" MIMETYPE="image/jpeg" SEQ="227" GROUPID="GID227">
+	    <mets:FLocat xlink:href="223.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+	  </mets:file>
+
+    I'd only seen examples of the same file pointers repeating in the structMap.

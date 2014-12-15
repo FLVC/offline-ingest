@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="info:flvc/manifest/v1">
+    <contentModel>islandora:bookCModel</contentModel>
+    <collection>islandora-test:bookCollection</collection>
+    <submittingInstitution>FIU</submittingInstitution>
+    <owningInstitution>FIU</owningInstitution>
+    <objectHistory source="digitool">admin_unit="FCL01", ingest_id="ing5199", creator="null:staff", creation_date="2010-03-15 16:38:06", modified_by="null:staff", modification_date="2010-03-15 16:38:09"</objectHistory>
+</manifest>
