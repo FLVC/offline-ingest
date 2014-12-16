@@ -357,9 +357,24 @@ class Utils
   end
 
 
+  def Utils.format_error_messages text
+
+    return text unless text.class == String
+
+    errors = []
+    text.split(/\n/).each do |line|
+      next if line =~ /warning: component data type mismatch/i
+      next if line =~ /warning: superfluous BPCC box/i
+      next if line.empty?
+      errors.push line
+    end
+    return errors
+  end
+
+
   def Utils.image_processing config, image_filepath, command, error_title
 
-    error = nil
+    error_text = nil
     errors = []
     image = Utils.temp_file
     Open3.popen3(command) do |stdin, stdout, stderr|
@@ -368,12 +383,12 @@ class Utils
           image.write data
       end
       image.rewind
-      error = stderr.read
+      error_text = stderr.read
     end
-    if not error.nil? and not error.empty?
-      errors = [ error_title ]
-      errors += error.split(/\n+/).map{ |line| line.strip }.select { |line| not line.empty? }
-    end
+
+    errors = Utils.format_error_messages(error_text)
+    errors.unshift error_title unless errors.nil? or errors.empty?
+
     return image, errors
   end
 
@@ -386,48 +401,49 @@ class Utils
   def Utils.pdf_to_thumbnail config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
-                                  "When creating a thumbnail image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
+                                  "When creating a thumbnail image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
   end
 
   def Utils.pdf_to_preview config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_convert_command} -resize #{config.pdf_preview_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
-                                  "When creating a preview image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
+                                  "When creating a preview image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
   end
 
 
   def Utils.pdf_to_text config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -",
-                                  "When extracting texy from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was produced:")
-  end
-
-
-  def Utils.image_magick_to_tiff config,  image_filepath
-    return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
-                                  "When creating a TIFF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+                                  "When extracting texy from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
   end
 
   def Utils.image_to_jpeg config,  image_filepath
     return Utils.image_processing(config, image_filepath,
                                   "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jpeg:-",
-                                  "When creating a JEPG from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+                                  "When creating a JEPG from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
   end
 
   def Utils.image_to_jp2k config, image_filepath
     return Utils.image_processing(config, image_filepath,
                                   "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jp2:-",
-                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command} <filename> jp2:-' the following message was produced:" )
+                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command} <filename> jp2:-' the following message was encountered:" )
   end
 
   def Utils.image_to_pdf config, image_filepath
     return Utils.image_processing(config, image_filepath,
                                   "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} pdf:-",
-                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
   end
 
-  # kdu_expand on jp2k
+  # Use Image Magick's convert to create a TIFF (TODO: when we have appropriate test data for image_to_tiff - where we can test convert's failure - make this private)
+
+  def Utils.image_magick_to_tiff config,  image_filepath
+    return Utils.image_processing(config, image_filepath,
+                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
+                                  "When creating a TIFF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+  end
+
+  # kdu_expand on jp2k  (TODO: when we have appropriate test data for image_to_tiff - where we can test convert's failure - make this private)
 
   def Utils.kakadu_jp2k_to_tiff config, jp2k_filepath
 
@@ -452,6 +468,11 @@ class Utils
 
   def Utils.image_to_tiff config, image_filepath
     file, errors = Utils.image_magick_to_tiff(config, image_filepath)
+
+    # For case of JP2K input and failure of convert, punt to kakadu:
+
+    return file, errors unless Utils.mime_type(image_filepath) == 'image/jp2'
+
     if (not file) or (file.stat.size < 1) or (Utils.mime_type(file) != 'image/tiff')
       file, errors = Utils.kakadu_jp2k_to_tiff(config, image_filepath)
     end
@@ -476,7 +497,7 @@ class Utils
   def Utils.image_resize config, image_filepath, geometry, new_format = nil
     return Utils.image_processing(config, image_filepath,
                                   "#{config.image_convert_command} #{shellescape(image_filepath)} -resize #{geometry} #{ new_format.nil? ?  '-' :  new_format + ':-'}",
-                                  "When creating a resized image (#{geometry}) from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+                                  "When creating a resized image (#{geometry}) from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
 
   end
 

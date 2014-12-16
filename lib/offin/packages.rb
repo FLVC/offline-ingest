@@ -555,7 +555,8 @@ class LargeImagePackage < Package
     @image_pathname = File.join(@directory_path, @image_filename)
     @mime_type = Utils.mime_type(@image_pathname)
 
-    case @type
+
+    case @mime_type
     when JP2
       @image = File.open(@image_pathname, 'rb')
     when TIFF
@@ -590,6 +591,8 @@ class LargeImagePackage < Package
     #  JPG    medium image derived from TIFF
     #  TN     thumbnail derived from TIFF
 
+    medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
+
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
@@ -608,9 +611,8 @@ class LargeImagePackage < Package
 
       ingestor.datastream('JPG') do |ds|
         ds.dsLabel  = 'Medium sized JPEG'
-        ds.content  = Utils.image_to_pdf
         ds.content  = medium
-        ds.mimeType = @image.mime_type
+        ds.mimeType = 'image/jpeg'
       end
 
       thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
@@ -618,7 +620,7 @@ class LargeImagePackage < Package
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
         ds.content  = thumbnail
-        ds.mimeType = @image.mime_type
+        ds.mimeType = 'image/jpeg'
       end
 
       @bytes_ingested = ingestor.size
@@ -627,8 +629,8 @@ class LargeImagePackage < Package
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
-    error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    error   [ 'Error creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
+    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
 
     [ @image, medium, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
 
@@ -656,7 +658,7 @@ class LargeImagePackage < Package
     end
 
   ensure
-    error  [ 'Error converting TIFF to JP2K' ] +  jp2k_error_messages  if jp2k_error_messages and not jp2k_error_messages.empty?
+    warning  [ 'Issues converting TIFF to JP2K' ] +  jp2k_error_messages  if jp2k_error_messages and not jp2k_error_messages.empty?
     [ @image, jp2k ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
@@ -678,7 +680,7 @@ class LargeImagePackage < Package
     end
 
   ensure
-    error  [ 'Error converting JP2K to TIFF' ] +  tiff_error_messages  if tiff_error_messages and not tiff_error_messages.empty?
+    warning  [ 'Issues when converting JP2K to TIFF' ] +  tiff_error_messages  if tiff_error_messages and not tiff_error_messages.empty?
     [ @image, tiff ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
