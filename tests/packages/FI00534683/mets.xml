@@ -1,0 +1,705 @@
+<METS:mets LABEL="Age, growth and mortality of the common snook, Centropomus undecimalis (Bloch), in Everglades National Park, Florida" OBJID="FI00534683" xmlns:METS="http://www.loc.gov/METS/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/version14/mets.xsd http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/simpledc20021212.xsd http://www.loc.gov/mods/v3 http://www.loc.orv/standards/mods/v3/mods-3-0.xsd" TYPE="book">
+
+  <METS:metsHdr CREATEDATE="2010-03-15T13:02:38-04:00">
+    <METS:agent OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE" ROLE="OTHER" TYPE="OTHER">
+      <METS:name>DigiTool METS Maker</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+
+  <METS:dmdSec ID="DMD1">
+    <METS:mdWrap MDTYPE="MARC" MIMETYPE="text/xml">
+      <METS:xmlData>
+
+<record xmlns="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+  <leader>     fam  2200541Ia 4500</leader>
+  <controlfield tag="001">000009604</controlfield>
+  <controlfield tag="006">m|||     d|s|</controlfield>
+  <controlfield tag="007">cr|gn</controlfield>
+  <controlfield tag="008">830215e198212uufluab   sbt  f0   0 eng d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)59669672</subfield>
+  </datafield>
+  <datafield tag="035" ind1="9" ind2=" ">
+    <subfield code="a">AAA7226  QF</subfield>
+  </datafield>
+  <datafield tag="037" ind1=" " ind2=" ">
+    <subfield code="a">SER-91:</subfield>
+    <subfield code="b">(Southeast Regional Office, National Park Service)</subfield>
+  </datafield>
+  <datafield tag="037" ind1=" " ind2=" ">
+    <subfield code="a">NRBIB:EVER-5570</subfield>
+    <subfield code="b">(NPS Natural Resources Bibliography Number)</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FXG</subfield>
+    <subfield code="c">FXG</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-us-fl</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FXGG</subfield>
+  </datafield>
+  <datafield tag="086" ind1=" " ind2=" ">
+    <subfield code="a">I 29.95:T-683</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Thue, Edith B.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Age, growth and mortality of the common snook, Centropomus undecimalis (Bloch), in Everglades National Park, Florida</subfield>
+    <subfield code="h">[electronic resource] /</subfield>
+    <subfield code="c">Edith B. Thue, Edward S. Rutherford and David G. Buker.</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Homestead, Fla. :</subfield>
+    <subfield code="b">National Park Service, South Florida Research Center, Everglades National Park,</subfield>
+    <subfield code="c">[1982]</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">v leaves, 32 p. :</subfield>
+    <subfield code="b">ill., map ;</subfield>
+    <subfield code="c">28 cm.</subfield>
+  </datafield>
+  <datafield tag="490" ind1="1" ind2=" ">
+    <subfield code="a">Report</subfield>
+    <subfield code="v">T-683</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">"December 1982."</subfield>
+  </datafield>
+  <datafield tag="520" ind1="3" ind2=" ">
+    <subfield code="a">This study focused on the age, growth and mortality of snook, Centropomus undecimalis, collected from sportfishermen in ENP from May 1976 through December 1979. Three hundred twenty-five fish ranged in length from 284-940 mm FL and in weight from 0.7 - 11.6 kg. Mean lengths of fish were largest in spring and smallest in winter. There were no differences in mean length among areas of capture. Annulus formation occurred in spring (March-May). Ages of fish were mainly 4-5 year-olds. Recruitment to the fishery began at age 2 and was completed at age 6.</subfield>
+  </datafield>
+  <datafield tag="520" ind1="3" ind2=" ">
+    <subfield code="a">The overall sex ratio favored males 3/1 and there were no differences in mean age of fish among areas of capture. Mean calculated growth of all snook was 375 mm FL in the first year and 57-90 mm thereafter. Calculated fish lengths at age differed among areas of capture and sexual differences in length-weight relationship were noted. Annual mortality rate of all fully recruited fish was 78%. Sexual differences in mortality rates were discussed.</subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2005.</subfield>
+    <subfield code="f">(Everglades online collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically reproduced by Florida International University from a technical report held in the Green Library at Florida International University, Miami.</subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">s</subfield>
+    <subfield code="b">2005</subfield>
+    <subfield code="d">flu</subfield>
+    <subfield code="e">n</subfield>
+  </datafield>
+  <datafield tag="598" ind1=" " ind2=" ">
+    <subfield code="a">FI00534683</subfield>
+  </datafield>
+  <datafield tag="599" ind1=" " ind2=" ">
+    <subfield code="a">cab</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park</subfield>
+    <subfield code="x">Age.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park</subfield>
+    <subfield code="x">Growth.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Snook</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park</subfield>
+    <subfield code="x">Mortality.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Fishes</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="7">
+    <subfield code="a">Everglades</subfield>
+    <subfield code="z">3090202</subfield>
+    <subfield code="2">huc</subfield>
+  </datafield>
+  <datafield tag="655" ind1=" " ind2="7">
+    <subfield code="a">Technical report.</subfield>
+    <subfield code="2">marcgt</subfield>
+  </datafield>
+  <datafield tag="700" ind1="1" ind2=" ">
+    <subfield code="a">Rutherford, Edward S.</subfield>
+    <subfield code="q">(Edward Stevens),</subfield>
+    <subfield code="d">1954-</subfield>
+  </datafield>
+  <datafield tag="700" ind1="1" ind2=" ">
+    <subfield code="a">Buker, David G.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">South Florida Research Center.</subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">(Original)</subfield>
+    <subfield code="w">(OCoLC)09224614</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Report (South Florida Research Center) ;</subfield>
+    <subfield code="v">T-683.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">feol</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">eol</subfield>
+  </datafield>
+  
+  
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Book</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Govt Publication</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Online Resource</subfield>
+  </datafield>
+</record>
+      </METS:xmlData>
+    </METS:mdWrap>
+  </METS:dmdSec>
+
+  <METS:fileSec>
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_cover1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID2" ID="FID2" SEQ="2" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_flyer1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID3" ID="FID3" SEQ="3" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_flyer2.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID4" ID="FID4" SEQ="4" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_i.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID5" ID="FID5" SEQ="5" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_ii.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID6" ID="FID6" SEQ="6" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_iii.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID7" ID="FID7" SEQ="7" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_iv.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID8" ID="FID8" SEQ="8" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_v.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID9" ID="FID9" SEQ="9" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_001.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID10" ID="FID10" SEQ="10" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_002.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID11" ID="FID11" SEQ="11" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_003.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID12" ID="FID12" SEQ="12" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_004.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID13" ID="FID13" SEQ="13" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_005.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID14" ID="FID14" SEQ="14" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_006.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID15" ID="FID15" SEQ="15" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_007.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID16" ID="FID16" SEQ="16" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_008.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID17" ID="FID17" SEQ="17" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_009.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID18" ID="FID18" SEQ="18" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_010.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID19" ID="FID19" SEQ="19" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_011.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID20" ID="FID20" SEQ="20" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_012.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID21" ID="FID21" SEQ="21" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_013.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID22" ID="FID22" SEQ="22" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_014.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID23" ID="FID23" SEQ="23" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_015.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID24" ID="FID24" SEQ="24" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_016.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID25" ID="FID25" SEQ="25" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_017.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID26" ID="FID26" SEQ="26" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_018.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID27" ID="FID27" SEQ="27" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_019.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID28" ID="FID28" SEQ="28" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_020.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID29" ID="FID29" SEQ="29" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_021.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID30" ID="FID30" SEQ="30" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_022.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID31" ID="FID31" SEQ="31" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_023.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID32" ID="FID32" SEQ="32" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_024.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID33" ID="FID33" SEQ="33" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_025.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID34" ID="FID34" SEQ="34" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_026.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID35" ID="FID35" SEQ="35" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_027.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID36" ID="FID36" SEQ="36" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_028.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID37" ID="FID37" SEQ="37" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_029.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID38" ID="FID38" SEQ="38" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_030.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID39" ID="FID39" SEQ="39" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_031.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID40" ID="FID40" SEQ="40" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_032.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID41" ID="FID41" SEQ="41" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI00534683_cover4.jpg" />
+      </METS:file>
+    </METS:fileGrp>
+
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID42" ID="FID42" SEQ="42" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file1.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID43" ID="FID43" SEQ="43" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file2.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID44" ID="FID44" SEQ="44" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file3.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID45" ID="FID45" SEQ="45" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file4.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID46" ID="FID46" SEQ="46" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file5.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID47" ID="FID47" SEQ="47" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file6.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID48" ID="FID48" SEQ="48" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file7.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID49" ID="FID49" SEQ="49" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file8.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID50" ID="FID50" SEQ="50" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file9.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID51" ID="FID51" SEQ="51" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file10.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID52" ID="FID52" SEQ="52" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file11.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID53" ID="FID53" SEQ="53" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file12.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID54" ID="FID54" SEQ="54" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file13.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID55" ID="FID55" SEQ="55" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file14.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID56" ID="FID56" SEQ="56" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file15.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID57" ID="FID57" SEQ="57" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file16.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID58" ID="FID58" SEQ="58" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file17.pdf" />
+      </METS:file>
+    </METS:fileGrp>
+  </METS:fileSec>
+
+  <METS:structMap LABEL="View" TYPE="PDF">
+    <METS:div DMDID="DMD1" LABEL="Age, growth and mortality of the common snook, Centropomus undecimalis (Bloch), in Everglades National Park, Florida">
+        <METS:div LABEL="Front matter" TYPE="chapter">
+          <METS:fptr FILEID="FID42"/>
+        </METS:div>
+        <METS:div LABEL="Table of contents" TYPE="chapter">
+          <METS:fptr FILEID="FID43"/>
+        </METS:div>
+        <METS:div LABEL="List of tables" TYPE="chapter">
+          <METS:fptr FILEID="FID44"/>
+        </METS:div>
+        <METS:div LABEL="List of figures" TYPE="chapter">
+          <METS:fptr FILEID="FID45"/>
+        </METS:div>
+        <METS:div LABEL="List of appendices" TYPE="chapter">
+          <METS:fptr FILEID="FID46"/>
+        </METS:div>
+        <METS:div LABEL="Abstract" TYPE="chapter">
+          <METS:fptr FILEID="FID47"/>
+        </METS:div>
+        <METS:div LABEL="Introduction" TYPE="chapter">
+          <METS:fptr FILEID="FID48"/>
+        </METS:div>
+        <METS:div LABEL="Methods" TYPE="chapter">
+          <METS:fptr FILEID="FID49"/>
+        </METS:div>
+        <METS:div LABEL="Results" TYPE="chapter">
+          <METS:fptr FILEID="FID50"/>
+        </METS:div>
+        <METS:div LABEL="Discussion" TYPE="chapter">
+          <METS:fptr FILEID="FID51"/>
+        </METS:div>
+        <METS:div LABEL="Conclusions" TYPE="chapter">
+          <METS:fptr FILEID="FID52"/>
+        </METS:div>
+        <METS:div LABEL="Acknowledgements" TYPE="chapter">
+          <METS:fptr FILEID="FID53"/>
+        </METS:div>
+        <METS:div LABEL="Literature cited" TYPE="chapter">
+          <METS:fptr FILEID="FID54"/>
+        </METS:div>
+        <METS:div LABEL="Tables" TYPE="chapter">
+          <METS:fptr FILEID="FID55"/>
+        </METS:div>
+        <METS:div LABEL="Figures" TYPE="chapter">
+          <METS:fptr FILEID="FID56"/>
+        </METS:div>
+        <METS:div LABEL="Appendices" TYPE="chapter">
+          <METS:fptr FILEID="FID57"/>
+        </METS:div>
+        <METS:div LABEL="Complete text" TYPE="chapter">
+          <METS:fptr FILEID="FID58"/>
+        </METS:div> 
+    </METS:div>
+  </METS:structMap>
+
+  <METS:structMap LABEL="View" TYPE="JPEG">
+    <METS:div DMDID="DMD1" LABEL="Age, growth and mortality of the common snook, Centropomus undecimalis (Bloch), in Everglades National Park, Florida">
+        <METS:div LABEL="Front matter" TYPE="chapter">
+          <METS:div LABEL="FI00534683_cover1" TYPE="page">
+            <METS:fptr FILEID="FID1"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_flyer1" TYPE="page">
+            <METS:fptr FILEID="FID2"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_flyer2" TYPE="page">
+            <METS:fptr FILEID="FID3"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Table of contents" TYPE="chapter">
+          <METS:div LABEL="FI00534683_i" TYPE="page">
+            <METS:fptr FILEID="FID4"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="List of tables" TYPE="chapter">
+          <METS:div LABEL="FI00534683_ii" TYPE="page">
+            <METS:fptr FILEID="FID5"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="List of figures" TYPE="chapter">
+          <METS:div LABEL="FI00534683_iii" TYPE="page">
+            <METS:fptr FILEID="FID6"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_iv" TYPE="page">
+            <METS:fptr FILEID="FID7"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="List of appendices" TYPE="chapter">
+          <METS:div LABEL="FI00534683_v" TYPE="page">
+            <METS:fptr FILEID="FID8"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Abstract" TYPE="chapter">
+          <METS:div LABEL="FI00534683_001" TYPE="page">
+            <METS:fptr FILEID="FID9"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Introduction" TYPE="chapter">
+          <METS:div LABEL="FI00534683_002" TYPE="page">
+            <METS:fptr FILEID="FID10"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Methods" TYPE="chapter">
+          <METS:div LABEL="FI00534683_003" TYPE="page">
+            <METS:fptr FILEID="FID11"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_004" TYPE="page">
+            <METS:fptr FILEID="FID12"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Results" TYPE="chapter">
+          <METS:div LABEL="FI00534683_004" TYPE="page">
+            <METS:fptr FILEID="FID12"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_005" TYPE="page">
+            <METS:fptr FILEID="FID13"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_006" TYPE="page">
+            <METS:fptr FILEID="FID14"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_007" TYPE="page">
+            <METS:fptr FILEID="FID15"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Discussion" TYPE="chapter">
+          <METS:div LABEL="FI00534683_007" TYPE="page">
+            <METS:fptr FILEID="FID15"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_008" TYPE="page">
+            <METS:fptr FILEID="FID16"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Conclusions" TYPE="chapter">
+          <METS:div LABEL="FI00534683_009" TYPE="page">
+            <METS:fptr FILEID="FID17"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Acknowledgements" TYPE="chapter">
+          <METS:div LABEL="FI00534683_009" TYPE="page">
+            <METS:fptr FILEID="FID17"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Literature cited" TYPE="chapter">
+          <METS:div LABEL="FI00534683_010" TYPE="page">
+            <METS:fptr FILEID="FID18"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_011" TYPE="page">
+            <METS:fptr FILEID="FID19"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Tables" TYPE="chapter">
+          <METS:div LABEL="FI00534683_012" TYPE="page">
+            <METS:fptr FILEID="FID20"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_013" TYPE="page">
+            <METS:fptr FILEID="FID21"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Figures" TYPE="chapter">
+          <METS:div LABEL="FI00534683_014" TYPE="page">
+            <METS:fptr FILEID="FID22"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_015" TYPE="page">
+            <METS:fptr FILEID="FID23"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_016" TYPE="page">
+            <METS:fptr FILEID="FID24"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_017" TYPE="page">
+            <METS:fptr FILEID="FID25"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_018" TYPE="page">
+            <METS:fptr FILEID="FID26"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_019" TYPE="page">
+            <METS:fptr FILEID="FID27"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_020" TYPE="page">
+            <METS:fptr FILEID="FID28"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_021" TYPE="page">
+            <METS:fptr FILEID="FID29"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_022" TYPE="page">
+            <METS:fptr FILEID="FID30"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_023" TYPE="page">
+            <METS:fptr FILEID="FID31"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_024" TYPE="page">
+            <METS:fptr FILEID="FID32"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_025" TYPE="page">
+            <METS:fptr FILEID="FID33"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_026" TYPE="page">
+            <METS:fptr FILEID="FID34"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_027" TYPE="page">
+            <METS:fptr FILEID="FID35"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_028" TYPE="page">
+            <METS:fptr FILEID="FID36"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Appendices" TYPE="chapter">
+          <METS:div LABEL="FI00534683_029" TYPE="page">
+            <METS:fptr FILEID="FID37"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_030" TYPE="page">
+            <METS:fptr FILEID="FID38"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_031" TYPE="page">
+            <METS:fptr FILEID="FID39"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_032" TYPE="page">
+            <METS:fptr FILEID="FID40"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Complete text" TYPE="chapter">
+          <METS:div LABEL="FI00534683_cover1" TYPE="page">
+            <METS:fptr FILEID="FID1"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_flyer1" TYPE="page">
+            <METS:fptr FILEID="FID2"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_flyer2" TYPE="page">
+            <METS:fptr FILEID="FID3"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_i" TYPE="page">
+            <METS:fptr FILEID="FID4"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_ii" TYPE="page">
+            <METS:fptr FILEID="FID5"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_iii" TYPE="page">
+            <METS:fptr FILEID="FID6"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_iv" TYPE="page">
+            <METS:fptr FILEID="FID7"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_v" TYPE="page">
+            <METS:fptr FILEID="FID8"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_001" TYPE="page">
+            <METS:fptr FILEID="FID9"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_002" TYPE="page">
+            <METS:fptr FILEID="FID10"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_003" TYPE="page">
+            <METS:fptr FILEID="FID11"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_004" TYPE="page">
+            <METS:fptr FILEID="FID12"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_005" TYPE="page">
+            <METS:fptr FILEID="FID13"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_006" TYPE="page">
+            <METS:fptr FILEID="FID14"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_007" TYPE="page">
+            <METS:fptr FILEID="FID15"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_008" TYPE="page">
+            <METS:fptr FILEID="FID16"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_009" TYPE="page">
+            <METS:fptr FILEID="FID17"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_010" TYPE="page">
+            <METS:fptr FILEID="FID18"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_011" TYPE="page">
+            <METS:fptr FILEID="FID19"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_012" TYPE="page">
+            <METS:fptr FILEID="FID20"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_013" TYPE="page">
+            <METS:fptr FILEID="FID21"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_014" TYPE="page">
+            <METS:fptr FILEID="FID22"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_015" TYPE="page">
+            <METS:fptr FILEID="FID23"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_016" TYPE="page">
+            <METS:fptr FILEID="FID24"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_017" TYPE="page">
+            <METS:fptr FILEID="FID25"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_018" TYPE="page">
+            <METS:fptr FILEID="FID26"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_019" TYPE="page">
+            <METS:fptr FILEID="FID27"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_020" TYPE="page">
+            <METS:fptr FILEID="FID28"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_021" TYPE="page">
+            <METS:fptr FILEID="FID29"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_022" TYPE="page">
+            <METS:fptr FILEID="FID30"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_023" TYPE="page">
+            <METS:fptr FILEID="FID31"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_024" TYPE="page">
+            <METS:fptr FILEID="FID32"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_025" TYPE="page">
+            <METS:fptr FILEID="FID33"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_026" TYPE="page">
+            <METS:fptr FILEID="FID34"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_027" TYPE="page">
+            <METS:fptr FILEID="FID35"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_028" TYPE="page">
+            <METS:fptr FILEID="FID36"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_029" TYPE="page">
+            <METS:fptr FILEID="FID37"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_030" TYPE="page">
+            <METS:fptr FILEID="FID38"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_031" TYPE="page">
+            <METS:fptr FILEID="FID39"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_032" TYPE="page">
+            <METS:fptr FILEID="FID40"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_cover4" TYPE="page">
+            <METS:fptr FILEID="FID41"/>
+          </METS:div>
+        </METS:div> 
+    </METS:div>
+  </METS:structMap>
+</METS:mets>

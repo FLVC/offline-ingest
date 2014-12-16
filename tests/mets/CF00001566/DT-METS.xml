@@ -1,0 +1,1791 @@
+<?xml version="1.0"?>
+<mets:mets xmlns:mets="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" TYPE="book" OBJID="CF00001566" LABEL="Gardening in Florida: a treatise on the vegetables and tropical products of Florida">
+  <mets:metsHdr CREATEDATE="2010-07-11T15:22:36-04:00">
+    <mets:agent ROLE="OTHER" TYPE="OTHER" OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE">
+      <mets:name>DigiTool METS Maker</mets:name>
+    </mets:agent>
+  </mets:metsHdr><mets:dmdSec ID="DMD1"><mets:mdWrap MIMETYPE="text/xml" MDTYPE="MARC"><mets:xmlData><record xmlns="http://www.loc.gov/MARC21/slim">
+  <leader>02114fam a2200433Ia 4500</leader>
+  <controlfield tag="001">QFAAA3258</controlfield>
+  <controlfield tag="005">20050804110234.8</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(FCLAZ)AAA3258QF00011/29/200108/04/200515998BfamIa D0QF</subfield>
+  </datafield>
+  <controlfield tag="008">750815s1885    flua    s     001 0 eng d</controlfield>
+  <controlfield tag="006">m???     d?s?     </controlfield>
+  <controlfield tag="007">cr?an?</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(DNX)FHP C CF 2001-11-29</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(snx)FCLA url 20020221xOCLC</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)49445367</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">DZM</subfield>
+    <subfield code="c">DZM</subfield>
+    <subfield code="d">AGL</subfield>
+    <subfield code="d">FTU</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FTUS&lt;Mickler&gt;</subfield>
+  </datafield>
+  <datafield tag="050" ind1="0" ind2=" ">
+    <subfield code="a">SB95</subfield>
+    <subfield code="b">.W61 1885</subfield>
+  </datafield>
+  <datafield tag="070" ind1="0" ind2=" ">
+    <subfield code="a">SB95.W54</subfield>
+    <subfield code="b">1885 R</subfield>
+  </datafield>
+  <datafield tag="072" ind1=" " ind2="0">
+    <subfield code="a">F110</subfield>
+  </datafield>
+  <datafield tag="092" ind1=" " ind2=" ">
+    <subfield code="a">Fla 635.9</subfield>
+    <subfield code="b">W616g 1885</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Whitner, J. N.</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Gardening in Florida</subfield>
+    <subfield code="h">[electronic resource] :</subfield>
+    <subfield code="b">a treatise on the vegetables and tropical products of Florida /</subfield>
+    <subfield code="c">by J.N. Whitner.</subfield>
+  </datafield>
+  <datafield tag="250" ind1=" " ind2=" ">
+    <subfield code="a">&lt;2nd ed.&gt;</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Jacksonville, Fla. :</subfield>
+    <subfield code="b">C.W. DaCosta,</subfield>
+    <subfield code="c">1885.</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">xv, &lt;17&gt;-246 p. :</subfield>
+    <subfield code="b">ill. ;</subfield>
+    <subfield code="c">19 cm.</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">Includes index.</subfield>
+  </datafield>
+  <datafield tag="520" ind1=" " ind2=" ">
+    <subfield code="a">An 1880's manual for growing garden and marketable vegetables in Florida, as well as short treatises on tropical fruits.                        </subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2001.</subfield>
+    <subfield code="f">(Florida heritage collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically digitized by the University of Central Florida from a book held in the Main Library at the University of Central Florida, Orlando.</subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">s</subfield>
+    <subfield code="b">2001</subfield>
+    <subfield code="d">flu</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Vegetable gardening</subfield>
+    <subfield code="z">Florida.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Fruit-culture</subfield>
+    <subfield code="z">Florida.</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="7">
+    <subfield code="a">Economics and Society: Post-Civil War Florida, 1865-1913</subfield>
+    <subfield code="x">Business, Agriculture, and Tourism, 1878-1897</subfield>
+    <subfield code="3">fh4650</subfield>
+    <subfield code="2">fhp</subfield>
+  </datafield>
+  <datafield tag="690" ind1=" " ind2="8">
+    <subfield code="a">Agriculture.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">PALMM (Project) </subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">Original</subfield>
+    <subfield code="w">(DLC)   11014091</subfield>
+    <subfield code="w">(OCoLC)1550510</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Florida heritage collection. </subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">fhp </subfield>
+  </datafield>
+  
+  
+<datafield tag="598" ind1=" " ind2=" "><subfield code="a">CF00001566</subfield></datafield></record></mets:xmlData></mets:mdWrap></mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID1" MIMETYPE="image/jpeg" SEQ="1" GROUPID="GID1">
+        <mets:FLocat xlink:href="fly1.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID2" MIMETYPE="image/jpeg" SEQ="2" GROUPID="GID2">
+        <mets:FLocat xlink:href="fly2.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID3" MIMETYPE="image/jpeg" SEQ="3" GROUPID="GID3">
+        <mets:FLocat xlink:href="fly3.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID4" MIMETYPE="image/jpeg" SEQ="4" GROUPID="GID4">
+        <mets:FLocat xlink:href="fly4.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID5" MIMETYPE="image/jpeg" SEQ="5" GROUPID="GID5">
+        <mets:FLocat xlink:href="fly5.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID6" MIMETYPE="image/jpeg" SEQ="6" GROUPID="GID6">
+        <mets:FLocat xlink:href="iii.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID7" MIMETYPE="image/jpeg" SEQ="7" GROUPID="GID7">
+        <mets:FLocat xlink:href="iv.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID8" MIMETYPE="image/jpeg" SEQ="8" GROUPID="GID8">
+        <mets:FLocat xlink:href="v.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID9" MIMETYPE="image/jpeg" SEQ="9" GROUPID="GID9">
+        <mets:FLocat xlink:href="vi.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID10" MIMETYPE="image/jpeg" SEQ="10" GROUPID="GID10">
+        <mets:FLocat xlink:href="vii.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID11" MIMETYPE="image/jpeg" SEQ="11" GROUPID="GID11">
+        <mets:FLocat xlink:href="viii.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID12" MIMETYPE="image/jpeg" SEQ="12" GROUPID="GID12">
+        <mets:FLocat xlink:href="ix.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID13" MIMETYPE="image/jpeg" SEQ="13" GROUPID="GID13">
+        <mets:FLocat xlink:href="x.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID14" MIMETYPE="image/jpeg" SEQ="14" GROUPID="GID14">
+        <mets:FLocat xlink:href="xi.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID15" MIMETYPE="image/jpeg" SEQ="15" GROUPID="GID15">
+        <mets:FLocat xlink:href="xii.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID16" MIMETYPE="image/jpeg" SEQ="16" GROUPID="GID16">
+        <mets:FLocat xlink:href="xiii.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID17" MIMETYPE="image/jpeg" SEQ="17" GROUPID="GID17">
+        <mets:FLocat xlink:href="xiv.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID18" MIMETYPE="image/jpeg" SEQ="18" GROUPID="GID18">
+        <mets:FLocat xlink:href="xv.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID19" MIMETYPE="image/jpeg" SEQ="19" GROUPID="GID19">
+        <mets:FLocat xlink:href="xvi.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID20" MIMETYPE="image/jpeg" SEQ="20" GROUPID="GID20">
+        <mets:FLocat xlink:href="17.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID21" MIMETYPE="image/jpeg" SEQ="21" GROUPID="GID21">
+        <mets:FLocat xlink:href="18.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID22" MIMETYPE="image/jpeg" SEQ="22" GROUPID="GID22">
+        <mets:FLocat xlink:href="19.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID23" MIMETYPE="image/jpeg" SEQ="23" GROUPID="GID23">
+        <mets:FLocat xlink:href="20.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID24" MIMETYPE="image/jpeg" SEQ="24" GROUPID="GID24">
+        <mets:FLocat xlink:href="21.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID25" MIMETYPE="image/jpeg" SEQ="25" GROUPID="GID25">
+        <mets:FLocat xlink:href="22.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID26" MIMETYPE="image/jpeg" SEQ="26" GROUPID="GID26">
+        <mets:FLocat xlink:href="23.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID27" MIMETYPE="image/jpeg" SEQ="27" GROUPID="GID27">
+        <mets:FLocat xlink:href="24.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID28" MIMETYPE="image/jpeg" SEQ="28" GROUPID="GID28">
+        <mets:FLocat xlink:href="25.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID29" MIMETYPE="image/jpeg" SEQ="29" GROUPID="GID29">
+        <mets:FLocat xlink:href="26.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID30" MIMETYPE="image/jpeg" SEQ="30" GROUPID="GID30">
+        <mets:FLocat xlink:href="27.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID31" MIMETYPE="image/jpeg" SEQ="31" GROUPID="GID31">
+        <mets:FLocat xlink:href="28.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID32" MIMETYPE="image/jpeg" SEQ="32" GROUPID="GID32">
+        <mets:FLocat xlink:href="29.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID33" MIMETYPE="image/jpeg" SEQ="33" GROUPID="GID33">
+        <mets:FLocat xlink:href="30.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID34" MIMETYPE="image/jpeg" SEQ="34" GROUPID="GID34">
+        <mets:FLocat xlink:href="31.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID35" MIMETYPE="image/jpeg" SEQ="35" GROUPID="GID35">
+        <mets:FLocat xlink:href="32.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID36" MIMETYPE="image/jpeg" SEQ="36" GROUPID="GID36">
+        <mets:FLocat xlink:href="33.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID37" MIMETYPE="image/jpeg" SEQ="37" GROUPID="GID37">
+        <mets:FLocat xlink:href="34.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID38" MIMETYPE="image/jpeg" SEQ="38" GROUPID="GID38">
+        <mets:FLocat xlink:href="35.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID39" MIMETYPE="image/jpeg" SEQ="39" GROUPID="GID39">
+        <mets:FLocat xlink:href="36.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID40" MIMETYPE="image/jpeg" SEQ="40" GROUPID="GID40">
+        <mets:FLocat xlink:href="37.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID41" MIMETYPE="image/jpeg" SEQ="41" GROUPID="GID41">
+        <mets:FLocat xlink:href="38.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID42" MIMETYPE="image/jpeg" SEQ="42" GROUPID="GID42">
+        <mets:FLocat xlink:href="39.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID43" MIMETYPE="image/jpeg" SEQ="43" GROUPID="GID43">
+        <mets:FLocat xlink:href="40.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID44" MIMETYPE="image/jpeg" SEQ="44" GROUPID="GID44">
+        <mets:FLocat xlink:href="41.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID45" MIMETYPE="image/jpeg" SEQ="45" GROUPID="GID45">
+        <mets:FLocat xlink:href="42.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID46" MIMETYPE="image/jpeg" SEQ="46" GROUPID="GID46">
+        <mets:FLocat xlink:href="43.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID47" MIMETYPE="image/jpeg" SEQ="47" GROUPID="GID47">
+        <mets:FLocat xlink:href="44.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID48" MIMETYPE="image/jpeg" SEQ="48" GROUPID="GID48">
+        <mets:FLocat xlink:href="45.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID49" MIMETYPE="image/jpeg" SEQ="49" GROUPID="GID49">
+        <mets:FLocat xlink:href="46.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID50" MIMETYPE="image/jpeg" SEQ="50" GROUPID="GID50">
+        <mets:FLocat xlink:href="47.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID51" MIMETYPE="image/jpeg" SEQ="51" GROUPID="GID51">
+        <mets:FLocat xlink:href="48.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID52" MIMETYPE="image/jpeg" SEQ="52" GROUPID="GID52">
+        <mets:FLocat xlink:href="49.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID53" MIMETYPE="image/jpeg" SEQ="53" GROUPID="GID53">
+        <mets:FLocat xlink:href="50.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID54" MIMETYPE="image/jpeg" SEQ="54" GROUPID="GID54">
+        <mets:FLocat xlink:href="51.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID55" MIMETYPE="image/jpeg" SEQ="55" GROUPID="GID55">
+        <mets:FLocat xlink:href="52.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID56" MIMETYPE="image/jpeg" SEQ="56" GROUPID="GID56">
+        <mets:FLocat xlink:href="53.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID57" MIMETYPE="image/jpeg" SEQ="57" GROUPID="GID57">
+        <mets:FLocat xlink:href="54.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID58" MIMETYPE="image/jpeg" SEQ="58" GROUPID="GID58">
+        <mets:FLocat xlink:href="55.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID59" MIMETYPE="image/jpeg" SEQ="59" GROUPID="GID59">
+        <mets:FLocat xlink:href="56.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID60" MIMETYPE="image/jpeg" SEQ="60" GROUPID="GID60">
+        <mets:FLocat xlink:href="57.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID61" MIMETYPE="image/jpeg" SEQ="61" GROUPID="GID61">
+        <mets:FLocat xlink:href="58.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID62" MIMETYPE="image/jpeg" SEQ="62" GROUPID="GID62">
+        <mets:FLocat xlink:href="59.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID63" MIMETYPE="image/jpeg" SEQ="63" GROUPID="GID63">
+        <mets:FLocat xlink:href="60.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID64" MIMETYPE="image/jpeg" SEQ="64" GROUPID="GID64">
+        <mets:FLocat xlink:href="61.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID65" MIMETYPE="image/jpeg" SEQ="65" GROUPID="GID65">
+        <mets:FLocat xlink:href="62.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID66" MIMETYPE="image/jpeg" SEQ="66" GROUPID="GID66">
+        <mets:FLocat xlink:href="63.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID67" MIMETYPE="image/jpeg" SEQ="67" GROUPID="GID67">
+        <mets:FLocat xlink:href="64.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID68" MIMETYPE="image/jpeg" SEQ="68" GROUPID="GID68">
+        <mets:FLocat xlink:href="65.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID69" MIMETYPE="image/jpeg" SEQ="69" GROUPID="GID69">
+        <mets:FLocat xlink:href="66.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID70" MIMETYPE="image/jpeg" SEQ="70" GROUPID="GID70">
+        <mets:FLocat xlink:href="67.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID71" MIMETYPE="image/jpeg" SEQ="71" GROUPID="GID71">
+        <mets:FLocat xlink:href="68.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID72" MIMETYPE="image/jpeg" SEQ="72" GROUPID="GID72">
+        <mets:FLocat xlink:href="69.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID73" MIMETYPE="image/jpeg" SEQ="73" GROUPID="GID73">
+        <mets:FLocat xlink:href="70.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID74" MIMETYPE="image/jpeg" SEQ="74" GROUPID="GID74">
+        <mets:FLocat xlink:href="71.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID75" MIMETYPE="image/jpeg" SEQ="75" GROUPID="GID75">
+        <mets:FLocat xlink:href="72.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID76" MIMETYPE="image/jpeg" SEQ="76" GROUPID="GID76">
+        <mets:FLocat xlink:href="73.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID77" MIMETYPE="image/jpeg" SEQ="77" GROUPID="GID77">
+        <mets:FLocat xlink:href="74.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID78" MIMETYPE="image/jpeg" SEQ="78" GROUPID="GID78">
+        <mets:FLocat xlink:href="75.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID79" MIMETYPE="image/jpeg" SEQ="79" GROUPID="GID79">
+        <mets:FLocat xlink:href="76.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID80" MIMETYPE="image/jpeg" SEQ="80" GROUPID="GID80">
+        <mets:FLocat xlink:href="77.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID81" MIMETYPE="image/jpeg" SEQ="81" GROUPID="GID81">
+        <mets:FLocat xlink:href="78.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID82" MIMETYPE="image/jpeg" SEQ="82" GROUPID="GID82">
+        <mets:FLocat xlink:href="79.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID83" MIMETYPE="image/jpeg" SEQ="83" GROUPID="GID83">
+        <mets:FLocat xlink:href="80.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID84" MIMETYPE="image/jpeg" SEQ="84" GROUPID="GID84">
+        <mets:FLocat xlink:href="81.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID85" MIMETYPE="image/jpeg" SEQ="85" GROUPID="GID85">
+        <mets:FLocat xlink:href="82.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID86" MIMETYPE="image/jpeg" SEQ="86" GROUPID="GID86">
+        <mets:FLocat xlink:href="83.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID87" MIMETYPE="image/jpeg" SEQ="87" GROUPID="GID87">
+        <mets:FLocat xlink:href="84.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID88" MIMETYPE="image/jpeg" SEQ="88" GROUPID="GID88">
+        <mets:FLocat xlink:href="85.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID89" MIMETYPE="image/jpeg" SEQ="89" GROUPID="GID89">
+        <mets:FLocat xlink:href="86.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID90" MIMETYPE="image/jpeg" SEQ="90" GROUPID="GID90">
+        <mets:FLocat xlink:href="87.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID91" MIMETYPE="image/jpeg" SEQ="91" GROUPID="GID91">
+        <mets:FLocat xlink:href="88.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID92" MIMETYPE="image/jpeg" SEQ="92" GROUPID="GID92">
+        <mets:FLocat xlink:href="89.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID93" MIMETYPE="image/jpeg" SEQ="93" GROUPID="GID93">
+        <mets:FLocat xlink:href="90.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID94" MIMETYPE="image/jpeg" SEQ="94" GROUPID="GID94">
+        <mets:FLocat xlink:href="91.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID95" MIMETYPE="image/jpeg" SEQ="95" GROUPID="GID95">
+        <mets:FLocat xlink:href="92.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID96" MIMETYPE="image/jpeg" SEQ="96" GROUPID="GID96">
+        <mets:FLocat xlink:href="93.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID97" MIMETYPE="image/jpeg" SEQ="97" GROUPID="GID97">
+        <mets:FLocat xlink:href="94.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID98" MIMETYPE="image/jpeg" SEQ="98" GROUPID="GID98">
+        <mets:FLocat xlink:href="95.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID99" MIMETYPE="image/jpeg" SEQ="99" GROUPID="GID99">
+        <mets:FLocat xlink:href="96.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID100" MIMETYPE="image/jpeg" SEQ="100" GROUPID="GID100">
+        <mets:FLocat xlink:href="97.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID101" MIMETYPE="image/jpeg" SEQ="101" GROUPID="GID101">
+        <mets:FLocat xlink:href="98.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID102" MIMETYPE="image/jpeg" SEQ="102" GROUPID="GID102">
+        <mets:FLocat xlink:href="99.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID103" MIMETYPE="image/jpeg" SEQ="103" GROUPID="GID103">
+        <mets:FLocat xlink:href="100.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID104" MIMETYPE="image/jpeg" SEQ="104" GROUPID="GID104">
+        <mets:FLocat xlink:href="101.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID105" MIMETYPE="image/jpeg" SEQ="105" GROUPID="GID105">
+        <mets:FLocat xlink:href="102.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID106" MIMETYPE="image/jpeg" SEQ="106" GROUPID="GID106">
+        <mets:FLocat xlink:href="103.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID107" MIMETYPE="image/jpeg" SEQ="107" GROUPID="GID107">
+        <mets:FLocat xlink:href="104.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID108" MIMETYPE="image/jpeg" SEQ="108" GROUPID="GID108">
+        <mets:FLocat xlink:href="105.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID109" MIMETYPE="image/jpeg" SEQ="109" GROUPID="GID109">
+        <mets:FLocat xlink:href="106.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID110" MIMETYPE="image/jpeg" SEQ="110" GROUPID="GID110">
+        <mets:FLocat xlink:href="107.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID111" MIMETYPE="image/jpeg" SEQ="111" GROUPID="GID111">
+        <mets:FLocat xlink:href="108.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID112" MIMETYPE="image/jpeg" SEQ="112" GROUPID="GID112">
+        <mets:FLocat xlink:href="109.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID113" MIMETYPE="image/jpeg" SEQ="113" GROUPID="GID113">
+        <mets:FLocat xlink:href="110.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID114" MIMETYPE="image/jpeg" SEQ="114" GROUPID="GID114">
+        <mets:FLocat xlink:href="111.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID115" MIMETYPE="image/jpeg" SEQ="115" GROUPID="GID115">
+        <mets:FLocat xlink:href="112.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID116" MIMETYPE="image/jpeg" SEQ="116" GROUPID="GID116">
+        <mets:FLocat xlink:href="113.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID117" MIMETYPE="image/jpeg" SEQ="117" GROUPID="GID117">
+        <mets:FLocat xlink:href="114.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID118" MIMETYPE="image/jpeg" SEQ="118" GROUPID="GID118">
+        <mets:FLocat xlink:href="115.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID119" MIMETYPE="image/jpeg" SEQ="119" GROUPID="GID119">
+        <mets:FLocat xlink:href="116.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID120" MIMETYPE="image/jpeg" SEQ="120" GROUPID="GID120">
+        <mets:FLocat xlink:href="117.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID121" MIMETYPE="image/jpeg" SEQ="121" GROUPID="GID121">
+        <mets:FLocat xlink:href="118.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID122" MIMETYPE="image/jpeg" SEQ="122" GROUPID="GID122">
+        <mets:FLocat xlink:href="119.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID123" MIMETYPE="image/jpeg" SEQ="123" GROUPID="GID123">
+        <mets:FLocat xlink:href="120.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID124" MIMETYPE="image/jpeg" SEQ="124" GROUPID="GID124">
+        <mets:FLocat xlink:href="121.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID125" MIMETYPE="image/jpeg" SEQ="125" GROUPID="GID125">
+        <mets:FLocat xlink:href="122.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID126" MIMETYPE="image/jpeg" SEQ="126" GROUPID="GID126">
+        <mets:FLocat xlink:href="123.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID127" MIMETYPE="image/jpeg" SEQ="127" GROUPID="GID127">
+        <mets:FLocat xlink:href="124.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID128" MIMETYPE="image/jpeg" SEQ="128" GROUPID="GID128">
+        <mets:FLocat xlink:href="125.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID129" MIMETYPE="image/jpeg" SEQ="129" GROUPID="GID129">
+        <mets:FLocat xlink:href="126.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID130" MIMETYPE="image/jpeg" SEQ="130" GROUPID="GID130">
+        <mets:FLocat xlink:href="127.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID131" MIMETYPE="image/jpeg" SEQ="131" GROUPID="GID131">
+        <mets:FLocat xlink:href="128.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID132" MIMETYPE="image/jpeg" SEQ="132" GROUPID="GID132">
+        <mets:FLocat xlink:href="129.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID133" MIMETYPE="image/jpeg" SEQ="133" GROUPID="GID133">
+        <mets:FLocat xlink:href="130.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID134" MIMETYPE="image/jpeg" SEQ="134" GROUPID="GID134">
+        <mets:FLocat xlink:href="131.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID135" MIMETYPE="image/jpeg" SEQ="135" GROUPID="GID135">
+        <mets:FLocat xlink:href="132.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID136" MIMETYPE="image/jpeg" SEQ="136" GROUPID="GID136">
+        <mets:FLocat xlink:href="133.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID137" MIMETYPE="image/jpeg" SEQ="137" GROUPID="GID137">
+        <mets:FLocat xlink:href="134.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID138" MIMETYPE="image/jpeg" SEQ="138" GROUPID="GID138">
+        <mets:FLocat xlink:href="135.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID139" MIMETYPE="image/jpeg" SEQ="139" GROUPID="GID139">
+        <mets:FLocat xlink:href="136.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID140" MIMETYPE="image/jpeg" SEQ="140" GROUPID="GID140">
+        <mets:FLocat xlink:href="137.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID141" MIMETYPE="image/jpeg" SEQ="141" GROUPID="GID141">
+        <mets:FLocat xlink:href="138.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID142" MIMETYPE="image/jpeg" SEQ="142" GROUPID="GID142">
+        <mets:FLocat xlink:href="139.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID143" MIMETYPE="image/jpeg" SEQ="143" GROUPID="GID143">
+        <mets:FLocat xlink:href="140.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID144" MIMETYPE="image/jpeg" SEQ="144" GROUPID="GID144">
+        <mets:FLocat xlink:href="141.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID145" MIMETYPE="image/jpeg" SEQ="145" GROUPID="GID145">
+        <mets:FLocat xlink:href="142.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID146" MIMETYPE="image/jpeg" SEQ="146" GROUPID="GID146">
+        <mets:FLocat xlink:href="143.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID147" MIMETYPE="image/jpeg" SEQ="147" GROUPID="GID147">
+        <mets:FLocat xlink:href="144.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID148" MIMETYPE="image/jpeg" SEQ="148" GROUPID="GID148">
+        <mets:FLocat xlink:href="145.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID149" MIMETYPE="image/jpeg" SEQ="149" GROUPID="GID149">
+        <mets:FLocat xlink:href="146.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID150" MIMETYPE="image/jpeg" SEQ="150" GROUPID="GID150">
+        <mets:FLocat xlink:href="147.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID151" MIMETYPE="image/jpeg" SEQ="151" GROUPID="GID151">
+        <mets:FLocat xlink:href="148.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID152" MIMETYPE="image/jpeg" SEQ="152" GROUPID="GID152">
+        <mets:FLocat xlink:href="149.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID153" MIMETYPE="image/jpeg" SEQ="153" GROUPID="GID153">
+        <mets:FLocat xlink:href="150.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID154" MIMETYPE="image/jpeg" SEQ="154" GROUPID="GID154">
+        <mets:FLocat xlink:href="151.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID155" MIMETYPE="image/jpeg" SEQ="155" GROUPID="GID155">
+        <mets:FLocat xlink:href="152.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID156" MIMETYPE="image/jpeg" SEQ="156" GROUPID="GID156">
+        <mets:FLocat xlink:href="153.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID157" MIMETYPE="image/jpeg" SEQ="157" GROUPID="GID157">
+        <mets:FLocat xlink:href="154.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID158" MIMETYPE="image/jpeg" SEQ="158" GROUPID="GID158">
+        <mets:FLocat xlink:href="155.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID159" MIMETYPE="image/jpeg" SEQ="159" GROUPID="GID159">
+        <mets:FLocat xlink:href="156.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID160" MIMETYPE="image/jpeg" SEQ="160" GROUPID="GID160">
+        <mets:FLocat xlink:href="157.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID161" MIMETYPE="image/jpeg" SEQ="161" GROUPID="GID161">
+        <mets:FLocat xlink:href="158.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID162" MIMETYPE="image/jpeg" SEQ="162" GROUPID="GID162">
+        <mets:FLocat xlink:href="159.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID163" MIMETYPE="image/jpeg" SEQ="163" GROUPID="GID163">
+        <mets:FLocat xlink:href="160.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID164" MIMETYPE="image/jpeg" SEQ="164" GROUPID="GID164">
+        <mets:FLocat xlink:href="161.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID165" MIMETYPE="image/jpeg" SEQ="165" GROUPID="GID165">
+        <mets:FLocat xlink:href="162.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID166" MIMETYPE="image/jpeg" SEQ="166" GROUPID="GID166">
+        <mets:FLocat xlink:href="163.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID167" MIMETYPE="image/jpeg" SEQ="167" GROUPID="GID167">
+        <mets:FLocat xlink:href="164.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID168" MIMETYPE="image/jpeg" SEQ="168" GROUPID="GID168">
+        <mets:FLocat xlink:href="165.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID169" MIMETYPE="image/jpeg" SEQ="169" GROUPID="GID169">
+        <mets:FLocat xlink:href="166.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID170" MIMETYPE="image/jpeg" SEQ="170" GROUPID="GID170">
+        <mets:FLocat xlink:href="167.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID171" MIMETYPE="image/jpeg" SEQ="171" GROUPID="GID171">
+        <mets:FLocat xlink:href="168.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID172" MIMETYPE="image/jpeg" SEQ="172" GROUPID="GID172">
+        <mets:FLocat xlink:href="169.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID173" MIMETYPE="image/jpeg" SEQ="173" GROUPID="GID173">
+        <mets:FLocat xlink:href="170.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID174" MIMETYPE="image/jpeg" SEQ="174" GROUPID="GID174">
+        <mets:FLocat xlink:href="171.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID175" MIMETYPE="image/jpeg" SEQ="175" GROUPID="GID175">
+        <mets:FLocat xlink:href="172.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID176" MIMETYPE="image/jpeg" SEQ="176" GROUPID="GID176">
+        <mets:FLocat xlink:href="173.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID177" MIMETYPE="image/jpeg" SEQ="177" GROUPID="GID177">
+        <mets:FLocat xlink:href="174.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID178" MIMETYPE="image/jpeg" SEQ="178" GROUPID="GID178">
+        <mets:FLocat xlink:href="175.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID179" MIMETYPE="image/jpeg" SEQ="179" GROUPID="GID179">
+        <mets:FLocat xlink:href="176.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID180" MIMETYPE="image/jpeg" SEQ="180" GROUPID="GID180">
+        <mets:FLocat xlink:href="177.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID181" MIMETYPE="image/jpeg" SEQ="181" GROUPID="GID181">
+        <mets:FLocat xlink:href="178.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID182" MIMETYPE="image/jpeg" SEQ="182" GROUPID="GID182">
+        <mets:FLocat xlink:href="179.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID183" MIMETYPE="image/jpeg" SEQ="183" GROUPID="GID183">
+        <mets:FLocat xlink:href="180.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID184" MIMETYPE="image/jpeg" SEQ="184" GROUPID="GID184">
+        <mets:FLocat xlink:href="181.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID185" MIMETYPE="image/jpeg" SEQ="185" GROUPID="GID185">
+        <mets:FLocat xlink:href="182.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID186" MIMETYPE="image/jpeg" SEQ="186" GROUPID="GID186">
+        <mets:FLocat xlink:href="183.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID187" MIMETYPE="image/jpeg" SEQ="187" GROUPID="GID187">
+        <mets:FLocat xlink:href="184.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID188" MIMETYPE="image/jpeg" SEQ="188" GROUPID="GID188">
+        <mets:FLocat xlink:href="185.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID189" MIMETYPE="image/jpeg" SEQ="189" GROUPID="GID189">
+        <mets:FLocat xlink:href="186.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID190" MIMETYPE="image/jpeg" SEQ="190" GROUPID="GID190">
+        <mets:FLocat xlink:href="187.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID191" MIMETYPE="image/jpeg" SEQ="191" GROUPID="GID191">
+        <mets:FLocat xlink:href="188.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID192" MIMETYPE="image/jpeg" SEQ="192" GROUPID="GID192">
+        <mets:FLocat xlink:href="189.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID193" MIMETYPE="image/jpeg" SEQ="193" GROUPID="GID193">
+        <mets:FLocat xlink:href="190.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID194" MIMETYPE="image/jpeg" SEQ="194" GROUPID="GID194">
+        <mets:FLocat xlink:href="191.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID195" MIMETYPE="image/jpeg" SEQ="195" GROUPID="GID195">
+        <mets:FLocat xlink:href="192.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID196" MIMETYPE="image/jpeg" SEQ="196" GROUPID="GID196">
+        <mets:FLocat xlink:href="193.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID197" MIMETYPE="image/jpeg" SEQ="197" GROUPID="GID197">
+        <mets:FLocat xlink:href="194.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID198" MIMETYPE="image/jpeg" SEQ="198" GROUPID="GID198">
+        <mets:FLocat xlink:href="195.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID199" MIMETYPE="image/jpeg" SEQ="199" GROUPID="GID199">
+        <mets:FLocat xlink:href="196.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID200" MIMETYPE="image/jpeg" SEQ="200" GROUPID="GID200">
+        <mets:FLocat xlink:href="197.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID201" MIMETYPE="image/jpeg" SEQ="201" GROUPID="GID201">
+        <mets:FLocat xlink:href="198.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID202" MIMETYPE="image/jpeg" SEQ="202" GROUPID="GID202">
+        <mets:FLocat xlink:href="199.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID203" MIMETYPE="image/jpeg" SEQ="203" GROUPID="GID203">
+        <mets:FLocat xlink:href="200.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID204" MIMETYPE="image/jpeg" SEQ="204" GROUPID="GID204">
+        <mets:FLocat xlink:href="201.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID205" MIMETYPE="image/jpeg" SEQ="205" GROUPID="GID205">
+        <mets:FLocat xlink:href="202.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID206" MIMETYPE="image/jpeg" SEQ="206" GROUPID="GID206">
+        <mets:FLocat xlink:href="203.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID207" MIMETYPE="image/jpeg" SEQ="207" GROUPID="GID207">
+        <mets:FLocat xlink:href="204.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID208" MIMETYPE="image/jpeg" SEQ="208" GROUPID="GID208">
+        <mets:FLocat xlink:href="205.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID209" MIMETYPE="image/jpeg" SEQ="209" GROUPID="GID209">
+        <mets:FLocat xlink:href="206.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID210" MIMETYPE="image/jpeg" SEQ="210" GROUPID="GID210">
+        <mets:FLocat xlink:href="207.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID211" MIMETYPE="image/jpeg" SEQ="211" GROUPID="GID211">
+        <mets:FLocat xlink:href="208.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID212" MIMETYPE="image/jpeg" SEQ="212" GROUPID="GID212">
+        <mets:FLocat xlink:href="209.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID213" MIMETYPE="image/jpeg" SEQ="213" GROUPID="GID213">
+        <mets:FLocat xlink:href="210.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID214" MIMETYPE="image/jpeg" SEQ="214" GROUPID="GID214">
+        <mets:FLocat xlink:href="211.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID215" MIMETYPE="image/jpeg" SEQ="215" GROUPID="GID215">
+        <mets:FLocat xlink:href="212.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID216" MIMETYPE="image/jpeg" SEQ="216" GROUPID="GID216">
+        <mets:FLocat xlink:href="213.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID217" MIMETYPE="image/jpeg" SEQ="217" GROUPID="GID217">
+        <mets:FLocat xlink:href="214.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID218" MIMETYPE="image/jpeg" SEQ="218" GROUPID="GID218">
+        <mets:FLocat xlink:href="215.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID219" MIMETYPE="image/jpeg" SEQ="219" GROUPID="GID219">
+        <mets:FLocat xlink:href="216.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID220" MIMETYPE="image/jpeg" SEQ="220" GROUPID="GID220">
+        <mets:FLocat xlink:href="217.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID221" MIMETYPE="image/jpeg" SEQ="221" GROUPID="GID221">
+        <mets:FLocat xlink:href="218.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID222" MIMETYPE="image/jpeg" SEQ="222" GROUPID="GID222">
+        <mets:FLocat xlink:href="219.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID223" MIMETYPE="image/jpeg" SEQ="223" GROUPID="GID223">
+        <mets:FLocat xlink:href="220.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID224" MIMETYPE="image/jpeg" SEQ="224" GROUPID="GID224">
+        <mets:FLocat xlink:href="221.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID225" MIMETYPE="image/jpeg" SEQ="225" GROUPID="GID225">
+        <mets:FLocat xlink:href="222.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID226" MIMETYPE="image/jpeg" SEQ="226" GROUPID="GID226">
+        <mets:FLocat xlink:href="223.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID227" MIMETYPE="image/jpeg" SEQ="227" GROUPID="GID227">
+        <mets:FLocat xlink:href="223.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID228" MIMETYPE="image/jpeg" SEQ="228" GROUPID="GID228">
+        <mets:FLocat xlink:href="224.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID229" MIMETYPE="image/jpeg" SEQ="229" GROUPID="GID229">
+        <mets:FLocat xlink:href="225.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID230" MIMETYPE="image/jpeg" SEQ="230" GROUPID="GID230">
+        <mets:FLocat xlink:href="226.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID231" MIMETYPE="image/jpeg" SEQ="231" GROUPID="GID231">
+        <mets:FLocat xlink:href="227.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID232" MIMETYPE="image/jpeg" SEQ="232" GROUPID="GID232">
+        <mets:FLocat xlink:href="228.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID233" MIMETYPE="image/jpeg" SEQ="233" GROUPID="GID233">
+        <mets:FLocat xlink:href="229.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID234" MIMETYPE="image/jpeg" SEQ="234" GROUPID="GID234">
+        <mets:FLocat xlink:href="230.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID235" MIMETYPE="image/jpeg" SEQ="235" GROUPID="GID235">
+        <mets:FLocat xlink:href="231.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID236" MIMETYPE="image/jpeg" SEQ="236" GROUPID="GID236">
+        <mets:FLocat xlink:href="232.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID237" MIMETYPE="image/jpeg" SEQ="237" GROUPID="GID237">
+        <mets:FLocat xlink:href="233.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID238" MIMETYPE="image/jpeg" SEQ="238" GROUPID="GID238">
+        <mets:FLocat xlink:href="234.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID239" MIMETYPE="image/jpeg" SEQ="239" GROUPID="GID239">
+        <mets:FLocat xlink:href="235.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID240" MIMETYPE="image/jpeg" SEQ="240" GROUPID="GID240">
+        <mets:FLocat xlink:href="236.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID241" MIMETYPE="image/jpeg" SEQ="241" GROUPID="GID241">
+        <mets:FLocat xlink:href="237.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID242" MIMETYPE="image/jpeg" SEQ="242" GROUPID="GID242">
+        <mets:FLocat xlink:href="238.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID243" MIMETYPE="image/jpeg" SEQ="243" GROUPID="GID243">
+        <mets:FLocat xlink:href="239.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID244" MIMETYPE="image/jpeg" SEQ="244" GROUPID="GID244">
+        <mets:FLocat xlink:href="240.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID245" MIMETYPE="image/jpeg" SEQ="245" GROUPID="GID245">
+        <mets:FLocat xlink:href="241.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID246" MIMETYPE="image/jpeg" SEQ="246" GROUPID="GID246">
+        <mets:FLocat xlink:href="242.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID247" MIMETYPE="image/jpeg" SEQ="247" GROUPID="GID247">
+        <mets:FLocat xlink:href="242.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID248" MIMETYPE="image/jpeg" SEQ="248" GROUPID="GID248">
+        <mets:FLocat xlink:href="243.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID249" MIMETYPE="image/jpeg" SEQ="249" GROUPID="GID249">
+        <mets:FLocat xlink:href="244.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID250" MIMETYPE="image/jpeg" SEQ="250" GROUPID="GID250">
+        <mets:FLocat xlink:href="245.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID251" MIMETYPE="image/jpeg" SEQ="251" GROUPID="GID251">
+        <mets:FLocat xlink:href="246.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID252" MIMETYPE="image/jpeg" SEQ="252" GROUPID="GID252">
+        <mets:FLocat xlink:href="247.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID253" MIMETYPE="image/jpeg" SEQ="253" GROUPID="GID253">
+        <mets:FLocat xlink:href="248.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID254" MIMETYPE="image/jpeg" SEQ="254" GROUPID="GID254">
+        <mets:FLocat xlink:href="249.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID255" MIMETYPE="image/jpeg" SEQ="255" GROUPID="GID255">
+        <mets:FLocat xlink:href="250.jpg" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+    <mets:fileGrp USE="reference">
+      <mets:file ID="FID256" MIMETYPE="application/pdf" SEQ="256" GROUPID="GID1">
+        <mets:FLocat xlink:href="file1.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID257" MIMETYPE="application/pdf" SEQ="257" GROUPID="GID6">
+        <mets:FLocat xlink:href="file2.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID258" MIMETYPE="application/pdf" SEQ="258" GROUPID="GID8">
+        <mets:FLocat xlink:href="file3.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID259" MIMETYPE="application/pdf" SEQ="259" GROUPID="GID11">
+        <mets:FLocat xlink:href="file4.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID260" MIMETYPE="application/pdf" SEQ="260" GROUPID="GID14">
+        <mets:FLocat xlink:href="file5.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID261" MIMETYPE="application/pdf" SEQ="261" GROUPID="GID20">
+        <mets:FLocat xlink:href="file6.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID262" MIMETYPE="application/pdf" SEQ="262" GROUPID="GID32">
+        <mets:FLocat xlink:href="file7.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID263" MIMETYPE="application/pdf" SEQ="263" GROUPID="GID136">
+        <mets:FLocat xlink:href="file8.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID264" MIMETYPE="application/pdf" SEQ="264" GROUPID="GID227">
+        <mets:FLocat xlink:href="file9.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID265" MIMETYPE="application/pdf" SEQ="265" GROUPID="GID244">
+        <mets:FLocat xlink:href="file10.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID266" MIMETYPE="application/pdf" SEQ="266" GROUPID="GID246">
+        <mets:FLocat xlink:href="file11.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID267" MIMETYPE="application/pdf" SEQ="267" GROUPID="GID247">
+        <mets:FLocat xlink:href="file12.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID268" MIMETYPE="application/pdf" SEQ="268" GROUPID="GID250">
+        <mets:FLocat xlink:href="file13.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID269" MIMETYPE="application/pdf" SEQ="269" GROUPID="GID252">
+        <mets:FLocat xlink:href="file14.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+      <mets:file ID="FID270" MIMETYPE="application/pdf" SEQ="270" GROUPID="GID254">
+        <mets:FLocat xlink:href="file15.pdf" LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="JPEG" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Gardening in Florida: a treatise on the vegetables and tropical products of Florida">
+      <mets:div TYPE="chapter" LABEL="Front Matter">
+        <mets:div TYPE="page" LABEL="fly1">
+          <mets:fptr FILEID="FID1"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly2">
+          <mets:fptr FILEID="FID2"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly3">
+          <mets:fptr FILEID="FID3"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly4">
+          <mets:fptr FILEID="FID4"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="fly5">
+          <mets:fptr FILEID="FID5"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Title Page">
+        <mets:div TYPE="page" LABEL="iii">
+          <mets:fptr FILEID="FID6"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="iv">
+          <mets:fptr FILEID="FID7"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Introduction to Second Edition">
+        <mets:div TYPE="page" LABEL="v">
+          <mets:fptr FILEID="FID8"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="vi">
+          <mets:fptr FILEID="FID9"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="vii">
+          <mets:fptr FILEID="FID10"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Introduction to First Edition">
+        <mets:div TYPE="page" LABEL="viii">
+          <mets:fptr FILEID="FID11"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="ix">
+          <mets:fptr FILEID="FID12"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="x">
+          <mets:fptr FILEID="FID13"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Index">
+        <mets:div TYPE="page" LABEL="xi">
+          <mets:fptr FILEID="FID14"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xii">
+          <mets:fptr FILEID="FID15"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xiii">
+          <mets:fptr FILEID="FID16"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xiv">
+          <mets:fptr FILEID="FID17"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xv">
+          <mets:fptr FILEID="FID18"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="xvi">
+          <mets:fptr FILEID="FID19"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Preparation of the Soil">
+        <mets:div TYPE="page" LABEL="17">
+          <mets:fptr FILEID="FID20"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="18">
+          <mets:fptr FILEID="FID21"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="19">
+          <mets:fptr FILEID="FID22"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="20">
+          <mets:fptr FILEID="FID23"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="21">
+          <mets:fptr FILEID="FID24"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="22">
+          <mets:fptr FILEID="FID25"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="23">
+          <mets:fptr FILEID="FID26"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="24">
+          <mets:fptr FILEID="FID27"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="25">
+          <mets:fptr FILEID="FID28"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="26">
+          <mets:fptr FILEID="FID29"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="27">
+          <mets:fptr FILEID="FID30"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="28">
+          <mets:fptr FILEID="FID31"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Garden Vegetables">
+        <mets:div TYPE="page" LABEL="29">
+          <mets:fptr FILEID="FID32"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="30">
+          <mets:fptr FILEID="FID33"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="31">
+          <mets:fptr FILEID="FID34"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="32">
+          <mets:fptr FILEID="FID35"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="33">
+          <mets:fptr FILEID="FID36"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="34">
+          <mets:fptr FILEID="FID37"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="35">
+          <mets:fptr FILEID="FID38"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="36">
+          <mets:fptr FILEID="FID39"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="37">
+          <mets:fptr FILEID="FID40"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="38">
+          <mets:fptr FILEID="FID41"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="39">
+          <mets:fptr FILEID="FID42"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="40">
+          <mets:fptr FILEID="FID43"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="41">
+          <mets:fptr FILEID="FID44"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="42">
+          <mets:fptr FILEID="FID45"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="43">
+          <mets:fptr FILEID="FID46"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="44">
+          <mets:fptr FILEID="FID47"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="45">
+          <mets:fptr FILEID="FID48"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="46">
+          <mets:fptr FILEID="FID49"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="47">
+          <mets:fptr FILEID="FID50"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="48">
+          <mets:fptr FILEID="FID51"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="49">
+          <mets:fptr FILEID="FID52"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="50">
+          <mets:fptr FILEID="FID53"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="51">
+          <mets:fptr FILEID="FID54"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="52">
+          <mets:fptr FILEID="FID55"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="53">
+          <mets:fptr FILEID="FID56"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="54">
+          <mets:fptr FILEID="FID57"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="55">
+          <mets:fptr FILEID="FID58"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="56">
+          <mets:fptr FILEID="FID59"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="57">
+          <mets:fptr FILEID="FID60"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="58">
+          <mets:fptr FILEID="FID61"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="59">
+          <mets:fptr FILEID="FID62"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="60">
+          <mets:fptr FILEID="FID63"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="61">
+          <mets:fptr FILEID="FID64"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="62">
+          <mets:fptr FILEID="FID65"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="63">
+          <mets:fptr FILEID="FID66"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="64">
+          <mets:fptr FILEID="FID67"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="65">
+          <mets:fptr FILEID="FID68"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="66">
+          <mets:fptr FILEID="FID69"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="67">
+          <mets:fptr FILEID="FID70"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="68">
+          <mets:fptr FILEID="FID71"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="69">
+          <mets:fptr FILEID="FID72"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="70">
+          <mets:fptr FILEID="FID73"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="71">
+          <mets:fptr FILEID="FID74"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="72">
+          <mets:fptr FILEID="FID75"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="73">
+          <mets:fptr FILEID="FID76"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="74">
+          <mets:fptr FILEID="FID77"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="75">
+          <mets:fptr FILEID="FID78"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="76">
+          <mets:fptr FILEID="FID79"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="77">
+          <mets:fptr FILEID="FID80"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="78">
+          <mets:fptr FILEID="FID81"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="79">
+          <mets:fptr FILEID="FID82"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="80">
+          <mets:fptr FILEID="FID83"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="81">
+          <mets:fptr FILEID="FID84"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="82">
+          <mets:fptr FILEID="FID85"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="83">
+          <mets:fptr FILEID="FID86"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="84">
+          <mets:fptr FILEID="FID87"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="85">
+          <mets:fptr FILEID="FID88"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="86">
+          <mets:fptr FILEID="FID89"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="87">
+          <mets:fptr FILEID="FID90"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="88">
+          <mets:fptr FILEID="FID91"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="89">
+          <mets:fptr FILEID="FID92"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="90">
+          <mets:fptr FILEID="FID93"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="91">
+          <mets:fptr FILEID="FID94"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="92">
+          <mets:fptr FILEID="FID95"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="93">
+          <mets:fptr FILEID="FID96"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="94">
+          <mets:fptr FILEID="FID97"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="95">
+          <mets:fptr FILEID="FID98"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="96">
+          <mets:fptr FILEID="FID99"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="97">
+          <mets:fptr FILEID="FID100"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="98">
+          <mets:fptr FILEID="FID101"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="99">
+          <mets:fptr FILEID="FID102"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="100">
+          <mets:fptr FILEID="FID103"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="101">
+          <mets:fptr FILEID="FID104"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="102">
+          <mets:fptr FILEID="FID105"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="103">
+          <mets:fptr FILEID="FID106"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="104">
+          <mets:fptr FILEID="FID107"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="105">
+          <mets:fptr FILEID="FID108"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="106">
+          <mets:fptr FILEID="FID109"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="107">
+          <mets:fptr FILEID="FID110"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="108">
+          <mets:fptr FILEID="FID111"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="109">
+          <mets:fptr FILEID="FID112"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="110">
+          <mets:fptr FILEID="FID113"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="111">
+          <mets:fptr FILEID="FID114"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="112">
+          <mets:fptr FILEID="FID115"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="113">
+          <mets:fptr FILEID="FID116"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="114">
+          <mets:fptr FILEID="FID117"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="115">
+          <mets:fptr FILEID="FID118"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="116">
+          <mets:fptr FILEID="FID119"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="117">
+          <mets:fptr FILEID="FID120"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="118">
+          <mets:fptr FILEID="FID121"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="119">
+          <mets:fptr FILEID="FID122"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="120">
+          <mets:fptr FILEID="FID123"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="121">
+          <mets:fptr FILEID="FID124"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="122">
+          <mets:fptr FILEID="FID125"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="123">
+          <mets:fptr FILEID="FID126"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="124">
+          <mets:fptr FILEID="FID127"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="125">
+          <mets:fptr FILEID="FID128"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="126">
+          <mets:fptr FILEID="FID129"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="127">
+          <mets:fptr FILEID="FID130"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="128">
+          <mets:fptr FILEID="FID131"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="129">
+          <mets:fptr FILEID="FID132"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="130">
+          <mets:fptr FILEID="FID133"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="131">
+          <mets:fptr FILEID="FID134"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="132">
+          <mets:fptr FILEID="FID135"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Tropical Fruits, Trees, &amp;C.">
+        <mets:div TYPE="page" LABEL="133">
+          <mets:fptr FILEID="FID136"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="134">
+          <mets:fptr FILEID="FID137"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="135">
+          <mets:fptr FILEID="FID138"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="136">
+          <mets:fptr FILEID="FID139"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="137">
+          <mets:fptr FILEID="FID140"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="138">
+          <mets:fptr FILEID="FID141"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="139">
+          <mets:fptr FILEID="FID142"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="140">
+          <mets:fptr FILEID="FID143"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="141">
+          <mets:fptr FILEID="FID144"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="142">
+          <mets:fptr FILEID="FID145"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="143">
+          <mets:fptr FILEID="FID146"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="144">
+          <mets:fptr FILEID="FID147"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="145">
+          <mets:fptr FILEID="FID148"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="146">
+          <mets:fptr FILEID="FID149"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="147">
+          <mets:fptr FILEID="FID150"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="148">
+          <mets:fptr FILEID="FID151"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="149">
+          <mets:fptr FILEID="FID152"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="150">
+          <mets:fptr FILEID="FID153"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="151">
+          <mets:fptr FILEID="FID154"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="152">
+          <mets:fptr FILEID="FID155"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="153">
+          <mets:fptr FILEID="FID156"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="154">
+          <mets:fptr FILEID="FID157"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="155">
+          <mets:fptr FILEID="FID158"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="156">
+          <mets:fptr FILEID="FID159"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="157">
+          <mets:fptr FILEID="FID160"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="158">
+          <mets:fptr FILEID="FID161"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="159">
+          <mets:fptr FILEID="FID162"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="160">
+          <mets:fptr FILEID="FID163"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="161">
+          <mets:fptr FILEID="FID164"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="162">
+          <mets:fptr FILEID="FID165"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="163">
+          <mets:fptr FILEID="FID166"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="164">
+          <mets:fptr FILEID="FID167"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="165">
+          <mets:fptr FILEID="FID168"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="166">
+          <mets:fptr FILEID="FID169"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="167">
+          <mets:fptr FILEID="FID170"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="168">
+          <mets:fptr FILEID="FID171"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="169">
+          <mets:fptr FILEID="FID172"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="170">
+          <mets:fptr FILEID="FID173"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="171">
+          <mets:fptr FILEID="FID174"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="172">
+          <mets:fptr FILEID="FID175"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="173">
+          <mets:fptr FILEID="FID176"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="174">
+          <mets:fptr FILEID="FID177"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="175">
+          <mets:fptr FILEID="FID178"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="176">
+          <mets:fptr FILEID="FID179"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="177">
+          <mets:fptr FILEID="FID180"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="178">
+          <mets:fptr FILEID="FID181"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="179">
+          <mets:fptr FILEID="FID182"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="180">
+          <mets:fptr FILEID="FID183"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="181">
+          <mets:fptr FILEID="FID184"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="182">
+          <mets:fptr FILEID="FID185"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="183">
+          <mets:fptr FILEID="FID186"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="184">
+          <mets:fptr FILEID="FID187"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="185">
+          <mets:fptr FILEID="FID188"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="186">
+          <mets:fptr FILEID="FID189"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="187">
+          <mets:fptr FILEID="FID190"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="188">
+          <mets:fptr FILEID="FID191"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="189">
+          <mets:fptr FILEID="FID192"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="190">
+          <mets:fptr FILEID="FID193"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="191">
+          <mets:fptr FILEID="FID194"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="192">
+          <mets:fptr FILEID="FID195"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="193">
+          <mets:fptr FILEID="FID196"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="194">
+          <mets:fptr FILEID="FID197"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="195">
+          <mets:fptr FILEID="FID198"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="196">
+          <mets:fptr FILEID="FID199"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="197">
+          <mets:fptr FILEID="FID200"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="198">
+          <mets:fptr FILEID="FID201"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="199">
+          <mets:fptr FILEID="FID202"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="200">
+          <mets:fptr FILEID="FID203"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="201">
+          <mets:fptr FILEID="FID204"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="202">
+          <mets:fptr FILEID="FID205"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="203">
+          <mets:fptr FILEID="FID206"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="204">
+          <mets:fptr FILEID="FID207"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="205">
+          <mets:fptr FILEID="FID208"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="206">
+          <mets:fptr FILEID="FID209"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="207">
+          <mets:fptr FILEID="FID210"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="208">
+          <mets:fptr FILEID="FID211"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="209">
+          <mets:fptr FILEID="FID212"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="210">
+          <mets:fptr FILEID="FID213"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="211">
+          <mets:fptr FILEID="FID214"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="212">
+          <mets:fptr FILEID="FID215"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="213">
+          <mets:fptr FILEID="FID216"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="214">
+          <mets:fptr FILEID="FID217"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="215">
+          <mets:fptr FILEID="FID218"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="216">
+          <mets:fptr FILEID="FID219"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="217">
+          <mets:fptr FILEID="FID220"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="218">
+          <mets:fptr FILEID="FID221"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="219">
+          <mets:fptr FILEID="FID222"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="220">
+          <mets:fptr FILEID="FID223"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="221">
+          <mets:fptr FILEID="FID224"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="222">
+          <mets:fptr FILEID="FID225"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="223">
+          <mets:fptr FILEID="FID226"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Propagation by Budding, Grafting, Layering, Inarching, Etc.">
+        <mets:div TYPE="page" LABEL="223">
+          <mets:fptr FILEID="FID227"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="224">
+          <mets:fptr FILEID="FID228"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="225">
+          <mets:fptr FILEID="FID229"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="226">
+          <mets:fptr FILEID="FID230"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="227">
+          <mets:fptr FILEID="FID231"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="228">
+          <mets:fptr FILEID="FID232"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="229">
+          <mets:fptr FILEID="FID233"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="230">
+          <mets:fptr FILEID="FID234"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="231">
+          <mets:fptr FILEID="FID235"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="232">
+          <mets:fptr FILEID="FID236"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="233">
+          <mets:fptr FILEID="FID237"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="234">
+          <mets:fptr FILEID="FID238"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="235">
+          <mets:fptr FILEID="FID239"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="236">
+          <mets:fptr FILEID="FID240"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="237">
+          <mets:fptr FILEID="FID241"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="238">
+          <mets:fptr FILEID="FID242"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="239">
+          <mets:fptr FILEID="FID243"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="State Officers">
+        <mets:div TYPE="page" LABEL="240">
+          <mets:fptr FILEID="FID244"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="241">
+          <mets:fptr FILEID="FID245"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Geographical Divisions of the State">
+        <mets:div TYPE="page" LABEL="242">
+          <mets:fptr FILEID="FID246"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Measurements">
+        <mets:div TYPE="page" LABEL="242">
+          <mets:fptr FILEID="FID247"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="243">
+          <mets:fptr FILEID="FID248"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="244">
+          <mets:fptr FILEID="FID249"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Formulas for Cements">
+        <mets:div TYPE="page" LABEL="245">
+          <mets:fptr FILEID="FID250"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="246">
+          <mets:fptr FILEID="FID251"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Errata">
+        <mets:div TYPE="page" LABEL="247">
+          <mets:fptr FILEID="FID252"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="248">
+          <mets:fptr FILEID="FID253"/>
+        </mets:div>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Endpages">
+        <mets:div TYPE="page" LABEL="249">
+          <mets:fptr FILEID="FID254"/>
+        </mets:div>
+        <mets:div TYPE="page" LABEL="250">
+          <mets:fptr FILEID="FID255"/>
+        </mets:div>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structMap TYPE="PDF" LABEL="View">
+    <mets:div DMDID="DMD1" LABEL="Gardening in Florida: a treatise on the vegetables and tropical products of Florida">
+      <mets:div TYPE="chapter" LABEL="Front Matter">
+        <mets:fptr FILEID="FID256"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Title Page">
+        <mets:fptr FILEID="FID257"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Introduction to Second Edition">
+        <mets:fptr FILEID="FID258"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Introduction to First Edition">
+        <mets:fptr FILEID="FID259"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Index">
+        <mets:fptr FILEID="FID260"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Preparation of the Soil">
+        <mets:fptr FILEID="FID261"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Garden Vegetables">
+        <mets:fptr FILEID="FID262"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Tropical Fruits, Trees, &amp;C.">
+        <mets:fptr FILEID="FID263"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Propagation by Budding, Grafting, Layering, Inarching, Etc.">
+        <mets:fptr FILEID="FID264"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="State Officers">
+        <mets:fptr FILEID="FID265"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Geographical Divisions of the State">
+        <mets:fptr FILEID="FID266"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Measurements">
+        <mets:fptr FILEID="FID267"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Formulas for Cements">
+        <mets:fptr FILEID="FID268"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Errata">
+        <mets:fptr FILEID="FID269"/>
+      </mets:div>
+      <mets:div TYPE="chapter" LABEL="Endpages">
+        <mets:fptr FILEID="FID270"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+</mets:mets>
