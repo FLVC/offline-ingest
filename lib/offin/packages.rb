@@ -202,6 +202,7 @@ class Package
     end
 
     # Randy, I had to make changes, sorry about the mess
+
     @collections.each do |collection_id|
       collection_namespace = collection_id.partition(":")[0]
       collection_datastreams = Utils.get_datastream_names(config, collection_id)
@@ -740,7 +741,6 @@ class PdfPackage < Package
         @full_text = ' '
       end
     # No full text, so we generate UTF-8 using a unix utility, which we'll still cleanup:
-
     else
       @full_text_label = 'Full text derived from PDF'
       @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory_path, @pdf_filename)))
@@ -760,16 +760,9 @@ class PdfPackage < Package
   end
 
   def ingest
-
-    # Do image processing upfront so as to fail faster, if fail we must, before ingest is started.
-
-    thumb, messages  = Utils.pdf_to_thumbnail @config, File.join(@directory_path, @pdf_filename)
-    warning messages
-
-    preview, messages = Utils.pdf_to_preview @config, File.join(@directory_path, @pdf_filename)
-    warning messages
-
     return if @config.test_mode
+
+    preview, preview_error_messages, thumbnail, thumbnail_error_messages = nil
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -787,15 +780,19 @@ class PdfPackage < Package
         ds.mimeType = 'text/plain'
       end
 
+      preview, preview_error_messages      = Utils.pdf_to_preview(@config, File.join(@directory_path, @pdf_filename))
+
       ingestor.datastream('PREVIEW') do |ds|
         ds.dsLabel  = 'Preview'
         ds.content  = preview
         ds.mimeType = 'image/jpeg'
       end
 
+      thumbnail, thumbnail_error_messages  = Utils.pdf_to_thumbnail(@config, File.join(@directory_path, @pdf_filename))
+
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
-        ds.content  = thumb
+        ds.content  = thumbnail
         ds.mimeType = 'image/jpeg'
       end
     end
@@ -804,6 +801,11 @@ class PdfPackage < Package
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
+    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    warning [ 'Issues creating Preview datastream' ]   + preview_error_messages    if preview_error_messages   and not preview_error_messages.empty?
+
+    [ @pdf, @full_text, preview, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+
     @updator.post_ingest
   end
 end

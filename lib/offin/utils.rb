@@ -463,8 +463,10 @@ class Utils
     FileUtils.rm_f(temp_image_filename)
   end
 
-  # ImageMagick sometimes fails on JP2K,  so we punt to kakadu in that case.
-  # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
+  # ImageMagick sometimes fails on JP2K, so we punt to kakadu in that
+  # case.  Kakadu only produces uncompressed TIFFs, so we don't want
+  # to use kakadu indiscriminately or in place of ImageMagick.
+  # TODO:  a second pass on kakadu output to compress the TIFF?
 
   def Utils.image_to_tiff config, image_filepath
     file, errors = Utils.image_magick_to_tiff(config, image_filepath)
@@ -479,20 +481,11 @@ class Utils
     return file, errors
   end
 
-  # def Utils.open_anonymously filepath
-  #   newfile = Utils.temp_file
-  #   open(filepath, 'rb') do |f|
-  #     while (data = f.read(1024*1024))
-  #       newfile.write data
-  #     end
-  #   end
-  #   newfile.rewind
-  #   return newfile
-  # end
-
-
-  # geometry is something like "200x200" - resizing preserves the aspect ration (i.e., the image is uniformly scaled down to fit into a 200 x 200 box).
-  # The type of image is preserved unless the optional new_format is supplied
+  # Geometry is something like "200x200" - resizing preserves the
+  # aspect ration (i.e., the image is uniformly scaled down to fit
+  # into a 200 x 200 box).  The type of image is preserved unless the
+  # optional new_format is supplied.  It won't hurt anything to
+  # specify the same output type as the supplied image, if in doubt.
 
   def Utils.image_resize config, image_filepath, geometry, new_format = nil
     return Utils.image_processing(config, image_filepath,
@@ -501,15 +494,6 @@ class Utils
 
   end
 
-
-  # TODO: remove this
-
-  # ImageMagick sometimes fails on JP2K,  so we punt to kakadu, which we'll munge into a TIFF and call ImageMagick on *that*.
-  # Kakadu only produces uncompressed TIFFs, so we don't want to use kakadu indiscriminately or in place of ImageMagick.
-
-  def Utils.be_careful_with_that_jp2_now config, jp2k_filepath
-    raise "YIKES:  replace Utils.be_careful_with_that_jp2_now"
-  end
 
 
   private
@@ -594,25 +578,15 @@ class Utils
     return str
   end
 
-  # use the 'file' command to determine a file type. Argument FILE may be a filename or open IO object.  If the latter, and it supports rewind, it will be rewound when finished.
+  # We use the 'file' command to determine a file type. Argument FILE
+  # may be a filename or open IO object.  If the latter, and it
+  # supports rewind, it will be rewound when finished.
 
   def Utils.mime_type file
 
     type = error = nil
 
     case
-    # when file.is_a?(Magick::Image)
-
-    #   error = []
-    #   type = case file.format
-    #          when 'GIF'  ; 'image/gif'
-    #          when 'JP2'  ; 'image/jp2'
-    #          when 'JPEG' ; 'image/jpeg'
-    #          when 'PNG'  ; 'image/png'
-    #          when 'TIFF' ; 'image/tiff'
-    #          else;         'application/octet-stream'
-    #          end
-
     when file.is_a?(IO)
 
       Open3.popen3("/usr/bin/file --mime-type -b -") do |stdin, stdout, stderr|
@@ -626,7 +600,7 @@ class Utils
         error  = stderr.read
       end
 
-      file.rewind if file.respond_to? :rewind
+      file.rewind if file.respond_to? :rewind and not file.closed?
 
     when file.is_a?(String)  # presumed a filename
 
