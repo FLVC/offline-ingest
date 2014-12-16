@@ -496,20 +496,20 @@ class BasicImagePackage < Package
         ds.mimeType = @mime_type
       end
 
-      medium, medium_error_messages = Utils.image_resize(@config, @image_pathname, @config.medium_geometry)
+      medium, medium_error_messages = Utils.image_resize(@config, @image_pathname, @config.medium_geometry, 'jpeg')
 
       ingestor.datastream('MEDIUM_SIZE') do |ds|
         ds.dsLabel  = "Medium Size Image"
         ds.content  = medium
-        ds.mimeType = @mime_type
+        ds.mimeType = 'image/jpeg'
       end
 
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry)
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"
         ds.content  = thumbnail
-        ds.mimeType = @mime_type
+        ds.mimeType = 'image/jpeg'
       end
     end
 
@@ -959,18 +959,20 @@ class BookPackage < Package
   def ingest_book
 
     first_page = File.join @directory_path, @page_filenames.first
-    @image = Magick::Image.read(first_page).first
+    @image = File.read(first_page)
+
+    thumbnail, thumbnail_error_messages = nil
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
-      @image.format = 'JPG'
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
-        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = @image.mime_type
+        ds.content  =  thumbnail
+        ds.mimeType = 'image/jpeg'
       end
 
       ingestor.datastream('DT-METS') do |ds|
@@ -991,7 +993,10 @@ class BookPackage < Package
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
-    @image.destroy! if @image.class == Magick::Image
+    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+
+    [ @image, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+
     @updator.post_ingest
   end
 
@@ -1019,10 +1024,15 @@ class BookPackage < Package
     image_name = path.sub(/^.*\//, '')
     ocr_fail   = false
 
+    jp2k, jp2k_error_messages = nil
+    medium, medium_error_messages = nil
+
+    image = File.open(path)
+
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
       ds.content  = File.open(path)
-      ds.mimeType = image.mime_type
+      ds.mimeType = 'image/tiff'
     end
 
     if (text = Utils.ocr(@config, image))
@@ -1044,12 +1054,12 @@ class BookPackage < Package
       end
     end
 
-    image.format = 'JP2'
+    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = "JP2 derived from original TIFF"
-      ds.content  = image.to_blob
-      ds.mimeType = image.mime_type
+      ds.content  = jp2k
+      ds.mimeType = 'image/jp2'
     end
 
     ingestor.datastream('RELS-INT') do |ds|
@@ -1058,17 +1068,25 @@ class BookPackage < Package
       ds.mimeType = 'application/rdf+xml'
     end
 
-    # this case we shrink it to 'MEDIUM'
-
-    image.format = 'JPG'
+    medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
 
     ingestor.datastream('JPG') do |ds|
       ds.dsLabel  = 'Medium sized JPEG'
-      ds.content  = image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-      ds.mimeType = image.mime_type
+      ds.content  = medium
+      ds.mimeType = 'image/jpeg'
     end
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    warning [ 'Issues creating JPK2 datastream' ]      + jp2k_error_messages    if jp2k_error_messages    and not jp2k_error_messages.empty?
+    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
+
+    [ image, jp2k, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
+
+  ################
 
   def handle_jpeg_page  ingestor, image, path
 
