@@ -20,7 +20,7 @@ module UtilsHelpers
 
   # give the whole path to a test data file
 
-  def test_data_directory filename
+  def test_data_path filename
     return File.expand_path(File.join(File.dirname(__FILE__), 'test-data', filename))
   end
 
@@ -28,12 +28,11 @@ module UtilsHelpers
     info = ""
     errs = ""
     temp = Tempfile.new('pnm-chain-')
+    cmd  = sprintf(command, temp.path)
 
-    while (data = file.read(1024 ** 2))  do; temp.write data; end
+    while (data = file.read(1024 * 2))  do; temp.write data; end
     temp.close
 
-
-    cmd = sprintf(command, temp.path)
     Open3.popen3(cmd) do |stdin, stdout, stderr|
       stdin.close
       while (data = stdout.read(1024)) do;  info += data; end

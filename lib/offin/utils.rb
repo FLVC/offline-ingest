@@ -383,13 +383,6 @@ class Utils
 
   # run the convert command on an image file
 
-  def Utils.image_to_pdf config, image_filepath
-    return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} pdf:-",
-                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
-  end
-
-
   def Utils.pdf_to_thumbnail config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_convert_command} -resize #{config.thumbnail_geometry} #{Utils.shellescape(pdf_filepath + '[0]')} jpg:-",
@@ -414,10 +407,25 @@ class Utils
     return Utils.image_processing(config, image_filepath,
                                   "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
                                   "When creating a TIFF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
-
-
   end
 
+  def Utils.image_to_jpeg config,  image_filepath
+    return Utils.image_processing(config, image_filepath,
+                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jpeg:-",
+                                  "When creating a JEPG from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+  end
+
+  def Utils.image_to_jp2k config, image_filepath
+    return Utils.image_processing(config, image_filepath,
+                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jp2:-",
+                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command} <filename> jp2:-' the following message was produced:" )
+  end
+
+  def Utils.image_to_pdf config, image_filepath
+    return Utils.image_processing(config, image_filepath,
+                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} pdf:-",
+                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
+  end
 
   # kdu_expand on jp2k
 
@@ -428,7 +436,6 @@ class Utils
     unused, errors = Utils.image_processing(config, jp2k_filepath,
                                             "#{config.kakadu_expand_command} -i #{Utils.shellescape(jp2k_filepath)} -o #{temp_image_filename}",
                                             "Image processing error: could not process JP2 image '#{jp2k_filepath}'")
-
     if File.exists? temp_image_filename
       file = open(temp_image_filename, 'r+b')
     else
@@ -451,31 +458,24 @@ class Utils
     return file, errors
   end
 
-
-  def Utils.image_to_jpg
-
-  end
-
-
-
-  def Utils.open_anonymously filepath
-    newfile = Utils.temp_file
-    open(filepath, 'rb') do |f|
-      while (data = f.read(1024*1024))
-        newfile.write data
-      end
-    end
-    newfile.rewind
-    return newfile
-  end
+  # def Utils.open_anonymously filepath
+  #   newfile = Utils.temp_file
+  #   open(filepath, 'rb') do |f|
+  #     while (data = f.read(1024*1024))
+  #       newfile.write data
+  #     end
+  #   end
+  #   newfile.rewind
+  #   return newfile
+  # end
 
 
   # geometry is something like "200x200" - resizing preserves the aspect ration (i.e., the image is uniformly scaled down to fit into a 200 x 200 box).
-  # The type of image is preserved.
+  # The type of image is preserved unless the optional new_format is supplied
 
-  def Utils.image_resize config, image_filepath, geometry
+  def Utils.image_resize config, image_filepath, geometry, new_format = nil
     return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{shellescape(image_filepath)} -resize #{geometry} -",
+                                  "#{config.image_convert_command} #{shellescape(image_filepath)} -resize #{geometry} #{ new_format.nil? ?  '-' :  new_format + ':-'}",
                                   "When creating a resized image (#{geometry}) from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was produced:" )
 
   end

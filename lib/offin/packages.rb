@@ -459,8 +459,6 @@ class BasicImagePackage < Package
     @image_filename = @datafiles.first
     @image_pathname = File.join(@directory_path, @image_filename)
 
-    STDERR.puts '!!!!!!!!!!!!!!!!', @image_filename
-
     @mime_type = Utils.mime_type(@image_pathname)
 
     case @mime_type
@@ -553,22 +551,19 @@ class LargeImagePackage < Package
 
     return unless valid?
 
-    @image = nil
     @image_filename = @datafiles.first
-    path = File.join(@directory_path, @image_filename)
-    @type = Utils.mime_type(path)   # we need to record the original type since @image may be returned in either TIFF or JP2K
+    @image_pathname = File.join(@directory_path, @image_filename)
+    @mime_type = Utils.mime_type(@image_pathname)
 
     case @type
     when JP2
-      @image = Utils.be_careful_with_that_jp2_now(@config, path)   # this may return a JP2K, or, if ImageMagick bombs and kakadu succeeds, a TIFF
+      @image = File.open(@image_pathname, 'rb')
     when TIFF
-      @image = Magick::Image.read(path).first
+      @image = File.open(@image_pathname, 'rb')
     else
       raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
     end
 
-  rescue Magick::ImageMagickError => e
-    error "Image processing error for Large Image package #{@directory_name}: #{e.class}, #{e.message}"
   rescue PackageError => e
     error "Exception for Large Image package #{@directory_name}: #{e.message}"
   rescue => e
@@ -599,24 +594,30 @@ class LargeImagePackage < Package
 
       boilerplate(ingestor)
 
-      case @type
+      case @mime_type
+
       when TIFF;   ingest_tiff ingestor
       when JP2;    ingest_jp2 ingestor
       else
         raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with image format #{@image.format}."
       end
 
-      @image.format = 'JPG'
+      medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
+
+      medium, medium_error_messages = Utils.image_resize(@config, @image_pathname, @config.medium_geometry, 'jpeg')
 
       ingestor.datastream('JPG') do |ds|
         ds.dsLabel  = 'Medium sized JPEG'
-        ds.content  = @image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+        ds.content  = Utils.image_to_pdf
+        ds.content  = medium
         ds.mimeType = @image.mime_type
       end
 
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
+
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
-        ds.content  = @image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+        ds.content  = thumbnail
         ds.mimeType = @image.mime_type
       end
 
@@ -626,7 +627,11 @@ class LargeImagePackage < Package
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
-    @image.destroy! if @image.class == Magick::Image
+    error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    error   [ 'Error creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
+
+    [ @image, medium, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+
     @updator.post_ingest
   end
 
@@ -637,17 +642,22 @@ class LargeImagePackage < Package
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Original TIFF ' + @image_filename.sub(/\.(tiff|tiff)$/i, '')
-      ds.content  = File.open(File.join(@directory_path, @image_filename))
+      ds.content  = @image
       ds.mimeType = 'image/tiff'
     end
 
-    @image.format = 'JP2'
+    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, @image_pathname)
+
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'JPEG 2000 derived from original TIFF image'
-      ds.content  = @image.to_blob
+      ds.content  = jp2k
       ds.mimeType = 'image/jp2'
     end
+
+  ensure
+    error  [ 'Error converting TIFF to JP2K' ] +  jp2k_error_messages  if jp2k_error_messages and not jp2k_error_messages.empty?
+    [ @image, jp2k ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
 
@@ -655,18 +665,21 @@ class LargeImagePackage < Package
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
-      ds.content  = File.open(File.join(@directory_path, @image_filename))
+      ds.content  = @image
       ds.mimeType = 'image/jp2'
     end
 
-    @image.format = 'TIFF'
-    @image.compression = Magick::LZWCompression
+    tiff, tiff_error_messages = Utils.image_to_tiff(@config, @image_pathname)
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
-      ds.content  = @image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
+      ds.content  =  tiff
       ds.mimeType = 'image/tiff'
     end
+
+  ensure
+    error  [ 'Error converting JP2K to TIFF' ] +  tiff_error_messages  if tiff_error_messages and not tiff_error_messages.empty?
+    [ @image, tiff ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
 end
