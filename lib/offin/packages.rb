@@ -1149,7 +1149,7 @@ class BookPackage < Package
       ds.mimeType = 'application/rdf+xml'
     end
 
-    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'jpeg')
+    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'tiff')
 
     #### TODO: everywhere we do a resize, let's bail with a package error if produced file is empty (initally I thought an empty file would be OK)
 
@@ -1171,6 +1171,7 @@ class BookPackage < Package
 
 
   def handle_jp2k_page ingestor, image, path
+
     image_name = path.sub(/^.*\//, '')
     ocr_fail   = false
 
@@ -1186,13 +1187,12 @@ class BookPackage < Package
       ds.mimeType = 'application/rdf+xml'
     end
 
-    image.format = 'TIFF'
-    image.compression = Magick::LZWCompression
+    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'tiff')
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
-      ds.content  = image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-      ds.mimeType = image.mime_type
+      ds.content  = tiff
+      ds.mimeType = 'image/tiff'
     end
 
     if (text = Utils.ocr(@config, image))
@@ -1214,13 +1214,21 @@ class BookPackage < Package
       end
     end
 
-    image.format = 'JPG'
+    medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
 
     ingestor.datastream('JPG') do |ds|
       ds.dsLabel  = 'Medium sized JPEG'
-      ds.content  = image.change_geometry(@config.large_jpg_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-      ds.mimeType = image.mime_type
+      ds.content  = medium
+      ds.mimeType = 'image/jpeg'
     end
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    warning [ 'Issues creating TIFF datastream' ]      + tiff_error_messages    if tiff_error_messages    and not tiff_error_messages.empty?
+    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
+
+    [ image, tiff, medium ].each { |file| file.close if file.respond_to? :close and not file.closed? }
 
   end
 
@@ -1297,10 +1305,6 @@ class BookPackage < Package
     image = File.read(path)
 
     mime_Utils.mime_type = Utils.mime_type(path)
-
-    unless (mime_type =~  /tiff|jp2|jpeg/)
-      raise PackageError, "Can't determine the mime type of the page #{pagename} in Book package #{@directory_name}."
-    end
 
     pdf, pdf_error_messages = nil
     thumbnail, thumbnail_error_messages = nil
