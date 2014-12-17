@@ -46,7 +46,7 @@ end
 class Utils
 
   TESSERACT_TIMEOUT = 500   # tesseract can waste a lot of time on certain kinds of images
-  QUICKLY_TIMEOUT   = 10   # seconds before giving up on fedora
+  QUICKLY_TIMEOUT   = 10    # seconds before giving up on fedora
 
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
@@ -372,6 +372,8 @@ class Utils
   end
 
 
+  #### TODO:  need to catch errors, make sure we always provide an opened file, even it's File.open('/dev/null', 'rb')
+
   def Utils.image_processing config, image_filepath, command, error_title
 
     error_text = nil
@@ -415,6 +417,7 @@ class Utils
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -",
                                   "When extracting texy from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
+
   end
 
   def Utils.image_to_jpeg config,  image_filepath
@@ -478,6 +481,7 @@ class Utils
     if (not file) or (file.stat.size < 1) or (Utils.mime_type(file) != 'image/tiff')
       file, errors = Utils.kakadu_jp2k_to_tiff(config, image_filepath)
     end
+
     return file, errors
   end
 

@@ -11,7 +11,6 @@ require 'offin/ingestor'
 require 'offin/metadata-checkers'
 require 'offin/config'
 require 'offin/drupal-db'
-require 'RMagick'
 
 BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
 LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
@@ -708,22 +707,22 @@ class PdfPackage < Package
       raise PackageError, "The PDF package #{@directory_name} contains no data files."
     end
 
-    @pdf = nil
-    @pdf_filename = nil
-
-    @full_text = nil
-    @full_text_filename = nil
+    @pdf, @pdf_filename, @pdf_pathname = nil
+    @full_text, @full_text_filename, @full_text_pathname = nil
 
     @datafiles.each do |filename|
       path = File.join(@directory_path, filename)
       type = Utils.mime_type(path)
+
       case type
       when PDF
         @pdf_filename = filename
-        @pdf = File.read(path)
+        @pdf_pathname = path
+        @pdf = true
       when TEXT
         @full_text_filename = filename
-        @full_text = File.read(path)
+        @full_text_pathname = path
+        @full_text = true
       else
         raise PackageError, "The PDF package #{@directory_name} contains an unexpected file #{filename} of type #{type}."
       end
@@ -732,18 +731,31 @@ class PdfPackage < Package
     raise PackageError, "The PDF package #{@directory_name} doesn't contain a PDF file."  if @pdf.nil?
 
     case
+
     # A full text index file was submitted, which we don't trust much, so cleanup and re-encode to UTF:
+
     when @full_text
       @full_text_label = "Full text from index file"
-      @full_text = Utils.cleanup_text(Utils.re_encode_maybe(@full_text))
+      @full_text = Utils.cleanup_text(Utils.re_encode_maybe(File.read(@full_text_pathname)))
+
       if @full_text.empty?
         warning "The full text file #{@full_text_filename} supplied in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
       end
+
     # No full text, so we generate UTF-8 using a unix utility, which we'll still cleanup:
     else
       @full_text_label = 'Full text derived from PDF'
-      @full_text = Utils.cleanup_text(Utils.pdf_to_text(@config, File.join(@directory_path, @pdf_filename)))
+
+      text_from_pdf_file, errors = Utils.pdf_to_text(@config, @pdf_pathname)
+
+      if not (errors.nil? or errors.empty?)
+        warning "When extracting text from #{@pdf_filename} the following issues were encountered:"
+        warning errors
+      end
+
+      @full_text = Utils.cleanup_text(text_from_pdf_file.read)
+
       if @full_text.nil?
         warning "Unable to generate full text from #{@pdf_filename} in package #{@directory_name}; using a single space to preserve the FULL_TEXT datastream."
         @full_text = ' '
@@ -770,7 +782,7 @@ class PdfPackage < Package
 
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = @pdf_filename.sub(/\.pdf$/i, '')
-        ds.content  = @pdf
+        ds.content  = File.open(@pdf_pathname)
         ds.mimeType = 'application/pdf'
       end
 
@@ -804,7 +816,7 @@ class PdfPackage < Package
     warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
     warning [ 'Issues creating Preview datastream' ]   + preview_error_messages    if preview_error_messages   and not preview_error_messages.empty?
 
-    [ @pdf, @full_text, preview, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    [ preview, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
 
     @updator.post_ingest
   end
@@ -1032,7 +1044,7 @@ class BookPackage < Package
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
-      ds.content  = File.open(path)
+      ds.content  = image
       ds.mimeType = 'image/tiff'
     end
 
@@ -1083,21 +1095,23 @@ class BookPackage < Package
     warning [ 'Issues creating JPK2 datastream' ]      + jp2k_error_messages    if jp2k_error_messages    and not jp2k_error_messages.empty?
     warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
 
-    [ image, jp2k, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    [ image, jp2k, medium ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
-
-
-  ################
 
   def handle_jpeg_page  ingestor, image, path
 
     ocr_fail   = false
     image_name = path.sub(/^.*\//, '')
 
+    jp2k, jp2k_error_messages = nil
+    medium, medium_error_messages = nil
+
+    image = File.open(path)
+
     ingestor.datastream('JPG') do |ds|
       ds.dsLabel  = 'Original JPEG ' + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
-      ds.content  = File.open(path)
-      ds.mimeType = image.mime_type
+      ds.content  = image
+      ds.mimeType = 'image/jpeg'
     end
 
     if (text = Utils.ocr(@config, image))
@@ -1119,12 +1133,14 @@ class BookPackage < Package
       end
     end
 
-    image.format = 'JP2'
+    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)
+
+    # TODO: check and bail that jp2k is an open file and larger than zero....
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'JPEG 2000 derived from original JPEG image'
-      ds.content  = image.to_blob
-      ds.mimeType = image.mime_type
+      ds.content  = jp2k
+      ds.mimeType = 'image/jp2'
     end
 
     ingestor.datastream('RELS-INT') do |ds|
@@ -1133,14 +1149,23 @@ class BookPackage < Package
       ds.mimeType = 'application/rdf+xml'
     end
 
-    image.format = 'TIFF'
-    image.compression = Magick::LZWCompression
+    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'jpeg')
+
+    #### TODO: everywhere we do a resize, let's bail with a package error if produced file is empty (initally I thought an empty file would be OK)
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Reduced TIFF Derived from original JPEG Image'
-      ds.content  = image.change_geometry(@config.tiff_from_jp2k_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-      ds.mimeType = image.mime_type
+      ds.content  = tiff
+      ds.mimeType = 'image/tiff'
     end
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    warning [ 'Issues creating JPK2 datastream' ] + jp2k_error_messages  if jp2k_error_messages  and not jp2k_error_messages.empty?
+    warning [ 'Issues creating TIFF datastream' ] + tiff_error_messages  if tiff_error_messages  and not tiff_error_messages.empty?
+
+    [ image, jp2k, tiff ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
 
@@ -1269,12 +1294,16 @@ class BookPackage < Package
   def ingest_page pagename, sequence
 
     path  = File.join(@directory_path, pagename)
-    image = Magick::Image.read(path).first
+    image = File.read(path)
 
-    unless (image and image.mime_type)
+    mime_Utils.mime_type = Utils.mime_type(path)
+
+    unless (mime_type =~  /tiff|jp2|jpeg/)
       raise PackageError, "Can't determine the mime type of the page #{pagename} in Book package #{@directory_name}."
     end
 
+    pdf, pdf_error_messages = nil
+    thumbnail, thumbnail_error_messages = nil
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -1283,25 +1312,27 @@ class BookPackage < Package
       ingestor.content_model = PAGE_CONTENT_MODEL
       ingestor.dc            = dc(ingestor.pid, pagename)
 
-      case image.mime_type
+      case mime_type
       when TIFF;  handle_tiff_page(ingestor, image, path)
       when JP2;   handle_jp2k_page(ingestor, image, path)
       when JPEG;  handle_jpeg_page(ingestor, image, path)
       else
-        raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{image.mime_type}."
+        raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{mime_type}."
       end
 
-      image.format = 'JPG'
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
-        ds.content  = image.change_geometry(@config.thumbnail_geometry) { |cols, rows, img| img.resize(cols, rows) }.to_blob
-        ds.mimeType = image.mime_type
+        ds.content  = thumbnail
+        ds.mimeType = 'image/jpeg'
       end
+
+      pdf, pdf_error_messages = Utils.image_to_pdf(@config, path)
 
       ingestor.datastream('PDF') do |ds|
         ds.dsLabel  = 'PDF'
-        ds.content  = Utils.image_to_pdf(@config, path)
+        ds.content  = pdf
         ds.mimeType = 'application/pdf'
       end
 
@@ -1335,10 +1366,15 @@ class BookPackage < Package
   rescue => e
     error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{e.message}.", e.backtrace
     raise e
+
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
-    image.destroy! if image.class == Magick::Image
+
+    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    warning [ 'Issues creating PDF datastream' ] + pdf_error_messages  if pdf_error_messages and not pdf_error_messages.empty?
+
+    [ image, thumbnail, pdf ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
 end   #  of class BookPackage
