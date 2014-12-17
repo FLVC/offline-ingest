@@ -259,8 +259,7 @@ RSpec.describe Utils do
 
   describe "#image_magick_to_tiff" do
     it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
-
-      pending("Huh. convert doesn't support TIFF output on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
+      pending("Huh. convert doesn't support JP2K input on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
 
       file, errors = Utils.image_magick_to_tiff(config, test_data_path("sample01.jp2"))
       expect(errors).to be_empty
@@ -302,6 +301,8 @@ RSpec.describe Utils do
 
   describe "#image_to_jpeg" do
     it "returns without errors a File object on the JPEG produced from a valid JP2K file" do
+      pending("Huh. convert doesn't support JP2K input on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
+
       file, errors = Utils.image_to_jpeg(config, test_data_path("sample01.jp2"))
       expect(errors).to be_empty
       expect(file).to be_a_kind_of(File)
@@ -319,6 +320,8 @@ RSpec.describe Utils do
 
   describe "#image_to_jp2k" do
     it "returns without errors a File object on the JP2K produced from a valid JP2K file" do
+      pending("Huh. convert doesn't support JP2k output on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
+
       file, errors = Utils.image_to_jp2k(config, test_data_path("edward-text.tiff"))
       expect(errors).to be_empty
       expect(file).to be_a_kind_of(File)
