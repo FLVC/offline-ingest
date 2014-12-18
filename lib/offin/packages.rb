@@ -970,7 +970,6 @@ class BookPackage < Package
 
 
   def ingest_book
-
     first_page = File.join @directory_path, @page_filenames.first
     @image = File.read(first_page)
 
@@ -980,7 +979,7 @@ class BookPackage < Package
 
       boilerplate(ingestor)
 
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, first_page, @config.thumbnail_geometry, 'jpeg')
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'
@@ -1013,7 +1012,6 @@ class BookPackage < Package
     @updator.post_ingest
   end
 
-
   def ingest_pages
     sequence = 0
     @page_filenames.each do |pagename|
@@ -1029,11 +1027,9 @@ class BookPackage < Package
     end
   end
 
-
   # Islandora out of the box only supports TIFF submissions, so this is the canonical processing islandora would do:
 
   def handle_tiff_page ingestor, image, path
-
     image_name = path.sub(/^.*\//, '')
     ocr_fail   = false
 
@@ -1048,7 +1044,7 @@ class BookPackage < Package
       ds.mimeType = 'image/tiff'
     end
 
-    if (text = Utils.ocr(@config, image))
+    if (text = Utils.ocr(@config, path))
       ingestor.datastream('OCR') do |ds|
         ds.dsLabel  = 'OCR'
         ds.content  = text
@@ -1059,7 +1055,7 @@ class BookPackage < Package
       warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
-    if not ocr_fail and (text = Utils.hocr(@config, image))
+    if not ocr_fail and (text = Utils.hocr(@config, path))
       ingestor.datastream('HOCR') do |ds|
         ds.dsLabel  = 'HOCR'
         ds.content  = text
@@ -1077,7 +1073,7 @@ class BookPackage < Package
 
     ingestor.datastream('RELS-INT') do |ds|
       ds.dsLabel  = 'RELS-INT'
-      ds.content  = rels_int(ingestor.pid, image)
+      ds.content  = rels_int(ingestor.pid, path)
       ds.mimeType = 'application/rdf+xml'
     end
 
@@ -1099,7 +1095,6 @@ class BookPackage < Package
   end
 
   def handle_jpeg_page  ingestor, image, path
-
     ocr_fail   = false
     image_name = path.sub(/^.*\//, '')
 
@@ -1114,7 +1109,7 @@ class BookPackage < Package
       ds.mimeType = 'image/jpeg'
     end
 
-    if (text = Utils.ocr(@config, image))
+    if (text = Utils.ocr(@config, path))
       ingestor.datastream('OCR') do |ds|
         ds.dsLabel  = 'OCR'
         ds.content  = text
@@ -1125,7 +1120,7 @@ class BookPackage < Package
       warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
-    if not ocr_fail and (text = Utils.hocr(@config, image))
+    if not ocr_fail and (text = Utils.hocr(@config, path))
       ingestor.datastream('HOCR') do |ds|
         ds.dsLabel  = 'HOCR'
         ds.content  = text
@@ -1145,7 +1140,7 @@ class BookPackage < Package
 
     ingestor.datastream('RELS-INT') do |ds|
       ds.dsLabel  = 'RELS-INT'
-      ds.content  = rels_int(ingestor.pid, image)
+      ds.content  = rels_int(ingestor.pid, path)
       ds.mimeType = 'application/rdf+xml'
     end
 
@@ -1171,19 +1166,18 @@ class BookPackage < Package
 
 
   def handle_jp2k_page ingestor, image, path
-
     image_name = path.sub(/^.*\//, '')
     ocr_fail   = false
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'Original JP2 ' + path.sub(/^.*\//, '').sub(/\.jp2$/i, '')
       ds.content  = File.open(path)
-      ds.mimeType = image.mime_type
+      ds.mimeType = 'image/jp2k'
     end
 
     ingestor.datastream('RELS-INT') do |ds|
       ds.dsLabel  = 'RELS-INT'
-      ds.content  = rels_int(ingestor.pid, image)
+      ds.content  = rels_int(ingestor.pid, path)
       ds.mimeType = 'application/rdf+xml'
     end
 
@@ -1195,7 +1189,7 @@ class BookPackage < Package
       ds.mimeType = 'image/tiff'
     end
 
-    if (text = Utils.ocr(@config, image))
+    if (text = Utils.ocr(@config, path))
       ingestor.datastream('OCR') do |ds|
         ds.dsLabel  = 'OCR'
         ds.content  = text
@@ -1206,7 +1200,7 @@ class BookPackage < Package
       warning "The OCR and HOCR datastreams for the TIFF derived from image #{image_name} were skipped because no data were produced."
     end
 
-    if not ocr_fail and (text = Utils.hocr(@config, image))
+    if not ocr_fail and (text = Utils.hocr(@config, path))
       ingestor.datastream('HOCR') do |ds|
         ds.dsLabel  = 'HOCR'
         ds.content  = text
@@ -1234,14 +1228,19 @@ class BookPackage < Package
 
   # RELS-INT, application/rdf+xml
 
-  def rels_int page_pid, image
+  def rels_int page_pid, image_path
+    width, height = Utils.size(@config, image_path)
+
+    if not width or not height
+      raise PackageError, "Can't determine the size of the image '#{image_path}'"
+    end
 
     return <<-XML.gsub(/^     /, '')
     <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
        <rdf:Description rdf:about="info:fedora/#{page_pid}/JP2">
-         <width xmlns="http://islandora.ca/ontology/relsext#">#{image.columns}</width>
-         <height xmlns="http://islandora.ca/ontology/relsext#">#{image.rows}</height>
+         <width xmlns="http://islandora.ca/ontology/relsext#">#{width}</width>
+         <height xmlns="http://islandora.ca/ontology/relsext#">#{height}</height>
        </rdf:Description>
      </rdf:RDF>
   XML
@@ -1300,11 +1299,10 @@ class BookPackage < Package
   end
 
   def ingest_page pagename, sequence
-
     path  = File.join(@directory_path, pagename)
     image = File.read(path)
 
-    mime_Utils.mime_type = Utils.mime_type(path)
+    mime_type = Utils.mime_type(path)
 
     pdf, pdf_error_messages = nil
     thumbnail, thumbnail_error_messages = nil
@@ -1317,14 +1315,14 @@ class BookPackage < Package
       ingestor.dc            = dc(ingestor.pid, pagename)
 
       case mime_type
-      when TIFF;  handle_tiff_page(ingestor, image, path)
-      when JP2;   handle_jp2k_page(ingestor, image, path)
-      when JPEG;  handle_jpeg_page(ingestor, image, path)
+      when TIFF;  handle_tiff_page(ingestor, image, path);
+      when JP2;   handle_jp2k_page(ingestor, image, path);
+      when JPEG;  handle_jpeg_page(ingestor, image, path);
       else
         raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{mime_type}."
       end
 
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, path, @config.thumbnail_geometry, 'jpeg')
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = 'Thumbnail'

@@ -414,4 +414,71 @@ RSpec.describe Utils do
     end
   end
 
+  describe "#image_size" do
+    it "properly returns the size of a TIFF image as two fixnums - width and height" do
+      width, height = Utils.size config, test_data_path("edward-text.tiff")
+      expect(width).to eq(714)
+      expect(height).to eq(216)
+    end
+  end
+
+  describe "#image_size" do
+    it "properly returns the size of a JP2K image as two fixnums - width and height" do
+      pending("Huh. convert doesn't support JP2K input on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
+      width, height = Utils.size config, test_data_path("sample01.jp2")
+      expect(width).to eq(1728)
+      expect(height).to eq(2376)
+    end
+  end
+
+  describe "#image_size" do
+    it "properly returns the size of a JPEG image as two fixnums - width and height" do
+      width, height = Utils.size config, test_data_path("pdf-test.jpg")
+      expect(width).to eq(800)
+      expect(height).to eq(630)
+    end
+  end
+
+  describe "#image_size" do
+    it "properly returns the size of a GIF image as two fixnums - width and height" do
+      width, height = Utils.size config, test_data_path("pdf-test.gif")
+      expect(width).to eq(800)
+      expect(height).to eq(630)
+    end
+  end
+
+  describe "#image_size" do
+    it "properly returns the size of a PNG image as two fixnums - width and height" do
+      width, height = Utils.size config, test_data_path("pdf-test.png")
+      expect(width).to eq(800)
+      expect(height).to eq(630)
+    end
+  end
+
+  describe "#image_size" do
+    it "returns the size of an invalid image as nil" do
+      width, height = Utils.size config, test_data_path("garbage.rand")
+      expect(width).to be_nil
+      expect(height).to be_nil
+    end
+  end
+
+  describe "#image_size" do
+    it "returns the size of an empty image as nil" do
+      width, height = Utils.size config, test_data_path("/dev/null")
+      expect(width).to be_nil
+      expect(height).to be_nil
+    end
+  end
+
+  describe "#image_size" do
+    it "returns the size of a missing image as nil" do
+      width, height = Utils.size config, test_data_path("erguihgjtgkjsjfsdjfjf")
+      expect(width).to be_nil
+      expect(height).to be_nil
+    end
+  end
+
+
+
 end # of "RSpec.describe Utils do"

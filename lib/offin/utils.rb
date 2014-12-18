@@ -1,8 +1,6 @@
 # This file is like that kitchen drawer with the assorted unsortables.
 
 require 'rubydora'
-require 'RMagick'
-# require 'RMagick'
 require 'fileutils'
 require 'iconv'
 require 'offin/exceptions'
@@ -344,10 +342,11 @@ class Utils
   # To help us create a smaller RAM footprint when processing huge files,  we use a lot of temporary files;  this lets us pass around a file object
 
   def Utils.temp_file         # creat an anonymous file handle
-    tempfile = Tempfile.new('rspec')
+    tempfile = Tempfile.new('image-process-')
 
     if RUBY_VERSION < '2.0.0'   # actually, I don't have 1.9.x version to test against, only a 1.8.7 system
-      return tempfile.open
+      #### return tempfile.open
+      return File.open(tempfile.path, 'w+b')
     else
       return open(tempfile, 'w+b')
     end
@@ -396,7 +395,22 @@ class Utils
 
   public
 
+  def Utils.size config, image_filepath
+    file, errors = Utils.image_processing(config, image_filepath,
+                                          "#{config.image_convert_command} -identify #{Utils.shellescape(image_filepath)} null:",
+                                          "When determining the size of the image of '#{image_filepath}' with command '#{config.image_convert_command} -identify' the following message was encountered:")
 
+    data = file.gets
+    file.close
+    if data =~ /\s+(\d+)x(\d+)\s+/i
+      width, height = $1, $2
+      return width.to_i, height.to_i
+    else
+      return nil
+    end
+  rescue => e
+    return nil
+  end
 
   # run the convert command on an image file
 
