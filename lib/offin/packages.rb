@@ -1029,38 +1029,16 @@ class BookPackage < Package
 
   # Islandora out of the box only supports TIFF submissions, so this is the canonical processing islandora would do:
 
-  def handle_tiff_page ingestor, image, path
-    image_name = path.sub(/^.*\//, '')
-    ocr_fail   = false
+  def handle_tiff_page ingestor, path
+    image = File.open(path)
 
     jp2k, jp2k_error_messages = nil
     medium, medium_error_messages = nil
-
-    image = File.open(path)
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
       ds.content  = image
       ds.mimeType = 'image/tiff'
-    end
-
-    if (text = Utils.ocr(@config, path))
-      ingestor.datastream('OCR') do |ds|
-        ds.dsLabel  = 'OCR'
-        ds.content  = text
-        ds.mimeType = 'text/plain'
-      end
-    else
-      ocr_fail = true
-      warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
-    end
-
-    if not ocr_fail and (text = Utils.hocr(@config, path))
-      ingestor.datastream('HOCR') do |ds|
-        ds.dsLabel  = 'HOCR'
-        ds.content  = text
-        ds.mimeType = 'text/html'
-      end
     end
 
     jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)
@@ -1069,12 +1047,6 @@ class BookPackage < Package
       ds.dsLabel  = "JP2 derived from original TIFF"
       ds.content  = jp2k
       ds.mimeType = 'image/jp2'
-    end
-
-    ingestor.datastream('RELS-INT') do |ds|
-      ds.dsLabel  = 'RELS-INT'
-      ds.content  = rels_int(ingestor.pid, path)
-      ds.mimeType = 'application/rdf+xml'
     end
 
     medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
@@ -1094,20 +1066,9 @@ class BookPackage < Package
     [ image, jp2k, medium ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
-  def handle_jpeg_page  ingestor, image, path
-    ocr_fail   = false
-    image_name = path.sub(/^.*\//, '')
 
-    jp2k, jp2k_error_messages = nil
-    medium, medium_error_messages = nil
-
-    image = File.open(path)
-
-    ingestor.datastream('JPG') do |ds|
-      ds.dsLabel  = 'Original JPEG ' + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
-      ds.content  = image
-      ds.mimeType = 'image/jpeg'
-    end
+  def handle_ocr ingestor, path
+    ocr_produced_text = true
 
     if (text = Utils.ocr(@config, path))
       ingestor.datastream('OCR') do |ds|
@@ -1116,21 +1077,35 @@ class BookPackage < Package
         ds.mimeType = 'text/plain'
       end
     else
-      ocr_fail = true
-      warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
+      ocr_produced_text = false
+      #### TODO:  I really need to get consensus to stop logging this warning
+      #### image_name = path.sub(/^.*\//, '')
+      #### warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
-    if not ocr_fail and (text = Utils.hocr(@config, path))
+    if ocr_produced_text  and (text = Utils.hocr(@config, path))
       ingestor.datastream('HOCR') do |ds|
         ds.dsLabel  = 'HOCR'
         ds.content  = text
         ds.mimeType = 'text/html'
       end
     end
+  end
 
-    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)
 
-    # TODO: check and bail that jp2k is an open file and larger than zero....
+  def handle_jpeg_page  ingestor, path
+    image = File.open(path)
+
+    jp2k, jp2k_error_messages = nil
+    medium, medium_error_messages = nil
+
+    ingestor.datastream('JPG') do |ds|
+      ds.dsLabel  = 'Original JPEG ' + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
+      ds.content  = image
+      ds.mimeType = 'image/jpeg'
+    end
+
+    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)    # TODO: check and bail that jp2k is an open file and larger than zero....
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'JPEG 2000 derived from original JPEG image'
@@ -1138,15 +1113,7 @@ class BookPackage < Package
       ds.mimeType = 'image/jp2'
     end
 
-    ingestor.datastream('RELS-INT') do |ds|
-      ds.dsLabel  = 'RELS-INT'
-      ds.content  = rels_int(ingestor.pid, path)
-      ds.mimeType = 'application/rdf+xml'
-    end
-
-    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'tiff')
-
-    #### TODO: everywhere we do a resize, let's bail with a package error if produced file is empty (initally I thought an empty file would be OK)
+    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'tiff')  ## TODO: everywhere we do a resize, let's bail with a package error if produced file is empty (initally I thought an empty file would be OK)
 
     ingestor.datastream('OBJ') do |ds|
       ds.dsLabel  = 'Reduced TIFF Derived from original JPEG Image'
@@ -1164,21 +1131,13 @@ class BookPackage < Package
   end
 
 
-
-  def handle_jp2k_page ingestor, image, path
-    image_name = path.sub(/^.*\//, '')
-    ocr_fail   = false
+  def handle_jp2k_page ingestor, path
+    image = File.open(path)
 
     ingestor.datastream('JP2') do |ds|
       ds.dsLabel  = 'Original JP2 ' + path.sub(/^.*\//, '').sub(/\.jp2$/i, '')
-      ds.content  = File.open(path)
+      ds.content  = image
       ds.mimeType = 'image/jp2k'
-    end
-
-    ingestor.datastream('RELS-INT') do |ds|
-      ds.dsLabel  = 'RELS-INT'
-      ds.content  = rels_int(ingestor.pid, path)
-      ds.mimeType = 'application/rdf+xml'
     end
 
     tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'tiff')
@@ -1187,25 +1146,6 @@ class BookPackage < Package
       ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
       ds.content  = tiff
       ds.mimeType = 'image/tiff'
-    end
-
-    if (text = Utils.ocr(@config, path))
-      ingestor.datastream('OCR') do |ds|
-        ds.dsLabel  = 'OCR'
-        ds.content  = text
-        ds.mimeType = 'text/plain'
-      end
-    else
-      ocr_fail = true
-      warning "The OCR and HOCR datastreams for the TIFF derived from image #{image_name} were skipped because no data were produced."
-    end
-
-    if not ocr_fail and (text = Utils.hocr(@config, path))
-      ingestor.datastream('HOCR') do |ds|
-        ds.dsLabel  = 'HOCR'
-        ds.content  = text
-        ds.mimeType = 'text/html'
-      end
     end
 
     medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
@@ -1300,7 +1240,6 @@ class BookPackage < Package
 
   def ingest_page pagename, sequence
     path  = File.join(@directory_path, pagename)
-    image = File.read(path)
 
     mime_type = Utils.mime_type(path)
 
@@ -1315,12 +1254,14 @@ class BookPackage < Package
       ingestor.dc            = dc(ingestor.pid, pagename)
 
       case mime_type
-      when TIFF;  handle_tiff_page(ingestor, image, path);
-      when JP2;   handle_jp2k_page(ingestor, image, path);
-      when JPEG;  handle_jpeg_page(ingestor, image, path);
+      when TIFF;  handle_tiff_page(ingestor, path);
+      when JP2;   handle_jp2k_page(ingestor, path);
+      when JPEG;  handle_jpeg_page(ingestor, path);
       else
         raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{mime_type}."
       end
+
+      handle_ocr(ingestor, path)
 
       thumbnail, thumbnail_error_messages = Utils.image_resize(@config, path, @config.thumbnail_geometry, 'jpeg')
 
@@ -1341,6 +1282,12 @@ class BookPackage < Package
       ingestor.datastream('RELS-EXT') do |ds|
         ds.dsLabel  = 'Relationships'
         ds.content  = rels_ext(ingestor.pid, sequence)
+        ds.mimeType = 'application/rdf+xml'
+      end
+
+      ingestor.datastream('RELS-INT') do |ds|
+        ds.dsLabel  = 'RELS-INT'
+        ds.content  = rels_int(ingestor.pid, path)
         ds.mimeType = 'application/rdf+xml'
       end
 
@@ -1374,9 +1321,9 @@ class BookPackage < Package
     error   ingestor.errors   if ingestor and ingestor.errors?
 
     warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    warning [ 'Issues creating PDF datastream' ] + pdf_error_messages  if pdf_error_messages and not pdf_error_messages.empty?
+    warning [ 'Issues creating PDF datastream' ]       + pdf_error_messages        if pdf_error_messages      and not pdf_error_messages.empty?
 
-    [ image, thumbnail, pdf ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    [ thumbnail, pdf ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
 
 end   #  of class BookPackage
