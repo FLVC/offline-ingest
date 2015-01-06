@@ -1077,10 +1077,9 @@ class BookPackage < Package
         ds.mimeType = 'text/plain'
       end
     else
-      ocr_produced_text = false
-      #### TODO:  I really need to get consensus to stop logging this warning
-      #### image_name = path.sub(/^.*\//, '')
-      #### warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
+      ocr_produced_text = false      #### TODO:  I really need to get consensus to stop logging this warning
+      image_name = path.sub(/^.*\//, '')
+      warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
     if ocr_produced_text  and (text = Utils.hocr(@config, path))
