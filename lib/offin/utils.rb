@@ -216,6 +216,16 @@ class Utils
   #   <datastream dsid="DT-METS" label="Archived METS for future reference" mimeType="text/xml"/>
   #   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
   # </objectDatastreams>
+  #
+  # The above doc would return a hash of strings (key and values):
+  #
+  #   DC       =>  Dublin Core Record
+  #   RELS-EXT =>  Relationships
+  #   MODS     =>  MODS Record
+  #   MARCXML  =>  Archived MarcXML
+  #   TN       =>  Thumbnail
+  #   DT-METS  =>  Archived METS for future reference
+  #   TOC      =>  Table of Contents
 
   def Utils.get_datastream_names config, pid
     doc = quickly do
