@@ -292,6 +292,15 @@ RSpec.describe Utils do
   end
 
   describe "#image_to_tiff" do
+    it "returns without errors a File object on the TIFF produced from a valid, though problematic, JP2K file" do
+      file, errors = Utils.image_to_tiff(config, test_data_path("3171757_1.jp2"))
+      expect(errors).to be_empty
+      expect(file).to be_a_kind_of(File)
+      expect(Utils.mime_type(file)).to  eq('image/tiff')
+    end
+  end
+
+  describe "#image_to_tiff" do
     it "returns an array of error diagnostic messages for an invalid file" do
       file, errors = Utils.image_to_tiff(config, test_data_path("garbage.rand"))
       expect(errors.length).to be > 1
@@ -304,6 +313,17 @@ RSpec.describe Utils do
       pending("Huh. convert doesn't support JP2K input on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
 
       file, errors = Utils.image_to_jpeg(config, test_data_path("sample01.jp2"))
+      expect(errors).to be_empty
+      expect(file).to be_a_kind_of(File)
+      expect(Utils.mime_type(file)).to  eq('image/jpeg')
+    end
+  end
+
+  describe "#image_to_jpeg" do
+    it "returns without errors a File object on the JPEG produced from a valid, though problematic, JP2K file" do
+      pending("Huh. convert doesn't support JP2K input on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
+
+      file, errors = Utils.image_to_jpeg(config, test_data_path("3171757_1.jp2"))
       expect(errors).to be_empty
       expect(file).to be_a_kind_of(File)
       expect(Utils.mime_type(file)).to  eq('image/jpeg')
@@ -465,7 +485,7 @@ RSpec.describe Utils do
 
   describe "#image_size" do
     it "returns the size of an empty image as nil" do
-      width, height = Utils.size config, test_data_path("/dev/null")
+      width, height = Utils.size config, "/dev/null"
       expect(width).to be_nil
       expect(height).to be_nil
     end

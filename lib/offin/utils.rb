@@ -326,14 +326,12 @@ class Utils
 
       return text if ['utf-8', 'ascii'].include? detector['encoding'].downcase
 
-      if detector['confidence'] > 0.66
-        ## STDERR.puts "Attempting to convert from #{detector['encoding']} (confidence #{detector['confidence']})."
+      if detector['confidence'] > 0.66  # somewhat arbitrary
         converter = Iconv.new('UTF-8', detector['encoding'])
         return converter.iconv(text)
       end
 
     rescue => e
-      ##  STDERR.puts "Error converting with #{detector.inspect}}, returning original text"
       return text
     end
 
@@ -362,7 +360,7 @@ class Utils
     end
 
   ensure
-    File.unlink tempfile.path
+    FileUtils.rm_f tempfile.path
   end
 
 
@@ -380,6 +378,9 @@ class Utils
     end
     return errors
   end
+
+  def Utils.try_kakadu config, image_filepath
+
 
 
   #### TODO:  need to catch errors, make sure we always provide an opened file, even it's File.open('/dev/null', 'rb')
@@ -399,10 +400,19 @@ class Utils
     end
 
     errors = Utils.format_error_messages(error_text)
-    errors.unshift error_title unless errors.nil? or errors.empty?
+    errors.unshift error_title unless (errors.nil? or errors.empty?)
+
+    # unless errors.empty? or (image_filepath =~ /rand|null|erguihgjtgkjsjfsdjfjf/)
+    #   STDERR.puts "", "", "YIKES YIKES YIKES! #{image_filepath} didn't work with '#{command}':", errors, "", ""
+    # end
 
     return image, errors
   end
+
+  def Utils.pass_through filepath
+    return File.open(filepath, 'rb'), []
+  end
+
 
   public
 
@@ -437,84 +447,101 @@ class Utils
                                   "When creating a preview image from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
   end
 
-
   def Utils.pdf_to_text config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -",
-                                  "When extracting texy from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
+                                  "When extracting text from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
 
   end
+
+  private
+
+  # We need to check for certain problematic JP2K files;  we'll do it by using a (relatively) fast command from convert.
+
+  def Utils.jp2k_ok? config, image_filepath
+    file, errors = Utils.image_processing(config, image_filepath, "#{config.image_convert_command} -identify #{Utils.shellescape(image_filepath)} null:", "")
+    return (errors.nil? or errors.empty?)
+  ensure
+    file.close if file.respond_to? :close
+  end
+
+
+  ##### TODO: handle errors!
+
+  def Utils.convert_jp2k_maybe config, image_filepath
+    unused = nil
+
+    yield image_filepath, nil if Utils.mime_type(image_filepath) != 'image/jp2'
+    yield image_filepath, nil if not Utils.jp2k_ok?(config, image_filepath)
+
+    temp_image_filepath = Tempfile.new('image-kakadu-').path + '.tiff'
+    unused, errors = Utils.image_processing(config, jp2k_filepath,
+                                            "#{config.kakadu_expand_command} -i #{Utils.shellescape(jp2k_filepath)} -o #{temp_image_filepath}",
+                                            "Image processing error: could not process JP2 image '#{jp2k_filepath}'")
+    if errors and not errors.empty?
+      errors.unshift "#{image_file}"
+    end
+    yield temp_image_filepath, errors
+  ensure
+    unused.close if unused.respond_to? :close
+  end
+
+
+
+
+  public
+
+  # TODO: what to do with the errors?
 
   def Utils.image_to_jpeg config,  image_filepath
-    return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jpeg:-",
-                                  "When creating a JEPG from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
-  end
-
-  def Utils.image_to_jp2k config, image_filepath
-    return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jp2:-",
-                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command} <filename> jp2:-' the following message was encountered:" )
+    return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'image/jpeg'
+    image_filepath, errors = Utils.convert_jp2k_maybe(config, image_filepath) do
+      return nil, errors
+      return Utils.image_processing(config, image_filepath,
+                                    "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jpeg:-",
+                                    "When creating a JEPG from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    end
   end
 
   def Utils.image_to_pdf config, image_filepath
-    return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} pdf:-",
-                                  "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'application/pdf'
+    image_filepath, errors = Utils.convert_jp2k_maybe(config, image_filepath) do
+      return Utils.image_processing(config, image_filepath,
+                                    "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} pdf:-",
+                                    "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    end
   end
 
-  # Use Image Magick's convert to create a TIFF (TODO: when we have appropriate test data for image_to_tiff - where we can test convert's failure - make this private)
+  def Utils.image_to_tiff config,  image_filepath
+    return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'image/tiff'
+    image_filepath, errors = Utils.convert_jp2k_maybe(config, image_filepath) do
+      return Utils.image_processing(config, image_filepath,
+                                    "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
+                                    "When creating a TIFF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    end
+  end
 
-  def Utils.image_magick_to_tiff config,  image_filepath
+
+  def Utils.image_to_jp2k config, image_filepath
+    return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'image/jp2'
     return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
-                                  "When creating a TIFF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jp2:-",
+                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
   end
 
   # kdu_expand on jp2k  (TODO: when we have appropriate test data for image_to_tiff - where we can test convert's failure - make this private)
-
-  def Utils.kakadu_jp2k_to_tiff config, jp2k_filepath
-
-    temp_image_filename = Tempfile.new('image-kakadu-').path + '.tiff'
-
-    unused, errors = Utils.image_processing(config, jp2k_filepath,
-                                            "#{config.kakadu_expand_command} -i #{Utils.shellescape(jp2k_filepath)} -o #{temp_image_filename}",
-                                            "Image processing error: could not process JP2 image '#{jp2k_filepath}'")
-    if File.exists? temp_image_filename
-      file = open(temp_image_filename, 'r+b')
-    else
-      file = open('/dev/null', 'r+b')
-    end
-    return file, errors
-  ensure
-    unused.close if unused and unused.respond_to? :close
-    FileUtils.rm_f(temp_image_filename)
-  end
-
-  # ImageMagick sometimes fails on JP2K, so we punt to kakadu in that
-  # case.  Kakadu only produces uncompressed TIFFs, so we don't want
-  # to use kakadu indiscriminately or in place of ImageMagick.
-  # TODO:  a second pass on kakadu output to compress the TIFF?
-
-  def Utils.image_to_tiff config, image_filepath
-    file, errors = Utils.image_magick_to_tiff(config, image_filepath)
-
-    # For case of JP2K input and failure of convert, punt to kakadu:
-
-    return file, errors unless Utils.mime_type(image_filepath) == 'image/jp2'
-
-    if (not file) or (file.stat.size < 1) or (Utils.mime_type(file) != 'image/tiff')
-      file, errors = Utils.kakadu_jp2k_to_tiff(config, image_filepath)
-    end
-
-    return file, errors
-  end
 
   # Geometry is something like "200x200" - resizing preserves the
   # aspect ration (i.e., the image is uniformly scaled down to fit
   # into a 200 x 200 box).  The type of image is preserved unless the
   # optional new_format is supplied.  It won't hurt anything to
   # specify the same output type as the supplied image, if in doubt.
+
+
+
+
+
+  #### TODO: cover problematic JP2K issue.
 
   def Utils.image_resize config, image_filepath, geometry, new_format = nil
     return Utils.image_processing(config, image_filepath,
