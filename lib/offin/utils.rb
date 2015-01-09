@@ -180,8 +180,8 @@ class Utils
 
   def Utils.get_collection_names config
     query = "select $object $title from <#ri> " +
-      "where $object <fedora-model:label> $title " +
-      "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
+            "where $object <fedora-model:label> $title " +
+            "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
 
     repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
 
@@ -230,7 +230,7 @@ class Utils
   def Utils.get_datastream_names config, pid
     doc = quickly do
       url = "http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') +
-        "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml"
+            "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml"
       RestClient.get(URI.encode(url))
     end
     xml = Nokogiri::XML(doc)
@@ -379,10 +379,6 @@ class Utils
     return errors
   end
 
-  def Utils.try_kakadu config, image_filepath
-
-
-
   #### TODO:  need to catch errors, make sure we always provide an opened file, even it's File.open('/dev/null', 'rb')
 
   def Utils.image_processing config, image_filepath, command, error_title
@@ -393,7 +389,7 @@ class Utils
     Open3.popen3(command) do |stdin, stdout, stderr|
       stdin.close
       while (data = stdout.read(1024*1024))
-          image.write data
+        image.write data
       end
       image.rewind
       error_text = stderr.read
@@ -401,10 +397,6 @@ class Utils
 
     errors = Utils.format_error_messages(error_text)
     errors.unshift error_title unless (errors.nil? or errors.empty?)
-
-    # unless errors.empty? or (image_filepath =~ /rand|null|erguihgjtgkjsjfsdjfjf/)
-    #   STDERR.puts "", "", "YIKES YIKES YIKES! #{image_filepath} didn't work with '#{command}':", errors, "", ""
-    # end
 
     return image, errors
   end
@@ -462,7 +454,7 @@ class Utils
     file, errors = Utils.image_processing(config, image_filepath, "#{config.image_convert_command} -identify #{Utils.shellescape(image_filepath)} null:", "")
     return (errors.nil? or errors.empty?)
   ensure
-    file.close if file.respond_to? :close
+    file.close if file.respond_to? :close and not file.closed?
   end
 
 
@@ -470,55 +462,58 @@ class Utils
 
   def Utils.convert_jp2k_maybe config, image_filepath
     unused = nil
-
-    yield image_filepath, nil if Utils.mime_type(image_filepath) != 'image/jp2'
-    yield image_filepath, nil if not Utils.jp2k_ok?(config, image_filepath)
+    yield image_filepath, nil unless Utils.mime_type(image_filepath) == 'image/jp2'
+    yield image_filepath, nil if Utils.jp2k_ok?(config, image_filepath)
 
     temp_image_filepath = Tempfile.new('image-kakadu-').path + '.tiff'
-    unused, errors = Utils.image_processing(config, jp2k_filepath,
-                                            "#{config.kakadu_expand_command} -i #{Utils.shellescape(jp2k_filepath)} -o #{temp_image_filepath}",
-                                            "Image processing error: could not process JP2 image '#{jp2k_filepath}'")
-    if errors and not errors.empty?
-      errors.unshift "#{image_file}"
-    end
+    unused, errors = Utils.image_processing(config, image_filepath,
+                                            "#{config.kakadu_expand_command} -i #{Utils.shellescape(image_filepath)} -o #{Utils.shellescape(temp_image_filepath)}",
+                                            "Failed attempt to convert #{image_filepath} using kakadu after JP2 image failure.")
     yield temp_image_filepath, errors
   ensure
-    unused.close if unused.respond_to? :close
+    unused.close if unused.respond_to? :close and not unused.closed?
   end
-
-
 
 
   public
 
-  # TODO: what to do with the errors?
-
   def Utils.image_to_jpeg config,  image_filepath
     return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'image/jpeg'
-    image_filepath, errors = Utils.convert_jp2k_maybe(config, image_filepath) do
-      return nil, errors
-      return Utils.image_processing(config, image_filepath,
-                                    "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jpeg:-",
-                                    "When creating a JEPG from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    working_image_filepath = nil
+    Utils.convert_jp2k_maybe(config, image_filepath) do |working_image_filepath, errors|
+      return open('/dev/null'), errors unless errors.nil? or errors.empty?
+      return Utils.image_processing(config, working_image_filepath,
+                                    "#{config.image_convert_command} #{Utils.shellescape(working_image_filepath)} jpeg:-",
+                                    "When creating a JEPG from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
+  ensure
+    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
   end
 
   def Utils.image_to_pdf config, image_filepath
     return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'application/pdf'
-    image_filepath, errors = Utils.convert_jp2k_maybe(config, image_filepath) do
-      return Utils.image_processing(config, image_filepath,
-                                    "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} pdf:-",
-                                    "When creating a PDF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    working_image_filepath = nil
+    Utils.convert_jp2k_maybe(config, image_filepath) do |working_image_filepath, errors|
+      return open('/dev/null'), errors unless errors.nil? or errors.empty?
+      return Utils.image_processing(config, working_image_filepath,
+                                    "#{config.image_convert_command} #{Utils.shellescape(working_image_filepath)} pdf:-",
+                                    "When creating a PDF from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
+  ensure
+    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
   end
 
   def Utils.image_to_tiff config,  image_filepath
     return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'image/tiff'
-    image_filepath, errors = Utils.convert_jp2k_maybe(config, image_filepath) do
-      return Utils.image_processing(config, image_filepath,
-                                    "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
-                                    "When creating a TIFF from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    working_image_filepath = nil
+    Utils.convert_jp2k_maybe(config, image_filepath) do |working_image_filepath, errors|
+      return open('/dev/null'), errors unless errors.nil? or errors.empty?
+      return Utils.image_processing(config, working_image_filepath,
+                                    "#{config.image_convert_command} #{Utils.shellescape(working_image_filepath)} tiff:-",
+                                    "When creating a TIFF from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
+  ensure
+    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
   end
 
 
@@ -529,25 +524,23 @@ class Utils
                                   "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
   end
 
-  # kdu_expand on jp2k  (TODO: when we have appropriate test data for image_to_tiff - where we can test convert's failure - make this private)
-
   # Geometry is something like "200x200" - resizing preserves the
   # aspect ration (i.e., the image is uniformly scaled down to fit
   # into a 200 x 200 box).  The type of image is preserved unless the
   # optional new_format is supplied.  It won't hurt anything to
   # specify the same output type as the supplied image, if in doubt.
 
-
-
-
-
-  #### TODO: cover problematic JP2K issue.
-
   def Utils.image_resize config, image_filepath, geometry, new_format = nil
-    return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{shellescape(image_filepath)} -resize #{geometry} #{ new_format.nil? ?  '-' :  new_format + ':-'}",
-                                  "When creating a resized image (#{geometry}) from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
 
+    working_image_filepath = nil
+    Utils.convert_jp2k_maybe(config, image_filepath) do |working_image_filepath, errors|
+      return open('/dev/null'), errors unless errors.nil? or errors.empty?
+      return Utils.image_processing(config, image_filepath,
+                                    "#{config.image_convert_command} #{shellescape(image_filepath)} -resize #{geometry} #{ new_format.nil? ?  '-' :  new_format + ':-'}",
+                                    "When creating a resized image (#{geometry}) from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+    end
+  ensure
+    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
   end
 
 
@@ -644,7 +637,6 @@ class Utils
 
     case
     when file.is_a?(IO)
-
       Open3.popen3("/usr/bin/file --mime-type -b -") do |stdin, stdout, stderr|
 
         file.rewind if file.methods.include? 'rewind'

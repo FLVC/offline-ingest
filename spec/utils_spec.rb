@@ -240,52 +240,6 @@ RSpec.describe Utils do
     end
   end
 
-
-  #### Can go to image_to_tiff (when we have one)
-
-
-  describe "#kakadu_jp2k_to_tiff" do
-    it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
-      file, errors = Utils.kakadu_jp2k_to_tiff(config, test_data_path("sample01.jp2"))
-      expect(errors).to be_empty
-      expect(file).to be_a_kind_of(File)
-      expect(Utils.mime_type(file)).to  eq('image/tiff')
-    end
-  end
-
-  describe "#kakadu_jp2k_to_tiff" do
-    it "returns an array of error diagnostic messages for an invalid file" do
-      file, errors = Utils.kakadu_jp2k_to_tiff(config, test_data_path("garbage.rand"))
-      expect(errors.length).to be > 1
-      expect(file.stat.size).to be == 0
-    end
-  end
-
-  describe "#image_magick_to_tiff" do
-    it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
-      pending("Huh. convert doesn't support JP2K input on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
-
-      file, errors = Utils.image_magick_to_tiff(config, test_data_path("sample01.jp2"))
-      expect(errors).to be_empty
-      expect(file).to be_a_kind_of(File)
-      expect(Utils.mime_type(file)).to  eq('image/tiff')
-    end
-  end
-
-  describe "#image_magick_to_tiff" do
-    it "returns an array of error diagnostic messages for an invalid file" do
-      file, errors = Utils.image_magick_to_tiff(config, test_data_path("garbage.rand"))
-      expect(errors.length).to be > 1
-      expect(file.stat.size).to be == 0
-    end
-  end
-
-  # TODO: we need two different kids of JP2K images here, one that
-  # ImageMagick can't handle (so it punts to kakadu) and one that it
-  # can.  When that is the case, we can make the methods
-  # kakadu_jp2k_to_tiff and image_magick_to_tiff private and stop
-  # testing them above.
-
   describe "#image_to_tiff" do
     it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
       file, errors = Utils.image_to_tiff(config, test_data_path("sample01.jp2"))
@@ -297,10 +251,18 @@ RSpec.describe Utils do
 
   describe "#image_to_tiff" do
     it "returns without errors a File object on the TIFF produced from a valid, though problematic, JP2K file" do
-      file, errors = Utils.image_to_tiff(config, test_data_path("3171757_1.jp2"))
+      file, errors = Utils.image_to_tiff(config, test_data_path("problematic.jp2"))
       expect(errors).to be_empty
       expect(file).to be_a_kind_of(File)
       expect(Utils.mime_type(file)).to  eq('image/tiff')
+    end
+  end
+
+  describe "#image_to_tiff" do
+    it "returns an array of error diagnostic messages for a broken (partial-sized) JP2K file" do
+      file, errors = Utils.image_to_tiff(config, test_data_path("broken.jp2"))
+      expect(errors.length).to be > 1
+      expect(file.stat.size).to be == 0
     end
   end
 
@@ -327,7 +289,7 @@ RSpec.describe Utils do
     it "returns without errors a File object on the JPEG produced from a valid, though problematic, JP2K file" do
       pending("Huh. convert doesn't support JP2K input on my Mac OS X (macports)") if RUBY_PLATFORM =~ /darwin/i
 
-      file, errors = Utils.image_to_jpeg(config, test_data_path("3171757_1.jp2"))
+      file, errors = Utils.image_to_jpeg(config, test_data_path("problematic.jp2"))
       expect(errors).to be_empty
       expect(file).to be_a_kind_of(File)
       expect(Utils.mime_type(file)).to  eq('image/jpeg')
@@ -337,6 +299,14 @@ RSpec.describe Utils do
   describe "#image_to_jpeg" do
     it "returns an array of error diagnostic messages for an invalid file" do
       file, errors = Utils.image_to_jpeg(config, test_data_path("garbage.rand"))
+      expect(errors.length).to be > 1
+      expect(file.stat.size).to be == 0
+    end
+  end
+
+  describe "#image_to_jpeg" do
+    it "returns an array of error diagnostic messages for a broken (partial-sized) JP2K file" do
+      file, errors = Utils.image_to_jpeg(config, test_data_path("broken.jp2"))
       expect(errors.length).to be > 1
       expect(file.stat.size).to be == 0
     end
@@ -360,6 +330,14 @@ RSpec.describe Utils do
       expect(file.stat.size).to be == 0
     end
   end
+
+  # describe "#image_to_jp2k" do
+  #   it "returns an array of error diagnostic messages for a broken (partial-sized) JP2K file" do
+  #     file, errors = Utils.image_to_jp2k(config, test_data_path("broken.jp2"))
+  #     expect(errors.length).to be > 1
+  #     expect(file.stat.size).to be == 0
+  #   end
+  # end
 
   describe "#ocr" do
     it "returns a String of text extracted from an image" do
