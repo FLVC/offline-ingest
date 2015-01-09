@@ -240,6 +240,10 @@ RSpec.describe Utils do
     end
   end
 
+
+  #### Can go to image_to_tiff (when we have one)
+
+
   describe "#kakadu_jp2k_to_tiff" do
     it "returns without errors a File object on the TIFF produced from a valid JP2K file" do
       file, errors = Utils.kakadu_jp2k_to_tiff(config, test_data_path("sample01.jp2"))
