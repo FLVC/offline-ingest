@@ -535,9 +535,9 @@ class Utils
     working_image_filepath = nil
     Utils.convert_jp2k_maybe(config, image_filepath) do |working_image_filepath, errors|
       return open('/dev/null'), errors unless errors.nil? or errors.empty?
-      return Utils.image_processing(config, image_filepath,
-                                    "#{config.image_convert_command} #{shellescape(image_filepath)} -resize #{geometry} #{ new_format.nil? ?  '-' :  new_format + ':-'}",
-                                    "When creating a resized image (#{geometry}) from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+      return Utils.image_processing(config, working_image_filepath,
+                                    "#{config.image_convert_command} #{shellescape(working_image_filepath)} -resize #{geometry} #{ new_format.nil? ?  '-' :  new_format + ':-'}",
+                                    "When creating a resized image (#{geometry}) from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
   ensure
     FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath

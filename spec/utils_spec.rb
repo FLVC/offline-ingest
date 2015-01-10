@@ -386,6 +386,19 @@ RSpec.describe Utils do
   end
 
   describe "#image_resize" do
+    it "returns a uniformly scaled JPEG image to fit in a given geometry properly when given a problematic JP2" do
+      resized, errors = Utils.image_resize config, test_data_path("problematic.jp2"), "500x700", 'jpeg'
+      width, height = jpeg_size(resized)
+
+      expect(width).to  be_a(Fixnum)
+      expect(height).to be_a(Fixnum)
+
+      expect(width).to  be <= 500
+      expect(height).to be <= 700
+    end
+  end
+
+  describe "#image_resize" do
     it "returns a uniformly scaled image of a new type" do
       resized, errors = Utils.image_resize config, test_data_path("edward-text.tiff"), "50x50", 'jpeg'
       expect(errors).to be_empty
@@ -393,6 +406,7 @@ RSpec.describe Utils do
       expect(Utils.mime_type(resized)).to eq("image/jpeg")
     end
   end
+
 
   describe "#image_resize" do
     it "returns a uniformly scaled image to fit in a given geometry when changed to a new type" do
@@ -480,7 +494,5 @@ RSpec.describe Utils do
       expect(height).to be_nil
     end
   end
-
-
 
 end # of "RSpec.describe Utils do"
