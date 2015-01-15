@@ -47,6 +47,8 @@ puts "Processing #{list.count} package#{list.count == 1 ? '' : 's'}:\n" + list.j
 
 list.each do |directory|
   begin
+    @package_error = false
+
     completed, started, finished  = false, Time.now, Time.now
 
     package = factory.new_package(directory)
@@ -59,7 +61,7 @@ list.each do |directory|
 
   rescue PackageError => e
     @package_error = true     # this boolean is mostly to handle the case of errors from package initialization, like a missing manifest, that don't produce a package object at all.
-    STDERR.puts e
+    puts e
 
   rescue SystemError => e
     STDERR.puts "Gracefully exiting from fatal system error: #{e.message}"
