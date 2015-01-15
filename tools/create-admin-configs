@@ -41,7 +41,7 @@ def create_config_file hostname, comment = ''
     ServerName admin.#{hostname}
     # #{comment}
     KeepAlive on
-    LogFormat \"%h %l %u %t \"%r\" %>s %b\" common
+    LogFormat \"%h %l %u %t \\\"%r\\\" %>s %b\" common
     CustomLog logs/admin_#{under_hostname}_access_log common
     DocumentRoot /etc/httpd/conf.d/admin_#{under_hostname}/public
     <Directory   /etc/httpd/conf.d/admin_#{under_hostname}/public/>
