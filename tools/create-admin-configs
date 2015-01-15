@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 
 
+@institutions   = []
+@sql_statements = []
+@config_yml     = []
+
 
 
 # famu-test.digital.flvc.org                 Florida A&M University
@@ -59,11 +63,32 @@ end
 
 
 
+def create_config_entry site_name, site_comment
+  unqualified_name = (site_name.split('.'))[0]
+  inst_name  = (unqualified_name.split('-'))[0].downcase
+  config = "# #{site_comment}
+
+#{unqualified_name}:
+        root_collection:         info:fedora/#{inst_name}:root
+        site:                    #{site_name}
+        site_namespace:          #{inst_name}
+        drupal_schema:           #{inst_name}
+
+
+
+"
+  @institutions.push inst_name.upcase
+  @config_yml.push config
+
+end
+
+
 def main site_name, site_comment
 
   symlink_admin_site(site_name)
   create_config_file(site_name, site_comment)
-  puts "insert into islandora_sites(hostname) values('#{site_name}');"
+  create_config_entry(site_name, site_comment)
+  @sql_statements.push "insert into islandora_sites(hostname) values('#{site_name}');"
 end
 
 
@@ -78,3 +103,7 @@ data = [ ['broward-test.digital.flvc.org', 'Broward College'],
        ]
 
 data.each { |site, comment|  main(site, comment) }
+
+puts @sql_statements
+puts @config_yml
+puts @institutions.sort.join(', ')
