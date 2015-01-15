@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+
+
+
+
+# famu-test.digital.flvc.org                 Florida A&M University
+# fau-test.digital.flvc.org                  Florida Atlantic University
+# fgcu-test.digital.flvc.org                 Florida Gulf Coast University
+# fiu-test.digital.flvc.org                  Florida International University
+# fsu-test.digital.flvc.org                  Florida State University
+# gcsc-test.digital.flvc.org                 Gulf Coast State College
+# hccfl-test.digital.flvc.org                Hillsborough Community College
+# islandora-test.digital.flvc.org            FLVC sandbox
+# palmm-test.digital.flvc.org                PALMM
+# scf-test.digital.flvc.org                  State College of Florida
+# ucf-test.digital.flvc.org                  University of Central Florida
+# uf-test.digital.flvc.org                   University of Florida
+
+require 'fileutils'
+
+# TODO: check CWD, permissions
+
+def symlink_admin_site  hostname
+  linkname = 'admin_' + (hostname.split('.'))[0].gsub('-', '_')
+
+  if File.exists? linkname
+    STDERR.puts "Can't make symlink, file #{linkname} exists."
+  elsif File.symlink? linkname
+    STDERR.puts "Can't make symlink, #{linkname} exists."
+  else
+    FileUtils.symlink('/usr/local/islandora/offline-ingest/web-report', linkname)
+  end
+end
+
+def create_config_file hostname, comment = ''
+
+  short_hostname = (hostname.split('.'))[0]
+  under_hostname = short_hostname.gsub('-', '_')
+
+  text = "<VirtualHost *:80>
+    ServerName admin.#{hostname}
+    # #{comment}
+    KeepAlive on
+    LogFormat \"%h %l %u %t \"%r\" %>s %b\" common
+    CustomLog logs/admin_#{under_hostname}_access_log common
+    DocumentRoot /etc/httpd/conf.d/admin_#{under_hostname}/public
+    <Directory   /etc/httpd/conf.d/admin_#{under_hostname}/public/>
+        AllowOverride all
+        Options -MultiViews
+    </Directory>
+</VirtualHost>
+"
+
+  open("admin.#{short_hostname}.conf", 'w') do |fl|
+    fl.puts text
+    fl.close
+  end
+end
+
+
+
+def main site_name, site_comment
+
+  symlink_admin_site(site_name)
+  create_config_file(site_name, site_comment)
+  puts "insert into islandora_sites(hostname) values('#{site_name}');"
+end
+
+
+
+data = [ ['broward-test.digital.flvc.org', 'Broward College'],
+         ['fdnl-test.digital.flvc.org', 'Florida Digital Newspaper Library'],
+         ['fscj-test.digital.flvc.org', 'Florida State College at Jacksonville'],
+         ['irsc-test.digital.flvc.org', 'Indian River State College'],
+         ['lssc-test.digital.flvc.org', 'Lake Sumter College'],
+         ['nwfsc-test.digital.flvc.org', 'Northwest Florida State College'],
+         ['unf-test.digital.flvc.org', 'University of North Florida'],
+       ]
+
+data.each { |site, comment|  main(site, comment) }
