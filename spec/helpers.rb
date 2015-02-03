@@ -7,9 +7,9 @@ module UtilsHelpers
 
   def config
     return Struct::MockConfig::new(
-                                   "convert -quality 75 -colorspace RGB",  # pdf_convert_command
+                                   "convert -quiet -quality 75 -colorspace RGB",  # pdf_convert_command
                                    "kdu_expand",                           # kakadu_expand_command
-                                   "convert -compress LZW",                # image_convert_command
+                                   "convert -quiet -compress LZW",                # image_convert_command
                                    "tesseract -l eng",                     # tesseract_command
                                    "pdftotext -nopgbrk",                   # pdf_to_text_command
                                    "500x700",                              # pdf_preview_geometry
@@ -17,6 +17,7 @@ module UtilsHelpers
   end
 
 
+  # TODO:  check for NETPBM toolset and throw error if not installed
 
   # give the whole path to a test data file
 
