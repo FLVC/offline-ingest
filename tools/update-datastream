@@ -8,7 +8,7 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 Kernel.trap('HUP')  { "IGNORE" }
 
-$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
 
 require 'optparse'
 require 'offin/ingest-support'
@@ -22,7 +22,7 @@ def get_options args
   server_sections = get_config_server_sections()
   config = Struct::CommandOptions.new()
   opts   = OptionParser.new do |opt|
-    opt.banner = "usage: #{$0.sub(/.*\//, '')} --server ID object-pid datastream-name filename"
+    opt.banner = "usage: #{$0.sub(/.*\//, '')} --server ID object-pid datastream-name [ new-datastream-filename | - ]"
     opt.on("--server ID", String, "look in fedora repository for server ID - one of: [ #{server_sections.join(', ')} ]")  { |sid| config.server_id = sid }
   end
   opts.parse!(args)
@@ -75,6 +75,8 @@ end
 
 
 # main()
+
+
 
 ds = object.datastreams[command_line_options.datastream_name]
 ds.content = (command_line_options.filename == '-' ? STDIN : open(command_line_options.filename))

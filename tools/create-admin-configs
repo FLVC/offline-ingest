@@ -51,6 +51,13 @@ def create_config_file hostname, comment = ''
     <Directory   /etc/httpd/conf.d/admin_#{under_hostname}/public/>
         AllowOverride all
         Options -MultiViews
+        Order deny,allow
+        Deny from all
+        # All FLVC internal addresses and remote project staff
+        Include conf.d/ranges/flvc_ip_ranges.inc
+        Allow from localhost
+        Allow from 127.0.0.1
+        AllowOverride All
     </Directory>
 </VirtualHost>
 "

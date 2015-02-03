@@ -331,6 +331,11 @@ RSpec.describe Utils do
     end
   end
 
+  # This is left for future pondering: right now, there really isn't a
+  # good way to detect this broken image - it is the first 15K from a
+  # valid jpeg2k.  Doesn't matter: we really don't guarentee valid
+  # images, as long as we can convert them (other tests handle that).
+
   # describe "#image_to_jp2k" do
   #   it "returns an array of error diagnostic messages for a broken (partial-sized) JP2K file" do
   #     file, errors = Utils.image_to_jp2k(config, test_data_path("broken.jp2"))
@@ -412,7 +417,7 @@ RSpec.describe Utils do
     it "returns a uniformly scaled image to fit in a given geometry when changed to a new type" do
       resized, errors = Utils.image_resize config, test_data_path("edward-text.tiff"), "50x50", 'jpeg'
       width, height = jpeg_size(resized)
-
+<
       expect(width).to  be_a(Fixnum)
       expect(height).to be_a(Fixnum)
 

@@ -61,7 +61,7 @@ class TableOfContents
     @structmap = structmap
     @sequence = create_entries_sequence(structmap)
 
-    check_for_page_images
+    warn_for_missing_page_images
     nip_it_in_the_bud
     mark_valid_repeat_pages
     # telescope_pages
@@ -117,7 +117,7 @@ class TableOfContents
       when Struct::Page
         indent = '- ' * entry.level
       end
-      puts indent + entry.title
+      puts indent + entry.title + ((entry.class == Struct::Page and entry.valid_repeat) ? ' *' : '')
     end
   end
 
@@ -202,6 +202,8 @@ class TableOfContents
     @sequence = new_seq
   end
 
+  ####
+
   def mark_valid_repeat_pages
 
     fids = {}
@@ -277,7 +279,7 @@ class TableOfContents
 
   # Create warnings for pages that do not have associated image files.
 
-  def check_for_page_images
+  def warn_for_missing_page_images
 
     issues = []
     pages.each do |p|

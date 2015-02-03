@@ -6,33 +6,84 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
 
-
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
 
 require 'socket'
 require 'offin/mets'
 require 'offin/config'
 
-config  = Datyl::Config.new(ENV['CONFIG'] || "/usr/local/islandora/offline-ingest/config.yml", "default")
 
-SaxDocumentExamineMets.debug = false
+def main
+  SaxDocumentExamineMets.debug = false
+  tempfile = nil
 
-ARGV.each do |filename|
+  if ARGV.empty?
+    STDERR.puts "Usage: #{$0.sub(/^.*\//,'')}  METS-filename"
+    STDERR.puts "       use a single dash instead of filename for STDIN"
+    exit 1
+  end
 
-  STDERR.puts filename
-  start = Time.now
+  config_file = ENV['CONFIG_FILE'] || "/usr/local/islandora/offline-ingest/config.yml"
+  unless File.exists? config_file
+    STDERR.puts "#{$0.sub(/^.*\//,'')}: can't read a configuration file#{config_file ? " (tried #{config_file})" : ""}: try setting environment variable CONFIG_FILE to point to a valid YAML config file."  # damned emacs: "
+    exit 1
+  end
+
+  config  = Datyl::Config.new(config_file, "default")
+
+  if ARGV[0] == '-'
+    tempfile = Tempfile.new('mets-toc-')
+    tempfile.write STDIN.read
+    tempfile.rewind
+    filename = tempfile.path
+  else
+    filename = ARGV[0]
+  end
+
+  yield config, filename
+rescue => e
+  STDERR.puts e
+ensure
+  tempfile.unlink if tempfile
+end
+
+
+
+
+
+
+
+main do |config, filename|
 
   mets = Mets.new(config, filename)
 
-  STDERR.puts mets.valid? ? "METS is valid" : "METS is invalid"
-  STDERR.puts 'METS Errors: ',   mets.errors   if mets.errors?
-  STDERR.puts 'METS Warnings: ', mets.warnings if mets.warnings?
-
-  next unless mets.valid?
+  unless mets.valid? or not mets.errors?
+    STDERR.puts "METS is invalid"  unless mets.valid?
+    STDERR.puts 'METS Errors: ',   mets.errors   if mets.errors?
+    STDERR.puts 'METS Warnings: ', mets.warnings if mets.warnings?
+    exit -1
+  end
 
   # all of the candidate structmaps
 
   structmaps = mets.sax_document.structmaps
+
+  # TOC from just the most likely structmap:
+
+  toc  = TableOfContents.new(mets.structmap)
+
+  unless toc.valid? or not toc.errors?
+    STDERR.puts toc.valid? ? "TOC is valid" : "TOC is invalid"
+    STDERR.puts 'TOC Errors: ',   toc.errors   if toc.errors?
+    STDERR.puts 'TOC Warnings: ', toc.warnings if toc.warnings?
+    exit -1
+  end
+
+  puts toc.to_json(mets.label)
+
+  # Various debugging...
+
+  # toc.print
 
   # count = 1
   # structmaps.each do |sm|
@@ -55,17 +106,16 @@ ARGV.each do |filename|
 
   # mets.structmap.print
 
-  toc  = TableOfContents.new(mets.structmap)
+  # mets.structmap.each do |elt|
+  #   line = '. ' * elt.level
+  #   case
+  #   when elt.is_page
+  #     elt.files.each { |file| line = "#{line}. [#{file.sequence}] '#{elt.title}' -- #{file.href}  "  }
+  #   else # is a section heading
+  #     line += '* ' + '"' +  elt.title + '"'
+  #   end
+  #   puts line
+  # end
 
-  STDERR.puts toc.valid? ? "TOC is valid" : "TOC is invalid"
-  STDERR.puts 'TOC Errors: ',   toc.errors   if toc.errors?
-  STDERR.puts 'TOC Warnings: ', toc.warnings if toc.warnings?
 
-  next unless toc.valid?
-
-  STDERR.puts sprintf("Successfully parsed #{toc.pages.length} pages in %5.2f seconds.", Time.now - start)
-
-  puts toc.to_json(mets.label)
-
-  # toc.print
 end
