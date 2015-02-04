@@ -62,7 +62,7 @@ config = get_config('default', command_line_options.server_id)
 repo   = connect(config)
 object = repo.find(command_line_options.object_pid)
 
-if not object
+if not object or object.datastreams.keys.empty?
   STDERR.puts "No such object #{command_line_options.object_pid} in the fedora repository for #{command_line_options.server_id}"
   exit -1
 end

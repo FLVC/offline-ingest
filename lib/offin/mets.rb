@@ -44,7 +44,7 @@ end
 #
 #    <Struct::MetsFileDictionaryEntry :sequence, :href, :mimetype, :use, :fid>
 #
-# We're transforming this into a sequence of Struct::Page and Struct::Chapter objects
+# We're transforming this into a list of Struct::Page and Struct::Chapter objects
 # that are slightly more uniform.
 
 Struct.new('Page',          :title, :level, :image_filename, :image_mimetype, :fid, :pagenum, :valid_repeat)
@@ -78,6 +78,18 @@ class TableOfContents
   def pages
     @sequence.select{ |elt| is_page? elt }
   end
+
+  def unique_pages
+    list = []
+    already_seen = {}
+    pages.each do |p|
+      next if already_seen[p.fid]
+      already_seen[p.fid] = true
+      list.push p
+    end
+    return list
+  end
+
 
   def chapters
     @sequence.select{ |elt| is_chapter? elt }
@@ -226,7 +238,6 @@ class TableOfContents
     seq = []
     structmap.each do |div_data|
       if div_data.is_page
-
         entry = Struct::Page.new
         entry.title = (div_data.title || '').strip
         entry.level = div_data.level

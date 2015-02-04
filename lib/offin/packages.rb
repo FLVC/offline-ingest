@@ -418,8 +418,6 @@ class Package
     return valid?
   end
 
-
-
   def handle_misc
     return valid? if @config.test_mode
 
@@ -1012,12 +1010,10 @@ class BookPackage < Package
     @updator.post_ingest
   end
 
+
   def ingest_pages
-    sequence = 0
-    @page_filenames.each do |pagename|
-      sequence += 1
-      pid = ingest_page(pagename, sequence)
-      @component_objects.push pid
+    @table_of_contents.unique_pages.each_with_index do |entry, index|
+      @component_objects.push ingest_page(entry, index + 1)
     end
 
     if @manifest.embargo
@@ -1077,7 +1073,7 @@ class BookPackage < Package
         ds.mimeType = 'text/plain'
       end
     else
-      ocr_produced_text = false      #### TODO:  I really need to get consensus to stop logging this warning
+      ocr_produced_text = false      #### TODO:  break out into own type of warning...
       image_name = path.sub(/^.*\//, '')
       warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
@@ -1187,9 +1183,7 @@ class BookPackage < Package
 
   # RELS-EXT, application/rdf+xml
 
-  def rels_ext page_pid, sequence
-
-    toc_entry = @table_of_contents.pages[sequence - 1]
+  def rels_ext page_pid, toc_entry, sequence
 
     page_label = toc_entry ?  Utils.xml_escape(toc_entry.title) : "Page #{sequence}"
 
@@ -1237,7 +1231,8 @@ class BookPackage < Package
   XML
   end
 
-  def ingest_page pagename, sequence
+  def ingest_page page, sequence
+    pagename = page.image_filename
     path  = File.join(@directory_path, pagename)
 
     mime_type = Utils.mime_type(path)
@@ -1280,7 +1275,7 @@ class BookPackage < Package
 
       ingestor.datastream('RELS-EXT') do |ds|
         ds.dsLabel  = 'Relationships'
-        ds.content  = rels_ext(ingestor.pid, sequence)
+        ds.content  = rels_ext(ingestor.pid, page, sequence)
         ds.mimeType = 'application/rdf+xml'
       end
 
@@ -1320,7 +1315,7 @@ class BookPackage < Package
     error   ingestor.errors   if ingestor and ingestor.errors?
 
     warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    warning [ 'Issues creating PDF datastream' ]       + pdf_error_messages        if pdf_error_messages      and not pdf_error_messages.empty?
+    warning [ 'Issues creating PDF datastream' ]       + pdf_error_messages        if pdf_error_messages       and not pdf_error_messages.empty?
 
     [ thumbnail, pdf ].each { |file| file.close if file.respond_to? :close and not file.closed? }
   end
