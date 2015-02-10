@@ -1,0 +1,574 @@
+<METS:mets LABEL="Vegetation of Shark Slough, Everglades National Park (Report 97-001)" OBJID="FI05040402" xmlns:METS="http://www.loc.gov/METS/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/version14/mets.xsd http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/simpledc20021212.xsd http://www.loc.gov/mods/v3 http://www.loc.orv/standards/mods/v3/mods-3-0.xsd" TYPE="book">
+
+  <METS:metsHdr CREATEDATE="2010-03-15T13:03:02-04:00">
+    <METS:agent OTHERROLE="METS Maker" OTHERTYPE="SOFTWARE" ROLE="OTHER" TYPE="OTHER">
+      <METS:name>DigiTool METS Maker</METS:name>
+    </METS:agent>
+  </METS:metsHdr>
+
+  <METS:dmdSec ID="DMD1">
+    <METS:mdWrap MDTYPE="MARC" MIMETYPE="text/xml">
+      <METS:xmlData>
+
+<record xmlns="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+  <leader>     fam  2200553Ia 4500</leader>
+  <controlfield tag="001">000017891</controlfield>
+  <controlfield tag="006">m|||     d|s|</controlfield>
+  <controlfield tag="007">cr|mn</controlfield>
+  <controlfield tag="008">991222e199704uufluab    bt  f0   0 eng d</controlfield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(IID)FI05040402</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)60660805</subfield>
+  </datafield>
+  <datafield tag="035" ind1="9" ind2=" ">
+    <subfield code="a">AAB8396  QF</subfield>
+  </datafield>
+  <datafield tag="040" ind1=" " ind2=" ">
+    <subfield code="a">FXG</subfield>
+    <subfield code="c">FXG</subfield>
+  </datafield>
+  <datafield tag="043" ind1=" " ind2=" ">
+    <subfield code="a">n-us-fl</subfield>
+  </datafield>
+  <datafield tag="049" ind1=" " ind2=" ">
+    <subfield code="a">FXGG</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
+    <subfield code="a">Olmsted, Ingrid C.</subfield>
+    <subfield code="q">(Ingrid Christine),</subfield>
+    <subfield code="d">1939-</subfield>
+  </datafield>
+  <datafield tag="245" ind1="1" ind2="0">
+    <subfield code="a">Vegetation of Shark Slough, Everglades National Park</subfield>
+    <subfield code="h">[electronic resource] /</subfield>
+    <subfield code="c">Ingrid Olmsted and Thomas V. Armentano.</subfield>
+  </datafield>
+  <datafield tag="260" ind1=" " ind2=" ">
+    <subfield code="a">Homestead, FL :</subfield>
+    <subfield code="b">South Florida Natural Resources Center, Everglades National Park,</subfield>
+    <subfield code="c">[1997]</subfield>
+  </datafield>
+  <datafield tag="300" ind1=" " ind2=" ">
+    <subfield code="a">i, 41 p. :</subfield>
+    <subfield code="b">ill., maps ;</subfield>
+    <subfield code="c">28 cm.</subfield>
+  </datafield>
+  <datafield tag="440" ind1=" " ind2="0">
+    <subfield code="a">SFNRC technical report ;</subfield>
+    <subfield code="v">97-001</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">"April 1997."</subfield>
+  </datafield>
+  <datafield tag="500" ind1=" " ind2=" ">
+    <subfield code="a">One col. folded vegetation map in pocket.</subfield>
+  </datafield>
+  <datafield tag="520" ind1="3" ind2=" ">
+    <subfield code="a">Shark Slough drainage, the largest in Everglades National Park (ENP), forms the southern portion of the greater Everglades system. The imposition of artificial controls upon the natural system has led to important changes in the hydrological regime of Shark Slough. Relatively little is known of the extent that the current structure and distribution of vegetation within ENP has departed from pre-disturbance conditions.</subfield>
+  </datafield>
+  <datafield tag="520" ind1="3" ind2=" ">
+    <subfield code="a">The objectives of this report are to: 1) describe the patterns of plant communities within the Shark Slough portion of Everglades National Park as they existed in 1980; 2) describe quantitatively the composition of the marsh communities; 3) describe qualitatively the composition of selected Shark Slough tree communities; 4) provide supporting data on elevation, hydroperiods and soils for sampled areas, and 5) infer, within the limits of available data, the changes in vegetation that may have occurred in Shark Slough.</subfield>
+  </datafield>
+  <datafield tag="504" ind1=" " ind2=" ">
+    <subfield code="a">Includes bibliographical references (p. 34-36).</subfield>
+  </datafield>
+  <datafield tag="533" ind1=" " ind2=" ">
+    <subfield code="a">Electronic reproduction.</subfield>
+    <subfield code="b">[Florida] :</subfield>
+    <subfield code="c">State University System of Florida, PALMM Project,</subfield>
+    <subfield code="d">2005.</subfield>
+    <subfield code="f">(Everglades online collection)</subfield>
+    <subfield code="n">Mode of access: World Wide Web.</subfield>
+    <subfield code="n">System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.</subfield>
+    <subfield code="n">Electronically reproduced by Florida International University from a technical report held in the Green Library at Florida International University, Miami.</subfield>
+  </datafield>
+  <datafield tag="539" ind1=" " ind2=" ">
+    <subfield code="a">s</subfield>
+    <subfield code="b">2005</subfield>
+    <subfield code="d">flu</subfield>
+    <subfield code="e">n</subfield>
+  </datafield>
+  <datafield tag="599" ind1=" " ind2=" ">
+    <subfield code="a">cab</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Plant communities</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Shark River Slough.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Plant communities</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Vegetation surveys</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Shark River Slough.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Vegetation surveys</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Vegetation mapping</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Shark River Slough.</subfield>
+  </datafield>
+  <datafield tag="650" ind1=" " ind2="0">
+    <subfield code="a">Vegetation mapping</subfield>
+    <subfield code="z">Florida</subfield>
+    <subfield code="z">Everglades National Park.</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="0">
+    <subfield code="a">Shark River Slough (Fla.)</subfield>
+  </datafield>
+  <datafield tag="651" ind1=" " ind2="7">
+    <subfield code="a">Everglades</subfield>
+    <subfield code="z">3090202</subfield>
+    <subfield code="2">huc</subfield>
+  </datafield>
+  <datafield tag="655" ind1=" " ind2="7">
+    <subfield code="a">Technical report.</subfield>
+    <subfield code="2">marcgt</subfield>
+  </datafield>
+  <datafield tag="700" ind1="1" ind2=" ">
+    <subfield code="a">Armentano, T. V.</subfield>
+    <subfield code="q">(Thomas V.)</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">South Florida Natural Resources Center.</subfield>
+  </datafield>
+  <datafield tag="710" ind1="2" ind2=" ">
+    <subfield code="a">PALMM (Project)</subfield>
+  </datafield>
+  <datafield tag="776" ind1="1" ind2=" ">
+    <subfield code="c">(Original)</subfield>
+    <subfield code="w">(OCoLC)43081102</subfield>
+  </datafield>
+  <datafield tag="830" ind1=" " ind2="0">
+    <subfield code="a">Everglades online collection.</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">eol</subfield>
+  </datafield>
+  <datafield tag="852" ind1=" " ind2=" ">
+    <subfield code="b">feol</subfield>
+  </datafield>
+  
+  
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Book</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Govt Publication</subfield>
+  </datafield>
+  <datafield tag="998" ind1="7" ind2="7">
+    <subfield code="b">Online Resource</subfield>
+  </datafield>
+  <datafield tag="598" ind1=" " ind2=" ">
+    <subfield code="a">FI05040402</subfield>
+  </datafield>
+</record>
+      </METS:xmlData>
+    </METS:mdWrap>
+  </METS:dmdSec>
+
+  <METS:fileSec>
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID1" ID="FID1" SEQ="1" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_cover1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID2" ID="FID2" SEQ="2" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_cover2.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID3" ID="FID3" SEQ="3" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_cover3.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID4" ID="FID4" SEQ="4" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_cover4.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID5" ID="FID5" SEQ="5" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_fm1.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID6" ID="FID6" SEQ="6" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_fm2.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID7" ID="FID7" SEQ="7" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_i.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID8" ID="FID8" SEQ="8" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_ii.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID9" ID="FID9" SEQ="9" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_001.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID10" ID="FID10" SEQ="10" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_002.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID11" ID="FID11" SEQ="11" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_003.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID12" ID="FID12" SEQ="12" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_004.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID13" ID="FID13" SEQ="13" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_005.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID14" ID="FID14" SEQ="14" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_006.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID15" ID="FID15" SEQ="15" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_007.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID16" ID="FID16" SEQ="16" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_008.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID17" ID="FID17" SEQ="17" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_009.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID18" ID="FID18" SEQ="18" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_010.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID19" ID="FID19" SEQ="19" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_011.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID20" ID="FID20" SEQ="20" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_012.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID21" ID="FID21" SEQ="21" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_013.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID22" ID="FID22" SEQ="22" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_014.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID23" ID="FID23" SEQ="23" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_015.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID24" ID="FID24" SEQ="24" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_016.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID25" ID="FID25" SEQ="25" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_017.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID26" ID="FID26" SEQ="26" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_018.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID27" ID="FID27" SEQ="27" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_019.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID28" ID="FID28" SEQ="28" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_020.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID29" ID="FID29" SEQ="29" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_021.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID30" ID="FID30" SEQ="30" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_022.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID31" ID="FID31" SEQ="31" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_023.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID32" ID="FID32" SEQ="32" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_024.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID33" ID="FID33" SEQ="33" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_025.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID34" ID="FID34" SEQ="34" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_026.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID35" ID="FID35" SEQ="35" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_027.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID36" ID="FID36" SEQ="36" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_028.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID37" ID="FID37" SEQ="37" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_029.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID38" ID="FID38" SEQ="38" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_030.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID39" ID="FID39" SEQ="39" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_031.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID40" ID="FID40" SEQ="40" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_032.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID41" ID="FID41" SEQ="41" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_033.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID42" ID="FID42" SEQ="42" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_034.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID43" ID="FID43" SEQ="43" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_035.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID44" ID="FID44" SEQ="44" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_036.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID45" ID="FID45" SEQ="45" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_037.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID46" ID="FID46" SEQ="46" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_038.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID47" ID="FID47" SEQ="47" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_039.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID48" ID="FID48" SEQ="48" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_040.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID49" ID="FID49" SEQ="49" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_041.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID50" ID="FID50" SEQ="50" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_042.jpg" />
+      </METS:file>
+      <METS:file GROUPID="GID51" ID="FID51" SEQ="51" MIMETYPE="image/jpeg">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="FI05040402_map.jpg" />
+      </METS:file>
+    </METS:fileGrp>
+
+    <METS:fileGrp USE="reference">
+      <METS:file GROUPID="GID52" ID="FID52" SEQ="52" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file1.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID53" ID="FID53" SEQ="53" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file2.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID54" ID="FID54" SEQ="54" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file3.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID55" ID="FID55" SEQ="55" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file4.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID56" ID="FID56" SEQ="56" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file5.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID57" ID="FID57" SEQ="57" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file6.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID58" ID="FID58" SEQ="58" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file7.pdf" />
+      </METS:file>
+      <METS:file GROUPID="GID59" ID="FID59" SEQ="59" MIMETYPE="application/pdf">
+        <METS:FLocat LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" xlink:href="file8.pdf" />
+      </METS:file>
+    </METS:fileGrp>
+  </METS:fileSec>
+
+  <METS:structMap LABEL="View" TYPE="PDF">
+    <METS:div DMDID="DMD1" LABEL="Vegetation of Shark Slough, Everglades National Park (Report 97-001)">
+        <METS:div LABEL="Front Matter" TYPE="chapter">
+          <METS:div LABEL="Covers" TYPE="chapter">
+            <METS:fptr FILEID="FID52"/>
+          </METS:div>
+          <METS:div LABEL="Title Page" TYPE="chapter">
+            <METS:fptr FILEID="FID53"/>
+          </METS:div>
+          <METS:div LABEL="Table of Contents" TYPE="chapter">
+            <METS:fptr FILEID="FID54"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Body of Document" TYPE="chapter">
+          <METS:fptr FILEID="FID55"/>
+        </METS:div>
+        <METS:div LABEL="Acknowledgements" TYPE="chapter">
+          <METS:fptr FILEID="FID56"/>
+        </METS:div>
+        <METS:div LABEL="Literature Cited" TYPE="chapter">
+          <METS:fptr FILEID="FID57"/>
+        </METS:div>
+        <METS:div LABEL="Appendices" TYPE="chapter">
+          <METS:fptr FILEID="FID58"/>
+        </METS:div>
+        <METS:div LABEL="Vegetation Map" TYPE="chapter">
+          <METS:fptr FILEID="FID59"/>
+        </METS:div> 
+    </METS:div>
+  </METS:structMap>
+
+  <METS:structMap LABEL="View" TYPE="JPEG">
+    <METS:div DMDID="DMD1" LABEL="Vegetation of Shark Slough, Everglades National Park (Report 97-001)">
+        <METS:div LABEL="Front Matter" TYPE="chapter">
+          <METS:div LABEL="Covers" TYPE="chapter">
+            <METS:div LABEL="FI05040402_cover1" TYPE="page">
+              <METS:fptr FILEID="FID1"/>
+            </METS:div>
+            <METS:div LABEL="FI05040402_cover2" TYPE="page">
+              <METS:fptr FILEID="FID2"/>
+            </METS:div>
+            <METS:div LABEL="FI05040402_cover3" TYPE="page">
+              <METS:fptr FILEID="FID3"/>
+            </METS:div>
+            <METS:div LABEL="FI05040402_cover4" TYPE="page">
+              <METS:fptr FILEID="FID4"/>
+            </METS:div>
+          </METS:div>
+          <METS:div LABEL="Title Page" TYPE="chapter">
+            <METS:div LABEL="FI05040402_fm1" TYPE="page">
+              <METS:fptr FILEID="FID5"/>
+            </METS:div>
+            <METS:div LABEL="FI05040402_fm2" TYPE="page">
+              <METS:fptr FILEID="FID6"/>
+            </METS:div>
+          </METS:div>
+          <METS:div LABEL="Table of Contents" TYPE="chapter">
+            <METS:div LABEL="FI05040402_i" TYPE="page">
+              <METS:fptr FILEID="FID7"/>
+            </METS:div>
+            <METS:div LABEL="FI05040402_ii" TYPE="page">
+              <METS:fptr FILEID="FID8"/>
+            </METS:div>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Body of Document" TYPE="chapter">
+          <METS:div LABEL="FI05040402_001" TYPE="page">
+            <METS:fptr FILEID="FID9"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_002" TYPE="page">
+            <METS:fptr FILEID="FID10"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_003" TYPE="page">
+            <METS:fptr FILEID="FID11"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_004" TYPE="page">
+            <METS:fptr FILEID="FID12"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_005" TYPE="page">
+            <METS:fptr FILEID="FID13"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_006" TYPE="page">
+            <METS:fptr FILEID="FID14"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_007" TYPE="page">
+            <METS:fptr FILEID="FID15"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_008" TYPE="page">
+            <METS:fptr FILEID="FID16"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_009" TYPE="page">
+            <METS:fptr FILEID="FID17"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_010" TYPE="page">
+            <METS:fptr FILEID="FID18"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_011" TYPE="page">
+            <METS:fptr FILEID="FID19"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_012" TYPE="page">
+            <METS:fptr FILEID="FID20"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_013" TYPE="page">
+            <METS:fptr FILEID="FID21"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_014" TYPE="page">
+            <METS:fptr FILEID="FID22"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_015" TYPE="page">
+            <METS:fptr FILEID="FID23"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_016" TYPE="page">
+            <METS:fptr FILEID="FID24"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_017" TYPE="page">
+            <METS:fptr FILEID="FID25"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_018" TYPE="page">
+            <METS:fptr FILEID="FID26"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_019" TYPE="page">
+            <METS:fptr FILEID="FID27"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_020" TYPE="page">
+            <METS:fptr FILEID="FID28"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_021" TYPE="page">
+            <METS:fptr FILEID="FID29"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_022" TYPE="page">
+            <METS:fptr FILEID="FID30"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_023" TYPE="page">
+            <METS:fptr FILEID="FID31"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_024" TYPE="page">
+            <METS:fptr FILEID="FID32"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_025" TYPE="page">
+            <METS:fptr FILEID="FID33"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_026" TYPE="page">
+            <METS:fptr FILEID="FID34"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_027" TYPE="page">
+            <METS:fptr FILEID="FID35"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_028" TYPE="page">
+            <METS:fptr FILEID="FID36"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_029" TYPE="page">
+            <METS:fptr FILEID="FID37"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_030" TYPE="page">
+            <METS:fptr FILEID="FID38"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_031" TYPE="page">
+            <METS:fptr FILEID="FID39"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_032" TYPE="page">
+            <METS:fptr FILEID="FID40"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_033" TYPE="page">
+            <METS:fptr FILEID="FID41"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Acknowledgements" TYPE="chapter">
+          <METS:div LABEL="FI05040402_033" TYPE="page">
+            <METS:fptr FILEID="FID41"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Literature Cited" TYPE="chapter">
+          <METS:div LABEL="FI05040402_034" TYPE="page">
+            <METS:fptr FILEID="FID42"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_035" TYPE="page">
+            <METS:fptr FILEID="FID43"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_036" TYPE="page">
+            <METS:fptr FILEID="FID44"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Appendices" TYPE="chapter">
+          <METS:div LABEL="FI05040402_037" TYPE="page">
+            <METS:fptr FILEID="FID45"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_038" TYPE="page">
+            <METS:fptr FILEID="FID46"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_039" TYPE="page">
+            <METS:fptr FILEID="FID47"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_040" TYPE="page">
+            <METS:fptr FILEID="FID48"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_041" TYPE="page">
+            <METS:fptr FILEID="FID49"/>
+          </METS:div>
+          <METS:div LABEL="FI05040402_042" TYPE="page">
+            <METS:fptr FILEID="FID50"/>
+          </METS:div>
+        </METS:div>
+        <METS:div LABEL="Vegetation Map" TYPE="chapter">
+          <METS:div LABEL="FI05040402_map" TYPE="page">
+            <METS:fptr FILEID="FID51"/>
+          </METS:div>
+        </METS:div> 
+    </METS:div>
+  </METS:structMap>
+</METS:mets>

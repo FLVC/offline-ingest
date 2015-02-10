@@ -1,0 +1,611 @@
+{
+  "table_of_contents": [
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Front matter",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_cover1",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_flyer1",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_flyer2",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Table of contents",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_i",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "List of tables",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_ii",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "List of figures",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_iii",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_iv",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "List of appendices",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_v",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Abstract",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_001",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Introduction",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_002",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Methods",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_003",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_004",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Results",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_004",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_005",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_006",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_007",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Discussion",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_007",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_008",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Conclusions",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_009",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Acknowledgements",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_009",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Literature cited",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_010",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_011",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Tables",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_012",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_013",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Figures",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_014",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_015",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_016",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_017",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_018",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_019",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_020",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_021",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_022",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_023",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_024",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_025",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_026",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_027",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_028",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Appendices",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_029",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_030",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_031",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_032",
+      "pagenum": 1
+    },
+    {
+      "level": 1,
+      "type": "chapter",
+      "title": "Complete text",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_cover1",
+      "pagenum": 1
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_flyer1",
+      "pagenum": 2
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_flyer2",
+      "pagenum": 3
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_i",
+      "pagenum": 4
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_ii",
+      "pagenum": 5
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_iii",
+      "pagenum": 6
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_iv",
+      "pagenum": 7
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_v",
+      "pagenum": 8
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_001",
+      "pagenum": 9
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_002",
+      "pagenum": 10
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_003",
+      "pagenum": 11
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_004",
+      "pagenum": 12
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_005",
+      "pagenum": 13
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_006",
+      "pagenum": 14
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_007",
+      "pagenum": 15
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_008",
+      "pagenum": 16
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_009",
+      "pagenum": 17
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_010",
+      "pagenum": 18
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_011",
+      "pagenum": 19
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_012",
+      "pagenum": 20
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_013",
+      "pagenum": 21
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_014",
+      "pagenum": 22
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_015",
+      "pagenum": 23
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_016",
+      "pagenum": 24
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_017",
+      "pagenum": 25
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_018",
+      "pagenum": 26
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_019",
+      "pagenum": 27
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_020",
+      "pagenum": 28
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_021",
+      "pagenum": 29
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_022",
+      "pagenum": 30
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_023",
+      "pagenum": 31
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_024",
+      "pagenum": 32
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_025",
+      "pagenum": 33
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_026",
+      "pagenum": 34
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_027",
+      "pagenum": 35
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_028",
+      "pagenum": 36
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_029",
+      "pagenum": 37
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_030",
+      "pagenum": 38
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_031",
+      "pagenum": 39
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_032",
+      "pagenum": 40
+    },
+    {
+      "level": 2,
+      "type": "page",
+      "title": "FI00534683_cover4",
+      "pagenum": 41
+    }
+  ],
+  "title": "Age, growth and mortality of the common snook, Centropomus undecimalis (Bloch), in Everglades National Park, Florida"
+}
