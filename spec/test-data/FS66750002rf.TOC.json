@@ -2,231 +2,231 @@
   "table_of_contents": [
     {
       "pagenum": 1,
-      "level": 1,
+      "type": "chapter",
       "title": "Front Cover",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 1,
-      "level": 2,
+      "type": "page",
       "title": "Cover1",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 2,
-      "level": 2,
+      "type": "page",
       "title": "Cover2",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 3,
-      "level": 1,
+      "type": "chapter",
       "title": "Title Page",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 3,
-      "level": 2,
+      "type": "page",
       "title": "title1",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 4,
-      "level": 1,
+      "type": "chapter",
       "title": "Uncle Dick's Boy",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 4,
-      "level": 2,
+      "type": "page",
       "title": "1",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 5,
-      "level": 1,
+      "type": "chapter",
       "title": "Playing Horse",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 5,
-      "level": 2,
+      "type": "page",
       "title": "2",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 6,
-      "level": 1,
+      "type": "chapter",
       "title": "Baby-Land",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 6,
-      "level": 2,
+      "type": "page",
       "title": "3",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 7,
-      "level": 2,
+      "type": "page",
       "title": "4",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 8,
-      "level": 1,
+      "type": "chapter",
       "title": "Who Is She",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 8,
-      "level": 2,
+      "type": "page",
       "title": "5",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 8,
-      "level": 1,
+      "type": "chapter",
       "title": "Niddlety Noddy",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 8,
-      "level": 2,
+      "type": "page",
       "title": "5",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 9,
-      "level": 1,
+      "type": "chapter",
       "title": "Little Frogs At School",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 9,
-      "level": 2,
+      "type": "page",
       "title": "6",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 10,
-      "level": 1,
+      "type": "chapter",
       "title": "Pictures That Tell Their Own Story",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 10,
-      "level": 2,
+      "type": "page",
       "title": "7",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 11,
-      "level": 1,
+      "type": "chapter",
       "title": "A Successful Raid",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 11,
-      "level": 2,
+      "type": "page",
       "title": "8",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 11,
-      "level": 1,
+      "type": "chapter",
       "title": "Not So Easy After All",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 11,
-      "level": 2,
+      "type": "page",
       "title": "8",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 12,
-      "level": 1,
+      "type": "chapter",
       "title": "Nep And The Baby",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 12,
-      "level": 2,
+      "type": "page",
       "title": "9",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 13,
-      "level": 2,
+      "type": "page",
       "title": "10",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 14,
-      "level": 1,
+      "type": "chapter",
       "title": "Baby Bo- Peep And Little Jack Horner",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 14,
-      "level": 2,
+      "type": "page",
       "title": "11",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 15,
-      "level": 2,
+      "type": "page",
       "title": "12",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 16,
-      "level": 1,
+      "type": "chapter",
       "title": "A Practical Joke",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 16,
-      "level": 2,
+      "type": "page",
       "title": "13",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 17,
-      "level": 2,
+      "type": "page",
       "title": "14",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 18,
-      "level": 1,
+      "type": "chapter",
       "title": "Blowing Bubbles",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 18,
-      "level": 2,
+      "type": "page",
       "title": "15",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 19,
-      "level": 1,
+      "type": "chapter",
       "title": "Back Cover",
-      "type": "chapter"
+      "level": 1
     },
     {
       "pagenum": 19,
-      "level": 2,
+      "type": "page",
       "title": "Cover3",
-      "type": "page"
+      "level": 2
     },
     {
       "pagenum": 20,
-      "level": 2,
+      "type": "page",
       "title": "Cover4",
-      "type": "page"
+      "level": 2
     }
   ],
   "title": "Gee whoa!"

@@ -158,8 +158,8 @@
   <datafield tag="852" ind1=" " ind2=" ">
     <subfield code="b">eol</subfield>
   </datafield>
-
-
+  
+  
   <datafield tag="998" ind1="7" ind2="7">
     <subfield code="b">Book</subfield>
   </datafield>
@@ -406,6 +406,9 @@
         <METS:div LABEL="Appendices" TYPE="chapter">
           <METS:fptr FILEID="FID57"/>
         </METS:div>
+        <METS:div LABEL="Complete text" TYPE="chapter">
+          <METS:fptr FILEID="FID58"/>
+        </METS:div> 
     </METS:div>
   </METS:structMap>
 
@@ -572,6 +575,131 @@
             <METS:fptr FILEID="FID40"/>
           </METS:div>
         </METS:div>
-      </METS:div>
+        <METS:div LABEL="Complete text" TYPE="chapter">
+          <METS:div LABEL="FI00534683_cover1" TYPE="page">
+            <METS:fptr FILEID="FID1"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_flyer1" TYPE="page">
+            <METS:fptr FILEID="FID2"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_flyer2" TYPE="page">
+            <METS:fptr FILEID="FID3"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_i" TYPE="page">
+            <METS:fptr FILEID="FID4"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_ii" TYPE="page">
+            <METS:fptr FILEID="FID5"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_iii" TYPE="page">
+            <METS:fptr FILEID="FID6"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_iv" TYPE="page">
+            <METS:fptr FILEID="FID7"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_v" TYPE="page">
+            <METS:fptr FILEID="FID8"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_001" TYPE="page">
+            <METS:fptr FILEID="FID9"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_002" TYPE="page">
+            <METS:fptr FILEID="FID10"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_003" TYPE="page">
+            <METS:fptr FILEID="FID11"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_004" TYPE="page">
+            <METS:fptr FILEID="FID12"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_005" TYPE="page">
+            <METS:fptr FILEID="FID13"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_006" TYPE="page">
+            <METS:fptr FILEID="FID14"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_007" TYPE="page">
+            <METS:fptr FILEID="FID15"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_008" TYPE="page">
+            <METS:fptr FILEID="FID16"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_009" TYPE="page">
+            <METS:fptr FILEID="FID17"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_010" TYPE="page">
+            <METS:fptr FILEID="FID18"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_011" TYPE="page">
+            <METS:fptr FILEID="FID19"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_012" TYPE="page">
+            <METS:fptr FILEID="FID20"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_013" TYPE="page">
+            <METS:fptr FILEID="FID21"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_014" TYPE="page">
+            <METS:fptr FILEID="FID22"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_015" TYPE="page">
+            <METS:fptr FILEID="FID23"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_016" TYPE="page">
+            <METS:fptr FILEID="FID24"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_017" TYPE="page">
+            <METS:fptr FILEID="FID25"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_018" TYPE="page">
+            <METS:fptr FILEID="FID26"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_019" TYPE="page">
+            <METS:fptr FILEID="FID27"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_020" TYPE="page">
+            <METS:fptr FILEID="FID28"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_021" TYPE="page">
+            <METS:fptr FILEID="FID29"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_022" TYPE="page">
+            <METS:fptr FILEID="FID30"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_023" TYPE="page">
+            <METS:fptr FILEID="FID31"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_024" TYPE="page">
+            <METS:fptr FILEID="FID32"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_025" TYPE="page">
+            <METS:fptr FILEID="FID33"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_026" TYPE="page">
+            <METS:fptr FILEID="FID34"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_027" TYPE="page">
+            <METS:fptr FILEID="FID35"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_028" TYPE="page">
+            <METS:fptr FILEID="FID36"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_029" TYPE="page">
+            <METS:fptr FILEID="FID37"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_030" TYPE="page">
+            <METS:fptr FILEID="FID38"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_031" TYPE="page">
+            <METS:fptr FILEID="FID39"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_032" TYPE="page">
+            <METS:fptr FILEID="FID40"/>
+          </METS:div>
+          <METS:div LABEL="FI00534683_cover4" TYPE="page">
+            <METS:fptr FILEID="FID41"/>
+          </METS:div>
+        </METS:div> 
+    </METS:div>
   </METS:structMap>
 </METS:mets>

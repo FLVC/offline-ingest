@@ -1,3 +1,4 @@
+
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
@@ -11,53 +12,25 @@ RSpec.describe Mets do
 
   include MetsHelpers
 
-  describe "#toc" do
-    it "correctly returns a table of contents for example double-entried FI05040402 METS" do
+  [ "FS66750002rf", "FI00534683rf", "FI05040402" ].each do |package_id|
 
-      mets = Mets.new(config, test_data_path("FI05040402.mets"))
+      describe "#toc" do
+        it "correctly returns a table of contents for example double-entried #{package_id} METS" do
 
-      expect(mets.valid?).to be_equal(true)
+          mets = Mets.new(config, test_data_path("#{package_id}.mets.xml"))
 
-      errors = mets.errors
-      expect(errors).to  be_empty
+          expect(mets.valid?).to be_equal(true)
 
-      toc  = TableOfContents.new(mets.structmap)
+          errors = mets.errors
+          expect(errors).to  be_empty
 
-      report = compare_json(toc.to_json(mets.label),  JSON.parse(File.read(test_data_path("FI05040402.json"))))
-      expect(report).to be_empty
-    end
+          toc  = TableOfContents.new(mets.structmap)
+
+          report = compare_json(JSON.parse(toc.to_json(mets.label)),  JSON.parse(File.read(test_data_path("#{package_id}.TOC.json"))))
+          expect(report).to be_empty
+        end
+      end
   end
 
-
-  # describe "#toc for double-entried FI05040402 METS is correct" do
-
-  #   mets = Mets.new(config, test_data_path(".mets"))
-  #   expect(mets.valid?).to be_equal(true)
-
-  #   errors = mets.errors
-  #   expect(errors).to  be_empty
-
-  #   warnings = mets.warnings
-  #   expect(warnings).to be_empty
-
-  #   report = compare_json(mets.toc,  File.read(test_data_path(".json")))
-  #   expect(report).to be_empty
-  # end
-
-
-  # describe "#toc for double-entried FS66750002rf METS is correct" do
-
-  #   mets = Mets.new(config, test_data_path(".mets"))
-  #   expect(mets.valid?).to be_equal(true)
-
-  #   errors = mets.errors
-  #   expect(errors).to  be_empty
-
-  #   warnings = mets.warnings
-  #   expect(warnings).to be_empty
-
-  #   report = compare_json(mets.toc,  File.read(test_data_path(".json")))
-  #   expect(report).to be_empty
-  # end
 
 end
