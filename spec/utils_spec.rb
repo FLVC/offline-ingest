@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__), '../lib')
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
 require 'open3'
@@ -417,7 +417,7 @@ RSpec.describe Utils do
     it "returns a uniformly scaled image to fit in a given geometry when changed to a new type" do
       resized, errors = Utils.image_resize config, test_data_path("edward-text.tiff"), "50x50", 'jpeg'
       width, height = jpeg_size(resized)
-<
+
       expect(width).to  be_a(Fixnum)
       expect(height).to be_a(Fixnum)
 
