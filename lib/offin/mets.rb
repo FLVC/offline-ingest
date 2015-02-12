@@ -63,13 +63,12 @@ class TableOfContents
 
     warn_for_missing_page_images
     nip_it_in_the_bud
-    mark_valid_repeat_pages
+    mark_validly_repeated_pages
     # telescope_pages
     cleanup_chapter_titles
     cleanup_page_titles
     number_pages
   end
-
 
   def each
     @sequence.each { |entry| yield entry }
@@ -83,7 +82,8 @@ class TableOfContents
     list = []
     already_seen = {}
     pages.each do |p|
-      next if already_seen[p.fid]
+      next if already_seen[p.image_filename] or already_seen[p.fid]
+      already_seen[p.image_filename] = true
       already_seen[p.fid] = true
       list.push p
     end
@@ -187,6 +187,7 @@ class TableOfContents
   #
 
 
+  # This is deprecated:
 
   def telescope_pages
 
@@ -214,9 +215,9 @@ class TableOfContents
     @sequence = new_seq
   end
 
-  ####
 
-  def mark_valid_repeat_pages
+
+  def mark_validly_repeated_pages
 
     fids = {}
     @sequence.each do |entry|
@@ -231,6 +232,18 @@ class TableOfContents
       end
     end
 
+    image_filenames = {}
+    @sequence.each do |entry|
+      next unless is_page? entry
+      image_filenames[entry.image_filename] ||= []
+      image_filenames[entry.image_filename].push entry
+    end
+
+    image_filenames.keys.each do |k|
+      if image_filenames[k].length > 1
+        image_filenames[k][0..-2].each { |e| e.valid_repeat = true }  # don't mark the last one, it's the one we will eventually include in the sequence to ingest
+      end
+    end
   end
 
 
