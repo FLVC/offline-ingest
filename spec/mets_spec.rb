@@ -17,7 +17,7 @@ RSpec.describe Mets do
     describe "#toc" do
       it "correctly returns a table of contents for example double-entried #{package_id} METS" do
 
-        mets = Mets.new(config, test_data_path("#{package_id}.mets.xml"))
+        mets = Mets.new(config, test_data_path("#{package_id}.METS.xml"))
 
         expect(mets.valid?).to be_equal(true)
 
@@ -36,7 +36,7 @@ RSpec.describe Mets do
 
     describe "#toc" do
       it "correctly returns the number of unique pages in example double-entried #{package_id} METS" do
-        mets = Mets.new(config, test_data_path("#{package_id}.mets.xml"))
+        mets = Mets.new(config, test_data_path("#{package_id}.METS.xml"))
         toc  = TableOfContents.new(mets.structmap)
         expect(toc.unique_pages.length).to be == count
       end
