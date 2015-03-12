@@ -392,6 +392,10 @@ class Package
       return
     elsif iids.length == 1
       @iid = iids.first
+      if @iid =~ /[^A-Za-z0-9_\.()-]/
+        error "The MODS file in package #{@directory_name} declares the IID as '#{@iid}',  which has illegal characters (only 'A'-'Z', 'a'-'z', '0'-'9', ')', '(', '-', '_' and '.'  are allowed)."
+        return
+      end
     elsif iids.nil? or iids.length == 0
       # warning "MODS file doesn't include an IID, using the package name #{@directory_name}."
       @iid = @directory_name
