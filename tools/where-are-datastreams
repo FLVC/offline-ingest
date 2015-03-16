@@ -1,0 +1,165 @@
+#!/usr/bin/env ruby
+
+# where-are-datastreams takes the usual options (fedora server
+# location, admin username and password) and one argument, a
+# fedora PID (info:fedora/fiu:18532 or simply fiu:18532).
+#
+# It first grabs the FOXML for the PID, and then uses our akumbra
+# hash-path mapping to locate the file on disk.
+#
+# so for the above example....
+
+require 'uri'
+require 'optparse'
+require 'nokogiri'
+require 'rest-client'
+require 'digest/md5'
+
+DATASTREAM_STORE_ROOT = '/data/datastreamStore'
+
+Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid)
+
+def parse_command_line args
+  cmdline = Struct::Options.new('localhost:8080', nil, 'fedoraAdmin', nil)
+  opts   = OptionParser.new do |opt|
+    opt.banner = "Usage: where-are-datastreams [options] islandora-pid"
+    opt.on("--server-location LOC", String,  "Fedora server to contact, defaults to #{cmdline.server_location}")                 { |sloc| cmdline.server_location = sloc }
+    opt.on("--password PASS",       String,  "Password for connecting to fedora server")                                         { |pass| cmdline.admin_password  = pass }
+    opt.on("--username USER",       String,  "Username for connecting to fedora server, defaults to #{cmdline.admin_username}")  { |user| cmdline.admin_username  = user }
+  end
+  opts.parse!(args)
+  raise "You must include a server password."               unless cmdline.admin_password
+  raise "You must include one argument, an islandora PID."  unless args.length == 1
+  cmdline.islandora_pid = args[0].sub(/^info:fedora\//, '')
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+else
+  return cmdline
+end
+
+
+
+def data_stream_to_filename(islandora_pid, data_stream_id)
+
+  # From the islandora pid and data_stream id, assemble an internal
+  # URI, then use the akumbra algorithm to find the filepath.  We'll
+  # use the example "fiu:18532" and "OCR/OCR.0",
+
+  # FLVC specifics: the DATASTREAM_STORE_ROOT and three-part
+  # ("##/##/##") file hash mapping.  Otherwise, the standard rules
+  # apply:
+
+  # *) Construct the internal URI: "info:fedora/fiu:1853/OCR/OCR.0"
+
+  # *) Create the filesystem-safe string
+  # "info%3Afedora%2Ffiu%3A18532%2FOCR%2FOCR.0" for the filename
+
+  # *) Distribute the intial characters of the MD5 hexdigest of the
+  # internal URI into directory components (for us, "35", "38", "0a")
+
+  # *) join altogether into a filepath and return it
+
+  uri = [ 'info:fedora', islandora_pid, data_stream_id ].join('/')
+  filename = URI.encode(uri, /[^A-Za-z0-9=()\.-]/).sub(/\.$/, "%2E")
+  hash = Digest::MD5.hexdigest(uri)
+
+  return ([ DATASTREAM_STORE_ROOT ] + hash.unpack('A2A2A2') + [ filename ]).join('/')
+end
+
+# get_foxml(...)
+# essentially, do 'curl -s http://fedoraAdmin:PASSWORD@islandorap:8080/fedora/objects/PID/objectXML'
+
+def get_foxml(config)
+  url = "http://#{config.admin_username}:#{config.admin_password}@#{config.server_location}/fedora/objects/#{config.islandora_pid}/objectXML"
+  response = RestClient.get(url)
+  raise "Can't retrieve #{url.sub(config.admin_password, 'XXXXX')} - please check your command line options" unless response.code == 200
+  return response.to_str
+rescue => e
+  STDERR.puts e
+  exit -1
+end
+
+
+Struct.new('Datastream', :datastream_id, :version_id, :mime_type, :control_group, :size, :has_content_location)
+
+class SaxDocument < Nokogiri::XML::SAX::Document
+
+  attr_accessor :datastreams
+
+  def initialize
+    @datastreams = []
+    @current_datastream = nil
+    super()
+  end
+
+  def end_element_namespace name, prefix = nil, uri = nil
+    return unless name == 'datastream'
+    @datastreams.push @current_datastream  if @current_datastream.has_content_location and @current_datastream.control_group == 'M'
+  end
+
+  # We're only interested in parsing out parts of the FOXML that has data such as:
+  #
+  # <foxml:datastream ID="JPG" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
+  #   <foxml:datastreamVersion ID="JPG.0" LABEL="Original JPEG FI06141903_144" CREATED="2014-11-22T19:00:50.167Z" MIMETYPE="image/jpeg" SIZE="27531">
+  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+JPG+JPG.0"/>
+  #   </foxml:datastreamVersion>
+  # </foxml:datastream>
+  # <foxml:datastream ID="OCR" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
+  #   <foxml:datastreamVersion ID="OCR.0" LABEL="OCR" CREATED="2014-11-22T19:00:53.621Z" MIMETYPE="text/plain" SIZE="512">
+  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+OCR+OCR.0"/>
+  #   </foxml:datastreamVersion>
+  # </foxml:datastream>
+  # <foxml:datastream ID="HOCR" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
+  #   <foxml:datastreamVersion ID="HOCR.0" LABEL="HOCR" CREATED="2014-11-22T19:00:57.153Z" MIMETYPE="text/html" SIZE="15641">
+  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+HOCR+HOCR.0"/>
+  #   </foxml:datastreamVersion>
+
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
+
+    case name
+
+    when 'datastream'
+      @current_datastream = Struct::Datastream.new
+      attributes.each do |a|
+        @current_datastream.control_group = a.value if a.localname == 'CONTROL_GROUP'
+        @current_datastream.datastream_id = a.value if a.localname == 'ID'
+      end
+
+    when 'datastreamVersion'
+      attributes.each do |a|
+        @current_datastream.mime_type  = a.value      if a.localname == 'MIMETYPE'
+        @current_datastream.size       = a.value.to_i if a.localname == 'SIZE'
+        @current_datastream.version_id = a.value      if a.localname == 'ID'
+      end
+
+    when 'contentLocation'
+      attributes.each do |a|
+        @current_datastream.has_content_location = true if a.localname == 'TYPE' and a.value == 'INTERNAL_ID'
+      end
+    end
+  end
+end
+
+
+config = parse_command_line(ARGV)
+sax_document = SaxDocument.new
+Nokogiri::XML::SAX::Parser.new(sax_document).parse(get_foxml(config))
+
+# find max column widths for each field (except the last)
+cols = [ 0, 0, 0, 0 ]
+sax_document.datastreams.each do |ds|
+  cols[0] = [ cols[0], ds.datastream_id.length ].max
+  cols[1] = [ cols[1], ds.version_id.length ].max
+  cols[2] = [ cols[2], ds.mime_type.length ].max
+  cols[3] = [ cols[3], ds.size.to_s.length ].max
+end
+
+lines = []
+sax_document.datastreams.each do |ds|
+  filename = data_stream_to_filename(config.islandora_pid, [ ds.datastream_id, ds.version_id ].join('/'))
+  lines.push sprintf("%#{cols[0]}s  %#{cols[1]}s  %#{cols[2]}s  %#{cols[3]}d  %s", ds.datastream_id, ds.version_id, ds.mime_type, ds.size, filename)
+end
+
+# puts lines
+puts lines.sort{ |a,b|  a.gsub(/\s+/, '') <=> b.gsub(/\s+/, '') }
