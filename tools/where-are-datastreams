@@ -93,12 +93,9 @@ class SaxDocument < Nokogiri::XML::SAX::Document
     super()
   end
 
-  def end_element_namespace name, prefix = nil, uri = nil
-    return unless name == 'datastream'
-    @datastreams.push @current_datastream  if @current_datastream.has_content_location and @current_datastream.control_group == 'M'
-  end
-
-  # We're only interested in parsing out parts of the FOXML that has data such as:
+  # We're only interested in parsing out parts of the FOXML that has
+  # data such as (note multiple versions of OCR - I dummied that part
+  # of the example up but I believe it is accurate).
   #
   # <foxml:datastream ID="JPG" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
   #   <foxml:datastreamVersion ID="JPG.0" LABEL="Original JPEG FI06141903_144" CREATED="2014-11-22T19:00:50.167Z" MIMETYPE="image/jpeg" SIZE="27531">
@@ -108,6 +105,9 @@ class SaxDocument < Nokogiri::XML::SAX::Document
   # <foxml:datastream ID="OCR" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
   #   <foxml:datastreamVersion ID="OCR.0" LABEL="OCR" CREATED="2014-11-22T19:00:53.621Z" MIMETYPE="text/plain" SIZE="512">
   #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+OCR+OCR.0"/>
+  #   </foxml:datastreamVersion>
+  #   <foxml:datastreamVersion ID="OCR.1" LABEL="OCR" CREATED="2014-11-22T20:01:34.981Z" MIMETYPE="text/plain" SIZE="512">
+  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+OCR+OCR.1"/>
   #   </foxml:datastreamVersion>
   # </foxml:datastream>
   # <foxml:datastream ID="HOCR" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
@@ -138,15 +138,29 @@ class SaxDocument < Nokogiri::XML::SAX::Document
         @current_datastream.has_content_location = true if a.localname == 'TYPE' and a.value == 'INTERNAL_ID'
       end
     end
+
+  end
+
+  # since we can have multiple datastreamVersion's we may have to copy some data here.
+
+  def end_element_namespace name, prefix = nil, uri = nil
+    return unless name == 'datastreamVersion'
+    @datastreams.push @current_datastream  if @current_datastream.has_content_location and @current_datastream.control_group == 'M'
+    @current_datastream = @current_datastream.clone
   end
 end
 
+# MAIN
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
 config = parse_command_line(ARGV)
 sax_document = SaxDocument.new
 Nokogiri::XML::SAX::Parser.new(sax_document).parse(get_foxml(config))
 
 # find max column widths for each field (except the last)
+
 cols = [ 0, 0, 0, 0 ]
 sax_document.datastreams.each do |ds|
   cols[0] = [ cols[0], ds.datastream_id.length ].max
@@ -161,5 +175,4 @@ sax_document.datastreams.each do |ds|
   lines.push sprintf("%#{cols[0]}s  %#{cols[1]}s  %#{cols[2]}s  %#{cols[3]}d  %s", ds.datastream_id, ds.version_id, ds.mime_type, ds.size, filename)
 end
 
-# puts lines
 puts lines.sort{ |a,b|  a.gsub(/\s+/, '') <=> b.gsub(/\s+/, '') }
