@@ -17,19 +17,21 @@ require 'digest/md5'
 
 DATASTREAM_STORE_ROOT = '/data/datastreamStore'
 
-Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid)
+Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid, :last_datastreams_only)
 
 def parse_command_line args
   cmdline = Struct::Options.new('localhost:8080', nil, 'fedoraAdmin', nil)
-  opts   = OptionParser.new do |opt|
-    opt.banner = "Usage: where-are-datastreams [options] islandora-pid"
-    opt.on("--server-location LOC", String,  "Fedora server to contact, defaults to #{cmdline.server_location}")                 { |sloc| cmdline.server_location = sloc }
-    opt.on("--password PASS",       String,  "Password for connecting to fedora server")                                         { |pass| cmdline.admin_password  = pass }
-    opt.on("--username USER",       String,  "Username for connecting to fedora server, defaults to #{cmdline.admin_username}")  { |user| cmdline.admin_username  = user }
+  opts    = OptionParser.new do |opt|
+    opt.banner = "Usage: where-are-datastreams [options] islandora-pid\nOptions can be abbreviated to -p, -u, -s, -l respectively"
+    opt.on("--password PASS",             String,  "Password for connecting to fedora server")                                         { |pass| cmdline.admin_password        = pass }
+    opt.on("--username USER",             String,  "Username for connecting to fedora server, defaults to #{cmdline.admin_username}")  { |user| cmdline.admin_username        = user }
+    opt.on("--server-location NAME:PORT", String,  "Fedora server:port to contact, defaults to #{cmdline.server_location}")            { |sloc| cmdline.server_location       = sloc }
+    opt.on("--last-datastreams-only",              "Optionally, only show the last version of datastreams, defaults to all versions")  { |last| cmdline.last_datastreams_only = last }
   end
   opts.parse!(args)
   raise "You must include a server password."               unless cmdline.admin_password
   raise "You must include one argument, an islandora PID."  unless args.length == 1
+  raise "'#{args[0]}' is not an islandora PID."             unless args[0].count(':') == 1
   cmdline.islandora_pid = args[0].sub(/^info:fedora\//, '')
 rescue => e
   STDERR.puts e, opts
@@ -67,6 +69,13 @@ def data_stream_to_filename(islandora_pid, data_stream_id)
   return ([ DATASTREAM_STORE_ROOT ] + hash.unpack('A2A2A2') + [ filename ]).join('/')
 end
 
+
+def nope message
+  STDERR.puts message
+  exit -1
+end
+
+
 # get_foxml(...)
 # essentially, do 'curl -s http://fedoraAdmin:PASSWORD@islandorap:8080/fedora/objects/PID/objectXML'
 
@@ -75,9 +84,14 @@ def get_foxml(config)
   response = RestClient.get(url)
   raise "Can't retrieve #{url.sub(config.admin_password, 'XXXXX')} - please check your command line options" unless response.code == 200
   return response.to_str
+rescue Errno::ECONNREFUSED => e
+  nope "Can't connect to #{config.server_location}"
+rescue RestClient::Unauthorized
+  nope "Password for #{config.admin_username} was rejected by web service at #{config.server_location}"
+rescue RestClient::ResourceNotFound
+  nope "Islandora object #{config.islandora_pid} doesn't exist on the server"
 rescue => e
-  STDERR.puts e
-  exit -1
+  nope e
 end
 
 
@@ -87,9 +101,10 @@ class SaxDocument < Nokogiri::XML::SAX::Document
 
   attr_accessor :datastreams
 
-  def initialize
+  def initialize(only_show_last_datastream = false)
     @datastreams = []
     @current_datastream = nil
+    @only_show_last_datastream = only_show_last_datastream
     super()
   end
 
@@ -138,15 +153,24 @@ class SaxDocument < Nokogiri::XML::SAX::Document
         @current_datastream.has_content_location = true if a.localname == 'TYPE' and a.value == 'INTERNAL_ID'
       end
     end
-
   end
 
-  # since we can have multiple datastreamVersion's we may have to copy some data here.
+  # When we want multiple datastreamVersion's we just copy the
+  # previous @current_datastream, since it holds the parent's
+  # (datastream element) info.
 
   def end_element_namespace name, prefix = nil, uri = nil
-    return unless name == 'datastreamVersion'
-    @datastreams.push @current_datastream  if @current_datastream.has_content_location and @current_datastream.control_group == 'M'
-    @current_datastream = @current_datastream.clone
+    return unless name == 'datastreamVersion' or name == 'datastream'
+    return unless @current_datastream.has_content_location and @current_datastream.control_group == 'M'
+
+    case
+    when  (name == 'datastreamVersion' and not @only_show_last_datastream)
+      @datastreams.push @current_datastream
+      @current_datastream = @current_datastream.clone
+
+    when (name == 'datastream' and @only_show_last_datastream)
+      @datastreams.push @current_datastream
+    end
   end
 end
 
@@ -155,8 +179,9 @@ end
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
+
 config = parse_command_line(ARGV)
-sax_document = SaxDocument.new
+sax_document = SaxDocument.new(config.last_datastreams_only)
 Nokogiri::XML::SAX::Parser.new(sax_document).parse(get_foxml(config))
 
 # find max column widths for each field (except the last)
