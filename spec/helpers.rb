@@ -1,13 +1,43 @@
 require 'json'
 
-module MetsHelpers
 
-  Struct::new('MetsMockConfig',
-              'schema_directory')
+module CommonHelpers
+  # give the whole path to a test data file
 
   def test_data_path filename
     return File.expand_path(File.join(File.dirname(__FILE__), 'test-data', filename))
   end
+
+end
+
+module ModsHelpers
+
+  include CommonHelpers
+
+  Struct::new('ModsMockConfig',
+              'schema_directory',
+              'mods_to_dc_transform_filename',
+              'mods_to_title_transform_filename',
+              'mods_post_processing_filename')
+
+  def config
+    schema_dir = File.join(File.dirname(__FILE__), "../lib/include/")
+    return Struct::ModsMockConfig::new(schema_dir,                                         # schema_directory
+                                       File.join(schema_dir, 'mods_to_dc.xsl'),            # mods_to_dc_transform_filename
+                                       File.join(schema_dir, 'extract-mods-title.xslt'),   # mods_to_title_transform_filename
+                                       File.join(schema_dir, 'modify-serial-mods.xsl'))    # mods_post_processing_filename
+  end
+
+
+
+end
+
+module MetsHelpers
+
+  include CommonHelpers
+
+  Struct::new('MetsMockConfig',
+              'schema_directory')
 
   def config
     include_dir = File.join(File.dirname(__FILE__), "../lib/include/")
@@ -72,6 +102,8 @@ end
 
 module UtilsHelpers
 
+  include CommonHelpers
+
   Struct::new('MockConfig',
               'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command', 'tesseract_command', 'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry')
 
@@ -90,12 +122,6 @@ module UtilsHelpers
 
 
   # TODO:  check for NETPBM toolset and throw error if not installed
-
-  # give the whole path to a test data file
-
-  def test_data_path filename
-    return File.expand_path(File.join(File.dirname(__FILE__), 'test-data', filename))
-  end
 
   def image_size file, command
     info = ""

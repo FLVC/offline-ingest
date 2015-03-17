@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:flvc="info:flvc/manifest/v1" xmlns:dcterms="http://purl.org/dc/terms/" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd" version="3.4">
+  <titleInfo>
+    <title>Administration Building</title>
+  </titleInfo>
+  <identifier type="digitool">
+100369398</identifier>
+  <name>
+    <namePart>Morgan, Frances</namePart>
+    <role>
+      <roleTerm type="text" authority="marcrelator">creator</roleTerm>
+    </role>
+  </name>
+  <typeOfResource>still image</typeOfResource>
+  <originInfo>
+    <publisher>Heritage Protocol, Florida State University, Tallahassee, Florida.</publisher>
+    <dateIssued keyDate="yes">August 1940</dateIssued>
+  </originInfo>
+  <note>The personal photographs of Florida State College for Women student Frances Morgan. These photographs are a part of the Frances Morgan Collection, circa 1931-1933 (Accession No. HP-2009-037). B/W.</note>
+  <subject>
+    <topic>Florida State College for Women</topic>
+  </subject>
+  <subject>
+    <topic>Morgan, Frances</topic>
+  </subject>
+  <subject>
+    <topic>Administration Building</topic>
+  </subject>
+  <subject>
+    <topic>Westcott Building</topic>
+  </subject>
+  <subject>
+    <topic>Buildings and Grounds</topic>
+  </subject>
+  <subject>
+    <topic>circa 1940s</topic>
+  </subject>
+  <location displayLabel="purl">
+    <url>http://purl.flvc.org/fgcu/dt/100369398</url>
+  </location>
+  <accessCondition>This image is the property of Florida State University. Its use is governed by U.S. and international copyright laws. To obtain a high-resolution copy of this image for a fee, please contact Florida State University Heritage Protocol.</accessCondition>
+  <accessCondition type="restriction on access">This collection is open to all researchers.</accessCondition>
+</mods>

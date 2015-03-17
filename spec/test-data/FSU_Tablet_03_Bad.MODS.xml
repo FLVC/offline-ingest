@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods:mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:flvc="info:flvc/manifest/v1" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:dcterms="http://purl.org/dc/terms/" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+  <extension>
+    <flvc:flvc>
+      <flvc:owningInstitution>FSU</flvc:owningInstitution>
+      <flvc:submittingInstitution>FSU</flvc:submittingInstitution>
+    </flvc:flvc>
+  </extension>
+  <titleInfo>
+    <title>FSU 03</title>
+  </titleInfo>
+  <identifier type="IID">FSU_Tablet_%%</identifier>
+  <typeOfResource>text</typeOfResource>
+  <genre authority="TGM">Cuneiform</genre>
+  <originInfo>
+    <place>
+      <placeTerm type="text">Umma</placeTerm>
+    </place>
+    <dateCreated encoding="w3cdtf">Ur III, Šulgi 44</dateCreated>
+  </originInfo>
+  <language>
+    <languageTerm type="text" authority="iso639-2b">Sumerian</languageTerm>
+  </language>
+  <physicalDescription>
+    <extent>67 x 48 x 24 mm</extent>
+  </physicalDescription>
+  <abstract displayLabel="Summary">This is a very unusual record, documenting the distribution of ‘high quality beer’ for a variety of priests and&#13;
+priestesses in Umma, who were perhaps attached to the temple of the city-god Šara.</abstract>
+  <accessCondition type="useAndReproduction">Use of this item is provided for non-commercial, personal, educational, and research use only. For information about the copyright and reproduction rights for this item, please contact Special Collections &amp; Archives, Florida State University Libraries, Tallahassee, Florida.</accessCondition>
+  <location>
+    <physicalLocation>Special Collections &amp; Archives, Florida State University Libraries, Tallahassee, Florida.</physicalLocation>
+  </location>
+  <location displayLabel="purl">
+    <url>http://purl.flvc.org/fsu/fd/FSU_Tablet_03</url>
+  </location>
+  <subject>
+    <topic>Cuneiform tablets</topic>
+  </subject>
+</mods:mods>
