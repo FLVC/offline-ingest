@@ -20,7 +20,7 @@ DATASTREAM_STORE_ROOT = '/data/datastreamStore'
 Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid, :last_datastreams_only)
 
 def parse_command_line args
-  cmdline = Struct::Options.new('localhost:8080', nil, 'fedoraAdmin', nil)
+  cmdline = Struct::Options.new('localhost:8080', nil, 'fedoraAdmin', nil, false)
   opts    = OptionParser.new do |opt|
     opt.banner = "Usage: where-are-datastreams [options] islandora-pid\nOptions can be abbreviated to -p, -u, -s, -l respectively"
     opt.on("--password PASS",             String,  "Password for connecting to fedora server")                                         { |pass| cmdline.admin_password        = pass }
@@ -47,19 +47,19 @@ def data_stream_to_filename(islandora_pid, data_stream_id)
   # From the islandora pid and data_stream id, assemble an internal
   # URI, then use the akumbra algorithm to find the filepath.  We'll
   # use the example "fiu:18532" and "OCR/OCR.0",
-
+  #
   # FLVC specifics: the DATASTREAM_STORE_ROOT and three-part
   # ("##/##/##") file hash mapping.  Otherwise, the standard rules
   # apply:
-
+  #
   # *) Construct the internal URI: "info:fedora/fiu:1853/OCR/OCR.0"
-
+  #
   # *) Create the filesystem-safe string
   # "info%3Afedora%2Ffiu%3A18532%2FOCR%2FOCR.0" for the filename
-
+  #
   # *) Distribute the intial characters of the MD5 hexdigest of the
   # internal URI into directory components (for us, "35", "38", "0a")
-
+  #
   # *) join altogether into a filepath and return it
 
   uri = [ 'info:fedora', islandora_pid, data_stream_id ].join('/')
@@ -189,9 +189,9 @@ Nokogiri::XML::SAX::Parser.new(sax_document).parse(get_foxml(config))
 cols = [ 0, 0, 0, 0 ]
 sax_document.datastreams.each do |ds|
   cols[0] = [ cols[0], ds.datastream_id.length ].max
-  cols[1] = [ cols[1], ds.version_id.length ].max
-  cols[2] = [ cols[2], ds.mime_type.length ].max
-  cols[3] = [ cols[3], ds.size.to_s.length ].max
+  cols[1] = [ cols[1], ds.version_id.length    ].max
+  cols[2] = [ cols[2], ds.mime_type.length     ].max
+  cols[3] = [ cols[3], ds.size.to_s.length     ].max
 end
 
 lines = []
