@@ -9,6 +9,7 @@
 #
 # so for the above example....
 
+require 'rubygems'
 require 'uri'
 require 'optparse'
 require 'nokogiri'
