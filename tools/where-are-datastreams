@@ -114,22 +114,26 @@ class SaxDocument < Nokogiri::XML::SAX::Document
   # of the example up but I believe it is accurate).
   #
   # <foxml:datastream ID="JPG" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
-  #   <foxml:datastreamVersion ID="JPG.0" LABEL="Original JPEG FI06141903_144" CREATED="2014-11-22T19:00:50.167Z" MIMETYPE="image/jpeg" SIZE="27531">
-  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+JPG+JPG.0"/>
-  #   </foxml:datastreamVersion>
+  #     <foxml:datastreamVersion ID="JPG.0" LABEL="Original JPEG FI06141903_144" CREATED="2014-11-22T19:00:50.167Z" MIMETYPE="image/jpeg" SIZE="27531">
+  #         <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+JPG+JPG.0"/>
+  #     </foxml:datastreamVersion>
   # </foxml:datastream>
+  #
   # <foxml:datastream ID="OCR" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
-  #   <foxml:datastreamVersion ID="OCR.0" LABEL="OCR" CREATED="2014-11-22T19:00:53.621Z" MIMETYPE="text/plain" SIZE="512">
-  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+OCR+OCR.0"/>
-  #   </foxml:datastreamVersion>
-  #   <foxml:datastreamVersion ID="OCR.1" LABEL="OCR" CREATED="2014-11-22T20:01:34.981Z" MIMETYPE="text/plain" SIZE="512">
-  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+OCR+OCR.1"/>
-  #   </foxml:datastreamVersion>
+  #     <foxml:datastreamVersion ID="OCR.0" LABEL="OCR" CREATED="2014-11-22T19:00:53.621Z" MIMETYPE="text/plain" SIZE="512">
+  #         <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+OCR+OCR.0"/>
+  #     </foxml:datastreamVersion>
+  #     <foxml:datastreamVersion ID="OCR.1" LABEL="OCR" CREATED="2014-11-22T20:01:34.981Z" MIMETYPE="text/plain" SIZE="512">
+  #         <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+OCR+OCR.1"/>
+  #     </foxml:datastreamVersion>
   # </foxml:datastream>
+  #
   # <foxml:datastream ID="HOCR" STATE="A" CONTROL_GROUP="M" VERSIONABLE="true">
-  #   <foxml:datastreamVersion ID="HOCR.0" LABEL="HOCR" CREATED="2014-11-22T19:00:57.153Z" MIMETYPE="text/html" SIZE="15641">
-  #     <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+HOCR+HOCR.0"/>
-  #   </foxml:datastreamVersion>
+  #     <foxml:datastreamVersion ID="HOCR.0" LABEL="HOCR" CREATED="2014-11-22T19:00:57.153Z" MIMETYPE="text/html" SIZE="15641">
+  #         <foxml:contentLocation TYPE="INTERNAL_ID" REF="fiu:18532+HOCR+HOCR.0"/>
+  #     </foxml:datastreamVersion>
+  # </foxml:datastream>
+
 
   def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []
 
