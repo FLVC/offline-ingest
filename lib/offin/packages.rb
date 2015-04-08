@@ -12,11 +12,15 @@ require 'offin/metadata-checkers'
 require 'offin/config'
 require 'offin/drupal-db'
 
-BASIC_IMAGE_CONTENT_MODEL = "islandora:sp_basic_image"
-LARGE_IMAGE_CONTENT_MODEL = "islandora:sp_large_image_cmodel"
-PDF_CONTENT_MODEL         = "islandora:sp_pdf"
-BOOK_CONTENT_MODEL        = "islandora:bookCModel"
-PAGE_CONTENT_MODEL        = "islandora:pageCModel"
+BASIC_IMAGE_CONTENT_MODEL      = 'islandora:sp_basic_image'
+LARGE_IMAGE_CONTENT_MODEL      = 'islandora:sp_large_image_cmodel'
+PDF_CONTENT_MODEL              = 'islandora:sp_pdf'
+BOOK_CONTENT_MODEL             = 'islandora:bookCModel'
+PAGE_CONTENT_MODEL             = 'islandora:pageCModel'
+NEWSPAPER_CONTENT_MODEL        = 'islandora:newspaperCModel'
+NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
+NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
+
 
 # PackageFactory takes a directory path and checks the manifest.xml
 # file within it.  It determines what content model is being
@@ -40,10 +44,11 @@ class PackageFactory
     manifest = Utils.get_manifest @config, directory
 
     return case manifest.content_model
-           when BASIC_IMAGE_CONTENT_MODEL;  BasicImagePackage.new(@config, directory, manifest, @updator_class)
-           when LARGE_IMAGE_CONTENT_MODEL;  LargeImagePackage.new(@config, directory, manifest, @updator_class)
-           when PDF_CONTENT_MODEL;          PdfPackage.new(@config, directory, manifest, @updator_class)
-           when BOOK_CONTENT_MODEL;         BookPackage.new(@config, directory, manifest, @updator_class)
+           when BASIC_IMAGE_CONTENT_MODEL;       BasicImagePackage.new(@config, directory, manifest, @updator_class)
+           when LARGE_IMAGE_CONTENT_MODEL;       LargeImagePackage.new(@config, directory, manifest, @updator_class)
+           when PDF_CONTENT_MODEL;               PDFPackage.new(@config, directory, manifest, @updator_class)
+           when BOOK_CONTENT_MODEL;              BookPackage.new(@config, directory, manifest, @updator_class)
+           when NEWSPAPER_ISSUE_CONTENT_MODEL;   NewspaperIssuePackage.new(@config, directory, manifest, @updator_class)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
@@ -432,6 +437,12 @@ class Package
     return valid?
   end
 
+  # utility to return a nicely formated string of the (sub)class name for error and warning messages
+
+  def pretty_class_name
+    return self.class.to_s.split(/(?=[A-Z])/).join(' ')
+  end
+
 end # of Package base class
 
 
@@ -449,11 +460,11 @@ class BasicImagePackage < Package
     @mods_type_of_resource = 'still image'
 
     if @datafiles.length > 1
-      error "The Basic Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      error "The #{pretty_class_name} #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
     end
 
     if @datafiles.length == 0
-      error "The Basic Image package #{@directory_name} contains no data files."
+      error "The #{pretty_class_name}  #{@directory_name} contains no data files."
     end
 
     return unless valid?
@@ -469,15 +480,15 @@ class BasicImagePackage < Package
 
     # TODO: add special support for TIFFs (not needed for digitool migration)
     when TIFF
-      raise PackageError, "The Basic Image package #{@directory_name} contains the TIFF file #{@datafiles.first}, which is currently unsupported (coming soon)."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains the TIFF file #{@datafiles.first}, which is currently unsupported (coming soon)."
     else
-      raise PackageError, "The Basic Image package #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{type}."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{type}."
     end
 
   rescue PackageError => e
-    error "Exception for Basic Image package #{@directory_name}: #{e.message}"
+    error "Exception for #{pretty_class_name} #{@directory_name}: #{e.message}"
   rescue => e
-    error "Exception #{e.class} - #{e.message} for Basic Image package #{@directory_name}, backtrace follows:", e.backtrace
+    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
   end
 
   def ingest
@@ -544,11 +555,11 @@ class LargeImagePackage < Package
     @mods_type_of_resource = 'still image'
 
     if @datafiles.length > 1
-      error "The Large Image package #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+      error "The #{pretty_class_name} #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
     end
 
     if @datafiles.length == 0
-      raise PackageError, "The Large Image package #{@directory_name} contains no data files."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."
     end
 
     return unless valid?
@@ -557,20 +568,19 @@ class LargeImagePackage < Package
     @image_pathname = File.join(@directory_path, @image_filename)
     @mime_type = Utils.mime_type(@image_pathname)
 
-
     case @mime_type
     when JP2
       @image = File.open(@image_pathname, 'rb')
     when TIFF
       @image = File.open(@image_pathname, 'rb')
     else
-      raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
     end
 
   rescue PackageError => e
-    error "Exception for Large Image package #{@directory_name}: #{e.message}"
+    error "Exception for #{pretty_class_name} #{@directory_name}: #{e.message}"
   rescue => e
-    error "Exception #{e.class} - #{e.message} for Large Image package #{@directory_name}, backtrace follows:", e.backtrace
+    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
   end
 
   def ingest
@@ -604,7 +614,7 @@ class LargeImagePackage < Package
       when TIFF;   ingest_tiff ingestor
       when JP2;    ingest_jp2 ingestor
       else
-        raise PackageError, "The Large Image package #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with image format #{@image.format}."
+        raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with image format #{@image.format}."
       end
 
       medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
@@ -691,7 +701,7 @@ end
 
 # Subclass of Package for handling the PDF content model
 
-class PdfPackage < Package
+class PDFPackage < Package
 
   # At this point we know we have a manifest, mods and maybe a marc file.
 
@@ -702,11 +712,11 @@ class PdfPackage < Package
     @mods_type_of_resource = 'text'
 
     if @datafiles.length > 2
-      raise PackageError, "The PDF package #{@directory_name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains too many data files (only a PDF and optional OCR file allowed): #{@datafiles.join(', ')}."
     end
 
     if @datafiles.length == 0
-      raise PackageError, "The PDF package #{@directory_name} contains no data files."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."
     end
 
     @pdf, @pdf_filename, @pdf_pathname = nil
@@ -726,11 +736,11 @@ class PdfPackage < Package
         @full_text_pathname = path
         @full_text = true
       else
-        raise PackageError, "The PDF package #{@directory_name} contains an unexpected file #{filename} of type #{type}."
+        raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected file #{filename} of type #{type}."
       end
     end
 
-    raise PackageError, "The PDF package #{@directory_name} doesn't contain a PDF file."  if @pdf.nil?
+    raise PackageError, "The #{pretty_class_name} #{@directory_name} doesn't contain a PDF file."  if @pdf.nil?
 
     case
 
@@ -768,9 +778,9 @@ class PdfPackage < Package
     end
 
   rescue PackageError => e
-    error "Exception for PDF package #{@directory_name}: #{e.message}"
+    error "Exception for #{pretty_class_name} #{@directory_name}: #{e.message}"
   rescue => e
-    error "Exception #{e.class} - #{e.message}, for PDF package #{@directory_name} backtrace follows:", e.backtrace
+    error "Exception #{e.class} - #{e.message}, for #{pretty_class_name} #{@directory_name} backtrace follows:", e.backtrace
   end
 
   def ingest
@@ -824,50 +834,18 @@ class PdfPackage < Package
   end
 end
 
+# The StructuredPagePackage is planned for sharing the common methods for the BookPackage and NewspaperIssuePackage
 
-# Subclass of Package for handling the Book content model
-
-class BookPackage < Package
+class StructuredPagePackage
 
   attr_reader :mets, :page_filenames, :table_of_contents
 
   def initialize config, directory, manifest, updator
     super(config, directory, manifest, updator)
-
-    @content_model = BOOK_CONTENT_MODEL
     @mods_type_of_resource = 'text'
-
-    raise PackageError, "The Book package #{@directory_name} contains no data files."  if @datafiles.empty?
-
-    handle_marc or return  # create @marc if we have a marc.xml
-    handle_mets or return  # create @mets and check its validity
-
-    create_table_of_contents or return       # creates @table_of_contents
-    reconcile_file_lists     or return       # creates @page_filenames
-    check_page_types         or return       # checks @page_filenames file types
-
-  rescue PackageError => e
-    error "Error processing Book package #{@directory_name}: #{e.message}"
-  rescue => e
-    error "Exception #{e.class} - #{e.message} for Book package #{@directory_name}, backtrace follows:", e.backtrace
+    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
   end
 
-  def ingest
-    return if @config.test_mode
-    ingest_book
-    sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
-    ingest_pages
-  end
-
-  private
-
-  # TODO: This following is (probably) a digitool-only case  and really should be pulled out into the metadata-updater class
-
-  def handle_marc
-    marc_filename = File.join(@directory_path, 'marc.xml')
-    @marc = File.read(marc_filename) if File.exists? marc_filename
-    return true
-  end
 
   def handle_mets
     mets_filename = File.join(@directory_path, 'mets.xml')
@@ -875,11 +853,11 @@ class BookPackage < Package
     if File.exists? mets_filename
       @mets =  Mets.new(@config, mets_filename)
     else
-      raise PackageError, "The Book package #{@directory_name} doesn't contain a mets.xml file."
+      raise PackageError, "The #{pretty_class_name}  #{@directory_name} doesn't contain a mets.xml file."
     end
 
     if not @mets.valid?
-      error "The mets.xml file in the Book package #{@directory_name} is invalid, errors follow:"
+      error "The mets.xml file in the #{pretty_class_name} #{@directory_name} is invalid, errors follow:"
     end
 
     error mets.errors
@@ -957,12 +935,159 @@ class BookPackage < Package
     unexpected = @datafiles - expected
 
     unless unexpected.empty?
-      warning "The Book package #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
+      warning "The #{pretty_class_name} #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
       warning unexpected.map { |name| ' - ' + name }.sort
     end
 
     unless missing.empty?
-      error "The Book package #{@directory_name} is missing the following #{missing.count} required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
+      error "The #{pretty_class_name} #{@directory_name} is missing the following #{missing.count} required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
+      error missing.map { |name| ' - ' + name }.sort
+      return false
+    end
+
+    @page_filenames = expected - missing
+  end
+end
+
+
+# Subclass of Package for handling the Book content model
+
+class BookPackage < Package
+
+  attr_reader :mets, :page_filenames, :table_of_contents
+
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
+
+    @content_model = BOOK_CONTENT_MODEL
+    @mods_type_of_resource = 'text'
+
+    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
+
+    handle_marc or return  # create @marc if we have a marc.xml
+    handle_mets or return  # create @mets and check its validity
+
+    create_table_of_contents or return       # creates @table_of_contents
+    reconcile_file_lists     or return       # creates @page_filenames
+    check_page_types         or return       # checks @page_filenames file types
+
+  rescue PackageError => e
+    error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
+  rescue => e
+    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
+  end
+
+  def ingest
+    return if @config.test_mode
+    ingest_book
+    sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
+    ingest_pages
+  end
+
+  private
+
+  # TODO: This following is (probably) a digitool-only case  and really should be pulled out into the metadata-updater class
+
+  def handle_marc
+    marc_filename = File.join(@directory_path, 'marc.xml')
+    @marc = File.read(marc_filename) if File.exists? marc_filename
+    return true
+  end
+
+  def handle_mets
+    mets_filename = File.join(@directory_path, 'mets.xml')
+
+    if File.exists? mets_filename
+      @mets =  Mets.new(@config, mets_filename)
+    else
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} doesn't contain a mets.xml file."
+    end
+
+    if not @mets.valid?
+      error "The mets.xml file in the #{pretty_class_name} #{@directory_name} is invalid, errors follow:"
+    end
+
+    error mets.errors
+    warning mets.warnings
+
+    return valid?
+  end
+
+
+  def create_table_of_contents
+
+    @table_of_contents = TableOfContents.new(@mets.structmap)
+
+    if @table_of_contents.warnings?
+      warning "Note: the table of contents derived from the METS file #{@directory_name}/mets.xml has the following issues:"
+      warning @table_of_contents.warnings
+    end
+
+    if @table_of_contents.errors?
+      error "The table of contents derived from the METS file #{@directory_name}/mets.xml is invalid:"
+      error @table_of_contents.errors
+      return false
+    end
+
+    return true
+  end
+
+  def check_page_types
+
+    if @page_filenames.empty?
+      error  "The #{Pretty_Class_Name} #{directory_name} does not appear to have any page image files."
+      return
+    end
+
+    issues = []
+    @page_filenames.each do |file_name|
+      path = File.join(@directory_path, file_name)
+      type = Utils.mime_type(path)
+      unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
+        issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" \
+      end
+    end
+
+    unless issues.empty?
+      error "The #{Pretty_Class_Name} #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
+      error issues
+      return
+    end
+
+    return true
+  end
+
+
+  def reconcile_file_lists
+
+    missing     = []
+    expected    = []
+
+    # This checks the filenames in the list @datafiles (what's in the
+    # package directory, less the metadata files) against the
+    # filenames declared in the METS file table of contents (a
+    # structmap).  While datafiles is a simple list of filenames, the
+    # table of contents provies a Struct::Page with slots :title,
+    # :level, :image_filename, :image_mimetype, and :valid_repeat.
+    # A :valid_repeat file is ignored.
+
+    # TODO: handle text files somehow.
+
+    @table_of_contents.pages.each do |entry|
+      next if entry.valid_repeat
+      expected.push entry.image_filename
+      missing.push  entry.image_filename  if @datafiles.grep(entry.image_filename).empty?
+    end
+
+    unexpected = @datafiles - expected
+
+    unless unexpected.empty?
+      warning "The #{pretty_class_name} #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
+      warning unexpected.map { |name| ' - ' + name }.sort
+    end
+
+    unless missing.empty?
+      error "The #{pretty_class_name} #{@directory_name} is missing the following #{missing.count} required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
       error missing.map { |name| ' - ' + name }.sort
       return false
     end
@@ -1256,7 +1381,7 @@ class BookPackage < Package
       when JP2;   handle_jp2k_page(ingestor, path);
       when JPEG;  handle_jpeg_page(ingestor, path);
       else
-        raise PackageError, "Page image #{pagename} in Book package #{@directory_name} is of unsupported type #{mime_type}."
+        raise PackageError, "Page image #{pagename} in #{pretty_class_name} #{@directory_name} is of unsupported type #{mime_type}."
       end
 
       handle_ocr(ingestor, path)
@@ -1325,3 +1450,63 @@ class BookPackage < Package
   end
 
 end   #  of class BookPackage
+
+
+# A package for handling the Newspaper Issue Content Model
+
+class NewspaperIssuePackage < StructuredPagePackage
+
+  attr_reader :mets, :page_filenames, :table_of_contents
+
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
+
+    @content_model = NEWSPAPER_ISSUE_CONTENT_MODEL
+
+    handle_marc or return  # create @marc if we have a marc.xml
+    handle_mets or return  # create @mets and check its validity
+
+    create_table_of_contents or return       # creates @table_of_contents
+    reconcile_file_lists     or return       # creates @page_filenames
+    check_page_types         or return       # checks @page_filenames file types
+
+  rescue PackageError => e
+    error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
+  rescue => e
+    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
+  end
+
+  def ingest
+    return if @config.test_mode
+    ingest_issue
+    # TODO:  uncomment after
+    # sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
+    ingest_newspaper_pages
+  end
+
+
+  # An issue must have a MODS file with at least a dateIssued.
+  #
+  # https://fsu.digital.flvc.org/islandora/object/fsu%3A116912/datastream/RELS-EXT
+  #
+  # <?xml version="1.0" encoding="ISO-8859-1"?>
+  # <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:islandora="http://islandora.ca/ontology/relsext#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  #   <rdf:Description rdf:about="info:fedora/fsu:116912">
+  #     <fedora-model:hasModel rdf:resource="info:fedora/islandora:newspaperIssueCModel"/>
+  #     <fedora:isMemberOf rdf:resource="info:fedora/fsu:109142"/>
+  #     <islandora:isSequenceNumber>5</islandora:isSequenceNumber>
+  #     <islandora:dateIssued>1915-01-23</islandora:dateIssued>
+  #     <islandora:inheritXacmlFrom rdf:resource="info:fedora/fsu:109142"/>
+  #   </rdf:Description>
+  # </rdf:RDF>
+
+
+  def ingest_issue
+
+  end
+
+  def ingest_newspaper_pages
+
+  end
+
+end
