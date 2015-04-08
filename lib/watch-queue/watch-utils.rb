@@ -38,8 +38,8 @@ class WatchUtils
   end
 
 
-  # Resque requires a specialized logger due to interrupt race
-  # conditions. Meh. Also: our application code does a temporary
+  # Resque requires th specialized logger MonoLogger due to interrupt
+  # race conditions. Meh. Also: our application code does a temporary
   # dup/reopen of STDERR when processing certain image content-types,
   # which confuses MonoLogger; luckily we can get away with using
   # STDOUT.
