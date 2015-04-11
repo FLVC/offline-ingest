@@ -1485,6 +1485,11 @@ class NewspaperIssuePackage < StructuredPagePackage
   end
 
 
+
+  # manifest issues:
+
+
+
   # An issue must have a MODS file with at least a dateIssued.
   #
   # https://fsu.digital.flvc.org/islandora/object/fsu%3A116912/datastream/RELS-EXT
@@ -1499,6 +1504,17 @@ class NewspaperIssuePackage < StructuredPagePackage
   #     <islandora:inheritXacmlFrom rdf:resource="info:fedora/fsu:109142"/>
   #   </rdf:Description>
   # </rdf:RDF>
+
+  # May specify languages (see https://code.google.com/p/tesseract-ocr/downloads/list)
+  # <language>
+  #    <languageTerm type="text" authority="iso639-2b">English</languageTerm>
+  #    <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+  # </language>
+  #
+
+
+
+
 
 
   def ingest_issue

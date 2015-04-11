@@ -557,6 +557,8 @@ class Utils
     errors = []
     err = ""
 
+    ### TODO: doh!   popen3 doesn't need shellescape if cmdline is an array - fix EVERYWHERE
+
     cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (hocr ? ' hocr' : '')
 
     Timeout.timeout(TESSERACT_TIMEOUT) do
@@ -577,6 +579,8 @@ class Utils
     end
 
     return File.read(text_filename).strip, errors
+
+    #### TODO:  kill off the previous tesseract
 
   rescue Timeout::Error => e
     errors.push "Tesseract command '#{cmdline}' timed-out after #{TESSERACT_TIMEOUT} seconds"
