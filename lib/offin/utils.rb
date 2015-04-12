@@ -1,5 +1,11 @@
 # This file is like that kitchen drawer with the assorted unsortables.
 
+# TODO: the image processing, especially the jp2k stuff, needs an
+# overhaul. openjpeg in particular seems able to handle problematic
+# jp2k files better, as a last resort.
+
+
+
 require 'rubydora'
 require 'fileutils'
 require 'iconv'
@@ -363,6 +369,7 @@ class Utils
     FileUtils.rm_f tempfile.path
   end
 
+  # split text message into array of lines, removing any bogus error messages.
 
   def Utils.format_error_messages text
 
@@ -380,6 +387,8 @@ class Utils
   end
 
   #### TODO:  need to catch errors, make sure we always provide an opened file, even it's File.open('/dev/null', 'rb')
+
+  # return an open filehandle to a converted image;
 
   def Utils.image_processing config, image_filepath, command, error_title
 
@@ -547,14 +556,42 @@ class Utils
 
   private
 
+
   def Utils.tesseract config, image_filepath, hocr = nil
 
     tempfiles = []
+    errors = []
+
+    tempfiles.push converted_filepath = Tempfile.new('tesseract-jp2k').path
+    tempfiles.push tiff_filepath = converted_filepath + '.tiff'
+
+    if Utils.mime_type(image_filepath) == 'image/jp2'
+      if Utils.jp2k_ok?(config, image_filepath)
+        temphandle, errors =  Utils.image_processing(config, image_filepath,
+                                                     "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} tiff:-",
+                                                     "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+        return nil, errors unless errors.nil? or errors.empty?
+
+        File.open(tiff_filepath, 'w+b') do |tiff|
+          while buff = temphandle.read(1024 * 1024)
+            tiff.write buff
+          end
+        end
+        temphandle.close
+      else
+        unused, errors = Utils.image_processing(config, image_filepath,
+                                                    "#{config.kakadu_expand_command} -i #{Utils.shellescape(image_filepath)} -o #{Utils.shellescape(tiff_filepath)}",
+                                                    "Failed attempt to convert #{image_filepath} using kakadu after JP2 image failure.")
+        return nil, errors unless errors.nil? or errors.empty?
+      end
+
+      image_filepath = tiff_filepath
+    end
+
 
     tempfiles.push base_filename = Tempfile.new('tesseract-').path
     tempfiles.push text_filename = base_filename + (hocr ? '.html' : '.txt')
 
-    errors = []
     err = ""
 
     cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (hocr ? ' hocr' : '')
@@ -595,7 +632,7 @@ class Utils
 
     return unless text.class == String
     return if text.empty?
-    return text.gsub(/<!DOCTYPE\s+html.*?>\s+/mi, '')
+    return text.gsub(/<!DOCTYPE\s+html.*?>\s+/mi, '')    # avoids schema lookup when indexing
   end
 
   # use tesseract to create an OCR file
