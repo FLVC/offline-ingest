@@ -345,8 +345,16 @@ RSpec.describe Utils do
   # end
 
   describe "#ocr" do
-    it "returns a String of text extracted from an image" do
+    it "returns a String of text extracted from a TIFF image" do
       text = Utils.ocr(config, test_data_path("edward-text.tiff"))
+      expect(text).to be_a_kind_of(String)
+      expect(text).to match(/glorious summer/i)
+    end
+  end
+
+  describe "#ocr" do
+    it "returns a String of text extracted from a JP2K image" do
+      text = Utils.ocr(config, test_data_path("edward-text.jp2"))
       expect(text).to be_a_kind_of(String)
       expect(text).to match(/glorious summer/i)
     end
