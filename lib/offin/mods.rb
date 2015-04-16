@@ -181,6 +181,18 @@ class Mods
   end
 
 
+  # <language>
+  #   <languageTerm type="text" authority="iso639-2b">English</languageTerm>
+  #   <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+  # </language>
+
+  def languages
+    return @xml_document.xpath("//mods:languageTerm[translate(@authority, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"ISO639-2B\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s.strip }.uniq
+  rescue => e
+    return []
+  end
+
+
   # There may be many typeOfResource elements, and they may, strictly speaking, have a
   # mix of character data and attributes.  We are really only interested in
   # the character data, particularly 'text' or 'still image'.  We downcase the text.

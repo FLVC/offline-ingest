@@ -4,14 +4,14 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
-# $LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
-$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+$LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
+# $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
 require 'offin'
 require 'optparse'
 
-# @config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "alpo")
-@config  = Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", "default", "islandora7d")
+@config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "islandora7d")
+# @config  = Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", "default", "islandora7d")
 
 Struct.new('MockManifest', :owning_institution, :submitting_institution, :object_history, :other_logos)
 
@@ -24,24 +24,25 @@ ARGV.each do |filename|
 
   STDERR.puts "Extensions? #{@mods.flvc_extensions?}"
 
-  @mods.add_islandora_identifier('foo:bar')
-  @mods.add_flvc_extension_elements(manifest)
+  # @mods.add_islandora_identifier('foo:bar')
+  # @mods.add_flvc_extension_elements(manifest)
 
-  STDERR.puts "Extensions? #{@mods.flvc_extensions?}"
+  # STDERR.puts "Extensions? #{@mods.flvc_extensions?}"
 
-  STDERR.puts "MODS file #{filename} is #{@mods.valid? ? 'valid' : 'not valid'}."
-  if @mods.errors?
-    STDERR.puts 'Errors:'
-    STDERR.puts @mods.errors.map { |foo| '   ' + foo }
-    next
-  end
+  # STDERR.puts "MODS file #{filename} is #{@mods.valid? ? 'valid' : 'not valid'}."
+  # if @mods.errors?
+  #   STDERR.puts 'Errors:'
+  #   STDERR.puts @mods.errors.map { |foo| '   ' + foo }
+  #   next
+  # end
   if @mods.warnings?
     STDERR.puts 'Warnings:'
     STDERR.puts @mods.warnings.map { |foo| '   ' + foo }
   end
 
-  STDERR.puts "PURLS: " + @mods.purls.join('   ')
-  STDERR.puts "IIDS: "  + @mods.iids.join('   ')
-  STDERR.puts "DIGITOOL IDS: "  + @mods.digitool_ids.join('   ')
-  puts @mods.to_s
+  STDERR.puts "LANGUAGES: " + @mods.languages.join(', ')
+  STDERR.puts "PURLS: " + @mods.purls.join(', ')
+  STDERR.puts "IIDS: "  + @mods.iids.join(', ')
+  STDERR.puts "DIGITOOL IDS: "  + @mods.digitool_ids.join(', ')
+#  puts @mods.to_s
 end

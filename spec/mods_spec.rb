@@ -31,6 +31,17 @@ RSpec.describe Mods do
     end
   end
 
+  describe "#languages" do
+    it "Correctly parses an example newpaper MODS file and extracts the language elements" do
+      mods = Mods.new(config, test_data_path("newspaper.mods"))
+
+      expect(mods.valid?).to             be == true
+      expect(mods.languages.length).to   be == 1
+      expect(mods.languages[0]).to       be == 'eng'
+      expect(mods.errors).to             be_empty
+    end
+  end
+
 
   # Huh.   We don't check IIDs there, then...
 

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:flvc="info:flvc/manifest/v1" xmlns:dcterms="http://purl.org/dc/terms/" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd" version="3.4">
+  <titleInfo>
+    <title>Pensacolian: the Gulf States magazine.: Vol. 1, No. 11</title>
+    <subTitle>the Gulf States magazine</subTitle>
+  </titleInfo>
+  <name type="corporate">
+    <namePart>PALMM (Project)</namePart>
+  </name>
+  <typeOfResource>text</typeOfResource>
+  <genre authority="marcgt">periodical</genre>
+  <originInfo>
+    <place>
+      <placeTerm type="code" authority="marccountry">flu</placeTerm>
+    </place>
+    <place>
+      <placeTerm type="text">Pensacola, Fla.</placeTerm>
+    </place>
+    <publisher>N.J. Lillard.</publisher>
+    <dateIssued encoding="marc" point="start">1909</dateIssued>
+    <dateIssued encoding="marc" point="end">????</dateIssued>
+    <issuance>serial</issuance>
+  </originInfo>
+  <language>
+    <languageTerm authority="iso639-2b" type="code">eng</languageTerm>
+  </language>
+  <physicalDescription>
+    <form authority="marcform">electronic</form>
+    <form authority="gmd">electronic resource</form>
+    <form authority="marccategory">electronic resource</form>
+    <form authority="marcsmd">remote</form>
+    <extent>v. ; 26-31 cm.</extent>
+  </physicalDescription>
+  <note type="date/sequential designation">v. 1 (Jan. 1909)-</note>
+  <note type="reproduction">Electronic reproduction. [Florida] : State University      System of Florida, PALMM Project, 2001. (Florida heritage collection) Mode of access: World Wide Web. System requirements: Internet connectivity; Web browser software; Adobe Acrobat Reader to view and print PDF files.     Electronically reproduced by the University of West Florida from a serial held in the Main Library at the University of West Florida, Pensacola.</note>
+  <note>Title varies: Jan.-May, 1909, Realty exchange--June 1909-Spring 1913, Pensacolian magazine.</note>
+  <subject authority="lcsh">
+    <geographic>Pensacola (Fla.)</geographic>
+    <genre>Periodicals</genre>
+  </subject>
+  <subject authority="ceeus">
+    <geographic>Escambia</geographic>
+    <geographic>12033</geographic>
+  </subject>
+  <subject authority="fhp ">
+    <topic>Economics and Society: Post-Civil War Florida, 1865-1913</topic>
+    <topic>The New Century and a Growing State, 1899-1913</topic>
+  </subject>
+  <location displayLabel="purl">
+    <url>
+http://purl.flvc.org/fcla/tc/fhp/SNWF000001</url>
+  </location>
+  <location displayLabel="purl">
+    <url>
+http://purl.flvc.org/fcla/dl/SNWF000001.pdf</url>
+  </location>
+  <location displayLabel="purl">
+    <url>
+http://purl.flvc.org/fcla/dl/SNWF000001.jpg</url>
+  </location>
+  <relatedItem type="series">
+    <titleInfo>
+      <title>Florida heritage collection</title>
+    </titleInfo>
+  </relatedItem>
+  <identifier type="FCLAZ">AAA2679QF00007/24/200101/23/200417221SnasIa D0QF</identifier>
+  <identifier type="snx">FIPS12033</identifier>
+  <identifier type="snx">FCLA url 20010918</identifier>
+  <identifier type="DNX">FHP C WF 2001-07-24</identifier>
+  <identifier type="FPeU">smpb ser Fla Heritage Project</identifier>
+  <identifier type="IID">WFDT2421145</identifier>
+  <identifier type="digitool">
+2421145</identifier>
+  <recordInfo>
+    <descriptionStandard>aacr</descriptionStandard>
+    <recordContentSource authority="marcorg">FWA</recordContentSource>
+    <recordCreationDate encoding="marc">010724</recordCreationDate>
+    <recordChangeDate encoding="iso8601">20040123120145.7</recordChangeDate>
+    <recordIdentifier>QFAAA2679</recordIdentifier>
+    <recordOrigin>Converted from MARCXML to MODS v3.4 using MARC21slim2MODS3-4_FLVC.xsl (LOC rev 1.86 / 20130610) (FLVC v7)</recordOrigin>
+  </recordInfo>
+</mods>

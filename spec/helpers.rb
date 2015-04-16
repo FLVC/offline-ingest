@@ -111,14 +111,16 @@ module UtilsHelpers
 
   def config
     return Struct::MockConfig::new(
-                                   "convert -quiet -quality 75 -colorspace RGB",  # pdf_convert_command
-                                   "kdu_expand",                           # kakadu_expand_command
-                                   "convert -quiet -compress LZW",                # image_convert_command
-                                   "tesseract -l eng",                     # tesseract_command
-                                   "pdftotext -nopgbrk",                   # pdf_to_text_command
-                                   "500x700",                              # pdf_preview_geometry
-                                   "200x200",                              # thumbnail_geometry
-                                    {"eng"=>{"tesseract"=>"eng", "name"=>"English"}, "fre"=>{"tesseract"=>"fra", "name"=>"French"}, "ita"=>{"tesseract"=>"ita", "name"=>"Italian"}})
+                                   "convert -quiet -quality 75 -colorspace RGB",    # pdf_convert_command
+                                   "kdu_expand",                                    # kakadu_expand_command
+                                   "convert -quiet -compress LZW",                  # image_convert_command
+                                   "tesseract -l eng",                              # tesseract_command
+                                   "pdftotext -nopgbrk",                            # pdf_to_text_command
+                                   "500x700",                                       # pdf_preview_geometry
+                                   "200x200",                                       # thumbnail_geometry,
+                                   {"eng"=>{"tesseract"=>"eng", "name"=>"English"}, # supported_ocr_languages
+                                    "fre"=>{"tesseract"=>"fra", "name"=>"French"},
+                                    "ita"=>{"tesseract"=>"ita", "name"=>"Italian"}})
                                    end
 
 
