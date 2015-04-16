@@ -552,12 +552,27 @@ class Utils
     FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
   end
 
-
-
   private
 
+  # take a list of iso639b language codes, find the supported ones,
+  # translate to the codes tesseract uses and return the options for a
+  # command line.
 
-  def Utils.tesseract config, image_filepath, hocr = nil
+  # config.supported_ocr_languages looks something like this, keyed by iso639b codes:
+  #
+  #  {  "fre" => { "tesseract" => "fra", "name" => "French" },  "ger" => { "tesseract" => "deu", "name" => "German" }, .... }
+
+  def Utils.langs_to_tesseract config, *requested_languages
+    supported = config.supported_ocr_languages
+    wanted = []
+    requested_languages.each { |lang| wanted.push(supported[lang]['tesseract']) if supported[lang] }
+
+    return "-l eng" if wanted.empty?
+    return wanted.map { |w| "-l " + w }.join(" ")
+  end
+
+
+  def Utils.tesseract config, image_filepath, do_hocr, *langs
 
     tempfiles = []
     errors = []
@@ -590,13 +605,13 @@ class Utils
 
 
     tempfiles.push base_filename = Tempfile.new('tesseract-').path
-    tempfiles.push text_filename = base_filename + (hocr ? '.html' : '.txt')
+    tempfiles.push text_filename = base_filename + (do_hocr ? '.html' : '.txt')
 
     err = ""
 
     ### TODO: doh!   popen3 doesn't need shellescape if cmdline is an array - fix EVERYWHERE
 
-    cmdline = config.tesseract_command + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (hocr ? ' hocr' : '')
+    cmdline = config.tesseract_command + ' ' + Utils.langs_to_tesseract(config, *langs)   + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (do_hocr ? ' hocr' : '')
 
     Timeout.timeout(TESSERACT_TIMEOUT) do
       Open3.popen3(cmdline) do |stdin, stdout, stderr|
@@ -617,7 +632,6 @@ class Utils
 
     return File.read(text_filename).strip, errors
 
-    #### TODO:  kill off the previous tesseract
 
   rescue Timeout::Error => e
     errors.push "Tesseract command '#{cmdline}' timed-out after #{TESSERACT_TIMEOUT} seconds"
@@ -631,8 +645,8 @@ class Utils
 
   # use tesseract to create an HOCR file; strip out the DOCTYPE to avoid hitting w3c for the DTD:
 
-  def Utils.hocr config, image_filepath
-    text, errors = Utils.tesseract(config, image_filepath, :hocr)
+  def Utils.hocr config, image_filepath, *langs
+    text, errors = Utils.tesseract(config, image_filepath, true, *langs)
 
     return unless text.class == String
     return if text.empty?
@@ -641,8 +655,8 @@ class Utils
 
   # use tesseract to create an OCR file
 
-  def Utils.ocr config, image_filepath
-    text, errors = Utils.tesseract(config, image_filepath)
+  def Utils.ocr config, image_filepath, *langs
+    text, errors = Utils.tesseract(config, image_filepath, false, *langs)
     return unless text.class == String
     return if text.empty?
     return text
