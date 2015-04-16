@@ -42,6 +42,17 @@ RSpec.describe Mods do
     end
   end
 
+  describe "#date_issued" do
+    it "Correctly parses an example newpaper MODS file and extracts the w3cdtf dateIssued elements" do
+      mods = Mods.new(config, test_data_path("newspaper.mods"))
+
+      expect(mods.valid?).to               be == true
+      expect(mods.date_issued.length).to   be == 1
+      expect(mods.date_issued[0]).to       be == '1915-01-23'
+      expect(mods.errors).to               be_empty
+    end
+  end
+
 
   # Huh.   We don't check IIDs there, then...
 

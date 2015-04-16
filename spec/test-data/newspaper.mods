@@ -17,6 +17,7 @@
       <placeTerm type="text">Pensacola, Fla.</placeTerm>
     </place>
     <publisher>N.J. Lillard.</publisher>
+    <dateIssued encoding="w3cdtf">1915-01-23</dateIssued>
     <dateIssued encoding="marc" point="start">1909</dateIssued>
     <dateIssued encoding="marc" point="end">????</dateIssued>
     <issuance>serial</issuance>

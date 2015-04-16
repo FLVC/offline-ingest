@@ -187,10 +187,19 @@ class Mods
   # </language>
 
   def languages
-    return @xml_document.xpath("//mods:languageTerm[translate(@authority, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"ISO639-2B\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s.strip }.uniq
+    return @xml_document.xpath("//mods:languageTerm[translate(@authority, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"ISO639-2B\" and translate(@type, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"CODE\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s.strip }.uniq
   rescue => e
     return []
   end
+
+  # <dateIssued encoding="w3cdtf">1915-01-23</dateIssued>
+
+  def date_issued
+    return @xml_document.xpath("//mods:dateIssued[translate(@encoding, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')=\"W3CDTF\"]", 'mods' => MODS_NAMESPACE).children.map { |xt| xt.to_s.strip }.uniq
+  rescue => e
+    return []
+  end
+
 
 
   # There may be many typeOfResource elements, and they may, strictly speaking, have a
