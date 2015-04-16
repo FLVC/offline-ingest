@@ -105,7 +105,7 @@ module UtilsHelpers
   include CommonHelpers
 
   Struct::new('MockConfig',
-              'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command', 'tesseract_command', 'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry')
+              'pdf_convert_command', 'kakadu_expand_command', 'image_convert_command', 'tesseract_command', 'pdf_to_text_command',  'pdf_preview_geometry', 'thumbnail_geometry', 'supported_ocr_languages')
 
   # fake the horrible config.yml
 
@@ -117,8 +117,9 @@ module UtilsHelpers
                                    "tesseract -l eng",                     # tesseract_command
                                    "pdftotext -nopgbrk",                   # pdf_to_text_command
                                    "500x700",                              # pdf_preview_geometry
-                                   "200x200")                              # thumbnail_geometry
-  end
+                                   "200x200",                              # thumbnail_geometry
+                                    {"eng"=>{"tesseract"=>"eng", "name"=>"English"}, "fre"=>{"tesseract"=>"fra", "name"=>"French"}, "ita"=>{"tesseract"=>"ita", "name"=>"Italian"}})
+                                   end
 
 
   # TODO:  check for NETPBM toolset and throw error if not installed
