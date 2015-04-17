@@ -386,7 +386,6 @@ class SaxDocumentExtractSparql < SaxDocument
       @results.push OpenStruct.new(@current_result)
     end
 
-    @stack.pop
     @current_string = ''
   end
 end   # of class SaxDocumentExtractSparql

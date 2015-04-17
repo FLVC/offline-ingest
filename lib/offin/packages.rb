@@ -1512,9 +1512,25 @@ class NewspaperIssuePackage < StructuredPagePackage
   # </language>
   #
 
+  # we need to find the highest issue sequence number for this newspaper before we can add another... we assume we'll be doing these
 
+  def issue_sequences_sparql newspaper_object
+    return <<-SPARQL.gsub(/^    /, '')
+    PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
+    PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
 
-
+    SELECT ?object ?sequence ?label ?issued
+    FROM <#ri>
+    WHERE {
+      ?object fedora-rels-ext:isMemberOf <info:fedora/#{newspaper_object.sub(/^info:fedora\//, '')}> ;
+           <fedora-model:hasModel> <info:fedora/islandora:newspaperIssueCModel> ;
+           <fedora-model:label> ?label .
+      ?object islandora-rels-ext:isSequenceNumber ?sequence
+      OPTIONAL { ?object islandora-rels-ext:dateIssued ?issued }
+    }
+    ORDER BY ?sequence
+  SPARQL
+  end
 
 
   def ingest_issue
