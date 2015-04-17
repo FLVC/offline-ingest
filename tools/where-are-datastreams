@@ -17,6 +17,7 @@ require 'rest-client'
 require 'digest/md5'
 
 DATASTREAM_STORE_ROOT = '/data/datastreamStore'
+METADATASTREAM_STORE_ROOT = '/data/objectStore'
 
 Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid, :last_datastreams_only)
 
@@ -40,7 +41,6 @@ rescue => e
 else
   return cmdline
 end
-
 
 
 def data_stream_to_filename(islandora_pid, data_stream_id)
@@ -69,6 +69,17 @@ def data_stream_to_filename(islandora_pid, data_stream_id)
 
   return ([ DATASTREAM_STORE_ROOT ] + hash.unpack('A2A2A2') + [ filename ]).join('/')
 end
+
+# like the above but for metadata,  and we just use one directory level
+
+def metadata_stream_to_filename(islandora_pid)
+  uri = [ 'info:fedora', islandora_pid ].join('/')
+  filename = URI.encode(uri, /[^A-Za-z0-9=()\.-]/).sub(/\.$/, "%2E")
+  hash = Digest::MD5.hexdigest(uri)
+  return ([ METADATASTREAM_STORE_ROOT ] + hash.unpack('A2') + [ filename ]).join('/')
+end
+
+
 
 
 def nope message
@@ -166,7 +177,7 @@ class SaxDocument < Nokogiri::XML::SAX::Document
 
   def end_element_namespace name, prefix = nil, uri = nil
     return unless name == 'datastreamVersion' or name == 'datastream'
-    return unless @current_datastream.has_content_location and @current_datastream.control_group == 'M'
+    return unless (@current_datastream.has_content_location and @current_datastream.control_group == 'M') or @current_datastream.control_group == 'X'
 
     case
     when  (name == 'datastreamVersion' and not @only_show_last_datastream)
@@ -189,6 +200,11 @@ config = parse_command_line(ARGV)
 sax_document = SaxDocument.new(config.last_datastreams_only)
 Nokogiri::XML::SAX::Parser.new(sax_document).parse(get_foxml(config))
 
+# sax_document.datastreams.each { |ds| puts ds.inspect }
+# exit
+
+
+
 # find max column widths for each field (except the last)
 
 cols = [ 0, 0, 0, 0 ]
@@ -201,7 +217,14 @@ end
 
 lines = []
 sax_document.datastreams.each do |ds|
-  filename = data_stream_to_filename(config.islandora_pid, [ ds.datastream_id, ds.version_id ].join('/'))
+  case
+  when ds.has_content_location
+    filename = data_stream_to_filename(config.islandora_pid, [ ds.datastream_id, ds.version_id ].join('/'))
+  when (ds.control_group == 'X')
+    filename = metadata_stream_to_filename(config.islandora_pid)
+  else
+    filename = nil
+  end
   lines.push sprintf("%#{cols[0]}s  %#{cols[1]}s  %#{cols[2]}s  %#{cols[3]}d  %s", ds.datastream_id, ds.version_id, ds.mime_type, ds.size, filename)
 end
 
