@@ -508,4 +508,29 @@ RSpec.describe Utils do
     end
   end
 
+  describe "#langs_to_tesseract_command_line" do
+    it "extracts the proper tesseract codes for supported languages" do
+      expect(Utils.langs_to_tesseract_command_line(config, "eng", "fre", "ger", "ita")).to eq("-l eng -l fra -l deu -l ita")
+      expect(Utils.langs_to_tesseract_command_line(config)).to eq("-l eng")
+    end
+  end
+
+  describe "#langs_to_names" do
+    it "provides proper english description for supported languages" do
+      expect(Utils.langs_to_names(config, "eng", "fre", "ger", "ita")).to eq("English, French, German, Italian")
+      expect(Utils.langs_to_names(config, "eng")).to eq("English")
+      expect(Utils.langs_to_names(config, "XXX")).to eq("English")
+      expect(Utils.langs_to_names(config)).to eq("English")
+    end
+  end
+
+  describe "#langs_unsupported_comment" do
+    it "provides a string listing unsupported language codes" do
+      expect(Utils.langs_unsupported_comment(config, "XX")).to eq("XX")
+      expect(Utils.langs_unsupported_comment(config, "XX", "XY")).to eq("XX, XY")
+    end
+  end
+
+
+
 end # of "RSpec.describe Utils do"

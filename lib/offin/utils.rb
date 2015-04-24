@@ -204,6 +204,92 @@ class Utils
     return {}
   end
 
+  # Get the next sequence number for the issues of a newpaper with PID
+  # newspaper_pid.  Return nil on error (can't connect, etc). Returns
+  # 1 for no issues, even if newspaper_pid doesn't exist (so check for
+  # that first)
+  #
+  # I return unused the object id as well.  We could get the label and issue-date as well with this SPARQL query:
+  #
+  #   query = <<-SPARQL.gsub(/^        /, '')
+  #     PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
+  #     PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+  #
+  #     SELECT ?object ?sequence ?label ?issued
+  #     FROM <#ri>
+  #     WHERE {
+  #       ?object fedora-rels-ext:isMemberOf <info:fedora/#{newspaper_pid.sub(/^info:fedora\//, '')}> ;
+  #            <fedora-model:hasModel> <info:fedora/islandora:newspaperIssueCModel> ;
+  #            <fedora-model:label> ?label .
+  #       ?object islandora-rels-ext:isSequenceNumber ?sequence
+  #       OPTIONAL { ?object islandora-rels-ext:dateIssued ?issued }
+  #     }
+  #     ORDER BY ?sequence
+  # SPARQL
+  #
+  # which returns data like:
+  #
+  #
+  # <CSV::Row "object":"info:fedora/fsu:162918" "sequence":"360" "label":"secolo" "issued":"1885-05-06">
+  # <CSV::Row "object":"info:fedora/fsu:162926" "sequence":"361" "label":"secolo" "issued":"1885-05-07">
+
+
+  def Utils.get_next_newspaper_issue_sequence config, newspaper_pid
+    query = <<-SPARQL.gsub(/^        /, '')
+        PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
+        PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+
+        SELECT ?object ?sequence
+        FROM <#ri>
+        WHERE {
+          ?object fedora-rels-ext:isMemberOf <info:fedora/#{newspaper_pid.sub(/^info:fedora\//, '')}> ;
+               <fedora-model:hasModel> <info:fedora/islandora:newspaperIssueCModel> .
+          ?object islandora-rels-ext:isSequenceNumber ?sequence
+        }
+        ORDER BY ?sequence
+    SPARQL
+
+    repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+
+    quickly do
+      repository.ping
+    end
+
+    # The sparql query returns a (possibly empty list) of rows along the lines of
+    #
+    # #<CSV::Row "object":"info:fedora/fsu:161312" "sequence":"245">
+    # #<CSV::Row "object":"info:fedora/fsu:161320" "sequence":"246">
+    # #<CSV::Row "object":"info:fedora/fsu:161328" "sequence":"247">
+
+
+    last =  repository.sparql(query).map { |row_rec| row_rec['sequence'].to_i }.max
+
+    return last ? last + 1 : 1
+
+  rescue => e
+    return
+  end
+
+
+  def Utils.get_newspaper_pids config
+
+    query = <<-SPARQL.gsub(/^        /, '')
+        SELECT ?object
+        FROM <#ri>
+        WHERE { ?object <fedora-model:hasModel> <info:fedora/islandora:newspaperCModel> }
+        ORDER BY ?object
+    SPARQL
+
+    repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+
+    quickly do
+      repository.ping
+    end
+
+    return repository.sparql(query).map { |row_rec| row_rec['object'].sub('info:fedora/', '') }
+  end
+
+
   # get_datastream_names(config, islandora_pid) => hash
   #
   # parse XML for dsid/label pairs, as from the example document:
@@ -234,10 +320,14 @@ class Utils
   #   TOC      =>  Table of Contents
 
   def Utils.get_datastream_names config, pid
+
     doc = quickly do
-      url = "http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') +
-            "/objects/#{pid.sub('info:fedora', '')}/datastreams?format=xml"
-      RestClient.get(URI.encode(url))
+      url = URI.encode("#{config.fedora_url}/objects/#{pid.sub('info:fedora/', '')}/datastreams?format=xml")
+      request = RestClient::Request.new(:user => config.user,
+                                        :password => config.password,
+                                        :method => :get,
+                                        :url => url)
+      request.execute
     end
     xml = Nokogiri::XML(doc)
 
@@ -562,7 +652,7 @@ class Utils
   #
   #  {  "fre" => { "tesseract" => "fra", "name" => "French" },  "ger" => { "tesseract" => "deu", "name" => "German" }, .... }
 
-  def Utils.langs_to_tesseract config, *requested_languages
+  def Utils.langs_to_tesseract_command_line config, *requested_languages
     supported = config.supported_ocr_languages
     wanted = []
     requested_languages.each { |lang| wanted.push(supported[lang]['tesseract']) if supported[lang] }
@@ -570,6 +660,31 @@ class Utils
     return "-l eng" if wanted.empty?
     return wanted.map { |w| "-l " + w }.join(" ")
   end
+
+  # like above,  but extracts message of what was selected
+
+  def Utils.langs_to_names config, *requested_languages
+    supported = config.supported_ocr_languages
+    wanted = []
+    requested_languages.each { |lang| wanted.push(supported[lang]['name']) if supported[lang] }
+
+    return "English" if wanted.empty?
+    return wanted.join(", ")
+  end
+
+  # flag for when a requested language was not supported
+
+  def Utils.langs_unsupported_comment config, *requested_languages
+    supported = config.supported_ocr_languages
+    unsupported = []
+    requested_languages.each { |lang| unsupported.push(lang) unless supported[lang] }
+
+    return unsupported.join(", ")
+  end
+
+
+
+
 
 
   def Utils.tesseract config, image_filepath, do_hocr, *langs
@@ -760,36 +875,14 @@ class Utils
   def Utils.setup_basic_filters sql, params
 
     from, to = Utils.parse_dates(params['from'], params['to'])
-    sql.add_condition('time_started > ?', from) if from
-    sql.add_condition('time_started < ?', to) if to
-
-    if val = params['site_id']
-      sql.add_condition('islandora_site_id = ?', val)
-    end
-
-    if val = params['title']
-      sql.add_condition('title ilike ?', "%#{val}%")
-    end
-
-    if val = params['ids']
-      sql.add_condition('(package_name ilike ? OR CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ?)', [ "%#{val}%" ] * 3)
-    end
-
-    if val = params['content-type']
-      sql.add_condition('content_model = ?', val)
-    end
-
-    if val = params['collection']
-      sql.add_condition('islandora_packages.id IN (SELECT islandora_package_id FROM islandora_collections WHERE collection_code = ?)', val)
-    end
-
-    if params['status'] == 'warning'
-      sql.add_condition('islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)')
-    end
-
-    if params['status'] == 'error'
-      sql.add_condition('islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)')
-    end
+    sql.add_condition('time_started > ?', from)                   if from
+    sql.add_condition('time_started < ?', to)                     if to
+    sql.add_condition('islandora_site_id = ?', params['site_id']) if params['site_id']
+    sql.add_condition('title ilike ?', "%#{params['title']}%")    if params['title']
+    sql.add_condition('(package_name ilike ? OR CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ?)', [ "%#{params['ids']}%" ] * 3)                if params['ids']
+    sql.add_condition('islandora_packages.id IN (SELECT islandora_package_id FROM islandora_collections WHERE collection_code = ?)', params['collection']) if params['collection']
+    sql.add_condition('islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)')                                     if params['status'] == 'warning'
+    sql.add_condition('islandora_packages.id IN (SELECT error_messages.islandora_package_id FROM error_messages)')                                         if params['status'] == 'error'
 
     return sql
   end
@@ -797,9 +890,14 @@ class Utils
 
   def Utils.get_datastream_contents config, pid, dsid
 
-    url = "http://" + config.user + ":" + config.password + "@" + config.fedora_url.sub(/^http:\/\//, '') + "/objects/#{pid}/datastreams/#{dsid}/content"
+    url = URI.encode "#{config.fedora_url}/objects/#{pid}/datastreams/#{dsid}/content"
+    request = RestClient::Request.new(:user => config.user,
+                                      :password => config.password,
+                                      :method => :get,
+                                      :url => url)
+
     doc = quickly do
-      RestClient.get(URI.encode(url))
+      request.execute
     end
 
     return doc

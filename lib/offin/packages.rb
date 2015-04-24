@@ -888,7 +888,7 @@ class StructuredPagePackage
   def check_page_types
 
     if @page_filenames.empty?
-      error  "The Book Package #{directory_name} does not appear to have any page image files."
+      error  "The #{pretty_class_name} #{directory_name} does not appear to have any page image files."
       return
     end
 
@@ -902,7 +902,7 @@ class StructuredPagePackage
     end
 
     unless issues.empty?
-      error "The Book Package #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
+      error "The #{pretty_class_name} #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
       error issues
       return
     end
@@ -1035,7 +1035,7 @@ class BookPackage < Package
   def check_page_types
 
     if @page_filenames.empty?
-      error  "The #{Pretty_Class_Name} #{directory_name} does not appear to have any page image files."
+      error  "The #{pretty_class_name} #{directory_name} does not appear to have any page image files."
       return
     end
 
@@ -1049,7 +1049,7 @@ class BookPackage < Package
     end
 
     unless issues.empty?
-      error "The #{Pretty_Class_Name} #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
+      error "The #{pretty_class_name} #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
       error issues
       return
     end
@@ -1462,6 +1462,9 @@ class NewspaperIssuePackage < StructuredPagePackage
     super(config, directory, manifest, updator)
 
     @content_model = NEWSPAPER_ISSUE_CONTENT_MODEL
+    @starting_sequence = nil
+    @newspaper_id = nil
+
 
     handle_marc or return  # create @marc if we have a marc.xml
     handle_mets or return  # create @mets and check its validity
@@ -1485,10 +1488,26 @@ class NewspaperIssuePackage < StructuredPagePackage
   end
 
 
+  private
 
-  # manifest issues:
 
+  # Check manifest for a collection that has a NEWSPAPER_CONTENT_MODEL, and return the object id.
 
+  def get_parent_newspaper_id
+    newspapers = {}
+    newspaper_list = Utils.get_newspaper_pids(@config).sort
+    newspaper_list.each { |object_id| newspapers[object_id] = true if object_id =~ /^#{@namespace}\:/ }
+    @manifest.collections.each { |collection_id| return collection_id if newspapers[collection_id] }
+
+    error "The package manifest must include a collection id that is a newspaper object, but only found collections #{@manifest.collections.join(' ')}"
+    if newspaper_list.empty?
+      error "However, there are no newspaper objects defined for #{@owning_institution}"
+    else
+      error "Possible newspaper objects are #{newspaper_list.join(', ')}"
+    end
+  end
+
+  # Check mods file for issue to make sure it's got a dateIssued.  Check for supported languages as well.
 
   # An issue must have a MODS file with at least a dateIssued.
   #
@@ -1514,31 +1533,19 @@ class NewspaperIssuePackage < StructuredPagePackage
 
   # we need to find the highest issue sequence number for this newspaper before we can add another... we assume we'll be doing these
 
-  def issue_sequences_sparql newspaper_object
-    return <<-SPARQL.gsub(/^    /, '')
-    PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
-    PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-
-    SELECT ?object ?sequence ?label ?issued
-    FROM <#ri>
-    WHERE {
-      ?object fedora-rels-ext:isMemberOf <info:fedora/#{newspaper_object.sub(/^info:fedora\//, '')}> ;
-           <fedora-model:hasModel> <info:fedora/islandora:newspaperIssueCModel> ;
-           <fedora-model:label> ?label .
-      ?object islandora-rels-ext:isSequenceNumber ?sequence
-      OPTIONAL { ?object islandora-rels-ext:dateIssued ?issued }
-    }
-    ORDER BY ?sequence
-  SPARQL
-  end
-
 
   def ingest_issue
+    @newspaper_id = get_parent_newspaper @config
+    raise PackageError, "Errors were encountering getting newspaper information" unless valid?
 
+    @starting_sequence = Utils.get_next_newspaper_issue_sequence config, @newspaper_id
+    error "There was an error retrieving information about the issues sequences."   unless @starting_sequence
+
+    raise PackageError, "Errors were encountering while setting up issue information" unless valid?
   end
 
   def ingest_newspaper_pages
 
   end
 
-end
+end # of class NewspaperIssuePackage

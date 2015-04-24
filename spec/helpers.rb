@@ -120,8 +120,11 @@ module UtilsHelpers
                                    "200x200",                                       # thumbnail_geometry,
                                    {"eng"=>{"tesseract"=>"eng", "name"=>"English"}, # supported_ocr_languages
                                     "fre"=>{"tesseract"=>"fra", "name"=>"French"},
-                                    "ita"=>{"tesseract"=>"ita", "name"=>"Italian"}})
-                                   end
+                                    "ger"=>{"tesseract"=>"deu", "name"=>"German"},
+                                    "ita"=>{"tesseract"=>"ita", "name"=>"Italian"},
+                                   })
+
+  end
 
 
   # TODO:  check for NETPBM toolset and throw error if not installed
