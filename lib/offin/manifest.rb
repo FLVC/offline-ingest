@@ -3,6 +3,23 @@ require 'offin/document-parsers'
 
 # All things manifest.  Parse the XML, etc
 
+# What manifests are all about:
+#
+#    Manifest Element      | Required | Repeatable    | Allowed Character Data                                  | Notes
+#    ----------------------+----------+---------------+---------------------------------------------------------+------------------------------------------------------
+#    collection            | yes      | yes           | existing Islandora collection object id                 | will create collection on the fly for digitool
+#    contentModel          | yes      | no            | islandora:{sp_pdf,sp_basic_image,sp_large_image_cmodel} |
+#    identifier            | no       | yes           | no embedded spaces?                                     | additional identifiers to be saved
+#    label                 | no       | no            | any UTF-8 string?                                       | used when displaying the object or object thumbnail
+#    otherLogo             | no       | yes           | existing drupal code                                    | determines logo for multibranding
+#    owningInstitution     | yes      | no            | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  |
+#    owningUser            | yes      | no            | valid drupal user                                       | should have submitter role across owningInstitution
+#    submittingInstitution | no       | no            | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  | defaults to owningInstitution
+#    embargo               | no       | not currently | n/a                                                     | required attribute rangeName, optional expirationDate
+#    pageProgression       | no       | no            | rl, lr                                                  | left-to-right or right-to-left pagination
+#
+# For example.... TODO: manifest.xml here......
+
 class Manifest
 
   include Errors

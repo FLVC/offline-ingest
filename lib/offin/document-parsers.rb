@@ -484,6 +484,7 @@ class ManifestSaxDocument < SaxDocument
   #    owningUser            | yes      | no            | valid drupal user                                       | should have submitter role across owningInstitution
   #    submittingInstitution | no       | no            | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  | defaults to owningInstitution
   #    embargo               | no       | not currently | n/a                                                     | required attribute rangeName, optional expirationDate
+  #    pageProgression       | no       | no            | rl, lr                                                  | left-to-right or right-to-left pagination
 
   # Textualize the attribute data off a stack element (ignore the :name key)
 
