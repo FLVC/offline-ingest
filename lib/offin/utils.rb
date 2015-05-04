@@ -672,7 +672,7 @@ class Utils
     return wanted.join(", ")
   end
 
-  # flag for when a requested language was not supported
+  # String for when a requested language was not supported
 
   def Utils.langs_unsupported_comment config, *requested_languages
     supported = config.supported_ocr_languages
