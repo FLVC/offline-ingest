@@ -24,6 +24,7 @@ module Errors
 
   def error *strings
     errors.push *strings.flatten    unless strings.empty?
+    return nil
   end
 
   def warnings
@@ -37,6 +38,7 @@ module Errors
 
   def warning *strings
     warnings.push *strings.flatten  unless strings.empty?
+    return nil
   end
 
 end
