@@ -174,7 +174,6 @@ class Package
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
 
-    #if not @mods.type_of_resource.include? @mods_type_of_resource
 
     if @mods.type_of_resource.empty?
       @mods.add_type_of_resource @mods_type_of_resource
@@ -182,9 +181,6 @@ class Package
 
     @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
     raise PackageError, "Invalid MODS file" unless @mods.valid?
-
-    # TODO: do we ever need to check that @mods is valid after adding manifest?
-    # Somewhat order dependent:
 
     ingestor.label         = @label
     ingestor.owner         = @owner
@@ -911,7 +907,7 @@ class StructuredPagePackage
   end
 
 
-  def reconcile_file_lists
+  def create_page_filename_list
 
     missing     = []
     expected    = []
@@ -952,24 +948,20 @@ end
 
 # Subclass of Package for handling the Book content model
 
-class BookPackage < Package
-
-  attr_reader :mets, :page_filenames, :table_of_contents
+class BookPackage < StructuredPagePackage
 
   def initialize config, directory, manifest, updator
     super(config, directory, manifest, updator)
 
     @content_model = BOOK_CONTENT_MODEL
-    @mods_type_of_resource = 'text'
-
-    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
 
     handle_marc or return  # create @marc if we have a marc.xml
     handle_mets or return  # create @mets and check its validity
 
-    create_table_of_contents or return       # creates @table_of_contents
-    reconcile_file_lists     or return       # creates @page_filenames
-    check_page_types         or return       # checks @page_filenames file types
+    create_table_of_contents   or return       # creates @table_of_contents
+
+    create_page_filename_list  or return       # creates @page_filenames
+    check_page_types           or return       # checks @page_filenames file types
 
   rescue PackageError => e
     error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
@@ -985,115 +977,6 @@ class BookPackage < Package
   end
 
   private
-
-  # TODO: This following is (probably) a digitool-only case  and really should be pulled out into the metadata-updater class
-
-  def handle_marc
-    marc_filename = File.join(@directory_path, 'marc.xml')
-    @marc = File.read(marc_filename) if File.exists? marc_filename
-    return true
-  end
-
-  def handle_mets
-    mets_filename = File.join(@directory_path, 'mets.xml')
-
-    if File.exists? mets_filename
-      @mets =  Mets.new(@config, mets_filename)
-    else
-      raise PackageError, "The #{pretty_class_name} #{@directory_name} doesn't contain a mets.xml file."
-    end
-
-    if not @mets.valid?
-      error "The mets.xml file in the #{pretty_class_name} #{@directory_name} is invalid, errors follow:"
-    end
-
-    error mets.errors
-    warning mets.warnings
-
-    return valid?
-  end
-
-
-  def create_table_of_contents
-
-    @table_of_contents = TableOfContents.new(@mets.structmap)
-
-    if @table_of_contents.warnings?
-      warning "Note: the table of contents derived from the METS file #{@directory_name}/mets.xml has the following issues:"
-      warning @table_of_contents.warnings
-    end
-
-    if @table_of_contents.errors?
-      error "The table of contents derived from the METS file #{@directory_name}/mets.xml is invalid:"
-      error @table_of_contents.errors
-      return false
-    end
-
-    return true
-  end
-
-  def check_page_types
-
-    if @page_filenames.empty?
-      error  "The #{pretty_class_name} #{directory_name} does not appear to have any page image files."
-      return
-    end
-
-    issues = []
-    @page_filenames.each do |file_name|
-      path = File.join(@directory_path, file_name)
-      type = Utils.mime_type(path)
-      unless  type =~ JP2 or type =~ TIFF or type =~ JPEG
-        issues.push "Page file #{file_name} is of unsupported type #{type}, but it must be one of image/jp2, image/jpeg, or image/tiff" \
-      end
-    end
-
-    unless issues.empty?
-      error "The #{pretty_class_name} #{directory_name} has #{ issues.length == 1 ? 'an invalid page image file' : 'invalid page image files'}:"
-      error issues
-      return
-    end
-
-    return true
-  end
-
-
-  def reconcile_file_lists
-
-    missing     = []
-    expected    = []
-
-    # This checks the filenames in the list @datafiles (what's in the
-    # package directory, less the metadata files) against the
-    # filenames declared in the METS file table of contents (a
-    # structmap).  While datafiles is a simple list of filenames, the
-    # table of contents provies a Struct::Page with slots :title,
-    # :level, :image_filename, :image_mimetype, and :valid_repeat.
-    # A :valid_repeat file is ignored.
-
-    # TODO: handle text files somehow.
-
-    @table_of_contents.pages.each do |entry|
-      next if entry.valid_repeat
-      expected.push entry.image_filename
-      missing.push  entry.image_filename  if @datafiles.grep(entry.image_filename).empty?
-    end
-
-    unexpected = @datafiles - expected
-
-    unless unexpected.empty?
-      warning "The #{pretty_class_name} #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
-      warning unexpected.map { |name| ' - ' + name }.sort
-    end
-
-    unless missing.empty?
-      error "The #{pretty_class_name} #{@directory_name} is missing the following #{missing.count} required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
-      error missing.map { |name| ' - ' + name }.sort
-      return false
-    end
-
-    @page_filenames = expected - missing
-  end
 
 
   def ingest_book
@@ -1404,7 +1287,7 @@ class BookPackage < Package
 
       ingestor.datastream('RELS-EXT') do |ds|
         ds.dsLabel  = 'Relationships'
-        ds.content  = rels_ext(ingestor.pid, page, sequence)
+        ds.content  = rels_ext(ingestor.pid)
         ds.mimeType = 'application/rdf+xml'
       end
 
@@ -1462,22 +1345,34 @@ class NewspaperIssuePackage < StructuredPagePackage
     super(config, directory, manifest, updator)
 
     @content_model = NEWSPAPER_ISSUE_CONTENT_MODEL
-    @starting_sequence = nil
+    @issue_sequence = nil
     @newspaper_id = nil
+    @ocr_language_options = []
+    @date_issued = nil
+    @has_mets = File.exists?(File.join(@directory_path, 'mets.xml'))
 
+
+
+    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
 
     handle_marc or return  # create @marc if we have a marc.xml
-    handle_mets or return  # create @mets and check its validity
 
-    create_table_of_contents or return       # creates @table_of_contents
-    reconcile_file_lists     or return       # creates @page_filenames
-    check_page_types         or return       # checks @page_filenames file types
+    if @has_mets
+      handle_mets                 or return  # create @mets and check its validity
+      create_table_of_contents    or return       # creates @table_of_contents
+    end
+
+    create_page_filename_list   or return       # creates @page_filenames
+    check_page_types            or return       # checks @page_filenames file types
 
   rescue PackageError => e
     error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
   rescue => e
     error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
   end
+
+
+
 
   def ingest
     return if @config.test_mode
@@ -1490,25 +1385,64 @@ class NewspaperIssuePackage < StructuredPagePackage
 
   private
 
+  def oops exception
+    error "Unexpected error while checking for issue's parent newspaper object #{exception}"
+    return nil
+  end
 
   # Check manifest for a collection that has a NEWSPAPER_CONTENT_MODEL, and return the object id.
 
   def get_parent_newspaper_id
     newspapers = {}
-    newspaper_list = Utils.get_newspaper_pids(@config).sort
-    newspaper_list.each { |object_id| newspapers[object_id] = true if object_id =~ /^#{@namespace}\:/ }
-    @manifest.collections.each { |collection_id| return collection_id if newspapers[collection_id] }
 
-    error "The package manifest must include a collection id that is a newspaper object, but only found collections #{@manifest.collections.join(' ')}"
-    if newspaper_list.empty?
-      error "However, there are no newspaper objects defined for #{@owning_institution}"
-    else
-      error "Possible newspaper objects are #{newspaper_list.join(', ')}"
+    utils.get_newspaper_pids(@config).each do |object_id|
+      newspapers[object_id] = true if object_id =~ /^#{@namespace}\:/
     end
+
+    @manifest.collections.each do |collection_id|
+      return collection_id if newspapers[collection_id]
+    end
+
+    if newspaper_list.empty?
+      error "The collection element in the manifest.xml for this package doesn't include a parent newspaper object for #{@owning_institution}.  There must be one collection that is this issue's parent newspaper object."
+      return
+    else
+      error "The package manifest.xml file must include a collection that is a newspaper object, but only found collections #{@manifest.collections.join(' ')}"
+      error "Possible newspaper objects for #{@owning_institution} are #{newspaper_list.join(', ')}"
+      return
+    end
+
+  rescue => exception
+    oops exception
   end
 
-  # Check mods file for issue to make sure it's got a dateIssued.  Check for supported languages as well.
 
+  def check_newspaper_parent
+
+    @newspaper_id = get_parent_newspaper_id
+    if not @newspaper_id
+      error "Can't determine parent Newspaper object for this issue"
+      return
+    end
+
+    if @collections.size > 1
+      error "The #{pretty_class_name} #{@directory_name} belongs to mre "
+      return
+    end
+
+    @issue_sequence = Utils.get_next_newspaper_issue_sequence config, @newspaper_id
+    if not @issue_sequence
+      error "There was an error retrieving information about the issues sequences."
+      return
+    end
+
+  rescue => exception
+    oops exception
+  end
+
+
+  # Check mods file for issue to make sure it's got a dateIssued.  Check for supported languages as well.
+  #
   # An issue must have a MODS file with at least a dateIssued.
   #
   # https://fsu.digital.flvc.org/islandora/object/fsu%3A116912/datastream/RELS-EXT
@@ -1524,25 +1458,163 @@ class NewspaperIssuePackage < StructuredPagePackage
   #   </rdf:Description>
   # </rdf:RDF>
 
-  # May specify languages (see https://code.google.com/p/tesseract-ocr/downloads/list)
+  # May optionally specify languages (see
+  # https://code.google.com/p/tesseract-ocr/downloads/list for all
+  # available)
+  #
   # <language>
   #    <languageTerm type="text" authority="iso639-2b">English</languageTerm>
   #    <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
   # </language>
   #
 
-  # we need to find the highest issue sequence number for this newspaper before we can add another... we assume we'll be doing these
+  def check_issue_manifest
+    warning_message = Utils.langs_unsupported_comment(@config, @mods.languages)
+    if not warning_message.empty?
+      warning "Found unsupported OCR languages in MODS file #{warning_message}"
+      warning "Will use #{Utils.langs_to_names(@config, @mods.languages)} for OCR"
+    end
+
+    @ocr_language_options = Utils.langs_to_tesseract_command_line(@config, @mods.languages)
+
+    if @mods.date_issued.empty?
+      error "The package MODS file does not include the required w3cdtf-encoded dateIssued element"
+    else
+      @date_issued = @mods.date_issued
+    end
+
+  rescue => exception
+    oops exception
+  end
+
+
+  def issue_rels_ext pid, parent_has_policy
+    str = <<-XML
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{pid}">
+        <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
+        <fedora:isMemberOfCollection rdf:resource=\"info:fedora/#{@newspaper_id}\"></fedora:isMemberOfCollection>
+    XML
+
+    if @manifest.page_progression
+      str +=  "        <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>"
+    end
+
+    if parent_has_policy
+      str += Utils.rels_ext_get_policy_fields(@config, @newspaper_id)
+    end
+
+    str += <<-XML
+        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{@newspaper_id}"></islandora:inheritXacmlFrom>
+        <islandora:isSequenceNumber>#{@issue_sequence}</islandora:isSequenceNumber>
+        <islandora:dateIssued>#{@date_issued}</islandora:dateIssued>
+      </rdf:Description>
+    </rdf:RDF>
+    XML
+
+    return str.gsub(/^    /, '')
+
+  end
 
 
   def ingest_issue
-    @newspaper_id = get_parent_newspaper @config
-    raise PackageError, "Errors were encountering getting newspaper information" unless valid?
+    check_issue_manifest     # sets @ocr_language_options and @date_issued
+    check_newspaper_parent   # sets @issue_sequence and @newspaper_id, etc
 
-    @starting_sequence = Utils.get_next_newspaper_issue_sequence config, @newspaper_id
-    error "There was an error retrieving information about the issues sequences."   unless @starting_sequence
+    raise PackageError, "Errors were encountering while getting up issue information" unless valid?
+    return if @config.test_mode
 
-    raise PackageError, "Errors were encountering while setting up issue information" unless valid?
+
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+
+      @pid = ingestor.pid
+
+      @mods.add_iid_identifier @iid if @mods.iids.empty?   # we do sanity checking and setup the @iid elsewhere
+      @mods.add_islandora_identifier ingestor.pid
+      @mods.add_flvc_extension_elements @manifest
+      @mods.add_type_of_resource @mods_type_of_resource if @mods.type_of_resource.empty?
+
+      @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
+
+      raise PackageError, "Invalid MODS file" unless @mods.valid?
+
+      ingestor.label         = @label
+      ingestor.owner         = @owner
+      ingestor.content_model = @content_model
+      ingestor.collections   = @collections
+      ingestor.dc            = @mods.to_dc
+      ingestor.mods          = @mods.to_s
+
+      if @marc
+        ingestor.datastream('MARCXML') do |ds|
+          ds.dsLabel  = "Archived MarcXML"
+          ds.content  = @marc
+          ds.mimeType = 'text/xml'
+        end
+      end
+
+      if @manifest.embargo
+        @drupal_db.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+      end
+
+      parent_has_policy = Utils.get_datastream_names(config, @newspaper_id).collection_datastreams.has_key?('POLICY')
+
+      if parent_has_policy
+        ingestor.datastream('POLICY') do |ds|
+          ds.dsLabel  = "XACML Policy Stream"
+          ds.content  = Utils.get_datastream_contents(@config, @newspaper_id, 'POLICY')
+          ds.mimeType = 'text/xml'
+          ds.controlGroup = 'X'
+        end
+      end
+
+      ingestor.datastream('RELS-EXT') do |ds|
+        ds.dsLabel  = 'Relationships'
+        ds.content  = issue_rels_ext(@pid, parent_has_policy)
+        ds.mimeType = 'application/rdf+xml'
+      end
+
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, File.join(@directory_path,  @page_filenames[0]), @config.thumbnail_geometry, 'jpeg')
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = "Thumbnail Image"
+        ds.content  = thumbnail
+        ds.mimeType = 'image/jpeg'
+      end
+
+      if @has_mets
+        ingestor.datastream('DT-METS') do |ds|
+          ds.dsLabel  = 'Archived METS for future reference'
+          ds.content  = @mets.text
+          ds.mimeType = 'text/xml'
+        end
+
+        ingestor.datastream('TOC') do |ds|
+          ds.dsLabel  = 'Table of Contents'
+          ds.content  = @table_of_contents.to_json(@mets.label)
+          ds.mimeType = 'application/json'
+        end
+      end
+
+    end
+
+    @bytes_ingested = ingestor.size
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+
+    [ thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+
+    @updator.post_ingest
   end
+
+
 
   def ingest_newspaper_pages
 
