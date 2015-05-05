@@ -1179,7 +1179,7 @@ class BookPackage < StructuredPagePackage
     width, height = Utils.size(@config, image_path)
 
     if not width or not height
-      raise PackageError, "Can't determine the size of the image '#{image_path}'"
+      raise PackageError, "Can't determine the size of the image '#{image_path}'."
     end
 
     return <<-XML.gsub(/^     /, '')
@@ -1387,29 +1387,33 @@ class NewspaperIssuePackage < StructuredPagePackage
 
   def oops exception
     error "Unexpected error while checking for issue's parent newspaper object #{exception}"
+    error exception.backtrace
     return nil
   end
 
   # Check manifest for a collection that has a NEWSPAPER_CONTENT_MODEL, and return the object id.
 
   def get_parent_newspaper_id
-    newspapers = {}
+    all_newspapers = {}
 
-    utils.get_newspaper_pids(@config).each do |object_id|
-      newspapers[object_id] = true if object_id =~ /^#{@namespace}\:/
+    Utils.get_newspaper_pids(@config).each do |object_id|
+      all_newspapers[object_id] = true if object_id =~ /^#{@namespace}\:/
     end
 
+    manifest_newspapers = []
     @manifest.collections.each do |collection_id|
-      return collection_id if newspapers[collection_id]
+      manifest_newspapers.push collection_id if all_newspapers[collection_id]
     end
 
-    if newspaper_list.empty?
-      error "The collection element in the manifest.xml for this package doesn't include a parent newspaper object for #{@owning_institution}.  There must be one collection that is this issue's parent newspaper object."
-      return
+    case
+    when manifest_newspapers.empty?
+      error "The collection element in the manifest.xml for this package doesn't include a parent newspaper object for #{@owning_institution}."
+      error "There must be exactly one collection that is this issue's parent newspaper object."
+    when manifest_newspapers.length > 1
+      error "The manifest.xml for this package includes too many parent newspaper objects for #{@owning_institution}: #{manifest_newspapers.sort.join(', ')}."
+      error "There must be exactly one collection that is this issue's parent newspaper object."
     else
-      error "The package manifest.xml file must include a collection that is a newspaper object, but only found collections #{@manifest.collections.join(' ')}"
-      error "Possible newspaper objects for #{@owning_institution} are #{newspaper_list.join(', ')}"
-      return
+      return manifest_newspapers.pop
     end
 
   rescue => exception
@@ -1421,12 +1425,12 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     @newspaper_id = get_parent_newspaper_id
     if not @newspaper_id
-      error "Can't determine parent Newspaper object for this issue"
+      error "Can't determine parent Newspaper object for this issue."
       return
     end
 
     if @collections.size > 1
-      error "The #{pretty_class_name} #{@directory_name} belongs to mre "
+      error "The #{pretty_class_name} #{@directory_name} belongs to more than one collection - there must be exactly one, a parent newspaper object."
       return
     end
 
@@ -1471,8 +1475,8 @@ class NewspaperIssuePackage < StructuredPagePackage
   def check_issue_manifest
     warning_message = Utils.langs_unsupported_comment(@config, @mods.languages)
     if not warning_message.empty?
-      warning "Found unsupported OCR languages in MODS file #{warning_message}"
-      warning "Will use #{Utils.langs_to_names(@config, @mods.languages)} for OCR"
+      warning "Found unsupported OCR languages in MODS file: #{warning_message}."
+      warning "Will use #{Utils.langs_to_names(@config, @mods.languages)} for OCR."
     end
 
     @ocr_language_options = Utils.langs_to_tesseract_command_line(@config, @mods.languages)
@@ -1527,6 +1531,8 @@ class NewspaperIssuePackage < StructuredPagePackage
     raise PackageError, "Errors were encountering while getting up issue information" unless valid?
     return if @config.test_mode
 
+    thumbnail, thumbnail_error_messages = Utils.image_resize(@config, File.join(@directory_path,  @page_filenames[0]), @config.thumbnail_geometry, 'jpeg')
+
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -1576,8 +1582,6 @@ class NewspaperIssuePackage < StructuredPagePackage
         ds.content  = issue_rels_ext(@pid, parent_has_policy)
         ds.mimeType = 'application/rdf+xml'
       end
-
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, File.join(@directory_path,  @page_filenames[0]), @config.thumbnail_geometry, 'jpeg')
 
       ingestor.datastream('TN') do |ds|
         ds.dsLabel  = "Thumbnail Image"
