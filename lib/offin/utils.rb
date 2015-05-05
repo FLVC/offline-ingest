@@ -904,7 +904,7 @@ class Utils
   end
 
   def Utils.rels_ext_get_policy_fields config, collection_pid
-    str = <<-XML.gsub(/^    /, '')
+    str = <<-XML
         <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{collection_pid}"/>
     XML
 
@@ -920,7 +920,7 @@ class Utils
     rels_ext_xml.xpath("//isViewableByUser").each do |node|
       view_rule_count += 1
       if (node.text != 'fedoraAdmin')
-        str += <<-XML.gsub(/^    /, '')
+        str += <<-XML
         <islandora:isViewableByUser>#{node.text}</islandora:isViewableByUser>
     XML
       end
@@ -929,14 +929,14 @@ class Utils
     rels_ext_xml.xpath("//isViewableByRole").each do |node|
       view_rule_count += 1
       if (node.text != 'administrator')
-        str += <<-XML.gsub(/^    /, '')
+        str += <<-XML
         <islandora:isViewableByRole>#{node.text}</islandora:isViewableByRole>
     XML
       end
     end
 
     if view_rule_count > 0
-      str += <<-XML.gsub(/^    /, '')
+      str += <<-XML
         <islandora:isViewableByUser>fedoraAdmin</islandora:isViewableByUser>
         <islandora:isViewableByRole>administrator</islandora:isViewableByRole>
     XML
@@ -945,7 +945,7 @@ class Utils
     rels_ext_xml.xpath("//isManageableByUser").each do |node|
       manage_rule_count += 1
       if (node.text != 'fedoraAdmin')
-        str += <<-XML.gsub(/^    /, '')
+        str += <<-XML
         <islandora:isManageableByUser>#{node.text}</islandora:isManageableByUser>
     XML
       end
@@ -954,20 +954,20 @@ class Utils
     rels_ext_xml.xpath("//isManageableByRole").each do |node|
       manage_rule_count += 1
       if (node.text != 'administrator')
-        str += <<-XML.gsub(/^    /, '')
+        str += <<-XML
         <islandora:isManageableByRole>#{node.text}</islandora:isManageableByRole>
     XML
       end
     end
 
     if manage_rule_count > 0
-      str += <<-XML.gsub(/^    /, '')
+      str += <<-XML
         <islandora:isManageableByUser>fedoraAdmin</islandora:isManageableByUser>
         <islandora:isManageableByRole>administrator</islandora:isManageableByRole>
     XML
     end
 
-    return str
+    return str.gsub(/^    /, '')
   end
 
   # find_appropriate_admin_config(config_file, server_name) is used
