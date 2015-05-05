@@ -726,7 +726,7 @@ class Utils
 
     ### TODO: doh!   popen3 doesn't need shellescape if cmdline is an array - fix EVERYWHERE
 
-    cmdline = config.tesseract_command + ' ' + Utils.langs_to_tesseract(config, *langs)   + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (do_hocr ? ' hocr' : '')
+    cmdline = config.tesseract_command + ' ' + Utils.langs_to_tesseract_command_line(config, *langs)   + ' ' + Utils.shellescape(image_filepath) +  ' ' + base_filename + (do_hocr ? ' hocr' : '')
 
     Timeout.timeout(TESSERACT_TIMEOUT) do
       Open3.popen3(cmdline) do |stdin, stdout, stderr|

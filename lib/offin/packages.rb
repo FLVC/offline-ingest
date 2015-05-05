@@ -242,7 +242,7 @@ class Package
 
   def rels_ext_with_islandora_fields pid
 
-    str = <<-XML.gsub(/^    /, '')
+    str = <<-XML
     <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
              xmlns:fedora-model="info:fedora/fedora-system:def/model#"
              xmlns:islandora="http://islandora.ca/ontology/relsext#"
@@ -250,16 +250,16 @@ class Package
       <rdf:Description rdf:about="info:fedora/#{pid}">
     XML
     @collections.each do |collection|
-      str += <<-XML.gsub(/^    /, '')
+      str += <<-XML
         <fedora:isMemberOfCollection rdf:resource="info:fedora/#{collection}"></fedora:isMemberOfCollection>
     XML
     end
-    str += <<-XML.gsub(/^    /, '')
+    str += <<-XML
         <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
     XML
 
     if @manifest.page_progression
-    str += <<-XML.gsub(/^    /, '')
+    str += <<-XML
         <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>
     XML
     end
@@ -268,12 +268,12 @@ class Package
         str += Utils.rels_ext_get_policy_fields(@config, @policy_collections[0])
     end
 
-    str += <<-XML.gsub(/^    /, '')
+    str += <<-XML
       </rdf:Description>
     </rdf:RDF>
     XML
 
-    return str
+    return str.gsub(/^    /, '')
   end
 
   # This is optional - only DigiTool derived MODS files will have it.
@@ -832,7 +832,7 @@ end
 
 # The StructuredPagePackage is planned for sharing the common methods for the BookPackage and NewspaperIssuePackage
 
-class StructuredPagePackage
+class StructuredPagePackage < Package
 
   attr_reader :mets, :page_filenames, :table_of_contents
 
@@ -1199,7 +1199,7 @@ class BookPackage < StructuredPagePackage
 
     page_label = toc_entry ?  Utils.xml_escape(toc_entry.title) : "Page #{sequence}"
 
-    str = <<-XML.gsub(/^    /, '')
+    str = <<-XML
     <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
              xmlns:fedora-model="info:fedora/fedora-system:def/model#"
              xmlns:islandora="http://islandora.ca/ontology/relsext#"
@@ -1220,11 +1220,11 @@ class BookPackage < StructuredPagePackage
       str += Utils.rels_ext_get_policy_fields(@config, @pid)
     end
 
-    str += <<-XML.gsub(/^    /, '')
+    str += <<-XML
       </rdf:Description>
     </rdf:RDF>
   XML
-    return str
+    return str.gsub(/^    /, '')
   end
 
 
@@ -1287,7 +1287,7 @@ class BookPackage < StructuredPagePackage
 
       ingestor.datastream('RELS-EXT') do |ds|
         ds.dsLabel  = 'Relationships'
-        ds.content  = rels_ext(ingestor.pid)
+        ds.content  = rels_ext(ingestor.pid, page, sequence)
         ds.mimeType = 'application/rdf+xml'
       end
 
