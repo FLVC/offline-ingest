@@ -90,7 +90,6 @@ class Package
     @iid               = nil
     @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
     @collections       = []
-    @policy_collections = []   # list of collections with POLICY datastreams and matching namespace
     @pid               = nil
     @config            = config
     @content_model     = nil
@@ -115,6 +114,7 @@ class Package
     @namespace   = @manifest.owning_institution.downcase
     @collections = list_collections(@manifest)
     @owning_institution = @namespace
+    @inherited_policy_collection_id = get_inherited_policy_collection_id(@config, @collections, @namespace)
 
   rescue SystemError
     raise
@@ -162,9 +162,12 @@ class Package
     not errors?
   end
 
-  # Used by all subclassess.  Note that a MetadataUpdater call will
+  # Used by subclassess.  Note that a MetadataUpdater call will
   # have to have first been made to properly set up some of these
   # (label, owner).
+  #
+  # This is becoming more problematic and increasingly unused as
+  # subclasses get more specialized.
 
   def boilerplate ingestor
 
@@ -201,22 +204,11 @@ class Package
       @drupal_db.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
     end
 
-    # Randy, I had to make changes, sorry about the mess
-
-    @collections.each do |collection_id|
-      collection_namespace = collection_id.partition(":")[0]
-      collection_datastreams = Utils.get_datastream_names(config, collection_id)
-      if collection_namespace == @namespace and collection_datastreams.has_key?('POLICY')
-          @policy_collections.push collection_id
-      end
-    end
-
     # set POLICY if there is only one collection with same namespace and POLICY datastream
     # if none or more than one collection, do not set POLICY
 
-    if @policy_collections.count == 1
-      collection_pid = @policy_collections[0]
-      policy_contents = Utils.get_datastream_contents(@config, collection_pid, 'POLICY')
+    if @inherited_policy_collection_id
+      policy_contents = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')
 
       ingestor.datastream('POLICY') do |ds|
         ds.dsLabel  = "XACML Policy Stream"
@@ -226,19 +218,20 @@ class Package
       end
     end
 
-    # if collection POLICY set or pageProgression in manifest, must create RELS-EXT with islandora fields
+    # If collection POLICY set or pageProgression in manifest, must create RELS-EXT with islandora fields (fischer: otherwise ??)
 
-    if @policy_collections.count == 1 or @manifest.page_progression
+    if @inherited_policy_collection_id or @manifest.page_progression
 
       ingestor.datastream('RELS-EXT') do |ds|
         ds.dsLabel  = 'Relationships'
         ds.content  = rels_ext_with_islandora_fields(ingestor.pid)
         ds.mimeType = 'application/rdf+xml'
       end
-
     end
-
   end
+
+
+  # XXXXX
 
   def rels_ext_with_islandora_fields pid
 
@@ -264,8 +257,8 @@ class Package
     XML
     end
 
-    if @policy_collections.count == 1
-        str += Utils.rels_ext_get_policy_fields(@config, @policy_collections[0])
+    if @inherited_policy_collection_id
+        str += Utils.rels_ext_get_policy_fields(@config, @inherited_policy_collection_id)
     end
 
     str += <<-XML
@@ -289,6 +282,21 @@ class Package
   end
 
   private
+
+  # If this object belongs to collections such that exactly one of them
+  # has a POLICY datastream, return the collection id, otherwise nil.
+
+  def get_inherited_policy_collection_id config, collection_list, my_namespace
+    parent_policy_ids = []
+    collection_list.each do |collection_id|
+      collection_namespace = collection_id.partition(':')[0]
+      if collection_namespace == my_namespace and Utils.get_datastream_names(config, collection_id).has_key?('POLICY')
+        parent_policy_ids.push collection_id
+      end
+    end
+    return (parent_policy_ids.count == 1 ? parent_policy_ids.pop : nil)
+  end
+
 
   # Get a list of all collections this package should be a member of; will check the config file for a list of remappings.
   # TODO: more docs, example fragments of of yaml
@@ -1215,8 +1223,7 @@ class BookPackage < StructuredPagePackage
         <islandora:preprocess>false</islandora:preprocess>
   XML
 
-    if @policy_collections.count == 1
-      #collection_pid = @policy_collections[0]
+    if @inherited_policy_collection_id
       str += Utils.rels_ext_get_policy_fields(@config, @pid)
     end
 
@@ -1299,13 +1306,10 @@ class BookPackage < StructuredPagePackage
 
       # set POLICY if there is only one collection with same namespace and POLICY datastream
 
-      if @policy_collections.count == 1
-        collection_pid = @policy_collections[0]
-        policy_contents = Utils.get_datastream_contents(@config, collection_pid, 'POLICY')
-
+      if @inherited_policy_collection_id
         ingestor.datastream('POLICY') do |ds|
           ds.dsLabel  = "XACML Policy Stream"
-          ds.content  = policy_contents
+          ds.content  = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')
           ds.mimeType = 'text/xml'
           ds.controlGroup = 'X'
         end
@@ -1344,35 +1348,33 @@ class NewspaperIssuePackage < StructuredPagePackage
   def initialize config, directory, manifest, updator
     super(config, directory, manifest, updator)
 
-    @content_model = NEWSPAPER_ISSUE_CONTENT_MODEL
-    @issue_sequence = nil
-    @newspaper_id = nil
+    @content_model        = NEWSPAPER_ISSUE_CONTENT_MODEL
+    @issue_sequence       = nil
+    @newspaper_id         = nil
     @ocr_language_options = []
-    @date_issued = nil
-    @has_mets = File.exists?(File.join(@directory_path, 'mets.xml'))
-
-
+    @date_issued          = nil
+    @has_mets             = File.exists?(File.join(@directory_path, 'mets.xml'))
 
     raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
 
     handle_marc or return  # create @marc if we have a marc.xml
 
     if @has_mets
-      handle_mets                 or return  # create @mets and check its validity
-      create_table_of_contents    or return       # creates @table_of_contents
+      handle_mets               or return  # create @mets and check its validity
+      create_table_of_contents  or return  # creates @table_of_contents
     end
 
-    create_page_filename_list   or return       # creates @page_filenames
-    check_page_types            or return       # checks @page_filenames file types
+    create_page_filename_list   or return  # creates @page_filenames
+    check_page_types            or return  # checks @page_filenames file types
+
+    check_issue_manifest        or return  # sets @ocr_language_options and @date_issued
+    check_newspaper_parent      or return  # sets @issue_sequence and @newspaper_id.
 
   rescue PackageError => e
     error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
   rescue => e
     error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
   end
-
-
-
 
   def ingest
     return if @config.test_mode
@@ -1440,6 +1442,7 @@ class NewspaperIssuePackage < StructuredPagePackage
       return
     end
 
+    return true
   rescue => exception
     oops exception
   end
@@ -1485,6 +1488,7 @@ class NewspaperIssuePackage < StructuredPagePackage
       error "The package MODS file does not include the required w3cdtf-encoded dateIssued element"
     else
       @date_issued = @mods.date_issued
+      return true
     end
 
   rescue => exception
@@ -1492,7 +1496,7 @@ class NewspaperIssuePackage < StructuredPagePackage
   end
 
 
-  def issue_rels_ext pid, parent_has_policy
+  def issue_rels_ext pid, inherited_policy_collection_id
     str = <<-XML
     <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
              xmlns:fedora-model="info:fedora/fedora-system:def/model#"
@@ -1507,26 +1511,23 @@ class NewspaperIssuePackage < StructuredPagePackage
       str +=  "        <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>"
     end
 
-    if parent_has_policy
-      str += Utils.rels_ext_get_policy_fields(@config, @newspaper_id)
+    if inherited_policy_collection_id
+      str += Utils.rels_ext_get_policy_fields(@config, inherited_policy_collection_id)
     end
 
     str += <<-XML
-        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{@newspaper_id}"></islandora:inheritXacmlFrom>
+        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{inherited_policy_collection_id}"></islandora:inheritXacmlFrom>
         <islandora:isSequenceNumber>#{@issue_sequence}</islandora:isSequenceNumber>
         <islandora:dateIssued>#{@date_issued}</islandora:dateIssued>
       </rdf:Description>
     </rdf:RDF>
     XML
 
-    return str.gsub(/^    /, '')
-
+    return str.gsub(/^    /, '')   # prettify XML somewhat
   end
 
 
   def ingest_issue
-    check_issue_manifest     # sets @ocr_language_options and @date_issued
-    check_newspaper_parent   # sets @issue_sequence and @newspaper_id, etc
 
     raise PackageError, "Errors were encountering while getting up issue information" unless valid?
     return if @config.test_mode
@@ -1566,12 +1567,10 @@ class NewspaperIssuePackage < StructuredPagePackage
         @drupal_db.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
       end
 
-      parent_has_policy = Utils.get_datastream_names(config, @newspaper_id).collection_datastreams.has_key?('POLICY')
-
-      if parent_has_policy
+      if @inherited_policy_collection_id
         ingestor.datastream('POLICY') do |ds|
           ds.dsLabel  = "XACML Policy Stream"
-          ds.content  = Utils.get_datastream_contents(@config, @newspaper_id, 'POLICY')
+          ds.content  = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')  # because we only allow one collection, this will be @newspaper_id
           ds.mimeType = 'text/xml'
           ds.controlGroup = 'X'
         end
@@ -1579,7 +1578,7 @@ class NewspaperIssuePackage < StructuredPagePackage
 
       ingestor.datastream('RELS-EXT') do |ds|
         ds.dsLabel  = 'Relationships'
-        ds.content  = issue_rels_ext(@pid, parent_has_policy)
+        ds.content  = issue_rels_ext(@pid, @inherited_policy_collection_id)
         ds.mimeType = 'application/rdf+xml'
       end
 
