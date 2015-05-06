@@ -1504,7 +1504,7 @@ class NewspaperIssuePackage < StructuredPagePackage
              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
       <rdf:Description rdf:about="info:fedora/#{pid}">
         <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
-        <fedora:isMemberOfCollection rdf:resource=\"info:fedora/#{@newspaper_id}\"></fedora:isMemberOfCollection>
+        <fedora:isMemberOf rdf:resource=\"info:fedora/#{@newspaper_id}\"></fedora:isMemberOf>
     XML
 
     if @manifest.page_progression
