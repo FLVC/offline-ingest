@@ -160,8 +160,11 @@ class Ingestor
 
   def existing_collections
     query = "select $object $title from <#ri> " +
-             "where $object <fedora-model:label> $title " +
-               "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
+            "where $object <fedora-model:label> $title " +
+            "and " +
+            "($object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel> " +
+            "or " +
+            "$object <fedora-model:hasModel> <info:fedora/islandora:newspaperCModel>)"
 
     @repository.itql(query).map{ |row| row[0] }
   end
