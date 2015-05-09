@@ -17,6 +17,9 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 Kernel.trap('HUP')  { "IGNORE" }
 
+STDERR.sync = true
+STDOUT.sync = true
+
 INDENT = ' ' * 4
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
