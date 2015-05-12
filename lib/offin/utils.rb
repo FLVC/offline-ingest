@@ -52,6 +52,19 @@ class Utils
   TESSERACT_TIMEOUT = 500   # tesseract can waste a lot of time on certain kinds of images
   QUICKLY_TIMEOUT   = 10    # seconds before giving up on fedora
 
+  # Yuck - these don't really belong here... (copied from packages.rb)
+
+  BASIC_IMAGE_CONTENT_MODEL      = 'islandora:sp_basic_image'
+  LARGE_IMAGE_CONTENT_MODEL      = 'islandora:sp_large_image_cmodel'
+  PDF_CONTENT_MODEL              = 'islandora:sp_pdf'
+  BOOK_CONTENT_MODEL             = 'islandora:bookCModel'
+  PAGE_CONTENT_MODEL             = 'islandora:pageCModel'
+  NEWSPAPER_CONTENT_MODEL        = 'islandora:newspaperCModel'
+  NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
+  NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
+
+
+
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
     STDERR.puts "Usage: #{program} <directory>"
@@ -204,14 +217,10 @@ class Utils
     return {}
   end
 
-  # Get the next sequence number for the issues of a newpaper with PID
-  # newspaper_pid.  Return nil on error (can't connect, etc). Returns
-  # 1 for no issues, even if newspaper_pid doesn't exist (so check for
-  # that first)
+  # This is a placeholder for a useful SPARQL query as an example - we
+  # actually use trimmed down specialized derivatives of this. Given a
+  # newspaper_pid, return all the issues:
   #
-  # I return unused the object id as well.  We could get the label and issue-date as well with this SPARQL query:
-  #
-  #   query = <<-SPARQL.gsub(/^        /, '')
   #     PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
   #     PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
   #
@@ -225,10 +234,8 @@ class Utils
   #       OPTIONAL { ?object islandora-rels-ext:dateIssued ?issued }
   #     }
   #     ORDER BY ?sequence
-  # SPARQL
   #
   # which returns data like:
-  #
   #
   # <CSV::Row "object":"info:fedora/fsu:162918" "sequence":"360" "label":"secolo" "issued":"1885-05-06">
   # <CSV::Row "object":"info:fedora/fsu:162926" "sequence":"361" "label":"secolo" "issued":"1885-05-07">
@@ -270,6 +277,41 @@ class Utils
     return
   end
 
+  def Utils.get_newspaper_issues_by_date_issued config, newspaper_pid, issue_date
+
+    query = <<-SPARQL.gsub(/^        /, '')
+        PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
+        PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+
+        SELECT ?object ?label
+        FROM <#ri>
+        WHERE {
+          ?object fedora-rels-ext:isMemberOf <info:fedora/#{newspaper_pid.sub(/^info:fedora\//, '')}> ;
+               <fedora-model:hasModel> <info:fedora/#{NEWSPAPER_ISSUE_CONTENT_MODEL}> ;
+               <fedora-model:label> ?label;
+               <islandora-rels-ext:dateIssued> "#{issue_date}"
+        }
+    SPARQL
+
+    repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+
+    quickly do
+      repository.ping
+    end
+
+    # The sparql query returns a (possibly empty list) of rows along the lines of
+    #
+    # #<CSV::Row "object":"info:fedora/fsu:157125"  "label":"secolo">
+    #
+    # We really should expect one or zero here, but there could be
+    # multiples; so we return a possibly empty array of object ids.
+
+    return repository.sparql(query).map { |row_rec| row_rec['object'].sub(/^info:fedora\//, '') }
+
+  rescue => e
+    return []
+  end
+
 
   def Utils.get_newspaper_pids config
 
@@ -292,7 +334,7 @@ class Utils
 
   # get_datastream_names(config, islandora_pid) => hash
   #
-  # parse XML for dsid/label pairs, as from the example document:
+  # parse XML for dsid/label pairs, as from this example document:
   #
   # <?xml version="1.0" encoding="UTF-8"?>
   # <objectDatastreams xmlns="http://www.fedora.info/definitions/1/0/access/"
@@ -309,7 +351,7 @@ class Utils
   #   <datastream dsid="TOC" label="Table of Contents" mimeType="application/json"/>
   # </objectDatastreams>
   #
-  # The above doc would return a hash of strings (key and values):
+  # The above doc would return a hash of strings (key/value pairs):
   #
   #   DC       =>  Dublin Core Record
   #   RELS-EXT =>  Relationships
@@ -346,6 +388,15 @@ class Utils
   # include the https://login:password@site/ but I hate hate hate
   # that.  It would of course come out of the config file in that
   # case.
+  #
+  # TODO: go ahead and mandate drupal admin/password in config file
+  # (or maybe in DB?)  for doing this via something like:
+  #
+  #     request = RestClient::Request.new(:user => config.drupal_admin_user,
+  #                                       :password => config.drupal_admin_password,
+  #                                       :method => :get,
+  #                                       :url => url)
+
 
   def Utils.ping_islandora_for_object islandora_site, pid
     return :missing unless pid
@@ -644,7 +695,7 @@ class Utils
 
   private
 
-  # take a list of iso639b language codes, find the supported ones,
+  # Take a list of ISO 639-2b language codes, find the supported ones,
   # translate to the codes tesseract uses and return the options for a
   # command line.
 
@@ -681,10 +732,6 @@ class Utils
 
     return unsupported.join(", ")
   end
-
-
-
-
 
 
   def Utils.tesseract config, image_filepath, do_hocr, *langs
@@ -967,7 +1014,7 @@ class Utils
     XML
     end
 
-    return str.gsub(/^    /, '')
+    return str
   end
 
   # find_appropriate_admin_config(config_file, server_name) is used
