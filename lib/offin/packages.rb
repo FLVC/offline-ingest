@@ -103,11 +103,11 @@ class Package
 
     @mods_type_of_resource = nil
 
-    handle_manifest(manifest) or return         # sets up @manifest
-    handle_mods or return                       # sets up @mods
-    handle_marc or return                       # sets up @marc
-    handle_updator or return                    # does system-specific checks, e.g. digtitool, prospective, etc
-    handle_misc or return                       # sigh. Currently: check owner exists in drupal database.
+    handle_manifest(manifest) or return     # sets up @manifest
+    handle_mods or return                   # sets up @mods
+    handle_marc or return                   # sets up @marc
+    handle_updator or return                # does system-specific checks, e.g. digtitool, prospective, etc
+    handle_drupal_check or return           # check that manifest-specified drupal account exists in drupal database.
 
     return unless valid?
 
@@ -142,7 +142,7 @@ class Package
         p = "info:fedora/#{p}" unless p =~ /^info:fedora/
         Rubydora::DigitalObject.find_or_initialize(p, repository).delete
       rescue RestClient::ResourceNotFound => e
-        # don't care
+      # don't care
       rescue => e
         warning "Could not delete pid #{p} from package #{name}: #{e.class} #{e.message}"
       end
@@ -177,7 +177,6 @@ class Package
     @mods.add_islandora_identifier ingestor.pid
     @mods.add_flvc_extension_elements @manifest
 
-
     if @mods.type_of_resource.empty?
       @mods.add_type_of_resource @mods_type_of_resource
     end
@@ -208,32 +207,24 @@ class Package
     # if none or more than one collection, do not set POLICY
 
     if @inherited_policy_collection_id
-      policy_contents = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')
-
       ingestor.datastream('POLICY') do |ds|
         ds.dsLabel  = "XACML Policy Stream"
-        ds.content  = policy_contents
+        ds.content  = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')
         ds.mimeType = 'text/xml'
         ds.controlGroup = 'X'
       end
     end
 
-    # If collection POLICY set or pageProgression in manifest, must create RELS-EXT with islandora fields (fischer: otherwise ??)
-
-    if @inherited_policy_collection_id or @manifest.page_progression
-
-      ingestor.datastream('RELS-EXT') do |ds|
-        ds.dsLabel  = 'Relationships'
-        ds.content  = rels_ext_with_islandora_fields(ingestor.pid)
-        ds.mimeType = 'application/rdf+xml'
-      end
+    ingestor.datastream('RELS-EXT') do |ds|
+      ds.dsLabel  = 'Relationships'
+      ds.content  = rels_ext(ingestor.pid)
+      ds.mimeType = 'application/rdf+xml'
     end
   end
 
+  # subclasses that call the boilerplate() method should redefine rels_ext as appropriate.
 
-  # XXXXX
-
-  def rels_ext_with_islandora_fields pid
+  def rels_ext pid
 
     str = <<-XML
     <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
@@ -241,24 +232,22 @@ class Package
              xmlns:islandora="http://islandora.ca/ontology/relsext#"
              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
       <rdf:Description rdf:about="info:fedora/#{pid}">
+        <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
     XML
     @collections.each do |collection|
       str += <<-XML
         <fedora:isMemberOfCollection rdf:resource="info:fedora/#{collection}"></fedora:isMemberOfCollection>
     XML
     end
-    str += <<-XML
-        <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
-    XML
 
     if @manifest.page_progression
-    str += <<-XML
+      str += <<-XML
         <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>
     XML
     end
 
     if @inherited_policy_collection_id
-        str += Utils.rels_ext_get_policy_fields(@config, @inherited_policy_collection_id)
+      str += Utils.rels_ext_get_policy_fields(@config, @inherited_policy_collection_id)
     end
 
     str += <<-XML
@@ -298,6 +287,13 @@ class Package
   end
 
 
+  # Self explanatory
+
+  def safe_close *files
+    files.each { |file| file.close if file.respond_to? :close and file.respond_to? :closed? and not file.closed? }
+  rescue
+  end
+
   # Get a list of all collections this package should be a member of; will check the config file for a list of remappings.
   # TODO: more docs, example fragments of of yaml
 
@@ -314,7 +310,7 @@ class Package
       when String
         new_pid = remapper[pid].downcase
         list.push new_pid
-        # warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collection #{new_pid}"
+      # warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collection #{new_pid}"
       when Array
         new_pids = remapper[pid].map { |p| p.downcase }
         list += new_pids
@@ -431,7 +427,7 @@ class Package
     return valid?
   end
 
-  def handle_misc
+  def handle_drupal_check
     return valid? if @config.test_mode
 
     users = @drupal_db.users
@@ -537,7 +533,7 @@ class BasicImagePackage < Package
     error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
     error   [ 'Error creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
 
-    [ @image, medium, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(@image, medium, thumbnail)
 
     @updator.post_ingest
   end
@@ -648,7 +644,7 @@ class LargeImagePackage < Package
     warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
     warning [ 'Issues creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
 
-    [ @image, medium, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(@image, medium, thumbnail)
 
     @updator.post_ingest
   end
@@ -675,7 +671,7 @@ class LargeImagePackage < Package
 
   ensure
     warning  [ 'Issues converting TIFF to JP2K' ] +  jp2k_error_messages  if jp2k_error_messages and not jp2k_error_messages.empty?
-    [ @image, jp2k ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(@image, jp2k)
   end
 
 
@@ -697,7 +693,7 @@ class LargeImagePackage < Package
 
   ensure
     warning  [ 'Issues when converting JP2K to TIFF' ] +  tiff_error_messages  if tiff_error_messages and not tiff_error_messages.empty?
-    [ @image, tiff ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(@image, tiff)
   end
 
 end
@@ -832,21 +828,23 @@ class PDFPackage < Package
     warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
     warning [ 'Issues creating Preview datastream' ]   + preview_error_messages    if preview_error_messages   and not preview_error_messages.empty?
 
-    [ preview, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(preview, thumbnail)
 
     @updator.post_ingest
   end
 end
 
-# The StructuredPagePackage is planned for sharing the common methods for the BookPackage and NewspaperIssuePackage
+# The StructuredPagePackage  the common methods for the BookPackage and NewspaperIssuePackage
 
 class StructuredPagePackage < Package
 
-  attr_reader :mets, :page_filenames, :table_of_contents
+  attr_reader :mets, :page_filenames, :table_of_contents, :has_mets
 
   def initialize config, directory, manifest, updator
     super(config, directory, manifest, updator)
     @mods_type_of_resource = 'text'
+    @has_mets = File.exists?(File.join(@directory_path, 'mets.xml'))
+
     raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
   end
 
@@ -914,26 +912,34 @@ class StructuredPagePackage < Package
     return true
   end
 
+  # TODO: handle text files some day.
 
   def create_page_filename_list
 
-    missing     = []
-    expected    = []
+    missing, expected = [], []
 
-    # This checks the filenames in the list @datafiles (what's in the
-    # package directory, less the metadata files) against the
-    # filenames declared in the METS file table of contents (a
-    # structmap).  While datafiles is a simple list of filenames, the
-    # table of contents provies a Struct::Page with slots :title,
-    # :level, :image_filename, :image_mimetype, and :valid_repeat.
-    # A :valid_repeat file is ignored.
+    if not @has_mets
 
-    # TODO: handle text files somehow.
+      # Without METS, there's no way to find out which files should be present, so we won't be able to figure out if something is missing.
+      # We also lack knowing what order they should be in.  Ah well...
 
-    @table_of_contents.pages.each do |entry|
-      next if entry.valid_repeat
-      expected.push entry.image_filename
-      missing.push  entry.image_filename  if @datafiles.grep(entry.image_filename).empty?
+      @datafiles.sort!
+      expected.push @datafiles.select { |name| name =~ /\.tiff$|\.tif$|\.jp2$|\.jp2k$|\.jpg$|\.jpeg$/i }
+    else
+
+      # This checks the filenames in the list @datafiles (what's in the
+      # package directory, less the metadata files) against the
+      # filenames declared in the METS file table of contents (a
+      # structmap).  While datafiles is a simple list of filenames, the
+      # table of contents provies a Struct::Page with slots :title,
+      # :level, :image_filename, :image_mimetype, and :valid_repeat.
+      # A :valid_repeat file is ignored.
+
+      @table_of_contents.pages.each do |entry|
+        next if entry.valid_repeat
+        expected.push entry.image_filename
+        missing.push  entry.image_filename  if @datafiles.grep(entry.image_filename).empty?
+      end
     end
 
     unexpected = @datafiles - expected
@@ -951,154 +957,24 @@ class StructuredPagePackage < Package
 
     @page_filenames = expected - missing
   end
-end
-
-
-# Subclass of Package for handling the Book content model
-
-class BookPackage < StructuredPagePackage
-
-  def initialize config, directory, manifest, updator
-    super(config, directory, manifest, updator)
-
-    @content_model = BOOK_CONTENT_MODEL
-
-    handle_marc or return  # create @marc if we have a marc.xml
-    handle_mets or return  # create @mets and check its validity
-
-    create_table_of_contents   or return       # creates @table_of_contents
-
-    create_page_filename_list  or return       # creates @page_filenames
-    check_page_types           or return       # checks @page_filenames file types
-
-  rescue PackageError => e
-    error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
-  rescue => e
-    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
-  end
-
-  def ingest
-    return if @config.test_mode
-    ingest_book
-    sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
-    ingest_pages
-  end
-
-  private
-
-
-  def ingest_book
-    first_page = File.join @directory_path, @page_filenames.first
-    @image = File.read(first_page)
-
-    thumbnail, thumbnail_error_messages = nil
-
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
-
-      boilerplate(ingestor)
-
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, first_page, @config.thumbnail_geometry, 'jpeg')
-
-      ingestor.datastream('TN') do |ds|
-        ds.dsLabel  = 'Thumbnail'
-        ds.content  =  thumbnail
-        ds.mimeType = 'image/jpeg'
-      end
-
-      ingestor.datastream('DT-METS') do |ds|
-        ds.dsLabel  = 'Archived METS for future reference'
-        ds.content  = @mets.text
-        ds.mimeType = 'text/xml'
-      end
-
-      ingestor.datastream('TOC') do |ds|
-        ds.dsLabel  = 'Table of Contents'
-        ds.content  = @table_of_contents.to_json(@mets.label)
-        ds.mimeType = 'application/json'
-      end
-    end
-
-    @bytes_ingested += ingestor.size
-
-  ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-
-    [ @image, thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
-
-    @updator.post_ingest
-  end
-
-
-  def ingest_pages
-    @table_of_contents.unique_pages.each_with_index do |entry, index|
-      @component_objects.push ingest_page(entry, index + 1)
-    end
-
-    if @manifest.embargo
-      @component_objects.each do |pid|
-        @drupal_db.add_embargo pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
-      end
-    end
-  end
-
-  # Islandora out of the box only supports TIFF submissions, so this is the canonical processing islandora would do:
-
-  def handle_tiff_page ingestor, path
-    image = File.open(path)
-
-    jp2k, jp2k_error_messages = nil
-    medium, medium_error_messages = nil
-
-    ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
-      ds.content  = image
-      ds.mimeType = 'image/tiff'
-    end
-
-    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)
-
-    ingestor.datastream('JP2') do |ds|
-      ds.dsLabel  = "JP2 derived from original TIFF"
-      ds.content  = jp2k
-      ds.mimeType = 'image/jp2'
-    end
-
-    medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
-
-    ingestor.datastream('JPG') do |ds|
-      ds.dsLabel  = 'Medium sized JPEG'
-      ds.content  = medium
-      ds.mimeType = 'image/jpeg'
-    end
-
-  ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating JPK2 datastream' ]      + jp2k_error_messages    if jp2k_error_messages    and not jp2k_error_messages.empty?
-    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
-
-    [ image, jp2k, medium ].each { |file| file.close if file.respond_to? :close and not file.closed? }
-  end
 
 
   def handle_ocr ingestor, path
     ocr_produced_text = true
 
-    if (text = Utils.ocr(@config, path))
+    if (text = Utils.ocr(@config, path, @mods.languages))
       ingestor.datastream('OCR') do |ds|
         ds.dsLabel  = 'OCR'
         ds.content  = text
         ds.mimeType = 'text/plain'
       end
     else
-      ocr_produced_text = false      #### TODO:  break out into own type of warning...
+      ocr_produced_text = false      # TODO:  break out into own type of warning...
       image_name = path.sub(/^.*\//, '')
       warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
-    if ocr_produced_text  and (text = Utils.hocr(@config, path))
+    if ocr_produced_text  and (text = Utils.hocr(@config, path, @mods.languages))
       ingestor.datastream('HOCR') do |ds|
         ds.dsLabel  = 'HOCR'
         ds.content  = text
@@ -1142,7 +1018,7 @@ class BookPackage < StructuredPagePackage
     warning [ 'Issues creating JPK2 datastream' ] + jp2k_error_messages  if jp2k_error_messages  and not jp2k_error_messages.empty?
     warning [ 'Issues creating TIFF datastream' ] + tiff_error_messages  if tiff_error_messages  and not tiff_error_messages.empty?
 
-    [ image, jp2k, tiff ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(image, jp2k, tiff)
   end
 
 
@@ -1177,94 +1053,66 @@ class BookPackage < StructuredPagePackage
     warning [ 'Issues creating TIFF datastream' ]      + tiff_error_messages    if tiff_error_messages    and not tiff_error_messages.empty?
     warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
 
-    [ image, tiff, medium ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(image, tiff, medium)
 
   end
 
-  # RELS-INT, application/rdf+xml
+  # Islandora out of the box only supports TIFF submissions, so this is the canonical processing islandora would do:
 
-  def rels_int page_pid, image_path
-    width, height = Utils.size(@config, image_path)
+  def handle_tiff_page ingestor, path
+    image = File.open(path)
 
-    if not width or not height
-      raise PackageError, "Can't determine the size of the image '#{image_path}'."
+    jp2k, jp2k_error_messages = nil
+    medium, medium_error_messages = nil
+
+    ingestor.datastream('OBJ') do |ds|
+      ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
+      ds.content  = image
+      ds.mimeType = 'image/tiff'
     end
 
-    return <<-XML.gsub(/^     /, '')
-    <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
-             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-       <rdf:Description rdf:about="info:fedora/#{page_pid}/JP2">
-         <width xmlns="http://islandora.ca/ontology/relsext#">#{width}</width>
-         <height xmlns="http://islandora.ca/ontology/relsext#">#{height}</height>
-       </rdf:Description>
-     </rdf:RDF>
-  XML
-  end
+    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)
 
-  # RELS-EXT, application/rdf+xml
-
-  def rels_ext page_pid, toc_entry, sequence
-
-    page_label = toc_entry ?  Utils.xml_escape(toc_entry.title) : "Page #{sequence}"
-
-    str = <<-XML
-    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
-             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
-             xmlns:islandora="http://islandora.ca/ontology/relsext#"
-             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-      <rdf:Description rdf:about="info:fedora/#{page_pid}">
-        <fedora:isMemberOf rdf:resource="info:fedora/#{@pid}"></fedora:isMemberOf>
-        <fedora-model:hasModel rdf:resource="info:fedora/islandora:pageCModel"></fedora-model:hasModel>
-        <islandora:isPageOf rdf:resource="info:fedora/#{@pid}"></islandora:isPageOf>
-        <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
-        <islandora:isPageNumber>#{page_label}</islandora:isPageNumber>
-        <islandora:isSection>1</islandora:isSection>
-        <islandora:hasLanguage>eng</islandora:hasLanguage>
-        <islandora:preprocess>false</islandora:preprocess>
-  XML
-
-    if @inherited_policy_collection_id
-      str += Utils.rels_ext_get_policy_fields(@config, @pid)
+    ingestor.datastream('JP2') do |ds|
+      ds.dsLabel  = "JP2 derived from original TIFF"
+      ds.content  = jp2k
+      ds.mimeType = 'image/jp2'
     end
 
-    str += <<-XML
-      </rdf:Description>
-    </rdf:RDF>
-  XML
-    return str.gsub(/^    /, '')
+    medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
+
+    ingestor.datastream('JPG') do |ds|
+      ds.dsLabel  = 'Medium sized JPEG'
+      ds.content  = medium
+      ds.mimeType = 'image/jpeg'
+    end
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    warning [ 'Issues creating JPK2 datastream' ]      + jp2k_error_messages    if jp2k_error_messages    and not jp2k_error_messages.empty?
+    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
+
+    safe_close(image, jp2k, medium)
   end
 
+  # Note: subclasses MUST impelement methods page_dc and
+  # page_rels_ext.  Furthermore, there MUST be a @page_content_model
+  # instance variable.
 
-  # DC text/xml
+  def ingest_page pagename, label, sequence
 
-  def dc page_pid, pagename
-
-    return <<-XML.gsub(/^    /, '')
-    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-               xmlns:dc="http://purl.org/dc/elements/1.1/"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-      <dc:title>#{Utils.xml_escape(pagename)}</dc:title>
-      <dc:identifier>#{page_pid}</dc:identifier>
-    </oai_dc:dc>
-  XML
-  end
-
-  def ingest_page page, sequence
-    pagename = page.image_filename
-    path  = File.join(@directory_path, pagename)
-
+    path      = File.join(@directory_path, pagename)
     mime_type = Utils.mime_type(path)
 
-    pdf, pdf_error_messages = nil
-    thumbnail, thumbnail_error_messages = nil
+    pdf, pdf_error_messages, thumbnail, thumbnail_error_messages = nil
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       ingestor.label         = pagename
       ingestor.owner         = @owner
-      ingestor.content_model = PAGE_CONTENT_MODEL
-      ingestor.dc            = dc(ingestor.pid, pagename)
+      ingestor.content_model = @page_content_model
+      ingestor.dc            = page_dc(ingestor.pid, pagename)
 
       case mime_type
       when TIFF;  handle_tiff_page(ingestor, path);
@@ -1294,26 +1142,16 @@ class BookPackage < StructuredPagePackage
 
       ingestor.datastream('RELS-EXT') do |ds|
         ds.dsLabel  = 'Relationships'
-        ds.content  = rels_ext(ingestor.pid, page, sequence)
+        ds.content  = page_rels_ext(ingestor.pid, label, sequence)
         ds.mimeType = 'application/rdf+xml'
       end
 
       ingestor.datastream('RELS-INT') do |ds|
         ds.dsLabel  = 'RELS-INT'
-        ds.content  = rels_int(ingestor.pid, path)
+        ds.content  = page_rels_int(ingestor.pid, path)
         ds.mimeType = 'application/rdf+xml'
       end
 
-      # set POLICY if there is only one collection with same namespace and POLICY datastream
-
-      if @inherited_policy_collection_id
-        ingestor.datastream('POLICY') do |ds|
-          ds.dsLabel  = "XACML Policy Stream"
-          ds.content  = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')
-          ds.mimeType = 'text/xml'
-          ds.controlGroup = 'X'
-        end
-      end
     end
 
     @bytes_ingested += ingestor.size
@@ -1333,27 +1171,201 @@ class BookPackage < StructuredPagePackage
     warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
     warning [ 'Issues creating PDF datastream' ]       + pdf_error_messages        if pdf_error_messages       and not pdf_error_messages.empty?
 
-    [ thumbnail, pdf ].each { |file| file.close if file.respond_to? :close and not file.closed? }
+    safe_close(thumbnail, pdf)
   end
 
+  # Standard page rels_int (type application/rdf+xml)
+
+  def page_rels_int page_pid, image_path
+    width, height = Utils.size(@config, image_path)
+
+    if not width or not height
+      raise PackageError, "Can't determine the size of the image '#{image_path}'."
+    end
+
+    return <<-XML.gsub(/^     /, '')
+    <rdf:RDF xmlns:islandora="http://islandora.ca/ontology/relsint#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+       <rdf:Description rdf:about="info:fedora/#{page_pid}/JP2">
+         <width xmlns="http://islandora.ca/ontology/relsext#">#{width}</width>
+         <height xmlns="http://islandora.ca/ontology/relsext#">#{height}</height>
+       </rdf:Description>
+     </rdf:RDF>
+  XML
+  end
+
+  # Standard page DC (type text/xml)
+
+  def page_dc page_pid, page_title
+
+    return <<-XML.gsub(/^    /, '')
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+               xmlns:dc="http://purl.org/dc/elements/1.1/"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+      <dc:title>#{Utils.xml_escape(page_title)}</dc:title>
+      <dc:identifier>#{page_pid}</dc:identifier>
+    </oai_dc:dc>
+  XML
+  end
+
+
+  def page_rels_ext *ignored
+    error "Must define page_rels_ext method in your subclass"
+  end
+
+
+end # of class StructuredPagePackage
+
+
+
+# Subclass of Package for handling the Book content model
+
+class BookPackage < StructuredPagePackage
+
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
+
+    @content_model = BOOK_CONTENT_MODEL
+    @page_content_model = PAGE_CONTENT_MODEL
+
+    handle_marc or return  # create @marc if we have a marc.xml
+    handle_mets or return  # create @mets and check its validity
+
+    create_table_of_contents   or return       # creates @table_of_contents
+
+    create_page_filename_list  or return       # creates @page_filenames
+    check_page_types           or return       # checks @page_filenames file types
+
+  rescue PackageError => e
+    error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
+  rescue => e
+    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
+  end
+
+  def ingest
+    return if @config.test_mode
+    ingest_book
+    sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
+    ingest_pages
+  end
+
+  private
+
+  def ingest_book
+    first_page = File.join @directory_path, @page_filenames.first
+    @image = File.read(first_page)
+
+    thumbnail, thumbnail_error_messages = nil
+
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+
+      boilerplate(ingestor)
+
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, first_page, @config.thumbnail_geometry, 'jpeg')
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = 'Thumbnail'
+        ds.content  =  thumbnail
+        ds.mimeType = 'image/jpeg'
+      end
+
+      ingestor.datastream('DT-METS') do |ds|
+        ds.dsLabel  = 'Archived METS for future reference'
+        ds.content  = @mets.text
+        ds.mimeType = 'text/xml'
+      end
+
+      ingestor.datastream('TOC') do |ds|
+        ds.dsLabel  = 'Table of Contents'
+        ds.content  = @table_of_contents.to_json(@mets.label)
+        ds.mimeType = 'application/json'
+      end
+    end
+
+    @bytes_ingested += ingestor.size
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+
+    safe_close(@image, thumbnail)
+
+    @updator.post_ingest
+  end
+
+  # books always require a METS file
+
+  def ingest_pages
+    @table_of_contents.unique_pages.each_with_index do |entry, index|
+      label =  toc_entry ?  Utils.xml_escape(toc_entry.title) : "Page #{sequence}"
+      @component_objects.push ingest_page(entry.image_filename, label, index + 1)
+    end
+
+    if @manifest.embargo
+      @component_objects.each do |pid|
+        @drupal_db.add_embargo pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+      end
+    end
+  end
+
+  # Method ingest_page(), called above, is inherited from the
+  # StructuredPagePackage class, which requires us to define
+  # page_rels_ext().
+
+
+  def page_rels_ext page_pid, page_label, sequence
+
+    str = <<-XML
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{page_pid}">
+        <fedora:isMemberOf rdf:resource="info:fedora/#{@pid}"></fedora:isMemberOf>
+        <fedora-model:hasModel rdf:resource="info:fedora/#{PAGE_CONTENT_MODEL}"></fedora-model:hasModel>
+        <islandora:isPageOf rdf:resource="info:fedora/#{@pid}"></islandora:isPageOf>
+        <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
+        <islandora:isPageNumber>#{page_label}</islandora:isPageNumber>
+        <islandora:isSection>1</islandora:isSection>
+        <islandora:hasLanguage>#{someone stop the bleeding!}</islandora:hasLanguage>
+        <islandora:preprocess>false</islandora:preprocess>
+   XML
+
+    if @inherited_policy_collection_id
+      str += Utils.rels_ext_get_policy_fields(@config, @pid)
+    end
+
+    # TODO: does page_progression get included at the page level as well for books? or just book/issue level
+
+    str += <<-XML
+      </rdf:Description>
+    </rdf:RDF>
+  XML
+    return str.gsub(/^    /, '')
+  end
+
+
 end   #  of class BookPackage
+
 
 
 # A package for handling the Newspaper Issue Content Model
 
 class NewspaperIssuePackage < StructuredPagePackage
 
-  attr_reader :mets, :page_filenames, :table_of_contents
-
   def initialize config, directory, manifest, updator
     super(config, directory, manifest, updator)
 
     @content_model        = NEWSPAPER_ISSUE_CONTENT_MODEL
+    @page_content_model   = NEWSPAPER_PAGE_CONTENT_MODEL
+
     @issue_sequence       = nil
     @newspaper_id         = nil
-    @ocr_language_options = []
+    @ocr_language_options = nil
+    @iso639_languages     = []
     @date_issued          = nil
-    @has_mets             = File.exists?(File.join(@directory_path, 'mets.xml'))
 
     raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
 
@@ -1381,11 +1393,160 @@ class NewspaperIssuePackage < StructuredPagePackage
     ingest_issue
     # TODO:  uncomment after
     # sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
-    ingest_newspaper_pages
+    ingest_pages
   end
 
 
   private
+
+
+  # Part I. Newspaper Issue level processing.
+  #
+  # We inherit methods boilerplate() and rels_ext() from the Package
+  # class. boilerplate() normally uses the rels_ext() method as defined
+  # in the Package class, but here we'll redefine rels_ext() to do a
+  # slightly different thing.
+
+  def rels_ext pid
+    str = <<-XML
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{pid}">
+        <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
+        <fedora:isMemberOf rdf:resource="info:fedora/#{@newspaper_id}"></fedora:isMemberOf>
+    XML
+
+    if @manifest.page_progression
+      str +=  "        <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>"
+    end
+
+    if inherited_policy_collection_id
+      str += Utils.rels_ext_get_policy_fields(@config, @inherited_policy_collection_id)
+    end
+
+    str += <<-XML
+        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{@inherited_policy_collection_id}"></islandora:inheritXacmlFrom>
+        <islandora:isSequenceNumber>#{@issue_sequence}</islandora:isSequenceNumber>
+        <islandora:dateIssued>#{@date_issued}</islandora:dateIssued>
+      </rdf:Description>
+    </rdf:RDF>
+    XML
+
+    return str.gsub(/^    /, '')   # prettify XML somewhat
+  end
+
+
+  def ingest_issue
+    raise PackageError, "Errors were encountering while setting up issue information" unless valid?
+    return if @config.test_mode
+
+    thumbnail, thumbnail_error_messages = Utils.image_resize(@config, File.join(@directory_path,  @page_filenames[0]), @config.thumbnail_geometry, 'jpeg')
+
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+
+      boilerplate(ingestor)
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = "Thumbnail Image"
+        ds.content  = thumbnail
+        ds.mimeType = 'image/jpeg'
+      end
+
+      if @has_mets
+        ingestor.datastream('DT-METS') do |ds|
+          ds.dsLabel  = 'Archived METS for future reference'
+          ds.content  = @mets.text
+          ds.mimeType = 'text/xml'
+        end
+
+        ingestor.datastream('TOC') do |ds|
+          ds.dsLabel  = 'Table of Contents'
+          ds.content  = @table_of_contents.to_json(@mets.label)
+          ds.mimeType = 'application/json'
+        end
+      end
+    end
+
+    @bytes_ingested = ingestor.size
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+
+    safe_close(thumbnail)
+    @updator.post_ingest
+  end
+
+
+  # Part II. Newspaper Page level processing.
+
+  # NewspaperIssue packages don't necessarily have to have a METS file, so we do the best we can do.
+
+  def ingest_pages
+    if @has_mets
+      sequence = 0
+      @table_of_contents.unique_pages.each do |entry|
+        sequence += 1
+        label =  entry.title ? Utils.xml_escape(entry.title) : "Page #{sequence}"
+        @component_objects.push ingest_page(entry.image_filename, label, sequence)
+      end
+    else
+      sequence = 0
+      @page_filenames.each do |image_filename|
+        @component_objects.push ingest_page(image_filename, "Page #{sequence}", sequence)
+      end
+    end
+
+    if @manifest.embargo
+      @component_objects.each do |pid|
+        @drupal_db.add_embargo pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+      end
+    end
+  end
+
+
+  # The ingest_page() method, called above, is inherited from
+  # StructuredPagePackage, but we have to provide our own method for
+  # page_rels_ext() to use it.
+
+  # TODO: does this need a page progression?
+
+  def page_rels_ext page_pid, page_label, sequence
+
+    # page_label unused for Newspaper pages
+
+    str = <<-XML
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{page_pid}">
+        <fedora-model:hasModel rdf:resource="info:fedora/#{NEWSPAPER_PAGE_CONTENT_MODEL}"></fedora-model:hasModel>
+        <fedora:isMemberOf rdf:resource="info:fedora/#{@pid}"></fedora:isMemberOf>
+        <islandora:isPageOf rdf:resource="info:fedora/#{@pid}"></islandora:isPageOf>
+        <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
+        <islandora:isPageNumber>#{sequence}</islandora:isPageNumber>
+        <islandora:isSection>1</islandora:isSection>
+    XML
+
+
+    if @inherited_policy_collection_id
+      str += Utils.rels_ext_get_policy_fields(@config, @pid)   # note that @inherited_policy_collection_id is the collection for this Issue,  which we've already ingested.  So we get policies from the Issue's datastreams (@pid)
+    end
+
+    str += <<-XML
+        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{@pid}"></islandora:inheritXacmlFrom>
+      </rdf:Description>
+    </rdf:RDF>
+    XML
+
+    return str.gsub(/^    /, '')   # prettify XML somewhat
+  end
+
+  # Part III. Internal utilities.
 
   def oops exception
     error "Unexpected error while checking for issue's parent newspaper object #{exception}"
@@ -1436,6 +1597,13 @@ class NewspaperIssuePackage < StructuredPagePackage
       return
     end
 
+    existing_issues_object_ids = Utils.get_newspaper_issues_by_date_issued(@config, @newspaper_id, @date_issued)
+
+    if not existing_issues_object_ids.empty?
+      error "The #{pretty_class_name} has an issue date #{@date_issued},  but so #{ existing_issues_object_ids.count == 1 ? "does issue " + "existing_issues_object_ids[0]" : "do issues " + existing_issues_object_ids.join(', ')}."
+      return
+    end
+
     @issue_sequence = Utils.get_next_newspaper_issue_sequence config, @newspaper_id
     if not @issue_sequence
       error "There was an error retrieving information about the issues sequences."
@@ -1448,179 +1616,26 @@ class NewspaperIssuePackage < StructuredPagePackage
   end
 
 
-  # Check mods file for issue to make sure it's got a dateIssued.  Check for supported languages as well.
-  #
-  # An issue must have a MODS file with at least a dateIssued.
-  #
-  # https://fsu.digital.flvc.org/islandora/object/fsu%3A116912/datastream/RELS-EXT
-  #
-  # <?xml version="1.0" encoding="ISO-8859-1"?>
-  # <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:islandora="http://islandora.ca/ontology/relsext#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  #   <rdf:Description rdf:about="info:fedora/fsu:116912">
-  #     <fedora-model:hasModel rdf:resource="info:fedora/islandora:newspaperIssueCModel"/>
-  #     <fedora:isMemberOf rdf:resource="info:fedora/fsu:109142"/>
-  #     <islandora:isSequenceNumber>5</islandora:isSequenceNumber>
-  #     <islandora:dateIssued>1915-01-23</islandora:dateIssued>
-  #     <islandora:inheritXacmlFrom rdf:resource="info:fedora/fsu:109142"/>
-  #   </rdf:Description>
-  # </rdf:RDF>
-
-  # May optionally specify languages (see
-  # https://code.google.com/p/tesseract-ocr/downloads/list for all
-  # available)
-  #
-  # <language>
-  #    <languageTerm type="text" authority="iso639-2b">English</languageTerm>
-  #    <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
-  # </language>
-  #
-
   def check_issue_manifest
+
     warning_message = Utils.langs_unsupported_comment(@config, @mods.languages)
+
     if not warning_message.empty?
       warning "Found unsupported OCR languages in MODS file: #{warning_message}."
       warning "Will use #{Utils.langs_to_names(@config, @mods.languages)} for OCR."
     end
 
-    @ocr_language_options = Utils.langs_to_tesseract_command_line(@config, @mods.languages)
-
     if @mods.date_issued.empty?
       error "The package MODS file does not include the required w3cdtf-encoded dateIssued element"
-    else
-      @date_issued = @mods.date_issued
-      return true
+      return
     end
+
+    @date_issued = @mods.date_issued
+
+    return true
 
   rescue => exception
     oops exception
-  end
-
-
-  def issue_rels_ext pid, inherited_policy_collection_id
-    str = <<-XML
-    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
-             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
-             xmlns:islandora="http://islandora.ca/ontology/relsext#"
-             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-      <rdf:Description rdf:about="info:fedora/#{pid}">
-        <fedora-model:hasModel rdf:resource="info:fedora/#{@content_model}"></fedora-model:hasModel>
-        <fedora:isMemberOf rdf:resource=\"info:fedora/#{@newspaper_id}\"></fedora:isMemberOf>
-    XML
-
-    if @manifest.page_progression
-      str +=  "        <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>"
-    end
-
-    if inherited_policy_collection_id
-      str += Utils.rels_ext_get_policy_fields(@config, inherited_policy_collection_id)
-    end
-
-    str += <<-XML
-        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{inherited_policy_collection_id}"></islandora:inheritXacmlFrom>
-        <islandora:isSequenceNumber>#{@issue_sequence}</islandora:isSequenceNumber>
-        <islandora:dateIssued>#{@date_issued}</islandora:dateIssued>
-      </rdf:Description>
-    </rdf:RDF>
-    XML
-
-    return str.gsub(/^    /, '')   # prettify XML somewhat
-  end
-
-
-  def ingest_issue
-
-    raise PackageError, "Errors were encountering while getting up issue information" unless valid?
-    return if @config.test_mode
-
-    thumbnail, thumbnail_error_messages = Utils.image_resize(@config, File.join(@directory_path,  @page_filenames[0]), @config.thumbnail_geometry, 'jpeg')
-
-
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
-
-      @pid = ingestor.pid
-
-      @mods.add_iid_identifier @iid if @mods.iids.empty?   # we do sanity checking and setup the @iid elsewhere
-      @mods.add_islandora_identifier ingestor.pid
-      @mods.add_flvc_extension_elements @manifest
-      @mods.add_type_of_resource @mods_type_of_resource if @mods.type_of_resource.empty?
-
-      @mods.post_process_cleanup   # creates purl if necessary, must be done after iid inserted into MODS
-
-      raise PackageError, "Invalid MODS file" unless @mods.valid?
-
-      ingestor.label         = @label
-      ingestor.owner         = @owner
-      ingestor.content_model = @content_model
-      ingestor.collections   = @collections
-      ingestor.dc            = @mods.to_dc
-      ingestor.mods          = @mods.to_s
-
-      if @marc
-        ingestor.datastream('MARCXML') do |ds|
-          ds.dsLabel  = "Archived MarcXML"
-          ds.content  = @marc
-          ds.mimeType = 'text/xml'
-        end
-      end
-
-      if @manifest.embargo
-        @drupal_db.add_embargo @pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
-      end
-
-      if @inherited_policy_collection_id
-        ingestor.datastream('POLICY') do |ds|
-          ds.dsLabel  = "XACML Policy Stream"
-          ds.content  = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')  # because we only allow one collection, this will be @newspaper_id
-          ds.mimeType = 'text/xml'
-          ds.controlGroup = 'X'
-        end
-      end
-
-      ingestor.datastream('RELS-EXT') do |ds|
-        ds.dsLabel  = 'Relationships'
-        ds.content  = issue_rels_ext(@pid, @inherited_policy_collection_id)
-        ds.mimeType = 'application/rdf+xml'
-      end
-
-      ingestor.datastream('TN') do |ds|
-        ds.dsLabel  = "Thumbnail Image"
-        ds.content  = thumbnail
-        ds.mimeType = 'image/jpeg'
-      end
-
-      if @has_mets
-        ingestor.datastream('DT-METS') do |ds|
-          ds.dsLabel  = 'Archived METS for future reference'
-          ds.content  = @mets.text
-          ds.mimeType = 'text/xml'
-        end
-
-        ingestor.datastream('TOC') do |ds|
-          ds.dsLabel  = 'Table of Contents'
-          ds.content  = @table_of_contents.to_json(@mets.label)
-          ds.mimeType = 'application/json'
-        end
-      end
-
-    end
-
-    @bytes_ingested = ingestor.size
-
-  ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-
-    [ thumbnail ].each { |file| file.close if file.respond_to? :close and not file.closed? }
-
-    @updator.post_ingest
-  end
-
-
-
-  def ingest_newspaper_pages
-
   end
 
 end # of class NewspaperIssuePackage
