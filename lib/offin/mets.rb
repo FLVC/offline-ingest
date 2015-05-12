@@ -64,7 +64,6 @@ class TableOfContents
     warn_for_missing_page_images
     nip_it_in_the_bud
     mark_validly_repeated_pages
-    # telescope_pages
     cleanup_chapter_titles
     cleanup_page_titles
     number_pages
@@ -185,36 +184,6 @@ class TableOfContents
   # Chapter  Little Frogs At School
   # Page       6
   #
-
-
-  # This is deprecated:
-
-  def telescope_pages
-
-    # find the last occurence of a page
-
-    index = 0
-    last_occurrence = {}
-    @sequence.each do |entry|
-      last_occurrence[entry.fid] = index  if is_page?(entry)
-      index += 1
-    end
-
-    # recreate our sequence by pruning out earlier occurrences
-
-    new_seq = []
-    index = 0
-    @sequence.each do |entry|
-      if is_page? entry
-        new_seq.push entry if last_occurrence[entry.fid] == index
-      else # chapter
-        new_seq.push entry
-      end
-      index += 1
-    end
-    @sequence = new_seq
-  end
-
 
 
   def mark_validly_repeated_pages
