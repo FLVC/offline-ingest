@@ -94,7 +94,6 @@ list.each do |directory|
       puts INDENT + 'Warnings:', package.warnings.map { |line|  INDENT + line }, '' if package.warnings?
 
       record_to_database(config.site, package, completed && package.valid?, started, finished) unless config.test_mode
-
     end
 
     move_to_dump_directory_maybe(directory, config.dump_directory) if (package and not package.valid?) or (not package and @package_error)

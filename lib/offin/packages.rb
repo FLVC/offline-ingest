@@ -124,7 +124,6 @@ class Package
     error "Unhandled exception for package #{@directory_name}: #{e.class} - #{e.message}, backtrace follows:", e.backtrace
   end
 
-
   # An array (possibly empty) of this package's islandora pid concatenated with any component_objects.
 
   def pids
@@ -1363,8 +1362,6 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     @issue_sequence       = nil
     @newspaper_id         = nil
-    @ocr_language_options = nil
-    @iso639_languages     = []
     @date_issued          = nil
 
     raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
@@ -1379,7 +1376,7 @@ class NewspaperIssuePackage < StructuredPagePackage
     create_page_filename_list   or return  # creates @page_filenames
     check_page_types            or return  # checks @page_filenames file types
 
-    check_issue_manifest        or return  # sets @ocr_language_options and @date_issued
+    check_issue_manifest        or return  # checks languages declared if any,  sets @date_issued
     check_newspaper_parent      or return  # sets @issue_sequence and @newspaper_id.
 
   rescue PackageError => e
@@ -1391,8 +1388,7 @@ class NewspaperIssuePackage < StructuredPagePackage
   def ingest
     return if @config.test_mode
     ingest_issue
-    # TODO:  uncomment after
-    # sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
+    sleep 60  # Trying to handle a race condition where Solr indexing can't get required RI data for pages, because the book object is still buffered in RI's in-memory cache.
     ingest_pages
   end
 
@@ -1422,7 +1418,7 @@ class NewspaperIssuePackage < StructuredPagePackage
       str +=  "        <islandora:hasPageProgression>#{@manifest.page_progression}</islandora:hasPageProgression>"
     end
 
-    if inherited_policy_collection_id
+    if @inherited_policy_collection_id
       str += Utils.rels_ext_get_policy_fields(@config, @inherited_policy_collection_id)
     end
 
@@ -1483,10 +1479,9 @@ class NewspaperIssuePackage < StructuredPagePackage
 
   # Part II. Newspaper Page level processing.
 
-  # NewspaperIssue packages don't necessarily have to have a METS file, so we do the best we can do.
-
   def ingest_pages
     if @has_mets
+    # This is basically equivalent to the BookPackage processing.
       sequence = 0
       @table_of_contents.unique_pages.each do |entry|
         sequence += 1
@@ -1494,6 +1489,7 @@ class NewspaperIssuePackage < StructuredPagePackage
         @component_objects.push ingest_page(entry.image_filename, label, sequence)
       end
     else
+    # NewspaperIssue packages don't necessarily have to have a METS file, so we do the best we can do.
       sequence = 0
       @page_filenames.each do |image_filename|
         @component_objects.push ingest_page(image_filename, "Page #{sequence}", sequence)
@@ -1557,26 +1553,26 @@ class NewspaperIssuePackage < StructuredPagePackage
   # Check manifest for a collection that has a NEWSPAPER_CONTENT_MODEL, and return the object id.
 
   def get_parent_newspaper_id
-    all_newspapers = {}
+    all_newspaper_ids = {}
 
     Utils.get_newspaper_pids(@config).each do |object_id|
-      all_newspapers[object_id] = true if object_id =~ /^#{@namespace}\:/
+      all_newspaper_ids[object_id] = true if object_id =~ /^#{@namespace}\:/
     end
 
-    manifest_newspapers = []
+    manifest_newspaper_ids = []
     @manifest.collections.each do |collection_id|
-      manifest_newspapers.push collection_id if all_newspapers[collection_id]
+      manifest_newspaper_ids.push collection_id if all_newspaper_ids[collection_id]
     end
 
     case
-    when manifest_newspapers.empty?
+    when manifest_newspaper_ids.empty?
       error "The collection element in the manifest.xml for this package doesn't include a parent newspaper object for #{@owning_institution}."
       error "There must be exactly one collection that is this issue's parent newspaper object."
-    when manifest_newspapers.length > 1
-      error "The manifest.xml for this package includes too many parent newspaper objects for #{@owning_institution}: #{manifest_newspapers.sort.join(', ')}."
+    when manifest_newspaper_ids.length > 1
+      error "The manifest.xml for this package includes too many parent newspaper objects for #{@owning_institution}: #{manifest_newspaper_ids.sort.join(', ')}."
       error "There must be exactly one collection that is this issue's parent newspaper object."
     else
-      return manifest_newspapers.pop
+      return manifest_newspaper_ids.pop
     end
 
   rescue => exception
