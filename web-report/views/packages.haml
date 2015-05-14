@@ -85,9 +85,8 @@
                 %option{ :value => "" } Any
                 %option{ :value => "islandora:sp_basic_image",        :selected => @paginator.is_content_type?("islandora:sp_basic_image")          } Basic Image
                 %option{ :value => "islandora:sp_large_image_cmodel", :selected => @paginator.is_content_type?("islandora:sp_large_image_cmodel")   } Large Image
-                %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
                 %option{ :value => "islandora:bookCModel",            :selected => @paginator.is_content_type?("islandora:bookCModel")              } Book
-                %option{ :value => "islandora:newspaperIssueCModel",  :selected => @paginator.is_content_type?("islandora:newspaperIssueCModel")    } Newspaper Issue
+                %option{ :value => "islandora:sp_pdf",                :selected => @paginator.is_content_type?("islandora:sp_pdf")                  } PDF
 
             .together
               %label{ :for =>   'collection' } Collection
