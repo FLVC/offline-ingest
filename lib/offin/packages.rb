@@ -21,9 +21,28 @@ NEWSPAPER_CONTENT_MODEL        = 'islandora:newspaperCModel'
 NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
 NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
 
+#  Class Hierarchy:
+#
+#                            PackageClass (base class)
+#                                  |
+#                                  |
+#        .-------------------------------------------------------.
+#        |                   |                |                  |
+#        |                   |                |                  |
+#  BasicImagePackage   LargeImagePackage   PDFPackage   StructuredPagePackage (base class)
+#                                                                |
+#                                                                |
+#                                                  .-----------------------------.
+#                                                  |                             |
+#                                                  |                             |
+#                                             BookPackage               NewspaperIssuePackage
+#
+
+
+
 
 # PackageFactory takes a directory path and checks the manifest.xml
-# file within it.  It determines what content model is being
+# file within it.  It determines what content model that is being
 # requested, and returns the appropriate type of package.
 
 class PackageFactory
@@ -62,7 +81,7 @@ class PackageFactory
 end
 
 
-# Package serves as a base class, but it could serve to do a basic
+# Package serves as a base class, but it might serve to do a basic
 # check on a directory's well-formedness as a package.
 
 class Package
@@ -88,7 +107,7 @@ class Package
 
     @bytes_ingested    = 0
     @iid               = nil
-    @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs for those objects
+    @component_objects = []    # for objects like books, which have page objects - these are islandora PIDs (strings) for those objects
     @collections       = []
     @pid               = nil
     @config            = config
@@ -102,6 +121,12 @@ class Package
     @drupal_db         = DrupalDataBase.new(config) unless config.test_mode
 
     @mods_type_of_resource = nil
+
+    # TODO: for *ALL* *SUBCLASSES* group MANIFEST, MODS, METS, processing
+    # so all derived methods and instance variables are reliably set
+    # before purely package-level semantics are checked.
+    #
+    # TODO: create a table of classes vs. instance variables and public methods.
 
     handle_manifest(manifest) or return     # sets up @manifest
     handle_mods or return                   # sets up @mods
@@ -269,7 +294,6 @@ class Package
     return @mods.purls
   end
 
-  private
 
   # If this object belongs to collections such that exactly one of them
   # has a POLICY datastream, return the collection id, otherwise nil.
@@ -847,6 +871,86 @@ class StructuredPagePackage < Package
     raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
   end
 
+  private
+
+  # Note: subclasses MUST impelement the page_rels_ext method.
+  # Furthermore, there MUST be a @page_content_model instance
+  # variable.
+
+  def ingest_page pagename, label, sequence
+
+    path      = File.join(@directory_path, pagename)
+    mime_type = Utils.mime_type(path)
+
+    pdf, pdf_error_messages, thumbnail, thumbnail_error_messages = nil
+
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+
+      ingestor.label         = pagename
+      ingestor.owner         = @owner
+      ingestor.content_model = @page_content_model
+      ingestor.dc            = page_dc(ingestor.pid, pagename)
+
+      case mime_type
+      when TIFF;  handle_tiff_page(ingestor, path);
+      when JP2;   handle_jp2k_page(ingestor, path);
+      when JPEG;  handle_jpeg_page(ingestor, path);
+      else
+        raise PackageError, "Page image #{pagename} in #{pretty_class_name} #{@directory_name} is of unsupported type #{mime_type}."
+      end
+
+      handle_ocr(ingestor, path)
+
+      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, path, @config.thumbnail_geometry, 'jpeg')
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = 'Thumbnail'
+        ds.content  = thumbnail
+        ds.mimeType = 'image/jpeg'
+      end
+
+      pdf, pdf_error_messages = Utils.image_to_pdf(@config, path)
+
+      ingestor.datastream('PDF') do |ds|
+        ds.dsLabel  = 'PDF'
+        ds.content  = pdf
+        ds.mimeType = 'application/pdf'
+      end
+
+      ingestor.datastream('RELS-EXT') do |ds|
+        ds.dsLabel  = 'Relationships'
+        ds.content  = page_rels_ext(ingestor.pid, label, sequence)
+        ds.mimeType = 'application/rdf+xml'
+      end
+
+      ingestor.datastream('RELS-INT') do |ds|
+        ds.dsLabel  = 'RELS-INT'
+        ds.content  = page_rels_int(ingestor.pid, path)
+        ds.mimeType = 'application/rdf+xml'
+      end
+
+    end
+
+    @bytes_ingested += ingestor.size
+    return ingestor.pid
+
+  rescue PackageError => e
+    error e
+    raise e
+  rescue => e
+    error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{e.message}.", e.backtrace
+    raise e
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
+
+    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    warning [ 'Issues creating PDF datastream' ]       + pdf_error_messages        if pdf_error_messages       and not pdf_error_messages.empty?
+
+    safe_close(thumbnail, pdf)
+  end
+
 
   def handle_mets
     mets_filename = File.join(@directory_path, 'mets.xml')
@@ -957,7 +1061,6 @@ class StructuredPagePackage < Package
     @page_filenames = expected - missing
   end
 
-
   def handle_ocr ingestor, path
     ocr_produced_text = true
 
@@ -1056,7 +1159,6 @@ class StructuredPagePackage < Package
 
   end
 
-  # Islandora out of the box only supports TIFF submissions, so this is the canonical processing islandora would do:
 
   def handle_tiff_page ingestor, path
     image = File.open(path)
@@ -1095,84 +1197,6 @@ class StructuredPagePackage < Package
     safe_close(image, jp2k, medium)
   end
 
-  # Note: subclasses MUST impelement methods page_dc and
-  # page_rels_ext.  Furthermore, there MUST be a @page_content_model
-  # instance variable.
-
-  def ingest_page pagename, label, sequence
-
-    path      = File.join(@directory_path, pagename)
-    mime_type = Utils.mime_type(path)
-
-    pdf, pdf_error_messages, thumbnail, thumbnail_error_messages = nil
-
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
-
-      ingestor.label         = pagename
-      ingestor.owner         = @owner
-      ingestor.content_model = @page_content_model
-      ingestor.dc            = page_dc(ingestor.pid, pagename)
-
-      case mime_type
-      when TIFF;  handle_tiff_page(ingestor, path);
-      when JP2;   handle_jp2k_page(ingestor, path);
-      when JPEG;  handle_jpeg_page(ingestor, path);
-      else
-        raise PackageError, "Page image #{pagename} in #{pretty_class_name} #{@directory_name} is of unsupported type #{mime_type}."
-      end
-
-      handle_ocr(ingestor, path)
-
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, path, @config.thumbnail_geometry, 'jpeg')
-
-      ingestor.datastream('TN') do |ds|
-        ds.dsLabel  = 'Thumbnail'
-        ds.content  = thumbnail
-        ds.mimeType = 'image/jpeg'
-      end
-
-      pdf, pdf_error_messages = Utils.image_to_pdf(@config, path)
-
-      ingestor.datastream('PDF') do |ds|
-        ds.dsLabel  = 'PDF'
-        ds.content  = pdf
-        ds.mimeType = 'application/pdf'
-      end
-
-      ingestor.datastream('RELS-EXT') do |ds|
-        ds.dsLabel  = 'Relationships'
-        ds.content  = page_rels_ext(ingestor.pid, label, sequence)
-        ds.mimeType = 'application/rdf+xml'
-      end
-
-      ingestor.datastream('RELS-INT') do |ds|
-        ds.dsLabel  = 'RELS-INT'
-        ds.content  = page_rels_int(ingestor.pid, path)
-        ds.mimeType = 'application/rdf+xml'
-      end
-
-    end
-
-    @bytes_ingested += ingestor.size
-    return ingestor.pid
-
-  rescue PackageError => e
-    error e
-    raise e
-  rescue => e
-    error "Caught exception processing page number #{sequence} #{pagename},  #{e.class} - #{e.message}.", e.backtrace
-    raise e
-
-  ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-
-    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    warning [ 'Issues creating PDF datastream' ]       + pdf_error_messages        if pdf_error_messages       and not pdf_error_messages.empty?
-
-    safe_close(thumbnail, pdf)
-  end
-
   # Standard page rels_int (type application/rdf+xml)
 
   def page_rels_int page_pid, image_path
@@ -1193,6 +1217,7 @@ class StructuredPagePackage < Package
   XML
   end
 
+
   # Standard page DC (type text/xml)
 
   def page_dc page_pid, page_title
@@ -1208,6 +1233,7 @@ class StructuredPagePackage < Package
   XML
   end
 
+  # Derived classes must implement this:
 
   def page_rels_ext *ignored
     error "Must define page_rels_ext method in your subclass"
@@ -1215,7 +1241,6 @@ class StructuredPagePackage < Package
 
 
 end # of class StructuredPagePackage
-
 
 
 # Subclass of Package for handling the Book content model
@@ -1250,6 +1275,8 @@ class BookPackage < StructuredPagePackage
   end
 
   private
+
+  # Ingest the top-level book object
 
   def ingest_book
     first_page = File.join @directory_path, @page_filenames.first
@@ -1294,7 +1321,7 @@ class BookPackage < StructuredPagePackage
     @updator.post_ingest
   end
 
-  # books always require a METS file
+  # Ingest pages for books; we always require a METS file
 
   def ingest_pages
     @table_of_contents.unique_pages.each_with_index do |entry, index|
@@ -1502,7 +1529,6 @@ class NewspaperIssuePackage < StructuredPagePackage
       end
     end
   end
-
 
   # The ingest_page() method, called above, is inherited from
   # StructuredPagePackage, but we have to provide our own method for
