@@ -107,6 +107,7 @@ module DataBase
              when  "islandora:sp_pdf";                "PDF"
              when  "islandora:bookCModel";            "Book"
              when  "islandora:pageCModel";            "Page"
+             when  "islandora:newspaperIssueCModel";  "Newspaper Issue"
              else;                                     self.content_model
              end
     end
