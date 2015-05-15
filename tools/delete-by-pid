@@ -48,14 +48,34 @@ else
 end
 
 
+def components pid, repo
+  query = <<-SPARQL
+    PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+
+    SELECT ?object
+    FROM <#ri>
+    WHERE {
+      ?object fedora-rels-ext:isMemberOf <#{pid}> ;
+    }
+  SPARQL
+
+  return repo.sparql(query).map { |row_rec| row_rec['object'] }.sort
+rescue => e
+  return []
+end
+
+
+
 config = parse_command_line(ARGV)
 repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
 
 ARGV.each do |pid|
-  begin
-    pid = "info:fedora/#{pid}" unless pid =~ /^info:fedora/
-    DigitalObject.find_or_initialize(pid, repository).delete
-  rescue => e
-    STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
+  pid = "info:fedora/#{pid}" unless pid =~ /^info:fedora/
+  ([ pid ] + components(pid, repository)).each do |p|
+    begin
+      DigitalObject.find_or_initialize(p, repository).delete
+    rescue => e
+      STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
+    end
   end
 end
