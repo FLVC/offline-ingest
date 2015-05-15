@@ -37,7 +37,17 @@ NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
 #                                                  |                             |
 #                                             BookPackage               NewspaperIssuePackage
 #
-
+#
+# Generally, all the Package classes have objects they create to
+# extract information about the package.  The important ones include:
+#
+#  * Manifest
+#  * Mods
+#  * Mets (StructuredPagePackages)
+#
+# TODO: packages have become a God object. Break this stuff out.
+# PackageFactory should instantiate the objects, fail to create a
+# Package if any are invalid.
 
 
 
