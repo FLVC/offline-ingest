@@ -1652,7 +1652,17 @@ class NewspaperIssuePackage < StructuredPagePackage
       return
     end
 
-    @date_issued = @mods.date_issued
+    if @mods.date_issued.count > 1
+      error "The package MODS file includes more than one of the required w3cdtf-encoded dateIssued element"
+      return
+    end
+
+    unless @mods.date_issued[0] =~ /^\d\d\d\d-\d\d-\d\d$/
+      error "The package MODS file has a badly formatted w3cdtf-encoded dateIssued element: it should be of the form 'YYYY-MM-DD' but is '#{@mods.date_issued[0]}'"
+      return
+    end
+
+    @date_issued = @mods.date_issued[0]
 
     return true
 
