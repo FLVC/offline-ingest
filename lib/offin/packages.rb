@@ -200,8 +200,7 @@ class Package
   # have to have first been made to properly set up some of these
   # (label, owner).
   #
-  # This is becoming more problematic and increasingly unused as
-  # subclasses get more specialized.
+  # This is normally not used for component objects (e.g. pages)
 
   def boilerplate ingestor
 
@@ -1335,7 +1334,7 @@ class BookPackage < StructuredPagePackage
 
   def ingest_pages
     @table_of_contents.unique_pages.each_with_index do |entry, index|
-      label =  toc_entry ?  Utils.xml_escape(toc_entry.title) : "Page #{sequence}"
+      label =  entry ?  Utils.xml_escape(entry.title) : "Page #{index + 1}"
       @component_objects.push ingest_page(entry.image_filename, label, index + 1)
     end
 
@@ -1365,9 +1364,11 @@ class BookPackage < StructuredPagePackage
         <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
         <islandora:isPageNumber>#{page_label}</islandora:isPageNumber>
         <islandora:isSection>1</islandora:isSection>
-        <islandora:hasLanguage>#{someone stop the bleeding!}</islandora:hasLanguage>
-        <islandora:preprocess>false</islandora:preprocess>
    XML
+
+    Utils.langs_supported(@config, @mods.languages).each do |lang|
+      str += "        <islandora:hasLanguage>#{lang}</islandora:hasLanguage>"
+    end
 
     if @inherited_policy_collection_id
       str += Utils.rels_ext_get_policy_fields(@config, @pid)
@@ -1376,6 +1377,7 @@ class BookPackage < StructuredPagePackage
     # TODO: does page_progression get included at the page level as well for books? or just book/issue level
 
     str += <<-XML
+        <islandora:preprocess>false</islandora:preprocess>
       </rdf:Description>
     </rdf:RDF>
   XML

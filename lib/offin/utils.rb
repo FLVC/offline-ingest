@@ -733,6 +733,15 @@ class Utils
     return unsupported.join(", ")
   end
 
+  # array of ISO 639 3-letter codes - we take the subset of requested languages from our list of supported languages.
+
+  def Utils.langs_supported config, requested_languages
+    all_supported = config.supported_ocr_languages
+    supported = []
+    requested_languages.each { |lang| supported.push(lang) if all_supported[lang] }
+    return  supported
+  end
+
 
   def Utils.tesseract config, image_filepath, do_hocr, *langs
 
