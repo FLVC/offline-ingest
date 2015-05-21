@@ -35,7 +35,7 @@ class SqlAssembler
 
   def dump
     sql, placeholder_values = assemble()
-    STDERR.puts "SQL Assembler Dump: " + sql.inspect +  ",  " + placeholder_values.inspect
+    return "SQL Assembler Dump: " + sql.inspect +  ",  " + placeholder_values.inspect
   end
 
   private
@@ -56,12 +56,15 @@ class SqlAssembler
     fragment.parameters += parameters.flatten
   end
 
+
+  # Take all the SQL fragments and assemble into
+
   def assemble
 
-    # We assume exactly one select text; start out with this  'SELECT ...'
+    # We'll only have one select text; start out with this  'SELECT ...'
 
     sql_text = @select.text.first
-    placeholder_values = @select.parameters
+    placeholder_values = @select.parameters.clone
 
     # handle multiple conditions:  'WHERE ... AND ...'
 
@@ -74,7 +77,7 @@ class SqlAssembler
     end
 
     unless @where.parameters.empty?
-      placeholder_values.push *@where.parameters
+      placeholder_values.push *@where.parameters.clone
     end
 
     # we assume zero or one order and limit fragments
@@ -86,7 +89,7 @@ class SqlAssembler
     end
 
     unless @order.parameters.empty?
-      placeholder_values.push *@order.parameters
+      placeholder_values.push *@order.parameters.clone
     end
 
     # 'OFFSET ... LIMIT ...'
@@ -96,7 +99,7 @@ class SqlAssembler
     end
 
     unless @limit.parameters.empty?
-      placeholder_values.push *@limit.parameters
+      placeholder_values.push *@limit.parameters.clone
     end
 
     return sql_text, placeholder_values

@@ -183,7 +183,7 @@ class PackageListPaginator
 
     sql = SqlAssembler.new
     sql.set_select 'SELECT count(*) FROM islandora_packages'
-    sql.add_condition 'islandora_site_id = ?', @site[:id]
+    sql.add_condition 'islandora_site_id = ?', @site[:id]    # note: this hangs around for all three invocations of sql.execute
 
     @total = sql.execute()[0]
 
@@ -191,7 +191,7 @@ class PackageListPaginator
     # are added by setup_basic_filters)
 
     sql.set_select 'SELECT min(id), max(id), count(*) FROM islandora_packages'
-    Utils.setup_basic_filters(sql, @params.merge('site_id' => @site[:id]))
+    Utils.setup_basic_filters(sql, @params)
 
     rec = sql.execute()[0]
 

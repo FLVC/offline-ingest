@@ -914,7 +914,7 @@ class Utils
     return
   end
 
-  # Returns hash HASH of collection codes offline ingest has actually used.
+  # Returns hash of collection codes offline ingest has actually used.
 
   def Utils.available_collection_codes
     sql = SqlAssembler.new
@@ -931,10 +931,11 @@ class Utils
   def Utils.setup_basic_filters sql, params
 
     from, to = Utils.parse_dates(params['from'], params['to'])
-    sql.add_condition('time_started > ?', from)                   if from
-    sql.add_condition('time_started < ?', to)                     if to
-    sql.add_condition('islandora_site_id = ?', params['site_id']) if params['site_id']
-    sql.add_condition('title ilike ?', "%#{params['title']}%")    if params['title']
+    sql.add_condition('time_started > ?', from)                     if from
+    sql.add_condition('time_started < ?', to)                       if to
+    sql.add_condition('islandora_site_id = ?', params['site_id'])   if params['site_id']
+    sql.add_condition('content_model = ?', params['content-type'])  if params['content-type']
+    sql.add_condition('title ilike ?', "%#{params['title']}%")      if params['title']
     sql.add_condition('(package_name ilike ? OR CAST(digitool_id AS TEXT) ilike ? OR islandora_pid ilike ?)', [ "%#{params['ids']}%" ] * 3)                if params['ids']
     sql.add_condition('islandora_packages.id IN (SELECT islandora_package_id FROM islandora_collections WHERE collection_code = ?)', params['collection']) if params['collection']
     sql.add_condition('islandora_packages.id IN (SELECT warning_messages.islandora_package_id FROM warning_messages)')                                     if params['status'] == 'warning'
