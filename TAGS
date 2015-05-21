@@ -1812,3 +1812,615 @@ web-report/app.rb,526
   def list_datastream_links config, package, css = ''list_datastream_links93,2923
   def check_if_present config, packagecheck_if_present102,3396
   def get_on_site_map config, packagesget_on_site_map108,3584
+
+lib/offin/config.rb,321
+module DatylDatyl5,44
+  class ConfigConfig34,1273
+    def initialize yaml_path, *sectionsinitialize46,1639
+    def method_missing method, *argsmethod_missing98,3953
+    def [] key[]113,4311
+    def keyskeys121,4449
+    def valuesvalues129,4586
+    def eacheach135,4677
+    def []= key, value[]=146,4959
+
+lib/offin/csv-provider.rb,177
+class CsvProviderCsvProvider8,165
+  def initialize site, params = {}initialize10,184
+  def eacheach16,350
+  def csv_datacsv_data29,821
+  def csv_titlecsv_title36,1167
+
+lib/offin/db.rb,1362
+module DataBaseDataBase11,299
+  class IslandoraSiteIslandoraSite18,378
+  class FtpPackageFtpPackage38,771
+  class FtpContainerFtpContainer51,1183
+    def self.next_container_name hostnamenext_container_name59,1353
+  class IslandoraPackageIslandoraPackage73,1712
+    def iidiid99,2865
+    def content_model_titlecontent_model_title103,2910
+    def add_warnings *messagesadd_warnings115,3465
+    def get_warningsget_warnings122,3669
+    def warnings?warnings?126,3753
+    def add_errors *messagesadd_errors130,3819
+    def get_errorsget_errors137,4015
+    def errors?errors?141,4093
+    def add_purls *urlsadd_purls145,4155
+    def get_purlsget_purls152,4316
+    def add_collections *collectionsadd_collections156,4383
+    def get_collectionsget_collections163,4648
+    def add_components *pidsadd_components167,4748
+    def get_componentsget_components174,4964
+  class IslandoraCollectionIslandoraCollection181,5083
+  class WarningMessageWarningMessage204,5554
+  class ErrorMessageErrorMessage213,5744
+  class PurlPurl222,5928
+  class ComponentObjectComponentObject231,6120
+  def self.debug= booldebug242,6355
+  def self.setup configsetup246,6404
+  def self.create configcreate260,6849
+  def self.add_ftp_tables configadd_ftp_tables271,7498
+  def self.dumpdump279,7882
+module DataBaseDataBase304,8625
+
+lib/offin/document-parsers.rb,4244
+class SaxDocument < Nokogiri::XML::SAX::DocumentSaxDocument13,269
+  def self.debug= valuedebug17,374
+  def initializeinitialize27,744
+  def characters stringcharacters35,1049
+class SaxDocumentAddDatastream < SaxDocumentSaxDocumentAddDatastream41,1196
+  def initializeinitialize102,3780
+  def start_element name, attributes = []start_element108,3889
+  def end_element nameend_element117,4230
+  def end_documentend_document122,4357
+class SaxDocumentGetNextPID < SaxDocumentSaxDocumentGetNextPID130,4626
+  def initializeinitialize149,5446
+  def start_element name, attributes = []start_element154,5567
+  def end_element nameend_element157,5616
+class SaxDocumentExamineMods < SaxDocumentSaxDocumentExamineMods163,5757
+  def initializeinitialize204,7179
+  def is_simple_mods?is_simple_mods?214,7363
+  def find_mods_namespace namespacesfind_mods_namespace219,7413
+  def end_element_namespace name, prefix = nil, uri = nilend_element_namespace228,7591
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []start_element_namespace232,7672
+class SaxDocumentExtractSparql < SaxDocumentSaxDocumentExtractSparql272,8936
+  def initializeinitialize329,11515
+  def start_element name, attributes = []start_element337,11858
+  def end_element nameend_element371,12946
+class ManifestSaxDocument < SaxDocumentManifestSaxDocument422,14326
+  def self.institutions= valueinstitutions431,14641
+  def self.content_models= valuecontent_models435,14706
+  def initializeinitialize439,14775
+  def prettify hashprettify491,17820
+  def stack_dumpstack_dump500,18027
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []start_element_namespace509,18353
+  def end_element_namespace name, prefix = nil, uri = nilend_element_namespace527,18848
+  def collections_ok?collections_ok?551,19638
+  def check_date strcheck_date561,19867
+  def embargo_ok?embargo_ok?569,19988
+  def content_model_ok?content_model_ok?608,21228
+  def label_ok?label_ok?633,22027
+  def owning_user_ok?owning_user_ok?647,22379
+  def owning_institution_ok?owning_institution_ok?665,22798
+  def submitting_institution_ok?submitting_institution_ok?689,23683
+  def object_history_ok?object_history_ok?712,24508
+  def page_progression_ok?page_progression_ok?733,25170
+  def end_documentend_document753,25678
+class MetsFileDictionaryMetsFileDictionary782,26795
+  def initializeinitialize808,28294
+  def safe_type strsafe_type813,28352
+  def []=(fid, value)[]=823,28769
+  def [](fid)[]830,28929
+  def eacheach834,28965
+  def printprint838,29030
+class MetsStructMapMetsStructMap854,29590
+  def initializeinitialize860,29666
+  def eacheach866,29744
+  def add_div hash, leveladd_div872,29842
+  def add_file hash, leveladd_file887,30301
+  def post_process file_dictionarypost_process897,30593
+  def printprint961,32275
+class SaxDocumentExamineMets < SaxDocumentSaxDocumentExamineMets973,32538
+  def initializeinitialize982,32831
+  def onstack? *listonstack?994,33632
+  def onstack_again? regexponstack_again?1006,33849
+  def handle_file_dictionaryhandle_file_dictionary1014,34065
+  def handle_labelhandle_label1066,36289
+  def safe_downcase textsafe_downcase1072,36428
+  def prettify hashprettify1080,36653
+  def stack_dumpstack_dump1089,36860
+  def handle_structmap_beginhandle_structmap_begin1093,36959
+  def handle_structmap_endhandle_structmap_end1097,37038
+  def div_leveldiv_level1103,37238
+  def handle_structmap_updatehandle_structmap_update1107,37320
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []start_element_namespace1132,38213
+  def end_element_namespace name, prefix = nil, uri = nilend_element_namespace1153,38799
+  def end_documentend_document1168,39280
+class DigitoolStreamRef < SaxDocumentDigitoolStreamRef1204,40216
+  def initializeinitialize1230,40975
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []start_element_namespace1238,41093
+  def cdata_block cdatacdata_block1242,41236
+  def best_databest_data1246,41286
+  def end_element_namespace name, prefix = nil, uri = nilend_element_namespace1251,41384
+
+lib/offin/drupal-db.rb,783
+class DrupalDataBaseDrupalDataBase11,238
+  def self.debug= booldebug15,279
+  def initialize configinitialize19,328
+  def set_search_pathset_search_path49,1052
+  def set_user_search_pathset_user_search_path55,1184
+  def self.setup configsetup62,1332
+  def downcase_keys hashdowncase_keys78,1719
+  def list_rangeslist_ranges84,1823
+  def is_embargoed? islandora_pidis_embargoed?96,2211
+  def insert_embargo islandora_pid, range_id, date_ob = nilinsert_embargo103,2533
+  def update_embargo islandora_pid, range_id, date_ob = nilupdate_embargo109,2881
+  def usersusers115,3223
+  def check_date strcheck_date126,3571
+  def check_range_name strcheck_range_name136,3849
+  def add_embargo  islandora_pid, ip_range_name, expiration_date = niladd_embargo142,4021
+
+lib/offin/errors.rb,220
+module ErrorsErrors14,500
+  def errorserrors16,515
+  def errors?errors?21,587
+  def error *stringserror25,630
+  def warningswarnings30,731
+  def warnings?warnings?35,811
+  def warning *stringswarning39,858
+
+lib/offin/exceptions.rb,119
+class PackageError < StandardError; endPackageError11,469
+class SystemError  < StandardError; endSystemError12,509
+
+lib/offin/ingestor.rb,792
+module RubydoraRubydora18,359
+  module ResourceIndexResourceIndex19,375
+    def itql queryitql20,398
+class IngestorIngestor31,650
+  def initialize  config, namespaceinitialize49,1005
+  def connect configconnect79,1795
+  def getpidgetpid88,2068
+  def collections= valuecollections=97,2425
+  def dc= valuedc=105,2667
+  def mods= valuemods=113,2825
+  def fixup_pid pidfixup_pid121,2980
+  def content_model= valuecontent_model=125,3070
+  def label= valuelabel=131,3243
+  def owner= valueowner=135,3302
+  def datastream namedatastream140,3383
+  def existing_collectionsexisting_collections161,3850
+  def collection_policy_text labelcollection_policy_text175,4329
+  def create_new_collection_if_necessary collection_pidcreate_new_collection_if_necessary199,5125
+
+lib/offin/ingest-support.rb,619
+def get_config_filenameget_config_filename17,407
+def record_to_database site, package, status, start_time, finish_timerecord_to_database27,786
+def setup_ingest_database configsetup_ingest_database56,2103
+def package_ingest_usagepackage_ingest_usage65,2233
+def get_config_server_sectionsget_config_server_sections73,2491
+def get_config *sectionsget_config80,2658
+def package_ingest_parse_command_line argspackage_ingest_parse_command_line87,2841
+def get_move_target source, destget_move_target139,5137
+def move_to_dump_directory_maybe package_directory, destinationmove_to_dump_directory_maybe150,5385
+
+lib/offin/manifest.rb,569
+class ManifestManifest23,1961
+  def initialize config, filepathinitialize29,2039
+  def valid?valid?54,2864
+  def collectionscollections63,3040
+  def identifiersidentifiers67,3130
+  def object_historyobject_history71,3220
+  def embargoembargo75,3316
+  def other_logosother_logos79,3398
+  def labellabel85,3598
+  def content_modelcontent_model89,3677
+  def owning_institutionowning_institution93,3772
+  def submitting_institutionsubmitting_institution97,3877
+  def owning_userowning_user103,4129
+  def page_progressionpage_progression107,4220
+
+lib/offin/metadata-checkers.rb,672
+class MetadataCheckerMetadataChecker15,459
+  def initialize packageinitialize21,524
+  def post_initialization                               # TODO: rename to pre_ingestpost_initialization25,579
+  def post_ingestpost_ingest40,1035
+class ProspectiveMetadataChecker < MetadataCheckerProspectiveMetadataChecker45,1065
+  def initialize packageinitialize48,1260
+  def post_initialization   # TODO: rename to pre_ingestpost_initialization52,1311
+  def post_ingestpost_ingest62,1705
+class DigitoolMetadataChecker < MetadataCheckerDigitoolMetadataChecker130,4368
+  def initialize packageinitialize132,4417
+  def post_initializationpost_initialization136,4468
+
+lib/offin/mets.rb,1430
+class MetsUtilsMetsUtils7,92
+  def MetsUtils.pretty_print_structmap structmappretty_print_structmap9,109
+class TableOfContentsTableOfContents53,1485
+  def initialize structmapinitialize57,1568
+  def eacheach72,1874
+  def pagespages76,1935
+  def unique_pagesunique_pages80,1997
+  def chapterschapters93,2269
+  def to_json label = nilto_json97,2337
+  def valid?valid?119,2861
+  def printprint123,2908
+  def is_page? eltis_page?139,3229
+  def is_chapter? eltis_chapter?143,3292
+  def mark_validly_repeated_pagesmark_validly_repeated_pages189,4982
+  def create_entries_sequence structmapcreate_entries_sequence219,5858
+  def nip_it_in_the_budnip_it_in_the_bud258,6771
+  def has_bud? seqhas_bud?265,6915
+  def warn_for_missing_page_imageswarn_for_missing_page_images275,7195
+  def file_name namefile_name287,7511
+  def cleanup_page_titlescleanup_page_titles296,7760
+  def cleanup_chapter_titlescleanup_chapter_titles340,8980
+  def number_pagesnumber_pages346,9141
+class MetsMets361,9379
+  def initialize config, pathinitialize367,9501
+  def labellabel402,10187
+  def valid?valid?406,10250
+  def xml_syntax_errors? listxml_syntax_errors?414,10310
+  def short_filenameshort_filename445,11321
+  def create_sax_documentcreate_sax_document452,11498
+  def select_best_structmap listselect_best_structmap474,12111
+  def validates_against_schema?validates_against_schema?534,13853
+
+lib/offin/mods.rb,1247
+class ModsMods19,667
+  def initialize config, pathinitialize42,1252
+  def titletitle69,1869
+  def to_dcto_dc80,2249
+  def post_process_cleanuppost_process_cleanup95,2649
+  def to_dc_xmlto_dc_xml129,3753
+  def to_sto_s153,4626
+  def valid?   # we'll have warnings and errors if notvalid?157,4667
+  def purlspurls161,4756
+  def iidsiids169,5057
+  def digitool_idsdigitool_ids177,5335
+  def languageslanguages189,5782
+  def date_issueddate_issued197,6200
+  def type_of_resourcetype_of_resource209,6716
+  def add_type_of_resource stradd_type_of_resource216,6931
+  def add_islandora_identifier stradd_islandora_identifier226,7263
+  def add_iid_identifier stradd_iid_identifier239,7640
+  def get_prefix_for_flvc_extensionget_prefix_for_flvc_extension270,8747
+  def add_flvc_extension_elements manifestadd_flvc_extension_elements284,9174
+  def add_flvc_owner_extension manifestadd_flvc_owner_extension321,10531
+  def flvc_extensions?flvc_extensions?344,11321
+  def flvc_extensionsflvc_extensions351,11503
+  def format_prefixformat_prefix360,11887
+  def validates_against_schema?validates_against_schema?366,12012
+  def short_filenameshort_filename409,13254
+  def get_schema locationget_schema417,13437
+
+lib/offin/packages.rb,3545
+class PackageFactoryPackageFactory58,2297
+  def initialize config, updator_classinitialize62,2342
+  def new_package directorynew_package67,2444
+class PackagePackage97,3893
+  def initialize config, directory, manifest, updator_classinitialize116,4529
+  def pidspids164,6601
+  def delete_from_islandoradelete_from_islandora171,6778
+  def namename186,7307
+  def ingestingest191,7390
+  def valid?valid?195,7488
+  def boilerplate ingestorboilerplate205,7744
+  def rels_ext pidrels_ext260,9562
+  def digitool_iddigitool_id296,10719
+  def purlspurls301,10809
+  def get_inherited_policy_collection_id config, collection_list, my_namespaceget_inherited_policy_collection_id310,11023
+  def safe_close *filessafe_close324,11518
+  def list_collections manifestlist_collections332,11847
+  def list_other_fileslist_other_files359,12745
+  def handle_manifest manifesthandle_manifest379,13258
+  def handle_marchandle_marc404,14071
+  def handle_modshandle_mods411,14228
+  def handle_updatorhandle_updator457,16090
+  def handle_drupal_checkhandle_drupal_check462,16169
+  def pretty_class_namepretty_class_name474,16547
+class BasicImagePackage < PackageBasicImagePackage484,16727
+  def initialize config, directory, manifest, updatorinitialize488,16837
+  def ingestingest526,18270
+class LargeImagePackage < PackageLargeImagePackage577,19847
+  def initialize config, directory, manifest, updatorinitialize583,19979
+  def ingestingest618,21235
+  def ingest_tiff ingestoringest_tiff687,23410
+  def ingest_jp2 ingestoringest_jp2710,24056
+class PDFPackage < PackagePDFPackage736,24774
+  def initialize config, directory, manifest, updatorinitialize740,24877
+  def ingestingest818,27820
+class StructuredPagePackage < PackageStructuredPagePackage871,29592
+  def initialize config, directory, manifest, updatorinitialize875,29700
+  def ingest_page pagename, label, sequenceingest_page889,30182
+  def handle_metshandle_mets964,32631
+  def create_table_of_contentscreate_table_of_contents984,33129
+  def check_page_typescheck_page_types1002,33662
+  def create_page_filename_listcreate_page_filename_list1029,34472
+  def handle_ocr ingestor, pathhandle_ocr1073,36253
+  def handle_jpeg_page  ingestor, pathhandle_jpeg_page1098,37010
+  def handle_jp2k_page ingestor, pathhandle_jp2k_page1136,38532
+  def handle_tiff_page ingestor, pathhandle_tiff_page1172,39791
+  def page_rels_int page_pid, image_pathpage_rels_int1211,41127
+  def page_dc page_pid, page_titlepage_dc1232,41840
+  def page_rels_ext *ignoredpage_rels_ext1247,42422
+class BookPackage < StructuredPagePackageBookPackage1257,42619
+  def initialize config, directory, manifest, updatorinitialize1259,42662
+  def ingestingest1279,43471
+  def ingest_bookingest_book1290,43780
+  def ingest_pagesingest_pages1335,45153
+  def page_rels_ext page_pid, page_label, sequencepage_rels_ext1353,45741
+class NewspaperIssuePackage < StructuredPagePackageNewspaperIssuePackage1394,47270
+  def initialize config, directory, manifest, updatorinitialize1396,47323
+  def ingestingest1427,48589
+  def rels_ext pidrels_ext1445,49154
+  def ingest_issueingest_issue1476,50444
+  def ingest_pagesingest_pages1521,51869
+  def page_rels_ext page_pid, page_label, sequencepage_rels_ext1551,52923
+  def oops exceptionoops1585,54422
+  def get_parent_newspaper_idget_parent_newspaper_id1593,54687
+  def check_newspaper_parentcheck_newspaper_parent1621,55762
+  def check_issue_manifestcheck_issue_manifest1653,56847
+
+lib/offin/paginator.rb,1610
+class PackageListPaginatorPackageListPaginator15,451
+  def initialize site, params = {}initialize48,1735
+  def has_next_page_list?has_next_page_list?57,2157
+  def has_previous_page_list?has_previous_page_list?62,2278
+  def no_pages?no_pages?67,2404
+  def any_pages?any_pages?71,2448
+  def is_first_page_list?is_first_page_list?75,2497
+  def is_last_page_list?is_last_page_list?80,2631
+  def query_string additional_params = {}query_string87,2802
+  def previous_page_listprevious_page_list95,3081
+  def next_page_listnext_page_list100,3292
+  def first_page_listfirst_page_list105,3498
+  def csv_linkcsv_link109,3598
+  def offset_to_last_pageoffset_to_last_page114,3680
+  def last_page_listlast_page_list123,3953
+  def is_content_type? stris_content_type?139,4533
+  def is_status? stris_status?143,4602
+  def is_collection? stris_collection?147,4659
+  def add_comment stradd_comment153,4785
+  def comment?comment?158,4877
+  def process_paramsprocess_params179,5622
+  def temper_params additional_params = {}temper_params229,7275
+class PackagePaginatorPackagePaginator250,8046
+  def initialize site, params = {}initialize260,8443
+  def temper_params params, additional_params = {}temper_params272,8875
+  def get_previous_id id, paramsget_previous_id277,9061
+  def get_next_id id, paramsget_next_id288,9436
+  def query_stringquery_string299,9808
+  def has_next_page?has_next_page?306,10027
+  def has_previous_page?has_previous_page?310,10077
+  def previous_pageprevious_page314,10135
+  def next_pagenext_page318,10209
+  def up_pageup_page323,10276
+
+lib/offin/sql-assembler.rb,538
+class SqlAssemblerSqlAssembler9,265
+  def initializeinitialize11,285
+  def add_condition text, *parametersadd_condition15,443
+  def set_select text, *parametersset_select19,522
+  def set_order text, *parametersset_order23,602
+  def set_limit  text, *parametersset_limit27,680
+  def executeexecute31,759
+  def dumpdump36,894
+  def new_statement_fragmentnew_statement_fragment43,1055
+  def update fragment, text, *parametersupdate47,1134
+  def add fragment, text, *parametersadd53,1284
+  def assembleassemble59,1431
+
+lib/offin/utils.rb,4027
+module RubydoraRubydora35,721
+  module ResourceIndexResourceIndex36,737
+    def itql queryitql37,760
+class UtilsUtils50,1014
+  def Utils.ingest_usageingest_usage68,1758
+  def Utils.xml_unescape strxml_unescape74,1882
+  def Utils.xml_escape strxml_escape80,2129
+  def Utils.solr_escape strsolr_escape87,2337
+  def Utils.silence_warnings(&block)silence_warnings95,2666
+  def Utils.field_system_error message = ''field_system_error104,2825
+  def Utils.silence_streams(*streams)  # after some rails code by DHHsilence_streams115,3160
+  def Utils.pretty_elapsed elapsedpretty_elapsed130,3490
+  def Utils.quickly time = QUICKLY_TIMEOUTquickly143,3951
+  def Utils.get_pre_existing_islandora_pid_for_iid config, iidget_pre_existing_islandora_pid_for_iid151,4123
+  def Utils.get_collection_names configget_collection_names200,5884
+  def Utils.get_next_newspaper_issue_sequence config, newspaper_pidget_next_newspaper_issue_sequence244,7534
+  def Utils.get_newspaper_issues_by_date_issued config, newspaper_pid, issue_dateget_newspaper_issues_by_date_issued280,8784
+  def Utils.get_newspaper_pids configget_newspaper_pids316,10053
+  def Utils.get_datastream_names config, pidget_datastream_names364,12119
+  def Utils.ping_islandora_for_object islandora_site, pidping_islandora_for_object401,13560
+  def Utils.ping_islandora_for_objects islandora_site, pidsping_islandora_for_objects419,14043
+  def Utils.get_manifest config, directoryget_manifest427,14238
+  def Utils.get_mods config, directoryget_mods439,14551
+  def Utils.cleanup_text textcleanup_text458,15149
+    def Utils.re_encode_maybe textre_encode_maybe471,15432
+    def Utils.re_encode_maybe textre_encode_maybe487,15807
+  def Utils.temp_file         # creat an anonymous file handletemp_file499,16094
+  def Utils.format_error_messages textformat_error_messages515,16571
+  def Utils.image_processing config, image_filepath, command, error_titleimage_processing534,17130
+  def Utils.pass_through filepathpass_through554,17634
+  def Utils.size config, image_filepathsize561,17727
+  def Utils.pdf_to_thumbnail config, pdf_filepathpdf_to_thumbnail580,18421
+  def Utils.pdf_to_preview config, pdf_filepathpdf_to_preview586,18871
+  def Utils.pdf_to_text config, pdf_filepathpdf_to_text592,19319
+  def Utils.jp2k_ok? config, image_filepathjp2k_ok603,19838
+  def Utils.convert_jp2k_maybe config, image_filepathconvert_jp2k_maybe613,20192
+  def Utils.image_to_jpeg config,  image_filepathimage_to_jpeg630,20986
+  def Utils.image_to_pdf config, image_filepathimage_to_pdf643,21821
+  def Utils.image_to_tiff config,  image_filepathimage_to_tiff656,22657
+  def Utils.image_to_jp2k config, image_filepathimage_to_jp2k670,23493
+  def Utils.image_resize config, image_filepath, geometry, new_format = nilimage_resize683,24332
+  def Utils.langs_to_tesseract_command_line config, *requested_languageslangs_to_tesseract_command_line706,25564
+  def Utils.langs_to_names config, *requested_languageslangs_to_names717,25956
+  def Utils.langs_unsupported_comment config, requested_languageslangs_unsupported_comment728,26306
+  def Utils.langs_supported config, requested_languageslangs_supported738,26687
+  def Utils.tesseract config, image_filepath, do_hocr, *langstesseract746,26927
+  def Utils.hocr config, image_filepath, *langshocr819,29812
+  def Utils.ocr config, image_filepath, *langsocr829,30141
+  def Utils.shellescape(str)shellescape839,30376
+  def Utils.mime_type filemime_type860,31058
+  def Utils.parse_dates from, toparse_dates904,32234
+  def Utils.available_collection_codesavailable_collection_codes919,32747
+  def Utils.setup_basic_filters sql, paramssetup_basic_filters931,33066
+  def Utils.get_datastream_contents config, pid, dsidget_datastream_contents947,34241
+  def Utils.rels_ext_get_policy_fields config, collection_pidrels_ext_get_policy_fields962,34692
+  def Utils.find_appropriate_admin_config config_file, server_namefind_appropriate_admin_config1040,37242
+
+lib/watch-queue/ingest-job.rb,670
+class BaseIngestJobBaseIngestJob9,180
+  def self.around_perform (data)around_perform11,201
+  def self.failsafe(container_directory, errors_directory)failsafe45,1495
+class ProspectiveIngestJob < BaseIngestJobProspectiveIngestJob56,1962
+  def self.perform(data)perform59,2022
+class DigitoolIngestJob < BaseIngestJobDigitoolIngestJob66,2202
+  def self.perform(data)perform69,2264
+class PackageIngestorPackageIngestor76,2441
+  def self.process data, updator_classprocess78,2464
+  def self.log_summary  package, elapsed_timelog_summary118,3871
+  def self.disposition package, container_directory, errors_directory, warnings_directorydisposition133,4585
+
+lib/watch-queue/watch-directory.rb,942
+class BaseWatchDirectoryBaseWatchDirectory17,440
+  def initialize config, config_section = nilinitialize30,910
+  def enqueue_incoming_packagesenqueue_incoming_packages36,1178
+  def resque_enqueue container_directory, package_directoryresque_enqueue56,1904
+  def cleanup_unused_container dircleanup_unused_container60,2091
+  def new_processing_directory(hostname)new_processing_directory66,2260
+  def not_recently_changed dirnot_recently_changed76,2810
+  def ready_directoriesready_directories94,3506
+class FtpWatchDirectory < BaseWatchDirectoryFtpWatchDirectory107,3895
+  def initialize config, config_sectioninitialize108,3940
+  def resque_enqueue container_directory, package_directoryresque_enqueue117,4334
+class DigiToolWatchDirectory < BaseWatchDirectoryDigiToolWatchDirectory130,4878
+  def initialize configinitialize131,4928
+  def resque_enqueue container_directory, package_directoryresque_enqueue140,5315
+
+lib/watch-queue/watch-utils.rb,646
+class WatchUtilsWatchUtils10,315
+  def WatchUtils.setup_config config_file=nilsetup_config12,333
+  def WatchUtils.setup_ingest_database configsetup_ingest_database22,741
+  def WatchUtils.setup_redis_connection configsetup_redis_connection28,923
+  def WatchUtils.setup_resque_loggersetup_resque_logger47,1618
+  def WatchUtils.directory_problems root_dirdirectory_problems54,2034
+  def WatchUtils.short_package_container_name container, packageshort_package_container_name80,2883
+  def WatchUtils.start_ingest_worker sleep_time, *queuesstart_ingest_worker86,3132
+  def WatchUtils.setup_environment configsetup_environment105,3908
+
+tools/add-ftp-tables,0
+
+tools/check,0
+
+tools/check-tiff,117
+def shellescape(str)shellescape5,38
+def find_tiffinfo?find_tiffinfo?15,202
+def tiff_ok? filenametiff_ok?21,296
+
+tools/collection-ids,54
+def parse_command_line argsparse_command_line20,416
+
+tools/create-admin-configs,254
+def symlink_admin_site  hostnamesymlink_admin_site27,973
+def create_config_file hostname, comment = ''create_config_file39,1350
+def create_config_entry site_name, site_commentcreate_config_entry73,2264
+def main site_name, site_commentmain93,2745
+
+tools/create-db,0
+
+tools/delete-by-pid,98
+def parse_command_line argsparse_command_line26,940
+def components pid, repocomponents51,1666
+
+tools/delete-by-pid-,98
+def parse_command_line argsparse_command_line26,940
+def components pid, repocomponents51,1666
+
+tools/fixup-metsid-issue,367
+def create_metsid_mapping entities_directorycreate_metsid_mapping39,1168
+def parse_digital_entity filepathparse_digital_entity57,1639
+def cross_reference_mets_dictionary datafiles_directory, mets, metsid_mappingcross_reference_mets_dictionary73,2191
+def fixup_mets_file mets_filename, metsid_mappingfixup_mets_file105,3032
+def usage mess = nilusage128,3783
+
+tools/ftp-handler,143
+def loop_for_incoming config_fileloop_for_incoming35,1046
+def watch_configured_directories  config_filewatch_configured_directories70,1968
+
+tools/hocr,0
+
+tools/ingest,0
+
+tools/ingest-handler,0
+
+tools/mets-toc,21
+def mainmain16,370
+
+tools/migrate-to-palmm,967
+module RubydoraRubydora28,972
+  module ResourceIndexResourceIndex29,988
+    def itql queryitql30,1011
+def get_repository site_codeget_repository41,1301
+def all_existing_collections repositoryall_existing_collections51,1599
+def parent_records repository, namespaceparent_records56,1915
+def get_fsu_to_palmm_mappingget_fsu_to_palmm_mapping93,3279
+def check_for_complete_information repo, namespacecheck_for_complete_information144,10358
+def create_new_collection_policy_from_existing repo, collectioncreate_new_collection_policy_from_existing166,11043
+def get_desc_text repo, collectionget_desc_text175,11387
+def get_banner repo, collectionget_banner185,11771
+def update_mappings mappings, parentsupdate_mappings197,12152
+def get_thumbnail base_url, collectionget_thumbnail270,14818
+def create_new_collection_maybe repo, collection, collection_title, parent_collection, source_base_url, source_collectioncreate_new_collection_maybe286,15214
+
+tools/package,0
+
+tools/package-logs,0
+
+tools/random-packages,84
+def parse_command argsparse_command11,265
+def shellescape(str)shellescape27,704
+
+tools/setup-db,0
+
+tools/test-manifest,0
+
+tools/test-mods,0
+
+tools/tiff-to-jp2,17
+def meme10,177
+
+tools/update-datastream,75
+def get_options argsget_options20,494
+def connect configconnect53,1662
+
+tools/where-are-datastreams,648
+def parse_command_line argsparse_command_line24,680
+def data_stream_to_filename(islandora_pid, data_stream_id)data_stream_to_filename46,2114
+def metadata_stream_to_filename(islandora_pid)metadata_stream_to_filename75,3222
+def nope messagenope85,3519
+def get_foxml(config)get_foxml94,3693
+class SaxDocument < Nokogiri::XML::SAX::DocumentSaxDocument112,4526
+  def initialize(only_show_last_datastream = false)initialize116,4606
+  def start_element_namespace name, attributes = [], prefix = nil, uri = nil, ns = []start_element_namespace149,6304
+  def end_element_namespace name, prefix = nil, uri = nilend_element_namespace178,7336
+
+tools/zip-serialize-pdfs,461
+def meme42,1259
+def get_command_line_arguments argsget_command_line_arguments50,1357
+def check_directory_permissions dircheck_directory_permissions82,2498
+def check_directory dircheck_directory95,3020
+def create_zip_file mods_data, package_info, destination_directorycreate_zip_file152,4854
+def rewrite_mods mods_path, manifest_path, old_name, configrewrite_mods174,5629
+def process package_directory, destination_directory, configprocess195,6466
+
+web-report/app.rb,526
+  def list_component_links packagelist_component_links49,1408
+  def list_purl_links packagelist_purl_links53,1568
+  def get_elapsed_time packageget_elapsed_time57,1683
+  def list_collections configlist_collections63,1911
+  def list_collection_links config, package, css = ''list_collection_links82,2529
+  def list_datastream_links config, package, css = ''list_datastream_links93,2923
+  def check_if_present config, packagecheck_if_present102,3396
+  def get_on_site_map config, packagesget_on_site_map108,3584
