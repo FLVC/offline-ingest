@@ -1035,8 +1035,11 @@ class StructuredPagePackage < Package
       # Without METS, there's no way to find out which files should be present, so we won't be able to figure out if something is missing.
       # We also lack knowing what order they should be in.  Ah well...
 
+      # TODO:  we can have a smarter sort here, so we don't have "1.img", "10.img", "2.img" ....
+
       @datafiles.sort!
-      expected.push @datafiles.select { |name| name =~ /\.tiff$|\.tif$|\.jp2$|\.jp2k$|\.jpg$|\.jpeg$/i }
+      expected += @datafiles.select { |name| name =~ /\.tiff$|\.tif$|\.jp2$|\.jp2k$|\.jpg$|\.jpeg$/i }
+
     else
 
       # This checks the filenames in the list @datafiles (what's in the
@@ -1407,10 +1410,10 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     handle_marc or return  # create @marc if we have a marc.xml
 
-    if @has_mets
-      handle_mets               or return  # create @mets and check its validity
-      create_table_of_contents  or return  # creates @table_of_contents
-    end
+    # insert "if @has_mets ... end"  around the next two lines if we decide METS is optional.
+
+    handle_mets               or return  # create @mets and check its validity
+    create_table_of_contents  or return  # creates @table_of_contents
 
     create_page_filename_list   or return  # creates @page_filenames
     check_page_types            or return  # checks @page_filenames file types
@@ -1489,6 +1492,8 @@ class NewspaperIssuePackage < StructuredPagePackage
         ds.mimeType = 'image/jpeg'
       end
 
+      # At the moment we always require METS,  but it's possible to do this without.
+
       if @has_mets
         ingestor.datastream('DT-METS') do |ds|
           ds.dsLabel  = 'Archived METS for future reference'
@@ -1531,6 +1536,7 @@ class NewspaperIssuePackage < StructuredPagePackage
     # NewspaperIssue packages don't necessarily have to have a METS file, so we do the best we can do.
       sequence = 0
       @page_filenames.each do |image_filename|
+        sequence += 1
         @component_objects.push ingest_page(image_filename, "Page #{sequence}", sequence)
       end
     end
@@ -1634,7 +1640,7 @@ class NewspaperIssuePackage < StructuredPagePackage
     existing_issues_object_ids = Utils.get_newspaper_issues_by_date_issued(@config, @newspaper_id, @date_issued)
 
     if not existing_issues_object_ids.empty?
-      error "The #{pretty_class_name} has an issue date #{@date_issued},  but so #{ existing_issues_object_ids.count == 1 ? "does issue " + "existing_issues_object_ids[0]" : "do issues " + existing_issues_object_ids.join(', ')}."
+      error "The #{pretty_class_name} has an issue date #{@date_issued}, but it is already in use by #{ (existing_issues_object_ids.count == 1 ? "object " : "objects ") + existing_issues_object_ids.join(', ')}."
       return
     end
 
