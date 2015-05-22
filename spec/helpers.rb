@@ -32,6 +32,15 @@ module ModsHelpers
 
 end
 
+
+module SqlAssemblerHelpers
+
+  include CommonHelpers
+
+end
+
+
+
 module MetsHelpers
 
   include CommonHelpers
