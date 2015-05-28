@@ -12,15 +12,6 @@ require 'offin/metadata-checkers'
 require 'offin/config'
 require 'offin/drupal-db'
 
-BASIC_IMAGE_CONTENT_MODEL      = 'islandora:sp_basic_image'
-LARGE_IMAGE_CONTENT_MODEL      = 'islandora:sp_large_image_cmodel'
-PDF_CONTENT_MODEL              = 'islandora:sp_pdf'
-BOOK_CONTENT_MODEL             = 'islandora:bookCModel'
-PAGE_CONTENT_MODEL             = 'islandora:pageCModel'
-NEWSPAPER_CONTENT_MODEL        = 'islandora:newspaperCModel'
-NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
-NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
-
 #  Class Hierarchy:
 #
 #                            PackageClass (base class)
@@ -56,6 +47,15 @@ NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
 # requested, and returns the appropriate type of package.
 
 class PackageFactory
+
+  BASIC_IMAGE_CONTENT_MODEL      = 'islandora:sp_basic_image'
+  LARGE_IMAGE_CONTENT_MODEL      = 'islandora:sp_large_image_cmodel'
+  PDF_CONTENT_MODEL              = 'islandora:sp_pdf'
+  BOOK_CONTENT_MODEL             = 'islandora:bookCModel'
+  PAGE_CONTENT_MODEL             = 'islandora:pageCModel'
+  NEWSPAPER_CONTENT_MODEL        = 'islandora:newspaperCModel'
+  NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
+  NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
 
   attr_reader :config
 
@@ -1406,17 +1406,23 @@ class NewspaperIssuePackage < StructuredPagePackage
     @newspaper_id         = nil
     @date_issued          = nil
 
-    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
+    # raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
+    warning "The #{pretty_class_name} #{@directory_name} contains no data files: only the issue will be created"  if @datafiles.empty?
 
     handle_marc or return  # create @marc if we have a marc.xml
 
     # insert "if @has_mets ... end"  around the next two lines if we decide METS is optional.
 
-    handle_mets               or return  # create @mets and check its validity
-    create_table_of_contents  or return  # creates @table_of_contents
+    if @has_mets
+      handle_mets               or return  # create @mets and check its validity
+      create_table_of_contents  or return  # creates @table_of_contents
+    end
 
-    create_page_filename_list   or return  # creates @page_filenames
-    check_page_types            or return  # checks @page_filenames file types
+    create_page_filename_list   or return  # creates @page_filenames from @datafiles
+
+    unless @page_filenames.empty?
+      check_page_types          or return  # checks @page_filenames file types; raises error if empty TODO: break that check out into the packages -
+    end
 
     check_issue_manifest        or return  # checks languages declared if any,  sets @date_issued
     check_newspaper_parent      or return  # sets @issue_sequence and @newspaper_id.
