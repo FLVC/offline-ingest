@@ -1462,10 +1462,10 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     if @inherited_policy_collection_id
       str += Utils.rels_ext_get_policy_fields(@config, @inherited_policy_collection_id)
+      str += "        <islandora:inheritXacmlFrom rdf:resource=\"info:fedora/#{@inherited_policy_collection_id}\"></islandora:inheritXacmlFrom>\n"
     end
 
     str += <<-XML
-        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{@inherited_policy_collection_id}"></islandora:inheritXacmlFrom>
         <islandora:isSequenceNumber>#{@issue_sequence}</islandora:isSequenceNumber>
         <islandora:dateIssued>#{@date_issued}</islandora:dateIssued>
       </rdf:Description>
@@ -1575,10 +1575,10 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     if @inherited_policy_collection_id
       str += Utils.rels_ext_get_policy_fields(@config, @pid)   # note that @inherited_policy_collection_id is the collection for this Issue,  which we've already ingested.  So we get policies from the Issue's datastreams (@pid)
+      str += "        <islandora:inheritXacmlFrom rdf:resource=\"info:fedora/#{@pid}\"></islandora:inheritXacmlFrom>\n"
     end
 
     str += <<-XML
-        <islandora:inheritXacmlFrom rdf:resource="info:fedora/#{@pid}"></islandora:inheritXacmlFrom>
       </rdf:Description>
     </rdf:RDF>
     XML
