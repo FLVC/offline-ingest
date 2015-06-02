@@ -56,6 +56,7 @@ def components pid, repo
     FROM <#ri>
     WHERE {
       ?object fedora-rels-ext:isMemberOf <#{pid}> ;
+      <fedora-model:hasModel> <info:fedora/islandora:newspaperIssueCModel> .
     }
   SPARQL
 
@@ -64,18 +65,14 @@ rescue => e
   return []
 end
 
-
-
 config = parse_command_line(ARGV)
 repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
 
 ARGV.each do |pid|
   pid = "info:fedora/#{pid}" unless pid =~ /^info:fedora/
-  ([ pid ] + components(pid, repository)).each do |p|
-    begin
-      DigitalObject.find_or_initialize(p, repository).delete
-    rescue => e
-      STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
-    end
+  begin
+    DigitalObject.find_or_initialize(pid, repository).delete
+  rescue => e
+    STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
   end
 end
