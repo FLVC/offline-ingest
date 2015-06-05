@@ -9,15 +9,18 @@ require 'mime/types'
 require 'uri'
 require 'base64'
 
-# Oops.  Deleted an object?  This tool will let you reconstruct it
-# from data backup files (objectStore/ and their referenced
-# datastreamStore/ files).  Including the original PIDs.
+# Oops.  Deleted an object?  I did. This tool will let you reconstruct
+# it from data backup files (objectStore/ and their referenced
+# datastreamStore/ files).  It maintains the original PIDs.
 #
-# Take an objectStore FOXML file, and, using the datastream internal
-# id from the <contentLocation> element, insert the base64 encoded
-# data.  Write out the resuling XML as a FOXML archive file.
+# This works by starting with an objectStore FOXML file, and, using
+# the datastream internal IDs from the <contentLocation> elements,
+# replaces them with <binaryContent> elements containing the base64
+# encoded datastreams.  It writes out the resuling XML as a FOXML
+# archive file in the current working directory.
 #
-# Then:
+# Then the FOXML archive file can be restored on the fedora server
+# using standard fedora utilities:
 #
 #  PATH=/usr/local/fedora/client/bin/:$PATH
 #  fedora-ingest.sh f NEWFILE.FOXML info:fedora/fedora-system:FOXML-1.1 localhost:8080 fedoraAdmin PASSWORD http ingest-log
@@ -35,13 +38,14 @@ def data_stream_to_filename(datastream_store_directory, name)
   return  File.join(datastream_store_directory,  URI.encode(name, /[^A-Za-z0-9=()\.-]/).sub(/\.$/, "%2E"))
 end
 
-# TODO:  tutorial on finding the objectStore/ and datastreamStore/ files from backup.
-# TODO:  take mutliple arguments
-# TODO:  check that objectstore_filepath is a foxml object
+# TODO:  write tutorial on finding the objectStore/ and datastreamStore/ files from backup.
+# TODO:  take mutliple objectStore files as arguments
+# TODO:  check that objectstore_filepath is readable, and is a foxml object
 # TODO:  turn on strict checking in Nokogiri
 # TODO:  use options to set datastream store directory
 # TODO:  don't smash existing foxml files
-# TODO:  if no contentLocation elements, don't produce anything (the objectStore file will itself serve for recovery)
+# TODO:  check the CWD is writable
+# TODO:  if there are no contentLocation elements, don't produce anything (the objectStore file will itself serve for recovery)
 
 objectstore_filepath = ARGV[0]
 
@@ -53,10 +57,10 @@ doc.xpath('//foxml:contentLocation').each do |node|
   oops 'contentLocation element is missing the expected TYPE attribute' unless node['TYPE'] == 'INTERNAL_ID'
   oops 'contentLocation element is missing the expected REF attribute'  unless node['REF']  =~ /.*:\d+\+/
 
-  internal_id = node['REF']
-  node.name   = 'binaryContent'
+  internal_id = node['REF']             # reference to the associated datastream..
+  node.name   = 'binaryContent'         # <contentLocation> node becomes a <binaryContent> element
 
-  node.keys.each { |k| node.delete k }
+  node.keys.each { |k| node.delete k }  # delete all atributes,  add base64 encoding of datastream:
 
   node.content = "\n" + Base64.encode64(File.read(data_stream_to_filename('data/datastreamStore', internal_id)))
 end
