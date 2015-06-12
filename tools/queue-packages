@@ -1,0 +1,121 @@
+#!/usr/bin/env ruby
+
+# A program to move packages into the appropriate /ftpdl/ processing
+# filesystem, changing the permissions as appropriate.  The ingest
+# queing system takes it from there.
+
+TARGET_GROUP   = 'dldev'
+ROOT_DIRECTORY = '/ftpdl'
+
+require 'fileutils'
+require 'find'
+require 'optparse'
+
+def ingest_sites(root_directory)
+  dirs = []
+  Dir["#{root_directory}/*/incoming/"].each do |dir|
+    next unless File.writable? dir
+    dirs.push dir.sub("#{root_directory}/", "").sub("/incoming/", "")
+  end
+  return dirs.sort
+end
+
+def ingest_dir(root_directory, ingest_site)
+  return "#{root_directory}/#{ingest_site}/incoming"
+end
+
+
+Struct.new('Options', :site)
+
+def parse_command_line(root_directory, args)
+  config = Struct::Options.new(nil)
+  opts = OptionParser.new do |opt|
+    opt.banner = "Usage: queue-packages [options] package [other packages]"
+    opt.on("--site SITE",  String,  "Which site to submit package(s);  can be one of #{ingest_sites(root_directory).join(', ')}.") { |site| config.site = site }
+  end
+  opts.parse! args
+  raise "You must select a site."  unless config.site
+  raise "You must include one of more arguments listing package directories"  unless args.length > 0
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+else
+  return config
+end
+
+# Do we have membership in the given group?
+
+def in_target_group?(group_name)
+  Process.groups.map  { |gid|  Etc.getgrgid(gid).name }.include? group_name
+rescue
+  false
+end
+
+# Basic sanity checks for filesystems
+
+def package_ok?(destination, package)
+  unless File.exists? package
+    STDERR.puts "package '#{package}' doesn't exist, skipping."
+    return false
+  end
+
+  if File.exists? File.join(destination, package)
+    STDERR.puts "package '#{package}' already exists in '#{destination}', skipping."
+    return false
+  end
+
+  Find.find(package) do |path|
+    if not File.readable? path
+      STDERR.puts "package file '#{path}' is not readable, skipping."
+      return false
+    end
+  end
+
+  return true
+rescue => e
+  STDERR.puts e.message
+  return false
+end
+
+def copy_package(group, target_directory, package)
+  package_copy = File.join(target_directory, package)
+
+  FileUtils.cp_r(package, target_directory)
+  FileUtils.chown_R(nil, group, package_copy)
+
+  dirs  = []
+  files = []
+  Find.find(package_copy) do |path|
+    if FileTest.directory?(path)
+      dirs.push path
+    else
+      files.push path
+    end
+  end
+
+  FileUtils.chmod(02775, dirs)
+  FileUtils.chmod(00664, files)
+rescue => e
+  STDERR.puts "Error moving package '#{package}' to '#{target_directory}': #{e}"
+  FileUtils.rm_rf package_copy
+end
+
+
+def copy_packages(group, target_directory, packages)
+  packages.each do |package|
+    next unless package_ok?(target_directory, package)
+    copy_package(group, target_directory, package)
+  end
+end
+
+
+# main()
+
+config = parse_command_line(ROOT_DIRECTORY, ARGV)
+
+if not in_target_group? TARGET_GROUP
+  STDERR.puts "You must be in the #{TARGET_GROUP} group to run this program."
+  exit
+end
+
+copy_packages(TARGET_GROUP, ingest_dir(ROOT_DIRECTORY, config.site), ARGV)
