@@ -22,15 +22,13 @@ class BaseWatchDirectory
   SUCCESS_SUBDIRECTORY     = 'success'
   WARNINGS_SUBDIRECTORY    = 'warnings'
 
-# DIRECTORY_UNCHANGED_TIME = 30
-  DIRECTORY_UNCHANGED_TIME = 15 * 60  #### Use this variable on launch
-
   attr_reader :config_path, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
-  def initialize config, config_section = nil
-    @config_section = config_section   # nil when global/default :digitool queue
-    @config_path    = config.path
-    @hostname       = config.site || Socket.gethostname   # nil when global/default :digitool queue
+  def initialize(config, config_section, delay)
+    @config_section   = config_section
+    @config_path      = config.path
+    @hostname         = config.site || Socket.gethostname
+    @directory_delay  = delay
   end
 
   def enqueue_incoming_packages
@@ -66,8 +64,6 @@ class BaseWatchDirectory
   def new_processing_directory(hostname)
     new_directory = File.join(processing_directory, DataBase::FtpContainer.next_container_name(hostname))
     FileUtils.mkdir new_directory
-####   FileUtils.chown nil, SHARED_GROUP, new_directory          # we don't really need to do this; set-gid on directory should get this right
-###    FileUtils.chmod 02775,  new_directory
     return new_directory
   rescue => e
     raise SystemError, "Encountered a fatal error when creating a new processing directory for #{hostname}: #{e.class} - #{e.message}"
@@ -84,7 +80,7 @@ class BaseWatchDirectory
       times.push File.stat(File.join(dir, fl)).ctime  # ctime catches more changes than mtime on plain files, e.g. rename.
     end
     latest_change = times.sort.pop
-    return (now - latest_change) > DIRECTORY_UNCHANGED_TIME
+    return (now - latest_change) > @directory_delay
   end
 
   # In the drop directory, we expect only subdirectories, each filled
@@ -105,9 +101,9 @@ end # class WatchDirectory
 
 
 class FtpWatchDirectory < BaseWatchDirectory
-  def initialize config, config_section
+  def initialize(config, config_section, delay)
 
-    super(config, config_section)
+    super(config, config_section, delay)
     @errors_directory     = File.join(config.ftp_root, ERRORS_SUBDIRECTORY)
     @incoming_directory   = File.join(config.ftp_root, INCOMING_SUBDIRECTORY)
     @processing_directory = File.join(config.ftp_root, PROCESSING_SUBDIRECTORY)
@@ -115,6 +111,8 @@ class FtpWatchDirectory < BaseWatchDirectory
   end
 
   def resque_enqueue container_directory, package_directory
+    # TODO: 'warnings' and 'errors' params: this creates a lot of noise in the logs --- have ingest_handler know about subdirectories and don't pass them in
+
     Resque.enqueue(ProspectiveIngestJob,
                    { :config_section      => config_section,
                      :config_file         => config_path,
@@ -127,10 +125,10 @@ class FtpWatchDirectory < BaseWatchDirectory
 
 end
 
-class DigiToolWatchDirectory < BaseWatchDirectory
-  def initialize config
+class DigitoolWatchDirectory < BaseWatchDirectory
+  def initialize(config, config_section, delay)
 
-    super(config, nil)
+    super(config, config_section, delay)
     @errors_directory     = File.join(config.digitool_root, ERRORS_SUBDIRECTORY)
     @incoming_directory   = File.join(config.digitool_root, INCOMING_SUBDIRECTORY)
     @processing_directory = File.join(config.digitool_root, PROCESSING_SUBDIRECTORY)
@@ -138,8 +136,9 @@ class DigiToolWatchDirectory < BaseWatchDirectory
   end
 
   def resque_enqueue container_directory, package_directory
-    Resque.enqueue(DigiToolIngestJob,
-                   { :config_file         => config_path,
+    Resque.enqueue(DigitoolIngestJob,
+                   { :config_section      => config_section,
+                     :config_file         => config_path,
                      :container_directory => container_directory,
                      :errors_directory    => errors_directory,
                      :package_directory   => File.join(container_directory, package_directory),

@@ -1,40 +1,54 @@
 #!/usr/bin/env ruby
 
-# A program to move packages into the appropriate /ftpdl/ processing
+$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+
+require 'fileutils'
+require 'find'
+require 'offin/config'
+require 'offin/ingest-support'
+require 'optparse'
+require 'socket'
+
+# A program to move packages into the appropriate /digitool/ processing
 # filesystem, changing the permissions as appropriate.  The ingest
 # queing system takes it from there.
 
 TARGET_GROUP   = 'dldev'
-ROOT_DIRECTORY = '/ftpdl'
 
-require 'fileutils'
-require 'find'
-require 'optparse'
-
-def ingest_sites(root_directory)
-  dirs = []
-  Dir["#{root_directory}/*/incoming/"].each do |dir|
-    next unless File.writable? dir
-    dirs.push dir.sub("#{root_directory}/", "").sub("/incoming/", "")
+def available_servers
+  available = {}
+  get_config_server_sections.each do |server_section|  # these will be server aliases
+    root = get_config(server_section).digitool_queue
+    next unless root
+    if File.exists?(root) && File.directory?(root)
+      available[server_section] = root
+    else
+      STDERR.puts "The config.yml file lists a digitool_queue of #{root} for #{server_section}, but that directory doesn't exist"
+    end
   end
-  return dirs.sort
-end
-
-def ingest_dir(root_directory, ingest_site)
-  return "#{root_directory}/#{ingest_site}/incoming"
+  return available
 end
 
 
-Struct.new('Options', :site)
 
-def parse_command_line(root_directory, args)
-  config = Struct::Options.new(nil)
+Struct.new('QueueOptions', :server, :directory, :quiet)
+
+def parse_command_line(args)
+  config = Struct::QueueOptions.new()
+  servers = available_servers
+  raise "There are no configured servers for digitool queues - use config.yml for adding digitool_queue: entries"  if servers.empty?
   opts = OptionParser.new do |opt|
     opt.banner = "Usage: queue-packages [options] package [other packages]"
-    opt.on("--site SITE",  String,  "Which site to submit package(s);  can be one of #{ingest_sites(root_directory).join(', ')}.") { |site| config.site = site }
+    opt.on("--server ID",  String,  "Required, a server to use; (use digitool_queue in config.yml file to add more): #{servers.keys.sort.join(', ')}.") do |server|
+      config.server = server
+      config.directory = servers[server]
+    end
+    opt.on("--quiet",  "Optional, don't report the count or destination directory when finished") do |quiet|
+      config.quiet = true
+    end
   end
   opts.parse! args
-  raise "You must select a site."  unless config.site
+  raise "You must select a valid server."  unless config.server && config.directory
   raise "You must include one of more arguments listing package directories"  unless args.length > 0
 rescue => e
   STDERR.puts e, opts
@@ -55,18 +69,18 @@ end
 
 def package_ok?(destination, package)
   unless File.exists? package
-    STDERR.puts "package '#{package}' doesn't exist, skipping."
+    STDERR.puts "Package '#{package}' doesn't exist, skipping."
     return false
   end
 
   if File.exists? File.join(destination, package)
-    STDERR.puts "package '#{package}' already exists in '#{destination}', skipping."
+    STDERR.puts "Package '#{package}' already exists in '#{destination}', skipping."
     return false
   end
 
   Find.find(package) do |path|
-    if not File.readable? path
-      STDERR.puts "package file '#{path}' is not readable, skipping."
+    unless File.readable? path
+      STDERR.puts "Package file '#{path}' is not readable, skipping."
       return false
     end
   end
@@ -77,8 +91,9 @@ rescue => e
   return false
 end
 
+
 def copy_package(group, target_directory, package)
-  package_copy = File.join(target_directory, package)
+  package_copy = File.join(target_directory, File.basename(package))
 
   FileUtils.cp_r(package, target_directory)
   FileUtils.chown_R(nil, group, package_copy)
@@ -95,27 +110,41 @@ def copy_package(group, target_directory, package)
 
   FileUtils.chmod(02775, dirs)
   FileUtils.chmod(00664, files)
+  return true
 rescue => e
-  STDERR.puts "Error moving package '#{package}' to '#{target_directory}': #{e}"
+  STDERR.puts "Error copying package '#{package}' to '#{target_directory}': #{e}"
+  STDERR.puts e.backtrace
+
   FileUtils.rm_rf package_copy
+  return false
 end
 
 
 def copy_packages(group, target_directory, packages)
+  count = 0
   packages.each do |package|
     next unless package_ok?(target_directory, package)
-    copy_package(group, target_directory, package)
+    count += 1 if copy_package(group, target_directory, package)
   end
+  return count
 end
 
 
-# main()
 
-config = parse_command_line(ROOT_DIRECTORY, ARGV)
+def main()
+  config = parse_command_line(ARGV)
 
-if not in_target_group? TARGET_GROUP
-  STDERR.puts "You must be in the #{TARGET_GROUP} group to run this program."
-  exit
+  unless in_target_group? TARGET_GROUP
+    STDERR.puts "You must be in the #{TARGET_GROUP} group to run this program."
+    exit
+  end
+
+  destination_directory = File.join(config.directory, 'incoming')
+  count = copy_packages(TARGET_GROUP, destination_directory, ARGV)
+
+  STDERR.puts "#{count} package#{count == 1 ? '' : 's'} copied to #{destination_directory}"  unless config.quiet
 end
 
-copy_packages(TARGET_GROUP, ingest_dir(ROOT_DIRECTORY, config.site), ARGV)
+
+
+main()

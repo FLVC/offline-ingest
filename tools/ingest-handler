@@ -16,10 +16,10 @@ require 'resque'
 require 'watch-queue/watch-utils'
 
 WORKER_SLEEP          = 5      # TODO: try to increase to 10 seconds - does 'god terminate' still work reliably?
-SYSTEM_ERROR_SLEEP    = 60     # increase to 120 in production
+SYSTEM_ERROR_SLEEP    = 120    # sleep two minutes if we think it's an errant error.
 UNHANDLED_ERROR_SLEEP = 600    # five minutes
 
-# A process monitor will restart an instance of this script if we exit on error.
+# A process monitor (currently 'god') will restart an instance of this script if we exit on error.
 
 queues = ARGV
 
@@ -33,11 +33,11 @@ begin
   Resque.logger.info "Process #{$$} Exiting...."
 
 rescue Redis::CannotConnectError, PackageError, SystemError => e
-  Resque.logger.error "System error: #{e.class}: #{e.message}; will restart after #{SYSTEM_ERROR_SLEEP} seconds."
+  Resque.logger.error "System error: #{e.class}: #{e.message}; will restart after #{SYSTEM_ERROR_SLEEP/60.0} minutes."
   sleep SYSTEM_ERROR_SLEEP
 
 rescue => e
-  Resque.logger.error "Unhandled error: #{e.class}: #{e.message}; will restart after #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
+  Resque.logger.error "Unhandled error: #{e.class}: #{e.message}; will restart after #{UNHANDLED_ERROR_SLEEP/60.0} minutes.  Backtrace follows:"
   e.backtrace.each { |line| Resque.logger.error line }
   sleep UNHANDLED_ERROR_SLEEP
 

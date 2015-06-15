@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
 
 require 'rubygems'
@@ -15,7 +16,7 @@ require 'watch-queue/watch-directory'
 
 
 
-# Note: ftp-handler is run as an independent front end for our
+# Note: incoming-package-handler is run as an independent front end for our
 # queueing system, so it isn't directly running resque worker code, as
 # is the ingest-handler.
 #
@@ -26,38 +27,31 @@ require 'watch-queue/watch-directory'
 # ingest-handler (which uses Resque::Logger). For now, we simply write
 # to STDERR, which gets captured by the process manager and logged.
 
-REREAD = 60 * 5   # re-read config file this often
-PAUSE  = 5        # PAUSE must divide REREAD evenly
+PAUSE  = 5        # PAUSE between checks of configuration file.
 
 SYSTEM_ERROR_SLEEP    = 60
 UNHANDLED_ERROR_SLEEP = 600
 
+FTP_DIRECTORY_DELAY        = 10       # directory has to be unchanged these many seconds
+FILESYSTEM_DIRECTORY_DELAY = 10 * 60  # before we'll process them
+
+
 def loop_for_incoming config_file
-  counter = 0
 
+  STDERR.puts "INFO: reading configuration file #{config_file}"
+  watched_directories = watch_configured_directories(config_file)
+  watched_directories.each { |wd| wd.enqueue_incoming_packages }
+
+  initial_mtime = File.stat(config_file).mtime
   while true
-
-    # maybe re-read the config file:
-
-    if (counter % REREAD == 0)
-
-      if counter == 0
-        STDERR.puts "INFO: reading configuration file #{config_file}"
-      else
-        STDERR.puts "INFO: rereading configuration file #{config_file}"
-      end
-
-      watched_directories = watch_configured_directories(config_file)
-    end
-
-    # check for incoming packages on all watched directories
-
-    watched_directories.each { |wd| wd.enqueue_incoming_packages }
-
-    # keep track of when to re-read the config file
-
     sleep PAUSE
-    counter += PAUSE
+    current_mtime = File.stat(config_file).mtime
+    if current_mtime > initial_mtime
+      initial_mtime = current_mtime
+      STDERR.puts "INFO: configuration file #{config_file} was updated, re-reading"
+      watched_directories = watch_configured_directories(config_file)
+      watched_directories.each { |wd| wd.enqueue_incoming_packages }
+    end
   end
 end
 
@@ -73,32 +67,35 @@ def watch_configured_directories  config_file
 
   config = Datyl::Config.new(config_file, 'default')
 
-  if config.digitool_root
-    errors = WatchUtils.directory_problems(config.digitool_root)
-    if errors.empty?
-      STDERR.puts "INFO: Watching digitool incoming directory in #{config.digitool_root}"
-      watched_directories.push DigiToolWatchDirectory.new(config)
-    else
-      STDERR.puts "ERROR: Skipping watching DigiTool directory #{config.digitool_root}, these configuration errors were encountered:"
-      errors.each { |line| STDERR.puts "ERROR: " + line }
-    end
-  end
-
   config.all_sections.each do |section|
 
     site_config = Datyl::Config.new(config_file, 'default', section)
-    next unless site_config.ftp_root
-    errors = WatchUtils.directory_problems(site_config.ftp_root)
 
-    if errors.empty?
-      STDERR.puts "INFO: Watching FTP incoming directory in #{site_config.ftp_root} for #{section}"
-    else
-      STDERR.puts "ERROR: Skipping watching FTP directory #{site_config.ftp_root} for #{section}, these configuration errors were encountered:"
-      errors.each { |line| STDERR.puts "ERROR: " + line }
-      next
+    # TODO: DRY up the next two sections (ftp_root/digitool_root)
+
+    if site_config.ftp_root
+      errors = WatchUtils.directory_problems(site_config.ftp_root)
+      if errors.empty?
+        STDERR.puts "INFO: Watching FTP incoming directory in #{site_config.ftp_root} for #{section}"
+        watched_directories.push FtpWatchDirectory.new(site_config, section, FTP_DIRECTORY_DELAY)
+      else
+        STDERR.puts "ERROR: Skipping watching FTP directory #{site_config.ftp_root} for #{section}, these configuration errors were encountered:"
+        errors.each { |line| STDERR.puts "ERROR: " + line }
+      end
     end
-    watched_directories.push FtpWatchDirectory.new(site_config, section)
+
+    if site_config.digitool_root
+      errors = WatchUtils.directory_problems(site_config.digitool_root)
+      if errors.empty?
+        STDERR.puts "INFO: Watching DIGITOOL incoming directory in #{site_config.digitool_root} for #{section}"
+        watched_directories.push DigitoolWatchDirectory.new(site_config, section, FILESYSTEM_DIRECTORY_DELAY)
+      else
+        STDERR.puts "ERROR: Skipping watching DIGITOOL directory #{site_config.digitool_root} for #{section}, these configuration errors were encountered:"
+        errors.each { |line| STDERR.puts "ERROR: " + line }
+      end
+    end
   end
+
 
   return watched_directories.compact
 end
