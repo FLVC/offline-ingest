@@ -8,13 +8,11 @@ require 'offin/db'
 require 'offin/config'
 require 'watch-queue/watch-utils'
 require 'watch-queue/watch-directory'
+require 'watch-queue/constants'
 
 ## TODO: use a logger pointing to STDERR instead of just writing to it
 ## (so we can assign/ignore severity levels) (so we can get a decent
 ## PID in the logs too)
-
-
-
 
 # Note: incoming-package-handler is run as an independent front end for our
 # queueing system, so it isn't directly running resque worker code, as
@@ -27,16 +25,8 @@ require 'watch-queue/watch-directory'
 # ingest-handler (which uses Resque::Logger). For now, we simply write
 # to STDERR, which gets captured by the process manager and logged.
 
-PAUSE  = 5        # PAUSE between checks of configuration file.
 
-SYSTEM_ERROR_SLEEP    = 60
-UNHANDLED_ERROR_SLEEP = 600
-
-FTP_DIRECTORY_DELAY        = 10       # directory has to be unchanged these many seconds
-FILESYSTEM_DIRECTORY_DELAY = 10 * 60  # before we'll process them
-
-
-def loop_for_incoming config_file
+def loop_for_incoming(config_file)
 
   STDERR.puts "INFO: reading configuration file #{config_file}"
   watched_directories = watch_configured_directories(config_file)
@@ -44,19 +34,19 @@ def loop_for_incoming config_file
 
   initial_mtime = File.stat(config_file).mtime
   while true
-    sleep PAUSE
+    sleep WatchConstants::DIRECTORY_SCAN_PAUSE
     current_mtime = File.stat(config_file).mtime
     if current_mtime > initial_mtime
       initial_mtime = current_mtime
       STDERR.puts "INFO: configuration file #{config_file} was updated, re-reading"
       watched_directories = watch_configured_directories(config_file)
-      watched_directories.each { |wd| wd.enqueue_incoming_packages }
     end
+    watched_directories.each { |wd| wd.enqueue_incoming_packages }
   end
 end
 
 # Search through various website stanzas in the config file for
-# declaration of ftp_root; do sanity check and collect up all configs
+# declaration of ftp_queue; do sanity check and collect up all configs
 # that refer to a valid ftp_site.  Also check for system digitool
 # directory.  We re-read the configuation file every time we're
 # called, to catch changes.
@@ -70,32 +60,32 @@ def watch_configured_directories  config_file
   config.all_sections.each do |section|
 
     site_config = Datyl::Config.new(config_file, 'default', section)
+    next unless site_config.site   # only use sections concerning websites
 
-    # TODO: DRY up the next two sections (ftp_root/digitool_root)
+    # TODO: DRY up the next two sections (ftp_queue/digitool_queue)
 
-    if site_config.ftp_root
-      errors = WatchUtils.directory_problems(site_config.ftp_root)
+    if site_config.ftp_queue
+      errors = WatchUtils.directory_problems(site_config.ftp_queue)
       if errors.empty?
-        STDERR.puts "INFO: Watching FTP incoming directory in #{site_config.ftp_root} for #{section}"
-        watched_directories.push FtpWatchDirectory.new(site_config, section, FTP_DIRECTORY_DELAY)
+        STDERR.puts "INFO: Watching FTP incoming directory in #{site_config.ftp_queue} for #{section}"
+        watched_directories.push FtpWatchDirectory.new(site_config, section)
       else
-        STDERR.puts "ERROR: Skipping watching FTP directory #{site_config.ftp_root} for #{section}, these configuration errors were encountered:"
+        STDERR.puts "ERROR: Skipping watching FTP directory #{site_config.ftp_queue} for #{section}, these configuration errors were encountered:"
         errors.each { |line| STDERR.puts "ERROR: " + line }
       end
     end
 
-    if site_config.digitool_root
-      errors = WatchUtils.directory_problems(site_config.digitool_root)
+    if site_config.digitool_queue
+      errors = WatchUtils.directory_problems(site_config.digitool_queue)
       if errors.empty?
-        STDERR.puts "INFO: Watching DIGITOOL incoming directory in #{site_config.digitool_root} for #{section}"
-        watched_directories.push DigitoolWatchDirectory.new(site_config, section, FILESYSTEM_DIRECTORY_DELAY)
+        STDERR.puts "INFO: Watching DIGITOOL incoming directory in #{site_config.digitool_queue} for #{section}"
+        watched_directories.push DigitoolWatchDirectory.new(site_config, section)
       else
-        STDERR.puts "ERROR: Skipping watching DIGITOOL directory #{site_config.digitool_root} for #{section}, these configuration errors were encountered:"
+        STDERR.puts "ERROR: Skipping watching DIGITOOL directory #{site_config.digitool_queue} for #{section}, these configuration errors were encountered:"
         errors.each { |line| STDERR.puts "ERROR: " + line }
       end
     end
   end
-
 
   return watched_directories.compact
 end
@@ -112,14 +102,14 @@ begin
 
 rescue Redis::CannotConnectError, SystemError => e
 
-  STDERR.puts "ERROR: #{e.message}; sleeping for #{SYSTEM_ERROR_SLEEP} seconds."
-  sleep SYSTEM_ERROR_SLEEP
+  STDERR.puts "ERROR: #{e.message}; sleeping for #{WatchConstants::SYSTEM_ERROR_SLEEP} seconds."
+  sleep WatchConstants::SYSTEM_ERROR_SLEEP
   exit
 
 rescue => e
 
-  STDERR.puts "ERROR: Unhandled #{e.class}: #{e.message}; sleeping for #{UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
+  STDERR.puts "ERROR: Unhandled #{e.class}: #{e.message}; sleeping for #{WatchConstants::UNHANDLED_ERROR_SLEEP/60} minutes.  Backtrace follows:"
   e.backtrace.each { |line| STDERR.puts "ERROR: " + line }
-  sleep UNHANDLED_ERROR_SLEEP
+  sleep WatchConstants::UNHANDLED_ERROR_SLEEP
   exit
 end

@@ -5,7 +5,7 @@ require 'offin/config'
 require 'mono_logger'
 require 'resque'
 require 'watch-queue/ingest-job'          # the actual handler corresponding to the 'ingest' queue specified below; the work happens in ingest-job
-
+require 'watch-queue/constants'
 
 class WatchUtils
 
@@ -53,7 +53,8 @@ class WatchUtils
 
   def WatchUtils.directory_problems root_dir
     errors = []
-    dirs = [ root_dir ] + [ BaseWatchDirectory::ERRORS_SUBDIRECTORY, BaseWatchDirectory::PROCESSING_SUBDIRECTORY, BaseWatchDirectory::WARNINGS_SUBDIRECTORY, BaseWatchDirectory::INCOMING_SUBDIRECTORY ].map { |sub| File.join(root_dir, sub) }
+
+    dirs = [ root_dir ] + [ WatchConstants::ERRORS_SUBDIRECTORY, WatchConstants::PROCESSING_SUBDIRECTORY, WatchConstants::WARNINGS_SUBDIRECTORY, WatchConstants::INCOMING_SUBDIRECTORY ].map { |sub| File.join(root_dir, sub) }
 
     dirs.each do |dir|
       unless File.exists? dir
@@ -86,11 +87,11 @@ class WatchUtils
   def WatchUtils.start_ingest_worker sleep_time, *queues
     raise SystemError, "configuration error: ingest worker didn't receive any queues to watch" if queues.empty?
 
-    worker = nil
     worker = Resque::Worker.new(*queues)   # 'ftp', 'digitool' currently supported
     worker.term_timeout      = 4.0
     worker.term_child        = 1
     worker.run_at_exit_hooks = 1  # ?!
+    # worker.very_verbose = true
 
     if Process.respond_to?('daemon')  # for ruby >= 1.9"
       Process.daemon(true, true)      # note: likely we'd have to tweak god process monitor
@@ -99,6 +100,7 @@ class WatchUtils
 
     worker.log  "Starting worker #{worker}"
     worker.log  "Worker #{worker.pid} will wakeup every #{sleep_time} seconds"
+
     worker.work  sleep_time
   end
 

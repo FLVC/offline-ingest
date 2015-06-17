@@ -4,20 +4,31 @@ require 'offin/packages'
 require 'offin/exceptions'
 require 'offin/ingest-support'
 require 'watch-queue/watch-utils'
+require 'watch-queue/constants'
 require 'mono_logger'
 
 class BaseIngestJob
 
-  def self.around_perform (data)
+  include WatchConstants
 
-    container_directory = data['container_directory']   # in processing_directory
-    errors_directory    = data['errors_directory']
-    package_directory   = data['package_directory']
+
+  def self.around_perform(data)
+
+    # e.g.
+    #
+    # data['config_file']     =>   '/usr/local/islandora/offline-ingest/config.yml'
+    # data['config_section']  =>   'uf-test'
+    # data['container']       =>   'aabz'
+    # data['package']         =>   'UCF2350135C'
+    # data['qroot']           =>   '/data/digitool/UF'
+
+    container_directory = File.join(data['qroot'], PROCESSING_SUBDIRECTORY, data['container'])
+    errors_directory    = File.join(data['qroot'], ERRORS_SUBDIRECTORY)
+    package_directory   = File.join(container_directory, data['package'])
 
     yield
 
-
-    # experimental control-c /sigterm handling...
+    # TODO: experimental control-c /sigterm handling...
 
   rescue SystemExit, Interrupt => e
     self.failsafe(container_directory, errors_directory)
@@ -44,7 +55,7 @@ class BaseIngestJob
 
   def self.failsafe(container_directory, errors_directory)
     return unless File.exists? container_directory
-    FileUtils.mv container_directory, errors_directory
+    FileUtils.mv(container_directory, errors_directory)
   rescue => e
     Resque.logger.error "Failsafe error handler: can't move #{container_directory} to #{errors_directory}"
     Resque.logger.error "Error was #{e.class}: #{e.message}"
@@ -75,17 +86,21 @@ end
 
 class PackageIngestor
 
-  def self.process data, updator_class
+  include WatchConstants
+
+  def self.process(data, updator_class)
 
     config = if data['config_section']
                Datyl::Config.new(data['config_file'], 'default', data['config_section'])
              else
                Datyl::Config.new(data['config_file'], 'default')
              end
-    package_directory   = data['package_directory']
-    container_directory = data['container_directory']
-    warnings_directory  = data['warnings_directory']
-    errors_directory    = data['errors_directory']
+
+    container_directory = File.join(data['qroot'], PROCESSING_SUBDIRECTORY, data['container'])
+    errors_directory    = File.join(data['qroot'], ERRORS_SUBDIRECTORY)
+    warnings_directory  = File.join(data['qroot'], WARNINGS_SUBDIRECTORY)
+    package_directory   = File.join(container_directory, data['package'])
+
 
     completed, started, finished  = false, Time.now, Time.now
 
@@ -95,7 +110,7 @@ class PackageIngestor
 
     package = PackageFactory.new(config, updator_class).new_package(package_directory)
 
-    raise PackageError, "Invalid package in #{package_directory}." unless package and package.valid?
+    raise PackageError, "Invalid package in #{package_directory}." unless package && package.valid?
 
     package.ingest
 
@@ -115,7 +130,7 @@ class PackageIngestor
 
   end # self.ingest
 
-  def self.log_summary  package, elapsed_time
+  def self.log_summary(package, elapsed_time)
     Resque.logger.info  sprintf('%5.2f sec, %5.2f MB  %s::%s (%s) => %s, "%s"',
                           elapsed_time,
                           package.bytes_ingested/1048576.0,
@@ -130,18 +145,18 @@ class PackageIngestor
 
   # a package object was handled,  now check where it shoulid go
 
-  def self.disposition package, container_directory, errors_directory, warnings_directory
+  def self.disposition(package, container_directory, errors_directory, warnings_directory)
 
     short_name = WatchUtils.short_package_container_name(container_directory, package)
 
     if package.errors?
       package.errors.each   { |line| Resque.logger.error line.strip } if package.errors
       Resque.logger.error "Moving from FTP directory #{short_name} to #{errors_directory}"
-      FileUtils.mv container_directory, errors_directory
+      FileUtils.mv(container_directory, errors_directory)
     elsif package.warnings?
       package.warnings.each { |line| Resque.logger.warn  line.strip } if package.warnings
       Resque.logger.warn "Moving from FTP directory #{short_name} to #{warnings_directory}"
-      FileUtils.mv container_directory, warnings_directory
+      FileUtils.mv(container_directory, warnings_directory)
     else
       Resque.logger.info "Deleting successfully ingested package from FTP directory #{short_name}"
       FileUtils.rm_rf container_directory
