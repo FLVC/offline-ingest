@@ -2,6 +2,7 @@
 
 $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
 
+require 'rubygems'
 require 'fileutils'
 require 'find'
 require 'offin/config'
@@ -14,6 +15,10 @@ require 'socket'
 # queing system takes it from there.
 
 TARGET_GROUP   = 'dldev'
+
+
+#### TODO: expand for 'well-known' queues... ftp, digitool, prospective, sobek (?)
+#### TODO: needs to be a better way to account for all the queues in one place...
 
 def available_servers
   available = {}
