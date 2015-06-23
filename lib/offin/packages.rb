@@ -1658,7 +1658,7 @@ class NewspaperIssuePackage < StructuredPagePackage
 
   def check_issue_manifest
 
-    warning_message = Utils.langs_unsupported_comment(@config, @mods.languages)
+    warning_message = Utils.langs_unsupported_comment(@config, *@mods.languages)
 
     if not warning_message.empty?
       warning "Found unsupported OCR languages in MODS file: #{warning_message}."

@@ -725,7 +725,7 @@ class Utils
 
   # String for when a requested language was not supported
 
-  def Utils.langs_unsupported_comment config, requested_languages
+  def Utils.langs_unsupported_comment config, *requested_languages
     supported = config.supported_ocr_languages
     unsupported = []
     requested_languages.each { |lang| unsupported.push(lang) unless supported[lang] }
