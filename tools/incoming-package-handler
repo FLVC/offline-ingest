@@ -10,13 +10,19 @@ require 'watch-queue/watch-utils'
 require 'watch-queue/watch-directory'
 require 'watch-queue/constants'
 
+# This program watches one or more directories, and when packages are
+# fully copied to it, will transfer them to a processing directory and
+# enter them into a redis queue; the program 'ingest-handler' will
+# manage process ingests.
+
 ## TODO: use a logger pointing to STDERR instead of just writing to it
 ## (so we can assign/ignore severity levels) (so we can get a decent
 ## PID in the logs too)
 
-# Note: incoming-package-handler is run as an independent front end for our
-# queueing system, so it isn't directly running resque worker code, as
-# is the ingest-handler.
+# Note: incoming-package-handler is run as an independent front end
+# for our queueing system, so it isn't directly running resque worker
+# code, as is the ingest-handler; thus it won't respond in the
+# expected way to standard resque process signaling.
 #
 # It *is* started and watched by the 'god' process manager (as is
 # ingest-handler) however.

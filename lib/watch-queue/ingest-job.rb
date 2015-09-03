@@ -123,7 +123,7 @@ class PackageIngestor
 
     if package
       self.log_summary(package, finished - started)
-      package.delete_from_islandora unless package.valid?
+      package.delete_from_islandora unless completed && package.valid?
       self.disposition(package, container_directory, errors_directory, warnings_directory)
       record_to_database(config.site, package, completed && package.valid?, started, finished)
     end # if package
