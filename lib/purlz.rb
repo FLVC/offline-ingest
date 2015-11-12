@@ -116,6 +116,11 @@ class Purlz
     @cookie     = get_login_cookie()
   end
 
+  def to_s
+    "<#purl server: #{server_uri}>"
+  end
+
+
   private
 
   # get_login_cookie() => cookie
