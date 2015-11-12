@@ -85,9 +85,10 @@ class Utils
   # For creating a solr query string, we need to escape some characters with "\".
 
   def Utils.solr_escape str
+    escaped = str.dup
     chars = [ '\\', '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '"', ';', ' ' ]
-    chars.each { |c| str.gsub!(c, '\\' + c) }
-    return str
+    chars.each { |c| escaped.gsub!(c, '\\' + c) }
+    return escaped
   end
 
   # This is mostly to silence the "require 'datamapper'" that causes the annoying warning "CSV constant redefined".
