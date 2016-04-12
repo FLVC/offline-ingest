@@ -969,7 +969,7 @@ class Utils
     rels_ext_content = Utils.get_datastream_contents(config, collection_pid, 'RELS-EXT')
     rels_ext_xml = Nokogiri::XML(rels_ext_content)
 
-    # I know this is very bad but I can't get my head around the errors with multiple namespaces
+    # I know this is very bad but I can't get my head around the errors with multiple namespaces -Gail
 
     rels_ext_xml.remove_namespaces!
     view_rule_count = 0
