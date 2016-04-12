@@ -19,8 +19,8 @@ require 'rest-client'
 require 'digest/md5'
 require 'socket'
 
-DATASTREAM_STORE_ROOT = '/data/datastreamStore'
-METADATASTREAM_STORE_ROOT = '/data/objectStore'
+DATASTREAM_STORE_ROOT = '/usr/local/fedora/data/datastreamStore'
+METADATASTREAM_STORE_ROOT = '/usr/local/fedora/data/objectStore'
 
 Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid, :last_datastreams_only)
 
@@ -34,10 +34,11 @@ def parse_command_line args
     opt.on("--last-datastreams-only",              "Optionally, only show the last version of datastreams, defaults to all versions")  { |last| cmdline.last_datastreams_only = last }
   end
   opts.parse!(args)
-  raise "You must include a server password."               unless cmdline.admin_password
-  raise "You must include one argument, an islandora PID."  unless args.length == 1
-  raise "'#{args[0]}' is not an islandora PID."             unless args[0].count(':') == 1
+  raise "You must include a server password."                 unless cmdline.admin_password
+  raise "You must include one argument, an islandora PID."    unless args.length == 1
+
   cmdline.islandora_pid = args[0].sub(/^info:fedora\//, '')
+  raise "'#{cmdline.islandora_pid}' is not an islandora PID." unless cmdline.islandora_pid.count(':') == 1
 rescue => e
   STDERR.puts e, opts
   exit -1
