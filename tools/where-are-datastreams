@@ -22,6 +22,12 @@ require 'socket'
 DATASTREAM_STORE_ROOT = '/usr/local/fedora/data/datastreamStore'
 METADATASTREAM_STORE_ROOT = '/usr/local/fedora/data/objectStore'
 
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+Kernel.trap('HUP')  { "IGNORE" }
+
+STDOUT.sync = true
+
 Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid, :last_datastreams_only)
 
 def parse_command_line args
