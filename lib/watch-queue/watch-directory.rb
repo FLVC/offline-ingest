@@ -22,8 +22,8 @@ class BaseWatchDirectory
   SUCCESS_SUBDIRECTORY     = 'success'
   WARNINGS_SUBDIRECTORY    = 'warnings'
 
-# DIRECTORY_UNCHANGED_TIME = 30
-  DIRECTORY_UNCHANGED_TIME = 15 * 60  #### Use this variable on launch
+  DIRECTORY_UNCHANGED_TIME = 60
+# DIRECTORY_UNCHANGED_TIME = 15 * 60  #### Use this variable on launch
 
   attr_reader :config_path, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
