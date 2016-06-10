@@ -12,14 +12,14 @@ require 'offin/metadata-checkers'
 require 'offin/config'
 require 'offin/drupal-db'
 
-BASIC_IMAGE_CONTENT_MODEL      = 'islandora:sp_basic_image'
-LARGE_IMAGE_CONTENT_MODEL      = 'islandora:sp_large_image_cmodel'
-PDF_CONTENT_MODEL              = 'islandora:sp_pdf'
-BOOK_CONTENT_MODEL             = 'islandora:bookCModel'
-PAGE_CONTENT_MODEL             = 'islandora:pageCModel'
-NEWSPAPER_CONTENT_MODEL        = 'islandora:newspaperCModel'
-NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
-NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
+BASIC_IMAGE_CONTENT_MODEL      =  'islandora:sp_basic_image'
+LARGE_IMAGE_CONTENT_MODEL      =  'islandora:sp_large_image_cmodel'
+PDF_CONTENT_MODEL              =  'islandora:sp_pdf'
+BOOK_CONTENT_MODEL             =  'islandora:bookCModel'
+PAGE_CONTENT_MODEL             =  'islandora:pageCModel'
+NEWSPAPER_CONTENT_MODEL        =  'islandora:newspaperCModel'
+NEWSPAPER_ISSUE_CONTENT_MODEL  =  'islandora:newspaperIssueCModel'
+NEWSPAPER_PAGE_CONTENT_MODEL   =  'islandora:newspaperPageCModel'
 
 #  Class Hierarchy:
 #
@@ -511,6 +511,7 @@ class BasicImagePackage < Package
       @image = File.open(@image_pathname, 'rb')
 
     # TODO: add special support for TIFFs (not needed for digitool migration)
+
     when TIFF
       raise PackageError, "The #{pretty_class_name} #{@directory_name} contains the TIFF file #{@datafiles.first}, which is currently unsupported (coming soon)."
     else

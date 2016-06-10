@@ -70,7 +70,7 @@ class Mods
     xslt = Nokogiri::XSLT(File.read(@config.mods_to_title_transform_filename))
     text = xslt.transform(@xml_document).to_s
     titles = text.split(/\n/).select { |t| not t =~ /<?xml/ }
-    str = titles[0]
+    str = titles[0].strip
     return nil if str.nil? or str.empty?
     return str.strip.gsub(/\s\s+/, ' ')
   end
@@ -316,7 +316,8 @@ class Mods
     error "Can't add extension elements to MODS document '#{short_filename}', error #{e.class} - #{e.message}."
   end
 
-  # Like above, but we only add the OwningInstitution
+  # Like above, but we only add the owningInstitution
+  # TODO: seems to be used in tools/ip-serialize-pdfs - if that tool is deprecated, remove this:
 
   def add_flvc_owner_extension manifest
     flvc_prefix = get_prefix_for_flvc_extension
