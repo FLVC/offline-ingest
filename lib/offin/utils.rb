@@ -85,9 +85,10 @@ class Utils
   # For creating a solr query string, we need to escape some characters with "\".
 
   def Utils.solr_escape str
+    escaped = str.dup
     chars = [ '\\', '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '"', ';', ' ' ]
-    chars.each { |c| str.gsub!(c, '\\' + c) }
-    return str
+    chars.each { |c| escaped.gsub!(c, '\\' + c) }
+    return escaped
   end
 
   # This is mostly to silence the "require 'datamapper'" that causes the annoying warning "CSV constant redefined".
@@ -725,7 +726,7 @@ class Utils
 
   # String for when a requested language was not supported
 
-  def Utils.langs_unsupported_comment config, requested_languages
+  def Utils.langs_unsupported_comment config, *requested_languages
     supported = config.supported_ocr_languages
     unsupported = []
     requested_languages.each { |lang| unsupported.push(lang) unless supported[lang] }
@@ -968,7 +969,7 @@ class Utils
     rels_ext_content = Utils.get_datastream_contents(config, collection_pid, 'RELS-EXT')
     rels_ext_xml = Nokogiri::XML(rels_ext_content)
 
-    # I know this is very bad but I can't get my head around the errors with multiple namespaces
+    # I know this is very bad but I can't get my head around the errors with multiple namespaces -Gail
 
     rels_ext_xml.remove_namespaces!
     view_rule_count = 0

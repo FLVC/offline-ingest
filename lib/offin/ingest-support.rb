@@ -16,7 +16,8 @@ Utils.silence_warnings { require 'offin/db' }   # csv constant redefinition deep
 
 def get_config_filename
   return case Socket.gethostname
-         when /islandora[dtp]\.fcla\.edu|tlhlxftp01-.*\.flvc\.org/i;                       "/usr/local/islandora/offline-ingest/config.yml"
+         when /islandora[dtp]\.fcla\.edu|tlhlxftp\d+-.*\.flvc\.org/i; "/usr/local/islandora/offline-ingest/config.yml"
+         when /fischer.flvc.org/i;                                    "/Users/fischer/WorkProjects/offline-ingest/config.yml"
          else
            STDERR.puts "#{$0} Doesn't know how to configure the environment for host (#{Socket.gethostname.downcase}), quitting."
            exit -1

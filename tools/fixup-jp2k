@@ -1,0 +1,113 @@
+#!/usr/bin/env ruby
+
+# This program uses openjpeg utilities to fix some problematic jp2's that adobe produces.
+
+# TODO: remove dependency on config.yml file, some colleagues do not have permission to read the file.
+
+$LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+
+require 'rubygems'
+require 'offin/utils'
+require 'offin/ingest-support'
+require 'fileutils'
+require 'tempfile'
+
+def file_ok?(filepath)
+  unless File.exists? filepath
+    STDERR.puts "Can't find #{filepath}, skipping."
+    return false
+  end
+
+  unless File.readable? filepath
+    STDERR.puts "Can't read #{filepath}, skipping."
+    return false
+  end
+
+  unless File.writable? filepath
+    STDERR.puts "Can't write #{filepath}, skipping."
+    return false
+  end
+
+  unless filepath =~ /\.jp2$/i
+    STDERR.puts "#{filepath} doesn't end in jp2, skipping."
+    return false
+  end
+
+  return true
+rescue => e
+  STDERR.puts "Problem checking #{filepath}, #{e}, skipping."
+  return false
+end
+
+
+def find_bad_files(filename_list)
+  config = get_config()
+
+  files_good = []
+  files_bad  = []
+
+  filename_list.each do |filepath|
+
+    next unless file_ok? filepath
+
+    puts "Checking #{filepath}"
+
+    if Utils.size(config, filepath).nil?
+      files_bad.push filepath
+    else
+      files_good.push filepath
+    end
+
+  end
+
+  unless files_good.empty?
+    short_list = files_good.map { |f| File.basename f }.sort
+    if files_good.count == 1
+      puts "This file looks OK: " + short_list.pop
+    else
+      puts "These files look OK: " + short_list.join(', ')
+    end
+  end
+
+  unless files_bad.empty?
+    short_list = files_bad.map { |f| File.basename f }.sort
+    if files_bad.count == 1
+      puts "This file looks to have a problem: " + short_list.pop
+    else
+      puts "These files look to have problems: " + short_list.join(', ')
+    end
+  end
+
+  return files_bad
+rescue => e
+  STDERR.puts "Unexpected error #{e}, quitting"
+  exit
+end
+
+def fixup(filepath)
+  tempfile = Tempfile.new('jp2-to-tiff-')
+  tempname = tempfile.path + '.tif'
+
+  bad = filepath.sub(/\.jp2$/i, '.bad.jp2')
+  FileUtils.mv filepath, bad
+  output = `/usr/bin/j2k_to_image -i #{Utils.shellescape(bad)} -o #{Utils.shellescape(tempname)} >& /dev/null`
+  unless File.exists? tempname
+    STDERR.puts "There was an error processing the renamed jp2 #{File.basename(bad)}"
+    return
+  end
+  output = `/usr/bin/image_to_j2k -i #{Utils.shellescape(tempname)} -o #{Utils.shellescape(filepath)} >& /dev/null`
+  unless File.exists? tempname
+    STDERR.puts "There was an error processing the renamed jp2 #{File.basename(bad)}"
+    return
+  end
+  puts "Regenerated JP2 #{filepath}"
+rescue => e
+  STDERR.puts "Unexpected error processing #{filepath}: #{e}"
+
+ensure
+  FileUtils.rm_f tempname
+  tempfile.unlink
+end
+
+
+find_bad_files(ARGV).each { |f| fixup(f) }
