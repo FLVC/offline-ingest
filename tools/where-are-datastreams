@@ -34,8 +34,8 @@ def parse_command_line args
   opts.parse!(args)
   raise "You must include a server password."               unless cmdline.admin_password
   raise "You must include one argument, an islandora PID."  unless args.length == 1
-  raise "'#{args[0]}' is not an islandora PID."             unless args[0].count(':') == 1
-  cmdline.islandora_pid = args[0].sub(/^info:fedora\//, '')
+  cmdline.islandora_pid = args[0].gsub('%2F', ':').sub(/^info:fedora\//, '').gsub('%3A', ':')
+  raise "'#{cmdline.islandora_pid}' is not an islandora PID."             unless cmdline.islandora_pid.count(':') == 1
 rescue => e
   STDERR.puts e, opts
   exit -1
