@@ -1508,7 +1508,8 @@ class NewspaperIssuePackage < StructuredPagePackage
           ds.mimeType = 'application/json'
         end
       end
-    end
+
+    end # of Ingestor
 
     @bytes_ingested = ingestor.size
   ensure
