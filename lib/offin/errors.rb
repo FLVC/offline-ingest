@@ -14,7 +14,7 @@
 module Errors
 
   def errors
-    @errors = [] if @errors.nil?
+    @errors ||= []
     return @errors
   end
 
@@ -28,7 +28,7 @@ module Errors
   end
 
   def warnings
-    @warnings = [] if @warnings.nil?
+    @warnings ||= []
     return @warnings
   end
 
@@ -41,4 +41,29 @@ module Errors
     return nil
   end
 
+  def notes
+    @notes ||= []
+    return @notes
+  end
+
+  def notes?
+    not notes.empty?
+  end
+
+  def note *strings
+    notes.push *strings.flatten  unless strings.empty?
+    return nil
+  end
+
+  def reset_errors
+    @errors  = []
+  end
+
+  def reset_notes
+    @notes  = []
+  end
+
+  def reset_warnings
+    @warnings  = []
+  end
 end
