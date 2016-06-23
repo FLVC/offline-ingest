@@ -1,7 +1,12 @@
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../../lib"))
+
+require 'offin/errors'
 require 'open3'
 require 'tempfile'
 require 'fileutils'
 
+
+# Helpful constants for several ingest classes:
 
 module ImageConstants
 
@@ -21,8 +26,10 @@ module ImageConstants
   OCR  = 'application/x-ocr'
   HOCR = 'application/x-hocr'
 
+  SUPPORTED_IMAGES = [ GIF, JP2, PNG, JPEG, TIFF, PDF ]
+
   def ImageConstants.executable_location(name)
-    paths = [ '/usr/local/bin', '/usr/bin' ]
+    paths = [ '/usr/local/bin', '/usr/bin' ] + ENV['PATH'].split(':')
     paths.each do |dir|
       bin = File.join(dir, name)
       return bin if (File.exists?(bin) and File.executable?(bin))
@@ -37,25 +44,153 @@ module ImageConstants
   KAKADU_EXECUTABLE      = ImageConstants.executable_location("kdu_expand")
   GHOSTSCRIPT_EXECUTABLE = ImageConstants.executable_location("gs")
 
-end
-
-
-class Image
-  private
-  include ImageConstants
-
-  SUPPORTED_IMAGES = [ GIF, JP2, PNG, JPEG, TIFF, PDF ]
-
-  THUNKS = Hash[ GIF => {},  JP2 => {},  PNG => {},  JPEG => {},  TIFF => {},  PDF => {} ]
+  # special tokens in following templates:
+  #
+  #  %o   the path to the output file
+  #  %i   the path to the input file
+  #  %m   the path to the input file,  '[0]' is appended if input is a TIFF or PDF, which selects first image of potential multi page images.
 
   CONVERT_TO_BASIC_IMAGE_COMMAND = "#{CONVERT_EXECUTABLE} -quiet -quality 75 -colorspace RGB %m %o"
   CONVERT_TO_JP2_COMMAND = "#{CONVERT_EXECUTABLE} -quiet -quality 75 -define jp2:prg=rlcp -define jp2:numrlvls=7 -define jp2:tilewidth=1024 -define jp2:tileheight=1024 %m %o"
   KAKADU_TO_TIFF_COMMAND = "#{KAKADU_EXECUTABLE} -quiet -i %i -o %o"
-  PDF_TO_TEXT_COMMAND = "#{PDFTOTEXT_EXECUTABLE} -quiet -nopgbrk %i %o"
+  PDF_TO_TEXT_COMMAND = "#{PDFTOTEXT_EXECUTABLE} -nopgbrk %i %o"
   CONVERT_WITH_LZW_COMPRESSION_COMMAND = "#{CONVERT_EXECUTABLE} -quiet -compress LZW %m %o"
 
+  # Experiments that resulted in problematic DPIs in some output formats
+  #
   # CONVERT_PDF_COMMAND = "#{CONVERT_EXECUTABLE} -units PixelsPerInch -density 96 -quiet -compress LZW %m %o"
   # RASTERIZE_PDF_FIRST_PAGE_COMMAND = "#{GHOSTSCRIPT_EXECUTABLE} -o %o -q -dQUIET -dSAFER -dBATCH -dNOPAUSE -dNOPROMPT -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dPrinted=false -dFirstPage=1 -dLastPage=1 -r180 -sDEVICE=pngalpha %i"
+end
+
+
+class Image
+
+  include Errors
+  include ImageConstants
+
+  THUNKS = {}
+  SUPPORTED_IMAGES.each { |img|  THUNKS[img] = {} }
+
+  attr_reader :mime_type, :file_path, :file_name, :file_io, :size
+
+  def initialize(path)
+    @file_path = path
+    @file_name = File.basename(path)
+    @temp_files = [ ]
+    @file_dimensions = nil
+
+    fail "No such file #{@file_path}"    unless File.exists?   @file_path   # TODO: group together with other failures
+    fail "File #{@file_path} unreadable" unless File.readable? @file_path
+
+    @mime_type = get_mime_type
+    @file_io = File.open(file_path, 'rb')
+    @size = File.stat(@file_path).size
+
+    # GIF conversion routines
+
+    THUNKS[GIF][JP2]  = image_to_jp2()
+    THUNKS[GIF][PDF]  = convert_with_lzw_compression(PDF)
+    THUNKS[GIF][TIFF] = convert_with_lzw_compression(TIFF)
+    THUNKS[GIF][OCR]  = nil
+    THUNKS[GIF][HOCR] = nil
+
+    [ GIF, JPEG, PNG ].each { |target_mime_type| THUNKS[GIF][target_mime_type] = convert_to_basic_image(target_mime_type) }
+
+    # JP2 conversion routines
+
+    THUNKS[GIF][OCR]  = nil
+    THUNKS[GIF][HOCR] = nil
+
+    [ GIF, JP2, JPEG, PDF, PNG, TIFF ].each { |target_mime_type| THUNKS[JP2][target_mime_type] = jp2_to_image(target_mime_type) }
+
+    # PDF conversion routines
+
+    THUNKS[PDF][TEXT] = pdf_to_text
+
+    [ GIF, JP2, JPEG, PDF, PNG, TIFF ].each { |target_mime_type| THUNKS[PDF][target_mime_type] = pdf_to_image(target_mime_type) }
+
+    # TIFF conversion routines
+
+    THUNKS[TIFF][JP2]  = image_to_jp2
+    THUNKS[TIFF][PDF]  = convert_with_lzw_compression(PDF)
+    THUNKS[TIFF][TIFF] = convert_with_lzw_compression(TIFF)
+    THUNKS[TIFF][HOCR] = nil
+    THUNKS[TIFF][OCR]  = nil
+
+    [ GIF, JPEG, PNG ].each { |target_mime_type| THUNKS[TIFF][target_mime_type] = convert_to_basic_image(target_mime_type) }
+
+    # basic images - GIF routines will work:
+
+    THUNKS[JPEG] = THUNKS[GIF]
+    THUNKS[PNG]  = THUNKS[GIF]
+
+    yield self
+
+  ensure
+    remove_temp_files
+  end
+
+  def file_name_label
+    file_name.sub(/\.[^\.]+$/, '')
+  end
+
+  def stream
+    file_io.rewind
+    return file_io
+  end
+
+  def dimensions
+    return @file_dimensions if @file_dimensions
+    data = nil
+    errors = nil
+    Open3.popen3(IDENTIFY_EXECUTABLE, file_path) do |stdin, stdout, stderr|
+      stdin.close
+      data = stdout.gets
+      oops = stderr.read
+    end
+    if data =~ /\s+(\d+)x(\d+)\s+/i
+      width, height = $1, $2
+      return @file_dimensions = [ width.to_i, height.to_i ]
+    else
+      error "Can't get dimensions for image '#{file_name}'", oops.split("\n")
+      return @file_dimensions = [ 0, 0 ]
+    end
+  rescue => e
+    error "Can't get dimensions for image '#{file_name}'", e.message, oops.split("\n")
+    return @file_dimensions = [ 0, 0 ]
+  end
+
+  # TODO: return a fall back on fatal error?
+
+  def convert(target_mime_type, geometry=nil)
+    proc = THUNKS[mime_type][target_mime_type]
+    if proc.nil?
+      error "derivative creation failure for image '#{file_name}' - conversion from '#{mime_type}' to '#{target_mime_type}' isn't supported" if proc.nil?
+      return nil
+    end
+    return proc.call(geometry)
+  rescue => e
+    error "derivative creation failure for image '#{file_name}' - during conversion from '#{mime_type}' to '#{target_mime_type}' the following error occured: ", e.message
+    return nil
+  end
+
+  def extension(mime_type)
+    case mime_type
+    when GIF;    'gif'
+    when JPEG;   'jpg'
+    when PNG;    'png'
+    when TIFF;   'tiff'
+    when JP2;    'jp2'
+    when PDF;    'pdf'
+    when TEXT;   'text'
+    when OCR;    'ocr'
+    when HOCR;   'hocr'
+    else
+      fail "Unexpected mimetype '#{mime_type}' encountered when processing '#{file_name}'"  # only expected to fail for bad file, never on internal use
+    end
+  end
+
+  private
 
   def convert_to_basic_image(target_mime_type)
     return Proc.new do |geometry|
@@ -144,7 +279,7 @@ class Image
   end
 
   def run(argv)
-    puts argv.join(' ')
+    STDERR.puts argv.join(' ')
 
     data = nil
     errors = nil
@@ -171,119 +306,6 @@ class Image
     return open(output_file_name, 'rb')
   end
 
-  public
-
-  attr_reader :mime_type, :file_path, :file_name, :file_io, :size
-
-  def initialize(path)
-    @file_path = path
-    @file_name = File.basename(path)
-    @temp_files = [ ]
-    @file_dimensions = nil
-
-    fail "No such file #{@file_path}"    unless File.exists?   @file_path
-    fail "File #{@file_path} unreadable" unless File.readable? @file_path
-
-    @mime_type = get_mime_type
-    @file_io = File.open(file_path, 'rb')
-    @size = File.stat(@file_path).size
-
-    # GIF conversion routines
-
-    THUNKS[GIF][JP2]  = image_to_jp2()
-    THUNKS[GIF][PDF]  = convert_with_lzw_compression(PDF)
-    THUNKS[GIF][TIFF] = convert_with_lzw_compression(TIFF)
-    THUNKS[GIF][OCR]  = nil
-    THUNKS[GIF][HOCR] = nil
-
-    [ GIF, JPEG, PNG ].each { |target_mime_type| THUNKS[GIF][target_mime_type] = convert_to_basic_image(target_mime_type) }
-
-    # JP2 conversion routines
-
-    THUNKS[GIF][OCR]  = nil
-    THUNKS[GIF][HOCR] = nil
-
-    [ GIF, JP2, JPEG, PDF, PNG, TIFF ].each { |target_mime_type| THUNKS[JP2][target_mime_type] = jp2_to_image(target_mime_type) }
-
-    # PDF conversion routines
-
-    THUNKS[PDF][TEXT] = pdf_to_text
-
-    [ GIF, JP2, JPEG, PDF, PNG, TIFF ].each { |target_mime_type| THUNKS[PDF][target_mime_type] = pdf_to_image(target_mime_type) }
-
-    # TIFF conversion routines
-
-    THUNKS[TIFF][JP2]  = image_to_jp2
-    THUNKS[TIFF][PDF]  = convert_with_lzw_compression(PDF)
-    THUNKS[TIFF][TIFF] = convert_with_lzw_compression(TIFF)
-    THUNKS[TIFF][HOCR] = nil
-    THUNKS[TIFF][OCR]  = nil
-
-    [ GIF, JPEG, PNG ].each { |target_mime_type| THUNKS[TIFF][target_mime_type] = convert_to_basic_image(target_mime_type) }
-
-    # basic images - GIF routines will work:
-
-    THUNKS[JPEG] = THUNKS[GIF]
-    THUNKS[PNG]  = THUNKS[GIF]
-
-    yield self
-
-  ensure
-    remove_temp_files
-  end
-
-  def file_name_label
-    file_name.sub(/\.[^\.]+$/, '')
-  end
-
-  def stream
-    file_io.rewind
-    return file_io
-  end
-
-  def dimensions
-    return @file_dimensions if @file_dimensions
-    data = nil
-    errors = nil
-    Open3.popen3(IDENTIFY_EXECUTABLE, file_path) do |stdin, stdout, stderr|
-      stdin.close
-      data = stdout.gets
-      errors = stderr.read
-    end
-    if data =~ /\s+(\d+)x(\d+)\s+/i
-      width, height = $1, $2
-      return @file_dimensions = [ width.to_i, height.to_i ]
-    else
-      return nil
-    end
-  rescue => e
-    return nil
-  end
-
-  def convert(target_mime_type, geometry=nil)
-    proc = THUNKS[mime_type][target_mime_type]
-    fail "unsupported conversion from #{mime_type} to #{target_mime_type}" if proc.nil?
-    return proc.call(geometry)
-  end
-
-  def extension(mime_type)
-    case mime_type
-    when GIF;    'gif'
-    when JPEG;   'jpg'
-    when PNG;    'png'
-    when TIFF;   'tiff'
-    when JP2;    'jp2'
-    when PDF;    'pdf'
-    when TEXT;   'text'
-    when OCR;    'ocr'
-    when HOCR;   'hocr'
-    else
-      fail "Unexpected mimetype '#{mime_type}'"
-    end
-  end
-
-
-  private
 
   def remove_temp_files
     FileUtils.rm_f @temp_files unless @temp_files.empty?
@@ -309,7 +331,9 @@ class Image
   # create an anonymous file name
 
   def temp_file_name(mime_type)
-    tf = Tempfile.new([ file_name_label + '-',  '.' + extension(mime_type) ])
+    ext = '.' + extension(mime_type)
+    label = file_name_label + '-'
+    tf = ENV['TMPDIR'] ? Tempfile.new([ label,  ext ], ENV['TMPDIR']) : Tempfile.new([ label,  ext ])
     name = tf.path
     tf.close
     tf.unlink
@@ -321,16 +345,22 @@ end # of image class
 
 include ImageConstants
 
-input_file_name = ARGV[0]
+Kernel.trap('INT')  { STDERR.puts "Interrupt"  ; exit }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"  ; exit }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
 
-Image.new(input_file_name) do |image|
+Image.new(input_file_name = ARGV[0]) do |image|
   puts "input #{image.mime_type} image #{image.file_name} size: #{image.size}"
 
-  [ GIF, JP2, PNG, JPEG, TIFF, PDF, TEXT, OCR, HOCR ].each do |target|
+  [ TEXT, GIF, JP2, PNG, JPEG, OCR, TIFF, PDF, HOCR ].each do |target|
       begin
+        image.reset_errors
         name = "test-from-" + image.file_name_label + "-" + image.extension(image.mime_type) + "-to." + image.extension(target)
-        # fd = image.convert(target, '1024x1024')
         fd = image.convert(target)
+        if fd.nil?
+          STDERR.puts image.errors
+          next
+        end
         open(name, 'w') do |out|
           while (data = fd.read(1024 * 1024))
             out.write data
