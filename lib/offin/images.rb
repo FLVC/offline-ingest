@@ -296,7 +296,7 @@ class Image
 
       if not [ JPEG, TIFF ].include? mime_type
         @tesseract_intermediary_cached ||= run_command(CONVERT_WITH_LZW_COMPRESSION_COMMAND, TIFF)
-        fail "unable to create a temporary TIFF file for performing OCR"
+        fail "unable to create a temporary TIFF file for performing OCR" if @tesseract_intermediary_cached.nil?
         input_file_name = @tesseract_intermediary_cached.path
       end
 
@@ -307,16 +307,18 @@ class Image
           args.push "-l #{record[:tesseract]}" unless record.nil?
         end
       end
+
       args = [ "-l eng" ] if args.empty?
       command = nil
+      fd = nil
       begin
         Timeout.timeout(TESSERACT_TIMEOUT) do
           if hocr
             command = HOCR_COMMAND.sub("%l", args.join(" "))
-            run_command(command, HOCR, nil, input_file_name)
+            fd = run_command(command, HOCR, nil, input_file_name)
           else
             command = OCR_COMMAND.sub("%l", args.join(" "))
-            run_command(command, OCR, nil, input_file_name)
+            fd = run_command(command, OCR, nil, input_file_name)
           end
         end
       rescue Timeout::Error => e
