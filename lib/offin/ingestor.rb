@@ -137,19 +137,30 @@ class Ingestor
     @fedora_object.ownerId = @owner
   end
 
-  def datastream name
-    trials ||= 0
-    yield @fedora_object.datastreams[name]
-    @size += @fedora_object.datastreams[name].content.size
-    @fedora_object.datastreams[name].save
-  rescue
-    trials += 1
-    if trials < 3
-      sleep trials
-      retry
+  def content_size(ob)
+    case ob
+    when File
+      File.stat(ob.path).size
+    when String
+      ob.size
     else
-      raise
+      raise "Unexpected datastream content #{ob.class}"
     end
+  end
+
+  def datastream name
+    yield @fedora_object.datastreams[name]
+
+    content = @fedora_object.datastreams[name].content
+    raise "'#{name}' derivative creation failed, skipping" unless content
+
+    size = content_size(@fedora_object.datastreams[name].content)
+    raise "'#{name}' derivative is zero length, skipping" unless content.size > 0
+
+    @fedora_object.datastreams[name].save
+    @size += size
+  rescue => e
+    warning "Can't save datastream #{name}", e.message
   end
 
   # def add_relationship predicate, object
@@ -201,7 +212,7 @@ class Ingestor
     label = 'collection ' + collection_pid.sub(/^info:fedora\//, '').sub(/^.*:/, '')
     return if existing_collections.include? collection_pid
 
-    warning "Creating new collection named '#{label}' for object #{@pid}."
+    warning "Creating new collection named '#{label}' for object #{@pid}"
 
     collection_object = @repository.create(collection_pid)
 
@@ -230,7 +241,7 @@ class Ingestor
       return if existing_collections.include? collection_pid
     end
 
-    raise PackageError, "Could not create collection #{collection_pid} for new object #{@pid}."
+    raise PackageError, "Could not create collection #{collection_pid} for new object #{@pid}"
   end
 
 
