@@ -5,12 +5,15 @@ require 'offin/utils'
 require 'offin/manifest'
 require 'offin/exceptions'
 require 'offin/errors'
+require 'offin/images'
 require 'offin/mets'
 require 'offin/mods'
 require 'offin/ingestor'
 require 'offin/metadata-checkers'
 require 'offin/config'
 require 'offin/drupal-db'
+
+
 
 BASIC_IMAGE_CONTENT_MODEL      =  'islandora:sp_basic_image'
 LARGE_IMAGE_CONTENT_MODEL      =  'islandora:sp_large_image_cmodel'
@@ -97,16 +100,7 @@ end
 class Package
 
   include Errors
-
-  # supported MIME types go here, using a regexp for the 'file' command's returned values (note very general text type recognition, for which file tends to outsmart itself)
-
-  GIF  = %r{image/gif}
-  JP2  = %r{image/jp2}
-  PNG  = %r{image/png}
-  JPEG = %r{image/jpeg}
-  TIFF = %r{image/tiff}
-  PDF  = %r{application/pdf}
-  TEXT = %r{text/}
+  include ImageConstants
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
   attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid, :mods_type_of_resource, :owning_institution
@@ -187,6 +181,15 @@ class Package
     @directory_name
   end
 
+  def supported?(mime_type, *types)
+    types.include? mime_type
+  end
+
+  def unsupported?(mime_type, *types)
+    not supported?(mime_type, *types)
+  end
+
+
   # base classes should re-implement ingest.
   def ingest
     raise PackageError, 'Attempt to ingest an invalid package.' unless valid?
@@ -194,6 +197,10 @@ class Package
 
   def valid?
     not errors?
+  end
+
+  def invalid?
+    errors?
   end
 
   # Used by subclassess.  Note that a MetadataUpdater call will
@@ -475,6 +482,17 @@ class Package
     return self.class.to_s.split(/(?=[A-Z])/).join(' ')
   end
 
+  # we have a lot of has-a relationships with objects that keep lists of errors, warnings, etc.  See 'errors.rb' included above
+  # this copies their notifications into ours.
+
+  def copy_notifications(*obs)
+    obs.each do |ob|
+      error ob.errors      if ob.respond_to? :errors
+      warning ob.warnings  if ob.respond_to? :warnings
+      notes ob.notes       if ob.respond_to? :notes
+    end
+  end
+
 end # of Package base class
 
 
@@ -499,75 +517,36 @@ class BasicImagePackage < Package
       error "The #{pretty_class_name}  #{@directory_name} contains no data files."
     end
 
-    return unless valid?
+    return if not valid?
 
     @image_filename = @datafiles.first
-    @image_pathname = File.join(@directory_path, @image_filename)
-
-    @mime_type = Utils.mime_type(@image_pathname)
-
-    case @mime_type
-    when GIF, JPEG, PNG
-      @image = File.open(@image_pathname, 'rb')
-
-    # TODO: add special support for TIFFs (not needed for digitool migration)
-
-    when TIFF
-      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains the TIFF file #{@datafiles.first}, which is currently unsupported (coming soon)."
-    else
-      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{type}."
-    end
+    @image_path = File.join(@directory_path, @image_filename)
 
   rescue PackageError => e
-    error "Exception for #{pretty_class_name} #{@directory_name}: #{e.message}"
+    error "Invald package #{pretty_class_name} #{@directory_name}: #{e.message}"
   rescue => e
     error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
   end
 
   def ingest
-    medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
-
     return if @config.test_mode
-
-    @image.rewind
-
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
 
-      ingestor.datastream('OBJ') do |ds|
-        ds.dsLabel  = @image_filename
-        ds.content  = @image
-        ds.mimeType = @mime_type
-      end
+      Image.new(@image_path) do |image|
+        raise PackageError, "#{@directory_name} has '#{image.mime_type}' '#{image.file_name}' which isn't supported for #{pretty_class_name}" if not supported?(image.mime_type, GIF, JPEG, PNG)
 
-      medium, medium_error_messages = Utils.image_resize(@config, @image_pathname, @config.medium_geometry, 'jpeg')
+        ingestor.datastream('OBJ')         { |ds| ds.dsLabel  = image.file_name_label; ds.content  = image.stream;                            ds.mimeType = image.mime_type }
+        ingestor.datastream('MEDIUM_SIZE') { |ds| ds.dsLabel  = "Medium Size Image";   ds.content  = image.convert(JPEG, MEDIUM_GEOMETRY);    ds.mimeType = JPEG }
+        ingestor.datastream('TN')          { |ds| ds.dsLabel  = "Thumbnail Image";     ds.content  = image.convert(JPEG, THUMBNAIL_GEOMETRY); ds.mimeType = JPEG }
+      end # of Image.new
 
-      ingestor.datastream('MEDIUM_SIZE') do |ds|
-        ds.dsLabel  = "Medium Size Image"
-        ds.content  = medium
-        ds.mimeType = 'image/jpeg'
-      end
+      @bytes_ingested = ingestor.size
+    end # of Ingestor.new
 
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
-
-      ingestor.datastream('TN') do |ds|
-        ds.dsLabel  = "Thumbnail Image"
-        ds.content  = thumbnail
-        ds.mimeType = 'image/jpeg'
-      end
-    end
-
-    @bytes_ingested = ingestor.size
   ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    error   [ 'Error creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    error   [ 'Error creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
-
-    safe_close(@image, medium, thumbnail)
-
+    copy_notifications(image, ingestor)
     @updator.post_ingest
   end
 end
@@ -598,17 +577,7 @@ class LargeImagePackage < Package
     return unless valid?
 
     @image_filename = @datafiles.first
-    @image_pathname = File.join(@directory_path, @image_filename)
-    @mime_type = Utils.mime_type(@image_pathname)
-
-    case @mime_type
-    when JP2
-      @image = File.open(@image_pathname, 'rb')
-    when TIFF
-      @image = File.open(@image_pathname, 'rb')
-    else
-      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
-    end
+    @image_path = File.join(@directory_path, @image_filename)
 
   rescue PackageError => e
     error "Exception for #{pretty_class_name} #{@directory_name}: #{e.message}"
@@ -636,105 +605,41 @@ class LargeImagePackage < Package
     #  JPG    medium image derived from TIFF
     #  TN     thumbnail derived from TIFF
 
-    medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
-
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
-
       boilerplate(ingestor)
 
-      case @mime_type
+      Image.new(@image_path) do |image|
+        case image.mime_type
+        when TIFF
+          ingestor.datastream('OBJ') { |ds| ds.dsLabel  = 'Original TIFF ' + image.file_name_label;     ds.content  = image.stream;       ds.mimeType = TIFF }
+          ingestor.datastream('JP2') { |ds| ds.dsLabel  = 'JPEG 2000 derived from original TIFF image'; ds.content  = image.convert(JP2); ds.mimeType = JP2 }
+        when JP2
+          ingestor.datastream('JP2') { |ds| ds.dsLabel  = 'Original JPEG 2000 ' + image.file_name_label;        ds.content  = image.stream;        ds.mimeType = JP2 }
+          ingestor.datastream('OBJ') { |ds| ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'; ds.content  = image.convert(TIFF); ds.mimeType = TIFF }
+        else
+          raise PackageError, "The #{pretty_class_name} '#{@directory_name}' contains an unexpected or unsupported file '#{@image_filename}' with image format '#{image.mime_type}'."
+        end
 
-      when TIFF;   ingest_tiff ingestor
-      when JP2;    ingest_jp2 ingestor
-      else
-        raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@image_filename} with image format #{@image.format}."
-      end
-
-      medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
-
-      medium, medium_error_messages = Utils.image_resize(@config, @image_pathname, @config.medium_geometry, 'jpeg')
-
-      ingestor.datastream('JPG') do |ds|
-        ds.dsLabel  = 'Medium sized JPEG'
-        ds.content  = medium
-        ds.mimeType = 'image/jpeg'
-      end
-
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, @image_pathname, @config.thumbnail_geometry, 'jpeg')
-
-      ingestor.datastream('TN') do |ds|
-        ds.dsLabel  = 'Thumbnail'
-        ds.content  = thumbnail
-        ds.mimeType = 'image/jpeg'
-      end
+        ingestor.datastream('JPG') { |ds| ds.dsLabel  = 'Medium sized JPEG'; ds.content = image.convert(JPEG, MEDIUM_GEOMETRY);    ds.mimeType = JPEG }
+        ingestor.datastream('TN')  { |ds| ds.dsLabel  = 'Thumbnail';         ds.content = image.convert(JPEG, THUMBNAIL_GEOMETRY); ds.mimeType = JPEG }
+      end # Image ...
 
       @bytes_ingested = ingestor.size
-    end
+    end  # Ingestor...
 
   ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages     if medium_error_messages    and not medium_error_messages.empty?
-
-    safe_close(@image, medium, thumbnail)
-
+    copy_notifications(image, ingestor)
     @updator.post_ingest
   end
 
 
-  private
-
-  def ingest_tiff ingestor
-
-    ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Original TIFF ' + @image_filename.sub(/\.(tiff|tiff)$/i, '')
-      ds.content  = @image
-      ds.mimeType = 'image/tiff'
-    end
-
-    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, @image_pathname)
-
-
-    ingestor.datastream('JP2') do |ds|
-      ds.dsLabel  = 'JPEG 2000 derived from original TIFF image'
-      ds.content  = jp2k
-      ds.mimeType = 'image/jp2'
-    end
-
-  ensure
-    warning  [ 'Issues converting TIFF to JP2K' ] +  jp2k_error_messages  if jp2k_error_messages and not jp2k_error_messages.empty?
-    safe_close(@image, jp2k)
-  end
-
-
-  def ingest_jp2 ingestor
-
-    ingestor.datastream('JP2') do |ds|
-      ds.dsLabel  = 'Original JPEG 2000 ' + @image_filename.sub(/\.jp2$/i, '')
-      ds.content  = @image
-      ds.mimeType = 'image/jp2'
-    end
-
-    tiff, tiff_error_messages = Utils.image_to_tiff(@config, @image_pathname)
-
-    ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
-      ds.content  =  tiff
-      ds.mimeType = 'image/tiff'
-    end
-
-  ensure
-    warning  [ 'Issues when converting JP2K to TIFF' ] +  tiff_error_messages  if tiff_error_messages and not tiff_error_messages.empty?
-    safe_close(@image, tiff)
-  end
-
-end
+end # of LargeImage
 
 
 # Subclass of Package for handling the PDF content model
 
 class PDFPackage < Package
+
 
   # At this point we know we have a manifest, mods and maybe a marc file.
 
@@ -752,63 +657,24 @@ class PDFPackage < Package
       raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."
     end
 
-    @pdf, @pdf_filename, @pdf_pathname = nil
-    @full_text, @full_text_filename, @full_text_pathname = nil
+    @pdf_path = nil
+    @full_text_path = nil
 
     @datafiles.each do |filename|
       path = File.join(@directory_path, filename)
       type = Utils.mime_type(path)
 
       case type
-      when PDF
-        @pdf_filename = filename
-        @pdf_pathname = path
-        @pdf = true
-      when TEXT
-        @full_text_filename = filename
-        @full_text_pathname = path
-        @full_text = true
+      when /pdf/i
+        @pdf_path = path
+      when /text/i
+        @full_text_path = path
       else
-        raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected file #{filename} of type #{type}."
+        raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected file '#{filename}' of type '#{type}'."
       end
     end
 
     raise PackageError, "The #{pretty_class_name} #{@directory_name} doesn't contain a PDF file."  if @pdf.nil?
-
-    case
-
-    # A full text index file was submitted, which we don't trust much, so cleanup and re-encode to UTF:
-
-    when @full_text
-      @full_text_label = "Full text from index file"
-      @full_text = Utils.cleanup_text(Utils.re_encode_maybe(File.read(@full_text_pathname)))
-
-      if @full_text.empty?
-        warning "The full text file #{@full_text_filename} supplied in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
-        @full_text = ' '
-      end
-
-    # No full text, so we generate UTF-8 using a unix utility, which we'll still cleanup:
-    else
-      @full_text_label = 'Full text derived from PDF'
-
-      text_from_pdf_file, errors = Utils.pdf_to_text(@config, @pdf_pathname)
-
-      if not (errors.nil? or errors.empty?)
-        warning "When extracting text from #{@pdf_filename} the following issues were encountered:"
-        warning errors
-      end
-
-      @full_text = Utils.cleanup_text(text_from_pdf_file.read)
-
-      if @full_text.nil?
-        warning "Unable to generate full text from #{@pdf_filename} in package #{@directory_name}; using a single space to preserve the FULL_TEXT datastream."
-        @full_text = ' '
-      elsif @full_text.empty?
-        warning "The generated full text from #{@pdf_filename} in package #{@directory_name} was empty; using a single space to preserve the FULL_TEXT datastream."
-        @full_text = ' '
-      end
-    end
 
   rescue PackageError => e
     error "Exception for #{pretty_class_name} #{@directory_name}: #{e.message}"
@@ -819,51 +685,40 @@ class PDFPackage < Package
   def ingest
     return if @config.test_mode
 
-    preview, preview_error_messages, thumbnail, thumbnail_error_messages = nil
-
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
-
       boilerplate(ingestor)
 
-      ingestor.datastream('OBJ') do |ds|
-        ds.dsLabel  = @pdf_filename.sub(/\.pdf$/i, '')
-        ds.content  = File.open(@pdf_pathname)
-        ds.mimeType = 'application/pdf'
-      end
+      Image.new(@pdf_path) do |image|
 
-      ingestor.datastream('FULL_TEXT') do |ds|
-        ds.dsLabel  = @full_text_label
-        ds.content  = @full_text
-        ds.mimeType = 'text/plain'
-      end
+        ingestor.datastream('OBJ') { |ds| ds.dsLabel  = image.file_name_label; ds.content  = image.stream; ds.mimeType = PDF }
 
-      preview, preview_error_messages      = Utils.pdf_to_preview(@config, File.join(@directory_path, @pdf_filename))
+        text = text_label = nil
 
-      ingestor.datastream('PREVIEW') do |ds|
-        ds.dsLabel  = 'Preview'
-        ds.content  = preview
-        ds.mimeType = 'image/jpeg'
-      end
+        text ||  (text = normalize_text(@full_text_path)  and  text_label = 'Package-supplied full text')
+        text ||  (text = image.convert(TEXT)              and  text_label = 'PDF to full text output')
+        text ||  (text = ' '                              and  text_label = 'full text')
 
-      thumbnail, thumbnail_error_messages  = Utils.pdf_to_thumbnail(@config, File.join(@directory_path, @pdf_filename))
+        ingestor.datastream('FULL_TEXT') { |ds| ds.dsLabel  = text_label;  ds.content  = text;                                     ds.mimeType = TEXT }
+        ingestor.datastream('PREVIEW')   { |ds| ds.dsLabel  = 'Preview';   ds.content  = image.covert(JPEG, PDF_PREVIEW_GEOMETRY); ds.mimeType = JPEG }
+        ingestor.datastream('TN')        { |ds| ds.dsLabel  = 'Thumbnail'; ds.content  = image.convert(JPEG, THUMBNAIL_GEOMETRY);  ds.mimeType = JPEG }
+      end # Image
 
-      ingestor.datastream('TN') do |ds|
-        ds.dsLabel  = 'Thumbnail'
-        ds.content  = thumbnail
-        ds.mimeType = 'image/jpeg'
-      end
-    end
+      @bytes_ingested = ingestor.size
+    end # Ingestor
 
-    @bytes_ingested = ingestor.size
   ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    warning [ 'Issues creating Preview datastream' ]   + preview_error_messages    if preview_error_messages   and not preview_error_messages.empty?
-
-    safe_close(preview, thumbnail)
-
+    copy_notifications(ingestor, image)
     @updator.post_ingest
+  end
+
+  def normalize_text(path)
+    return nil unless path
+    text = Utils.cleanup_text(Utils.re_encode_maybe(File.read(path)))
+    return nil if text.empty?
+    return text
+  rescue => e
+    warning "Could not clean up package-supplied full text '#{File.basename(path)}',  retaining original", e.message
+    return File.read(path)  # perhaps they know what they're doing...
   end
 end
 
@@ -888,63 +743,55 @@ class StructuredPagePackage < Package
   # variable.
 
   def ingest_page pagename, label, sequence
-
-    path      = File.join(@directory_path, pagename)
-    mime_type = Utils.mime_type(path)
-
-    pdf, pdf_error_messages, thumbnail, thumbnail_error_messages = nil
-
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
-
       ingestor.label         = pagename
       ingestor.owner         = @owner
       ingestor.content_model = @page_content_model
       ingestor.dc            = page_dc(ingestor.pid, pagename)
 
-      case mime_type
-      when TIFF;  handle_tiff_page(ingestor, path);
-      when JP2;   handle_jp2k_page(ingestor, path);
-      when JPEG;  handle_jpeg_page(ingestor, path);
-      else
-        raise PackageError, "Page image #{pagename} in #{pretty_class_name} #{@directory_name} is of unsupported type #{mime_type}."
+      Image.new(File.join(@directory_path, pagename)) do |image|
+        case image.mime_type
+        when TIFF
+          ingestor.datastream('OBJ') { |ds| ds.dsLabel = 'Original TIFF ' + image.file_name_label; ds.content = image.stream;                         ds.mimeType = TIFF }
+          ingestor.datastream('JPG') { |ds| ds.dsLabel = 'Medium sized JPEG';                      ds.content = image.convert(JPEG, MEDIUM_GEOMETRY); ds.mimeType = JPEG }
+          ingestor.datastream('JP2') { |ds| ds.dsLabel = "JP2 derived from original TIFF";         ds.content = image.convert(JP2);                   ds.mimeType = JP2 }
+        when JP2
+          ingestor.datastream('JP2') { |ds| ds.dsLabel = 'Original JP2 ' + image.file_name_label;              ds.content = image.stream;                                 ds.mimeType = JP2 }
+          ingestor.datastream('OBJ') { |ds| ds.dsLabel = 'Reduced TIFF Derived from original JPEG 2000 Image'; ds.content = image.convert(TIFF, TIFF_FROM_JP2K_GEOMETRY); ds.mimeType = TIFF }
+          ingestor.datastream('JPG') { |ds| ds.dsLabel = 'Medium sized JPEG';                                  ds.content = image_convert(JPEG, MEDIUM_GEOMETRY);         ds.mimeType = JPEG }
+          handle_jp2k_page(ingestor, path);
+        when JPEG
+          ingestor.datastream('JPG') { |ds| ds.dsLabel = 'Original JPEG ' + image.file_name_label;        ds.content = image.stream;                                 ds.mimeType = JPEG }
+          ingestor.datastream('OBJ') { |ds| ds.dsLabel = 'Reduced TIFF Derived from original JPEG Image'; ds.content = image.convert(TIFF, TIFF_FROM_JP2K_GEOMETRY); ds.mimeType = TIFF }
+          ingestor.datastream('JP2') { |ds| ds.dsLabel = 'JPEG 2000 derived from original JPEG image';    ds.content = image.convert(JPEG);                          ds.mimeType = JPEG }
+        else
+          raise PackageError, "Page image #{pagename} in #{pretty_class_name} #{@directory_name} is of unsupported type #{mime_type}."
+        end
+
+
+        langs = @mods.languages.empty? [ 'eng' ] : @mods.languages
+        ocr = image.convert(OCR, langs)
+        ingestor.datastream('OCR')  { |ds| ds.dsLabel = 'OCR';  ds.content = ocr;                        ds.mimeType = TEXT }
+        ingestor.datastream('HOCR') { |ds| ds.dsLabel = 'HOCR'; ds.content = image.convert(HOCR, langs); ds.mimeType = HTML }
+
+
+        handle_ocr(ingestor, path)
+
+
+        ingestor.datastream('TN') { |ds| ds.dsLabel = 'Thumbnail'; ds.content = thumbnail; ds.mimeType = 'image/jpeg' }
+
+        ingestor.datastream('PDF') { |ds| ds.dsLabel = 'PDF'; ds.content = pdf; ds.mimeType = 'application/pdf' }
+
+        ingestor.datastream('RELS-EXT') { |ds| ds.dsLabel = 'Relationships'; ds.content = page_rels_ext(ingestor.pid, label, sequence); ds.mimeType = 'application/rdf+xml' }
+
+        ingestor.datastream('RELS-INT') { |ds| ds.dsLabel = 'RELS-INT'; ds.content = page_rels_int(ingestor.pid, path); ds.mimeType = 'application/rdf+xml' }
+
       end
 
-      handle_ocr(ingestor, path)
+      @bytes_ingested += ingestor.size
+      return ingestor.pid
 
-      thumbnail, thumbnail_error_messages = Utils.image_resize(@config, path, @config.thumbnail_geometry, 'jpeg')
-
-      ingestor.datastream('TN') do |ds|
-        ds.dsLabel  = 'Thumbnail'
-        ds.content  = thumbnail
-        ds.mimeType = 'image/jpeg'
-      end
-
-      pdf, pdf_error_messages = Utils.image_to_pdf(@config, path)
-
-      ingestor.datastream('PDF') do |ds|
-        ds.dsLabel  = 'PDF'
-        ds.content  = pdf
-        ds.mimeType = 'application/pdf'
-      end
-
-      ingestor.datastream('RELS-EXT') do |ds|
-        ds.dsLabel  = 'Relationships'
-        ds.content  = page_rels_ext(ingestor.pid, label, sequence)
-        ds.mimeType = 'application/rdf+xml'
-      end
-
-      ingestor.datastream('RELS-INT') do |ds|
-        ds.dsLabel  = 'RELS-INT'
-        ds.content  = page_rels_int(ingestor.pid, path)
-        ds.mimeType = 'application/rdf+xml'
-      end
-
-    end
-
-    @bytes_ingested += ingestor.size
-    return ingestor.pid
-
-  rescue PackageError => e
+    rescue PackageError => e
     error e
     raise e
   rescue => e
@@ -952,12 +799,7 @@ class StructuredPagePackage < Package
     raise e
 
   ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-
-    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    warning [ 'Issues creating PDF datastream' ]       + pdf_error_messages        if pdf_error_messages       and not pdf_error_messages.empty?
-
+    copy_notifications(image, ingestor)
     safe_close(thumbnail, pdf)
   end
 
@@ -1074,141 +916,8 @@ class StructuredPagePackage < Package
     @page_filenames = expected - missing
   end
 
-  def handle_ocr ingestor, path
-    ocr_produced_text = true
-
-    if (text = Utils.ocr(@config, path, @mods.languages))
-      ingestor.datastream('OCR') do |ds|
-        ds.dsLabel  = 'OCR'
-        ds.content  = text
-        ds.mimeType = 'text/plain'
-      end
-    else
-      ocr_produced_text = false      # TODO:  break out into own type of warning...
-      image_name = path.sub(/^.*\//, '')
-      warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
-    end
-
-    if ocr_produced_text  and (text = Utils.hocr(@config, path, @mods.languages))
-      ingestor.datastream('HOCR') do |ds|
-        ds.dsLabel  = 'HOCR'
-        ds.content  = text
-        ds.mimeType = 'text/html'
-      end
-    end
-  end
 
 
-  def handle_jpeg_page  ingestor, path
-    image = File.open(path)
-
-    jp2k, jp2k_error_messages = nil
-    medium, medium_error_messages = nil
-
-    ingestor.datastream('JPG') do |ds|
-      ds.dsLabel  = 'Original JPEG ' + path.sub(/^.*\//, '').sub(/\.(jpg|jpeg)$/i, '')
-      ds.content  = image
-      ds.mimeType = 'image/jpeg'
-    end
-
-    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)    # TODO: check and bail that jp2k is an open file and larger than zero....
-
-    ingestor.datastream('JP2') do |ds|
-      ds.dsLabel  = 'JPEG 2000 derived from original JPEG image'
-      ds.content  = jp2k
-      ds.mimeType = 'image/jp2'
-    end
-
-    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'tiff')  ## TODO: everywhere we do a resize, let's bail with a package error if produced file is empty (initally I thought an empty file would be OK)
-
-    ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Reduced TIFF Derived from original JPEG Image'
-      ds.content  = tiff
-      ds.mimeType = 'image/tiff'
-    end
-
-  ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating JPK2 datastream' ] + jp2k_error_messages  if jp2k_error_messages  and not jp2k_error_messages.empty?
-    warning [ 'Issues creating TIFF datastream' ] + tiff_error_messages  if tiff_error_messages  and not tiff_error_messages.empty?
-
-    safe_close(image, jp2k, tiff)
-  end
-
-
-  def handle_jp2k_page ingestor, path
-    image = File.open(path)
-
-    ingestor.datastream('JP2') do |ds|
-      ds.dsLabel  = 'Original JP2 ' + path.sub(/^.*\//, '').sub(/\.jp2$/i, '')
-      ds.content  = image
-      ds.mimeType = 'image/jp2k'
-    end
-
-    tiff, tiff_error_messages = Utils.image_resize(@config, path, @config.tiff_from_jp2k_geometry, 'tiff')
-
-    ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Reduced TIFF Derived from original JPEG 2000 Image'
-      ds.content  = tiff
-      ds.mimeType = 'image/tiff'
-    end
-
-    medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
-
-    ingestor.datastream('JPG') do |ds|
-      ds.dsLabel  = 'Medium sized JPEG'
-      ds.content  = medium
-      ds.mimeType = 'image/jpeg'
-    end
-
-  ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating TIFF datastream' ]      + tiff_error_messages    if tiff_error_messages    and not tiff_error_messages.empty?
-    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
-
-    safe_close(image, tiff, medium)
-
-  end
-
-
-  def handle_tiff_page ingestor, path
-    image = File.open(path)
-
-    jp2k, jp2k_error_messages = nil
-    medium, medium_error_messages = nil
-
-    ingestor.datastream('OBJ') do |ds|
-      ds.dsLabel  = 'Original TIFF ' + path.sub(/^.*\//, '').sub(/\.(tiff|tif)$/i, '')
-      ds.content  = image
-      ds.mimeType = 'image/tiff'
-    end
-
-    jp2k, jp2k_error_messages = Utils.image_to_jp2k(@config, path)
-
-    ingestor.datastream('JP2') do |ds|
-      ds.dsLabel  = "JP2 derived from original TIFF"
-      ds.content  = jp2k
-      ds.mimeType = 'image/jp2'
-    end
-
-    medium, medium_error_messages = Utils.image_resize(@config, path, @config.medium_geometry, 'jpeg')
-
-    ingestor.datastream('JPG') do |ds|
-      ds.dsLabel  = 'Medium sized JPEG'
-      ds.content  = medium
-      ds.mimeType = 'image/jpeg'
-    end
-
-  ensure
-    warning ingestor.warnings if ingestor and ingestor.warnings?
-    error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating JPK2 datastream' ]      + jp2k_error_messages    if jp2k_error_messages    and not jp2k_error_messages.empty?
-    warning [ 'Issues creating Medium datastream' ]    + medium_error_messages  if medium_error_messages  and not medium_error_messages.empty?
-
-    safe_close(image, jp2k, medium)
-  end
 
   # Standard page rels_int (type application/rdf+xml)
 
@@ -1409,17 +1118,20 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
 
+    #### TODO:  MAKE all these problems forgiveable so we can get complete diagnostics?
+
+
     handle_marc or return  # create @marc if we have a marc.xml
 
     # insert "if @has_mets ... end"  around the next two lines if we decide METS is optional.
 
-    handle_mets               or return  # create @mets and check its validity
-    create_table_of_contents  or return  # creates @table_of_contents
+    handle_mets                 or return  # create @mets and check its validity
+    create_table_of_contents    or return  # creates @table_of_contents
 
     create_page_filename_list   or return  # creates @page_filenames
     check_page_types            or return  # checks @page_filenames file types
 
-    check_issue_manifest        or return  # checks languages declared if any,  sets @date_issued
+    check_issue_manifest        or return  # sets @date_issued
     check_newspaper_parent      or return  # sets @issue_sequence and @newspaper_id.
 
   rescue PackageError => e
@@ -1660,34 +1372,26 @@ class NewspaperIssuePackage < StructuredPagePackage
 
   def check_issue_manifest
 
-    warning_message = Utils.langs_unsupported_comment(@config, *@mods.languages)
-
-    if not warning_message.empty?
-      warning "Found unsupported OCR languages in MODS file: #{warning_message}."
-      warning "Will use #{Utils.langs_to_names(@config, @mods.languages)} for OCR."
-    end
+    errn = errors.count
 
     if @mods.date_issued.empty?
       error "The package MODS file does not include the required w3cdtf-encoded dateIssued element"
-      return
     end
 
     if @mods.date_issued.count > 1
       error "The package MODS file includes more than one of the required w3cdtf-encoded dateIssued element"
-      return
     end
 
     unless @mods.date_issued[0] =~ /^\d\d\d\d-\d\d-\d\d$/
       error "The package MODS file has a badly formatted w3cdtf-encoded dateIssued element: it should be of the form 'YYYY-MM-DD' but is '#{@mods.date_issued[0]}'"
-      return
+    else
+      @date_issued = @mods.date_issued[0]
     end
 
-    @date_issued = @mods.date_issued[0]
-
-    return true
+    return errors.count == errn
 
   rescue => exception
-    oops exception
+    error "while checking the issue manifest, these errors occured: ", exception.message
   end
 
 end # of class NewspaperIssuePackage
