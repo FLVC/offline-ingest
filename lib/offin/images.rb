@@ -15,24 +15,25 @@ module ImageConstants
   PDF_PREVIEW_GEOMETRY    = '500x700'
   TIFF_FROM_JP2K_GEOMETRY = '1024x1024'
 
-  GIF  = 'image/gif'
-  JP2  = 'image/jp2'
-  PNG  = 'image/png'
-  JPEG = 'image/jpeg'
-  TIFF = 'image/tiff'
-  PDF  = 'application/pdf'
+  SUPPORTED_IMAGES = [
+    GIF  = 'image/gif',
+    JP2  = 'image/jp2',
+    PNG  = 'image/png',
+    JPEG = 'image/jpeg',
+    TIFF = 'image/tiff',
+    PDF  = 'application/pdf',
+  ]
 
   TEXT = 'text/plain'
+  HTML = 'text/html'
   OCR  = 'application/x-ocr'
   HOCR = 'application/x-hocr'
 
-  SUPPORTED_IMAGES = [ GIF, JP2, PNG, JPEG, TIFF, PDF ]
-
   OCR_CANDIDATES = [    # we'll run 'tesseract --list-langs' to figure out which of these are actually compiled into tesseract.
 
-    { :tesseract =>  'eng',
-      :iso639b   =>  'eng',
-      :name      =>  'English' },
+    { :tesseract =>  'eng',           # the code tesseract wants
+      :iso639b   =>  'eng',           # the code we expect in the MODS file (iso639b)
+      :name      =>  'English' },     # some pretty text for errors/repots
 
     { :tesseract =>  'fra',
       :iso639b   =>  'fre',
@@ -40,15 +41,14 @@ module ImageConstants
 
     { :tesseract =>  'deu',
       :iso639b   =>  'ger',
-      :name      =>  'French' },
+      :name      =>  'German' },
 
     { :tesseract =>  'ita',
       :iso639b   =>  'ita',
       :name      =>  'Italian' },
   ]
 
-  TESSERACT_TIMEOUT = 120 # 500   # tesseract can waste a lot of time on certain kinds of images
-
+  TESSERACT_TIMEOUT = 250 # 500   # tesseract can waste a lot of time on certain kinds of images
 
   def self.executable_location(name)
     paths = [ '/usr/local/bin', '/usr/bin' ] + ENV['PATH'].split(':')
@@ -89,10 +89,10 @@ end
 
 
 class Image
-
   include Errors
   include ImageConstants
 
+  DEBUG = true
   THUNKS = {}
   SUPPORTED_IMAGES.each { |img|  THUNKS[img] = {} }
 
@@ -152,6 +152,8 @@ class Image
 
     yield self
 
+  rescue => e
+    STDERR.puts e  if DEBUG
   ensure
     remove_temp_files
   end
@@ -175,28 +177,29 @@ class Image
       oops = stderr.read
     end
     if data =~ /\s+(\d+)x(\d+)\s+/i
-      width, height = $1, $2
-      return @file_dimensions = [ width.to_i, height.to_i ]
+      return @file_dimensions = [ $1.to_i, $2.to_i ]
     else
-      error "Can't get dimensions for image '#{file_name}'", oops.split("\n")
+      warning "can't get dimensions for image '#{file_name}'", oops.split("\n")
       return @file_dimensions = [ 0, 0 ]
     end
   rescue => e
-    error "Can't get dimensions for image '#{file_name}'", e.message, oops.split("\n")
+    warning "can't get dimensions for image '#{file_name}'", e.message, oops.split("\n")
     return @file_dimensions = [ 0, 0 ]
   end
 
-  # TODO: return a fall back on fatal error?
+  # convert our image to target_mime_type, optionally resizing to geometry.
+  # returns nil unless derivative creation succeeds with a non-empty file
 
   def convert(target_mime_type, geometry=nil)
     proc = THUNKS[mime_type][target_mime_type]
     if proc.nil?
-      error "derivative creation failed for image '#{file_name}' - conversion from '#{mime_type}' to '#{target_mime_type}' isn't supported" if proc.nil?
+      warning "derivative creation failed for image '#{file_name}' - conversion from '#{mime_type}' to '#{target_mime_type}' isn't supported" if proc.nil?
       return nil
     end
+    # TODO: check the returned file descriptor for the correct mime type?
     return proc.call(geometry)
   rescue => e
-    error "derivative creation failed for image '#{file_name}' - during conversion from '#{mime_type}' to '#{target_mime_type}' the following error occured: ", e.message
+    warning "derivative creation failed for image '#{file_name}' - during conversion from '#{mime_type}' to '#{target_mime_type}' the following error occured: ", e.message
     return nil
   end
 
@@ -218,6 +221,50 @@ class Image
 
   private
 
+  # TODO - explain
+
+  def run_command(command_template, output_mime_type, geometry=nil, input_file_name=nil)
+    input_file_name ||= @file_name
+    output_file_name = temp_file_name(output_mime_type)
+    cmd = command_template_substitutions(command_template, input_file_name, output_file_name, output_mime_type, geometry)
+    run(cmd)
+
+    unless File.exists?(output_file_name)
+      warning "failed '#{output_mime_type}' derivative creation for '#{file_name}'"
+      return nil
+    end
+
+    unless File.stat(output_file_name).size > 0
+      warning "failed '#{output_mime_type}' derivative creation for '#{file_name}'"
+      return nil
+    end
+
+    return open(output_file_name, 'rb')
+
+  rescue => e
+      warning "failed derivative creation of '#{output_mime_type}' for '#{file_name}'", e.message
+      return nil
+  end
+
+  # helper for run_command that execs an array of strings
+
+  def run(argv)
+    STDERR.puts argv.join(' ') if DEBUG
+
+    data = nil
+    oops = nil
+    Open3.popen3(*argv) do |stdin, stdout, stderr|
+      stdin.close
+      data = stdout.gets
+      oops = stderr.read
+    end
+    unless (oops.nil? or oops.empty? or not_really_errors(oops))
+      warning "could not create derivative for '#{file_name}'",  "failed command: '#{argv.join(' ')}'", oops.split("\n")
+    end
+  end
+
+  # These thunks are called by the convert method,  which will catch any common exception
+
   def convert_to_basic_image(target_mime_type)
     return Proc.new do |geometry|
       run_command(CONVERT_TO_BASIC_IMAGE_COMMAND, target_mime_type, geometry)
@@ -234,7 +281,7 @@ class Image
     return Proc.new do |geometry|
       unless @kakadu_cached_file
         fd = run_command(KAKADU_TO_TIFF_COMMAND, TIFF) # N.B.  Kakadu creates uncompressed TIFFs
-        fail "could not create a temporary TIFF file from #{file_name}"
+        raise "Can't create a '#{target_mime_type}' derivative from the JP2 file #{file_name}" unless fd
         @kakadu_cached_file = fd.path
       end
       case target_mime_type
@@ -245,7 +292,7 @@ class Image
       when GIF, PNG, JPEG
         run_command(CONVERT_TO_BASIC_IMAGE_COMMAND, target_mime_type, geometry, @kakadu_cached_file)
       else
-        fail "no conversion suppport is available for JP2 to #{target_mime_type}"
+        raise "no conversion suppport is available for JP2 to #{target_mime_type}"
       end
     end
   end
@@ -286,47 +333,72 @@ class Image
     end
   end
 
-  def image_hocr
-    image_ocr(:hocr)
+  # given an open file object, read it, strip leadimng and trailing whitespace, save it to the same file path, and reopen read-only
+
+  def strip_file(fd)
+    path = fd.path
+    fd.rewind
+    text = fd.read.strip
+    fd.close
+    File.open(path, 'w') { |f| f.write text }
+    return File.open(path, 'rb')
+  rescue => e
+    return nil
   end
 
-  def image_ocr(hocr = false)
+  def image_hocr
+    image_ocr_hairy(HOCR_COMMAND, HOCR)
+  end
+
+  def image_ocr
+    image_ocr_hairy(OCR_COMMAND, OCR)
+  end
+
+  def es(ar)
+    args.count == 1 ? '' : 's'
+  end
+
+
+  def image_ocr_hairy(command, type)
     return Proc.new do |languages|
       input_file_name = file_name
 
-      if not [ JPEG, TIFF ].include? mime_type
+      unless (mime_type == JPEG or mime_type == TIFF)
         @tesseract_intermediary_cached ||= run_command(CONVERT_WITH_LZW_COMPRESSION_COMMAND, TIFF)
-        fail "unable to create a temporary TIFF file for performing OCR" if @tesseract_intermediary_cached.nil?
+        raise "unable to process '#{file_name}' for performing OCR" unless @tesseract_intermediary_cached
         input_file_name = @tesseract_intermediary_cached.path
       end
 
       args = []
+      unsupported = []
       if languages
         languages.each do |lang|
           record = @tesseract_languages.select { |rec| rec[:iso639b] == lang }.shift
-          args.push "-l #{record[:tesseract]}" unless record.nil?
+          record ? args.push record[:tesseract] : unsupported.push lang
         end
       end
-
-      args = [ "-l eng" ] if args.empty?
+      args = [ "eng" ] if args.empty?
+      unless unsupported.empty?
+        warning "OCR - encountered unsupported language code#{es(unsupported)} '" + unsupported.join("', '") + "' when processing #{file_name}"
+        warning "OCR - using language#{es(args)} '" + args.join("', '") + "'"
+      end
       command = nil
-      fd = nil
+      opts = args.map { |x| "-l #{x}" }.join(' ')
       begin
         Timeout.timeout(TESSERACT_TIMEOUT) do
-          if hocr
-            command = HOCR_COMMAND.sub("%l", args.join(" "))
-            fd = run_command(command, HOCR, nil, input_file_name)
-          else
-            command = OCR_COMMAND.sub("%l", args.join(" "))
-            fd = run_command(command, OCR, nil, input_file_name)
-          end
+          command = template.sub("%l", opts)
+          fd = strip_file(run_command(command, type, nil, input_file_name))
         end
+        raise "no text detected" unless (fd and File.stat(fd.path).size > 0)
       rescue Timeout::Error => e
-        error "The OCR command '#{command}' was taking too long: stopped after #{TESSERACT_TIMEOUT} seconds"
+        warning "the OCR command '#{command}' for '#{file_name}' was taking too long: stopped after #{TESSERACT_TIMEOUT} seconds"
       rescue => e
-        error "The OCR command '#{command}' failed:", e.message
+        warning "the OCR command '#{command}' for '#{file_name}' failed:", e.message
+      else
+        return fd
       end
     end
+
   end
 
 
@@ -352,46 +424,12 @@ class Image
 
 
   def not_really_errors(oops)
-    return true  if (oops =~ /Tesseract Open Source OCR Engine/i and oops.length < 65)
+    return true  if (oops =~ /Tesseract Open Source OCR Engine/i and oops.split("\n").size == 1)
     return false
   end
 
 
-  def run(argv)
-    STDERR.puts argv.join(' ')
-
-    data = nil
-    oops = nil
-    Open3.popen3(*argv) do |stdin, stdout, stderr|
-      stdin.close
-      data = stdout.gets
-      oops = stderr.read
-    end
-    unless (oops.nil? or oops.empty? or not_really_errors(oops))
-      error "could not create derivative for '#{file_name}'",  "failed command: '#{argv.join(' ')}'", oops.split("\n")
-    end
-  end
-
   # create a derivation for this image, on success return an opened file i/o object for the newly created derivative.
-
-  def run_command(command_template, output_mime_type, geometry=nil, input_file_name=nil)
-    input_file_name ||= @file_name
-    output_file_name = temp_file_name(output_mime_type)
-    cmd = command_template_substitutions(command_template, input_file_name, output_file_name, output_mime_type, geometry)
-    run(cmd)
-
-    unless File.exists?(output_file_name)
-      error "failed derivative creation of '#{output_mime_type}' for '#{file_name}'"
-      return nil
-    end
-
-    return open(output_file_name, 'rb')
-
-  rescue => e
-      error "failed derivative creation of '#{output_mime_type}' for '#{file_name}'", e.message
-      return nil
-  end
-
 
   def remove_temp_files
     FileUtils.rm_f @temp_files unless @temp_files.empty?
@@ -408,13 +446,15 @@ class Image
     end
     type.strip!
     type = 'image/jp2'    if (path =~ /\.jp2/i and type == 'application/octet-stream')
+
+    ### TODO: this is a pain point... make it gentler
     unless SUPPORTED_IMAGES.include? type
       fail "#{path} is not a supported image: it's mime type is '#{type}', but it must be one of '#{SUPPORTED_IMAGES.join("', '")}'"
     end
     return type
   end
 
-  # create an anonymous file name
+  # We use this to create unique file names, we immediately close the file descriptors.
 
   def temp_file_name(mime_type)
     ext = '.' + extension(mime_type)
@@ -426,6 +466,8 @@ class Image
     @temp_files.push name
     return name
   end
+
+  # ask tesseract what languages it supports, select those from our locally supported set in OCR_CANDIDATES.
 
   def supported_ocr_languages
     tesseract_languages = []
@@ -442,7 +484,7 @@ class Image
     end
 
   rescue => e
-    error "Can't determine supported OCR languages", e.message
+    warning "can't determine the supported OCR languages", e.message
     return tesseract_languages
   end
 
@@ -458,45 +500,27 @@ Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit }
 
 Image.new(input_file_name = ARGV[0]) do |image|
   puts "input #{image.mime_type} image #{image.file_name} size: #{image.size}"
-  puts image.errors  if image.errors?
-  puts image.warnings  if image.warnings?
-  puts image.notes  if image.notes?
+  image.errors?   && puts 'errors: ',   image.errors
+  image.warnings? && puts 'warnings: ', image.warnings
+  image.notes?    && puts 'notes: ',    image.notes
 
-  # [ TEXT, GIF, JP2, PNG, JPEG, TIFF, PDF ].each do |target|
-  #     begin
-  #       image.reset_errors
-  #       name = "test-from-" + image.file_name_label + "-" + image.extension(image.mime_type) + "-to." + image.extension(target)
-  #       fd = image.convert(target)
-  #       STDERR.puts image.errors  if image.errors?
-  #       fd.nil? && next
-  #       open(name, 'w') do |out|
-  #         while (data = fd.read(1024 * 1024))
-  #           out.write data
-  #         end
-  #       end
-  #     rescue => e
-  #       puts "output #{target} image #{name} error: #{e.message}"
-  #     end
-  # end
-
-  [ OCR, HOCR ].each do |target|
-      begin
-        image.reset_errors
-        name = "test-from-" + image.file_name_label + "-" + image.extension(image.mime_type) + "-to." + image.extension(target)
-        fd = image.convert(target, [ 'eng', 'fre' ])
-        if image.errors?
-          STDERR.puts "----------------", image.errors, ''
+  [ OCR, HOCR, TEXT, GIF, JP2, PNG, JPEG, TIFF, PDF ].each do |target|
+    begin
+      image.reset_errors
+      image.reset_warnings
+      name = "test-from-" + image.file_name_label + "-" + image.extension(image.mime_type) + "-to." + image.extension(target)
+      fd = image.convert(target)
+      STDERR.puts "errors: ", image.errors  if image.errors?
+      STDERR.puts "warnings: ", image.warnings  if image.warnings?
+      fd.nil? && next
+      open(name, 'w') do |out|
+        while (data = fd.read(1048576))  # 1024^2 - should it really be 1000^2?  TODO: run timing tests
+          out.write data
         end
-        fd.nil? && next
-        open(name, 'w') do |out|
-          while (data = fd.read(1024 * 1024))
-            out.write data
-          end
-        end
-      rescue => e
-        puts "output #{target} image #{name} error: #{e.message}"
       end
+    rescue => e
+      puts "output #{target} image #{name} error: #{e.message}"
+    end
   end
-
 
 end
