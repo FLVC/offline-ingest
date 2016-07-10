@@ -522,6 +522,7 @@ class Utils
       next if line =~ /warning: component data type mismatch/i
       next if line =~ /warning: superfluous BPCC box/i
       next if line =~ /ICC Profile CS 52474220/i
+      next if line =~ /warning: empty layer generated/i
       next if line.empty?
       errors.push line
     end
