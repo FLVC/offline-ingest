@@ -20,9 +20,6 @@ class BaseWatchDirectory
 
   attr_reader :config, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
-  DIRECTORY_UNCHANGED_TIME = 60
-# DIRECTORY_UNCHANGED_TIME = 15 * 60  #### Use this variable on launch
-
   def initialize(config, config_section, delay)
     @config  = config
     @config_section   = config_section

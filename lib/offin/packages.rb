@@ -1086,7 +1086,7 @@ class StructuredPagePackage < Package
     else
       ocr_produced_text = false      # TODO:  break out into own type of warning...
       image_name = path.sub(/^.*\//, '')
-      warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
+      # warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
     if ocr_produced_text  and (text = Utils.hocr(@config, path, @mods.languages))
