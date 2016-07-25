@@ -916,9 +916,6 @@ class StructuredPagePackage < Package
     @page_filenames = expected - missing
   end
 
-
-
-
   # Standard page rels_int (type application/rdf+xml)
 
   def page_rels_int page_pid, image_path

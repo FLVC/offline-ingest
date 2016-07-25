@@ -1,6 +1,6 @@
 module WatchConstants
 
-  FTP_DIRECTORY_DELAY        = 10 * 60  # directory has to be unchanged these many seconds
+  FTP_DIRECTORY_DELAY        = 180       # directory has to be unchanged these many seconds
   FILESYSTEM_DIRECTORY_DELAY = 10       # before we'll process packages we discover in them
 
   ERRORS_SUBDIRECTORY      = 'errors'

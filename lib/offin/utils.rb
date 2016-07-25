@@ -522,6 +522,7 @@ class Utils
       next if line =~ /warning: component data type mismatch/i
       next if line =~ /warning: superfluous BPCC box/i
       next if line =~ /ICC Profile CS 52474220/i
+      next if line =~ /warning: empty layer generated/i
       next if line.empty?
       errors.push line
     end
@@ -533,7 +534,6 @@ class Utils
   # return an open filehandle to a converted image;
 
   def self.image_processing config, image_filepath, command, error_title
-
     error_text = nil
     errors = []
     image = self.temp_file
@@ -667,12 +667,21 @@ class Utils
     FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
   end
 
+  def Utils.extended_image_filepath(image_filepath)
+    case Utils.mime_type(image_filepath)
+    when 'application/pdf', 'image/tiff'
+      return image_filepath + '[0]'
+    else
+      return image_filepath
+    end
+  end
 
   def self.image_to_jp2k config, image_filepath
-    return self.pass_through(image_filepath) if self.mime_type(image_filepath) == 'image/jp2'
+    return self.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'image/jp2'
+    please_jesus_forgive_me = "/usr/bin/convert -quiet -quality 75 -define jp2:prg=rlcp -define jp2:numrlvls=7 -define jp2:tilewidth=1024 -define jp2:tileheight=1024"
     return self.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{self.shellescape(image_filepath)} jp2:-",
-                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+                                  "#{please_jesus_forgive_me} #{Utils.shellescape(Utils.extended_image_filepath(image_filepath))} jp2:-",
+                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{please_jesus_forgive_me}' the following message was encountered:" )
   end
 
   # Geometry is something like "200x200" - resizing preserves the
