@@ -85,9 +85,10 @@ class Utils
   # For creating a solr query string, we need to escape some characters with "\".
 
   def Utils.solr_escape str
+    escaped = str.dup
     chars = [ '\\', '+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '"', ';', ' ' ]
-    chars.each { |c| str.gsub!(c, '\\' + c) }
-    return str
+    chars.each { |c| escaped.gsub!(c, '\\' + c) }
+    return escaped
   end
 
   # This is mostly to silence the "require 'datamapper'" that causes the annoying warning "CSV constant redefined".
@@ -521,6 +522,7 @@ class Utils
       next if line =~ /warning: component data type mismatch/i
       next if line =~ /warning: superfluous BPCC box/i
       next if line =~ /ICC Profile CS 52474220/i
+      next if line =~ /warning: empty layer generated/i
       next if line.empty?
       errors.push line
     end
@@ -532,7 +534,6 @@ class Utils
   # return an open filehandle to a converted image;
 
   def Utils.image_processing config, image_filepath, command, error_title
-
     error_text = nil
     errors = []
     image = Utils.temp_file
@@ -667,11 +668,22 @@ class Utils
   end
 
 
+  def Utils.extended_image_filepath(image_filepath)
+    case Utils.mime_type(image_filepath)
+    when 'application/pdf', 'image/tiff'
+      return image_filepath + '[0]'
+    else
+      return image_filepath
+    end
+  end
+
   def Utils.image_to_jp2k config, image_filepath
     return Utils.pass_through(image_filepath) if Utils.mime_type(image_filepath) == 'image/jp2'
+
+    please_jesus_forgive_me = "/usr/bin/convert -quiet -quality 75 -define jp2:prg=rlcp -define jp2:numrlvls=7 -define jp2:tilewidth=1024 -define jp2:tileheight=1024"
     return Utils.image_processing(config, image_filepath,
-                                  "#{config.image_convert_command} #{Utils.shellescape(image_filepath)} jp2:-",
-                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
+                                  "#{please_jesus_forgive_me} #{Utils.shellescape(Utils.extended_image_filepath(image_filepath))} jp2:-",
+                                  "When creating a JP2K from the image '#{image_filepath}' with command '#{please_jesus_forgive_me}' the following message was encountered:" )
   end
 
   # Geometry is something like "200x200" - resizing preserves the
@@ -725,7 +737,7 @@ class Utils
 
   # String for when a requested language was not supported
 
-  def Utils.langs_unsupported_comment config, requested_languages
+  def Utils.langs_unsupported_comment config, *requested_languages
     supported = config.supported_ocr_languages
     unsupported = []
     requested_languages.each { |lang| unsupported.push(lang) unless supported[lang] }
@@ -968,7 +980,7 @@ class Utils
     rels_ext_content = Utils.get_datastream_contents(config, collection_pid, 'RELS-EXT')
     rels_ext_xml = Nokogiri::XML(rels_ext_content)
 
-    # I know this is very bad but I can't get my head around the errors with multiple namespaces
+    # I know this is very bad but I can't get my head around the errors with multiple namespaces -Gail
 
     rels_ext_xml.remove_namespaces!
     view_rule_count = 0

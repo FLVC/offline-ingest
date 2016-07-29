@@ -1,0 +1,218 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'socket'
+
+# This program tries to copy all of the datastreams from an object on
+# one server (default islandorat) to an existing object on another
+# server (default islandorad).  No inline datastreams are copied
+# (e.g. RELS-EXT, RELS-INT, DC).  The object PID must be specified on
+# the command line; Specific datastreams can follow the object PID,
+# otherwise, all datastreams are checked.
+#
+# Normally if the label, size and mimetypes are the same, the
+# datastream is not copied. If the create-date on the destination is
+# greater than that on source object datastream, it is skipped.  Use
+# the --force flag to override those conditions.
+#
+# We use the regular config.yml file to get the admin username and
+# password, and assume it's the same for both destination and source
+# servers.
+
+# TODO: add command line options to supply these. --source-user --source-password  --destination-user  --destination-password
+
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+Kernel.trap('HUP')  { "IGNORE" }
+
+$LOAD_PATH.unshift case Socket.gethostname
+                   when /alpo/i;                                                  "/home/fischer/WorkProjects/offline-ingest/lib/"
+                   when /romeo-foxtrot|flvc-rfischer.local|fischer.flvc/i;        "/Users/fischer/WorkProjects/offline-ingest/lib/"
+                   when /islandora[dtp]\.fcla\.edu|tlhlxftp0\d*-.*\.flvc\.org/i;  "/usr/local/islandora/offline-ingest/lib"
+                   else
+                     STDERR.puts "#{$0} Doesn't know how to configure for this environment (#{Socket.gethostname.downcase}), quitting."
+                     exit -1
+                   end
+
+require 'optparse'
+require 'offin/ingest-support'
+require 'rubydora'
+
+def banner_text
+  return <<-EOF.gsub(/^\s+\:/, '')
+  : Usage: copy-datastreams [options] --source-id palmm:juv [datastreams]
+  :
+  : * when no --destination-id is given, we'll use the islandora PID specified for the required --source-id
+  : * if no specific datastreams are listed on the end of the command line, we'll copy all the datastreams (except for inline XML)
+  : * when the datastreams have identical labels, mimetypes and sizes, we'll skip the copy (use --force to override)
+  : * if the destination datastream is more recent than the source, we'll skip the copy (use --force to override)
+  : * by default we copy from islandora-test to islandora-prod,  but this can be changed (see below)
+  :
+  : Detailed options:
+  :
+EOF
+end
+
+Struct.new('DatastreamCopyConfig', :source_server, :destination_server, :user, :password, :verbose, :dry_run, :force, :source_id, :destination_id, :specific_datastreams)
+
+def parse_command_line(args)               # :source_server,                           :destination_server,                      :user, :password, :verbose, :dry_run, :force, :source_id, :destination_id, :specific_datastreams)
+  config = Struct::DatastreamCopyConfig.new('http://islandorat.fcla.edu:8080/fedora', 'http://islandorap.fcla.edu:8080/fedora',  nil,    nil,       true,     false,    false,  nil,        nil,             [])
+  opts    = OptionParser.new do |opt|
+    opt.banner = banner_text
+    opt.on_tail("  ")
+    opt.on("--source-server URL",         String,  "URL for source fedora repository, defaults to #{config.source_server}")                          { |url| config.source_server = url }
+    opt.on("--destination-server URL",    String,  "URL for destination fedora repository, defaults to #{config.destination_server}")                { |url| config.destination_server = url }
+
+    opt.on("--source-id PID",             String,  "Required, islandora object PID we'll copy datastreams FROM on the source fedora repository")                 { |pid| config.source_id = pid }
+    opt.on("--destination-id PID",        String,  "Islandora object PID we'll copy datastreams TO on the destination fedora repository, defaults to source-id")     { |pid| config.destination_id = pid }
+
+    opt.on("--[no-]verbose",  "Flag to print progress as we go, defaults to #{(config.verbose ? '--' : '--no-') + 'verbose'}")                                                     { |flg| config.verbose = flg }
+    opt.on("--[no-]dry-run",  "Flag indicates we'll print what we'd do, without actually making the copy, defaults to #{(config.dry_run ? '--' : '--no-') + 'dry-run'}")           { |flg| config.dry_run = flg }
+    opt.on("--[no-]force",    "Flag indicates we'll ignore equivalence checks to datastreams and ignore create times, defaults to #{(config.force ? '--' : '--no-') + 'force'}")   { |flg| config.force   = flg }
+  end
+  opts.parse!(args)
+
+  raise "You must include an islandora object PID from the source fedora repository."  unless config.source_id
+
+  config.destination_id ||= config.source_id
+  config.specific_datastreams = args
+  config.verbose = true if config.dry_run
+
+  sysconfig = Datyl::Config.new(get_config_filename, "default")
+
+  config.user     = sysconfig.user
+  config.password = sysconfig.password
+rescue => e
+  STDERR.puts e, opts
+  exit -1
+else
+  return config
+end
+
+def connect_source(config)
+  repository = Rubydora.connect :url => config.source_server, :user => config.user, :password => config.password
+  repository.ping
+  return repository
+rescue => e
+  STDERR.puts "Can't connect to source repository #{config.source_server}: #{e}"
+  exit -1
+end
+
+def connect_destination(config)
+  repository = Rubydora.connect :url => config.destination_server, :user => config.user, :password => config.password
+  repository.ping
+  return repository
+rescue => e
+  STDERR.puts "Can't connect to destination repository #{config.destination_server}: #{e}"
+  exit -1
+end
+
+def lookup_object(repository, object_id)
+  repository.find(object_id)
+rescue => e
+  STDERR.puts "Object ID #{object_id} could not be found on #{repository.config[:url]}: #{e}"
+  exit -1
+end
+
+# If our command line includes specific datastream names 'specified',
+# we need to find the corresponding names on the 'available' list and
+# return them (matches are case insensitive, but we return the matched
+# data from the 'available' list).  If the command line didn't include
+# datastream names and 'specified' is empty, we just return the
+# 'available' list.  All arrays are returned sorted.
+
+def limit_names_maybe(available, specified)
+  if available.empty?
+    STDERR.puts "There are no datastreams on the source object."
+  end
+
+  return available.sort if specified.empty?
+
+  matches = []
+  missing = []
+
+  specified.each do |name|
+    match = available.select{ |i| i[/^#{name}$/i] }.shift
+    if match.nil?
+      missing.push name
+    else
+      matches.push match
+    end
+  end
+
+  unless missing.empty?
+    STDERR.puts "These datastream(s) you specified on the command line don't exist on the source object: #{missing.join(', ')}; ignoring."
+  end
+
+  if matches.empty?
+    STDERR.puts "There are no datastream(s) on the source object that match the names you specified on the command line: #{specified.join(', ')}"
+  end
+
+  return matches.sort
+end
+
+# get options
+
+config = parse_command_line(ARGV)
+
+source_repository      = connect_source(config)
+destination_repository = connect_destination(config)
+
+only_these_datastreams = config.specific_datastreams.map { |ds_name| ds_name.downcase }  # for case insensitivy check...
+
+# get source digital object, destination digital object, exits with error if one of them doesn't exist
+
+source_object      = lookup_object(source_repository, config.source_id)
+destination_object = lookup_object(destination_repository, config.destination_id)
+
+source_datastream_names = limit_names_maybe(source_object.datastreams.keys,  config.specific_datastreams)
+
+source_datastream_names.each do |name|
+
+  source_datastream = source_object[name]
+  destination_datastream = destination_object.datastreams[name]
+
+  if config.verbose
+    puts ""
+    puts "Source datastream:      #{name} created='#{source_datastream.createDate}' label='#{source_datastream.dsLabel}' size='#{source_datastream.dsSize}' mimetype='#{source_datastream.mimeType}' controlgroup='#{source_datastream.controlGroup}' state='#{source_datastream.dsState}'"
+    if destination_datastream.createDate.nil? && destination_datastream.dsLabel.nil?
+      puts "Destination datastream: #{name} new"
+    else
+      puts "Destination datastream: #{name} created='#{destination_datastream.createDate}' label='#{destination_datastream.dsLabel}' size='#{destination_datastream.dsSize}' mimetype='#{destination_datastream.mimeType}' controlgroup='#{source_datastream.controlGroup}' state='#{source_datastream.dsState}'"
+    end
+  end
+
+  if source_datastream.controlGroup == 'X'
+    puts "   Skipping #{name}, since it is inline XML" if config.verbose
+    next
+  end
+
+  # Actually, now not so sure what state on datastream means... same as object-level?
+  #
+  # if source_datastream.dsState != 'A'
+  #   puts "Skipping #{name}, since it is not active" if config.verbose
+  #   next
+  # end
+
+  unless config.force
+    if (not destination_datastream.createDate.nil?) && (destination_datastream.createDate > source_datastream.createDate)
+      puts "    Skipping #{name} because destination's create date '#{destination_datastream.createDate}' is more recent than source's  '#{source_datastream.createDate}' (use --force to override)"  if config.verbose
+      next
+    end
+
+    if (destination_datastream.dsLabel == source_datastream.dsLabel) && (destination_datastream.dsSize == source_datastream.dsSize) && (destination_datastream.mimeType == source_datastream.mimeType)
+      puts "    Skipping #{name} because labels, mimetypes and sizes are the same (use --force to override)" if config.verbose
+      next
+    end
+  end
+
+  if config.dry_run
+    puts "     Dry-run, copy of #{name} skipped"
+  else
+    destination_datastream.dsLabel  = source_datastream.dsLabel
+    destination_datastream.content  = source_datastream.content
+    destination_datastream.mimeType = source_datastream.mimeType
+    destination_datastream.save
+    puts "    Copy of #{name} complete" if config.verbose
+  end
+end

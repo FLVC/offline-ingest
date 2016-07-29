@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__))
 
-require 'offin/sql-assember'
+require 'offin/sql-assembler'
 require 'helpers'
 
 RSpec.describe SqlAssembler do

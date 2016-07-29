@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+# Take the objectStore FOXML file and its associated datastreamStore
+# files, turn it into an ingestible FOXML archive file.
+
+require 'nokogiri'
+require 'ostruct'
+require 'mime/types'
+require 'uri'
+require 'base64'
+
+# Oops.  Deleted an object?  I did. This tool will let you reconstruct
+# it from data backup files (objectStore/ and their referenced
+# datastreamStore/ files).  It maintains the original PIDs.
+#
+# This works by starting with an objectStore FOXML file, and, using
+# the datastream internal IDs from the <contentLocation> elements,
+# replaces them with <binaryContent> elements containing the base64
+# encoded datastreams.  It writes out the resuling XML as a FOXML
+# archive file in the current working directory.
+#
+# Then the FOXML archive file can be restored on the fedora server
+# using standard fedora utilities:
+#
+#  PATH=/usr/local/fedora/client/bin/:$PATH
+#  fedora-ingest.sh f NEWFILE.FOXML info:fedora/fedora-system:FOXML-1.1 localhost:8080 fedoraAdmin PASSWORD http ingest-log
+#
+#  See http://www.fedora-commons.org/download/2.0/userdocs/client/cmd-line/index.html#d0e164
+#  for explanations of the arguments to fedora-ingest.sh.
+
+def oops str
+  STDERR.puts str
+  exit
+end
+
+def data_stream_to_filename(datastream_store_directory, name)
+  name = 'info:fedora/' + name.gsub('+', '/')
+  return  File.join(datastream_store_directory,  URI.encode(name, /[^A-Za-z0-9=()\.-]/).sub(/\.$/, "%2E"))
+end
+
+# TODO:  write tutorial on finding the objectStore/ and datastreamStore/ files from backup.
+# TODO:  take mutliple objectStore files as arguments
+# TODO:  check that objectstore_filepath is readable, and is a foxml object
+# TODO:  turn on strict checking in Nokogiri
+# TODO:  use options to set datastream store directory
+# TODO:  don't smash existing foxml files
+# TODO:  check the CWD is writable
+# TODO:  if there are no contentLocation elements, don't produce anything (the objectStore file will itself serve for recovery)
+
+objectstore_filepath = ARGV[0]
+
+fail "Can't find #{objectstore_filepath}" unless File.exists? objectstore_filepath
+
+doc = Nokogiri::XML(File.open(objectstore_filepath))
+
+doc.xpath('//foxml:contentLocation').each do |node|
+  oops 'contentLocation element is missing the expected TYPE attribute' unless node['TYPE'] == 'INTERNAL_ID'
+  oops 'contentLocation element is missing the expected REF attribute'  unless node['REF']  =~ /.*:\d+\+/
+
+  internal_id = node['REF']             # reference to the associated datastream..
+  node.name   = 'binaryContent'         # <contentLocation> node becomes a <binaryContent> element
+
+  node.keys.each { |k| node.delete k }  # delete all atributes,  add base64 encoding of datastream:
+
+  node.content = "\n" + Base64.encode64(File.read(data_stream_to_filename('data/datastreamStore', internal_id)))
+end
+
+File.open(File.basename(objectstore_filepath) + '.foxml',  'w') { |f| f.write doc.to_s }

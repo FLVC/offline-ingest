@@ -2,7 +2,7 @@ require 'cgi'
 require 'uri'
 require 'net/http'
 require 'nokogiri'
-
+require 'timeout'
 
 # Our purl requirements:
 # https://docs.google.com/document/d/1TrFsFfAiqpQSCpitDMb6fMblGHcB-_rnEJhUpAtAO0g
@@ -12,6 +12,11 @@ require 'nokogiri'
 # http://code.google.com/p/persistenturls/wiki/PURLFAQ
 #
 # TODO: get list of admin groups, existing domains,
+
+
+class PurlzError < StandardError;            end
+class PurlzTimeoutError < PurlzError;        end
+class PurlzAuthorizationError < PurlzError;  end
 
 
 class SaxDocument < Nokogiri::XML::SAX::Document
@@ -111,6 +116,11 @@ class Purlz
     @cookie     = get_login_cookie()
   end
 
+  def to_s
+    "<#purl server: #{server_uri}>"
+  end
+
+
   private
 
   # get_login_cookie() => cookie
@@ -122,9 +132,12 @@ class Purlz
     auth_info = [ "id=#{CGI.escape(username)}", "passwd=#{CGI.escape(password)}" ].join('&')
 
     http.request_post(LOGIN_PATH, auth_info) do |response|
-      raise "PURLZ login failed for #{server_uri}" if not response or not response['location'] or response['location'] =~ /failure/i
+      raise PurlzAuthorizationError, "purl login failed for #{username} on #{server_uri.host}:#{server_uri.port}" if not response or not response['location'] or response['location'] =~ /failure/i
       return { 'Cookie' => 'NETKERNELSESSION=session:' + response['set-cookie'][%r(session:([0-9A-F]+)), 1] }
     end
+
+  rescue TimeoutError => e
+    raise PurlzTimeoutError, "Timeout fetching login cookie when connecting to purl server #{server_uri.host}:#{server_uri.port}"
   end
 
   # request_helper(PURL_ID, optional TARGET_URL, optional *MAINTAINERS) => Struct::PurlInfo
@@ -181,6 +194,8 @@ class Purlz
     params = assemble_params(data)
     response = http.request_post(data.admin_url,  params,  cookie)
     return (response.code == "201")
+  rescue TimeoutError => e
+    raise PurlzTimeoutError, "Timeout for purl create when connecting to purl server #{server_uri.host}:#{server_uri.port}"
   end
 
   def modify purl_id, target_url, *maintainers
@@ -188,12 +203,16 @@ class Purlz
     params = assemble_params(data)
     response = http.request_put(data.admin_url + '?' + params, '', cookie)
     return (response.code == "200")
+  rescue TimeoutError => e
+    raise PurlzTimeoutError, "Timeout for purl modify when connecting to purl server #{server_uri.host}:#{server_uri.port}"
   end
 
   def delete purl_id
     data = request_helper(purl_id)
     response = http.delete(CGI.escape(data.admin_url), cookie)
     return (response.code == "200")
+  rescue TimeoutError => e
+    raise PurlzTimeoutError, "Timeout for purl delete when connecting to purl server #{server_uri.host}:#{server_uri.port}"
   end
 
   # exists?(PURL_ID)
@@ -255,6 +274,8 @@ class Purlz
     data = request_helper(purl_id)
     response = http.request_get(data.admin_url)
     return (response.code == '200' ? xml_to_hash(response.body) : nil)
+  rescue TimeoutError => e
+    raise PurlzTimeoutError, "Timeout in purl fetch when connecting to purl server #{server_uri.host}:#{server_uri.port}"
   end
 
 end # of class Purlz

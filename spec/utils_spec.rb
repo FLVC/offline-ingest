@@ -528,6 +528,10 @@ RSpec.describe Utils do
     it "provides a string listing unsupported language codes" do
       expect(Utils.langs_unsupported_comment(config, "XX")).to eq("XX")
       expect(Utils.langs_unsupported_comment(config, "XX", "XY")).to eq("XX, XY")
+      stuff = [ "XX",  "YY",  "ZZ" ]
+      expect(Utils.langs_unsupported_comment(config, *stuff)).to eq("XX, YY, ZZ")
+      stuff = [ ]
+      expect(Utils.langs_unsupported_comment(config, *stuff)).to eq("")
     end
   end
 

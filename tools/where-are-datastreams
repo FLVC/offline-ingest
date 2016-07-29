@@ -7,7 +7,9 @@
 # It first grabs the FOXML for the PID, and then uses our akumbra
 # hash-path mapping to locate the file on disk.
 #
-# so for the above example....
+# TODO: use config.yml to get the password
+# TODO: parse /usr/local/fedora/server/config/spring/akubra-llstore.xml instead of using th currently-hardcoded parameters.
+# TODO: switch to XPath to get datastreams
 
 require 'rubygems'
 require 'uri'
@@ -17,8 +19,14 @@ require 'rest-client'
 require 'digest/md5'
 require 'socket'
 
-DATASTREAM_STORE_ROOT = '/data/datastreamStore'
-METADATASTREAM_STORE_ROOT = '/data/objectStore'
+DATASTREAM_STORE_ROOT = '/usr/local/fedora/data/datastreamStore'
+METADATASTREAM_STORE_ROOT = '/usr/local/fedora/data/objectStore'
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+Kernel.trap('HUP')  { "IGNORE" }
+
+STDOUT.sync = true
 
 Struct.new('Options', :server_location, :admin_password, :admin_username, :islandora_pid, :last_datastreams_only)
 
@@ -32,10 +40,12 @@ def parse_command_line args
     opt.on("--last-datastreams-only",              "Optionally, only show the last version of datastreams, defaults to all versions")  { |last| cmdline.last_datastreams_only = last }
   end
   opts.parse!(args)
+
   raise "You must include a server password."               unless cmdline.admin_password
   raise "You must include one argument, an islandora PID."  unless args.length == 1
   cmdline.islandora_pid = args[0].gsub('%2F', ':').sub(/^info:fedora\//, '').gsub('%3A', ':')
   raise "'#{cmdline.islandora_pid}' is not an islandora PID."             unless cmdline.islandora_pid.count(':') == 1
+
 rescue => e
   STDERR.puts e, opts
   exit -1
@@ -80,13 +90,18 @@ def metadata_stream_to_filename(islandora_pid)
   return ([ METADATASTREAM_STORE_ROOT ] + hash.unpack('A2') + [ filename ]).join('/')
 end
 
-
-
-
 def nope message
   STDERR.puts message
   exit -1
 end
+
+# How many directory components do we use in the datastore?
+# /##/##/##/ and /##/ are what we've configured.  Arguably, we should
+# just parse the akubra storage XML configuration file and figure it
+# out for ourselves:
+# /usr/local/fedora/server/config/spring/akubra-llstore.xml - we could
+# then get the METADATASTREAM_STORE_ROOT and DATASTREAM_STORE_ROOT
+# locations ourselves.
 
 def directory_components
 
@@ -94,8 +109,9 @@ def directory_components
   when /islandorad.fcla.edu/i then 1
   when /islandorat.fcla.edu/i then 1
   when /islandorap.fcla.edu/i then 3
+  when /islandorac.fcla.edu/i then 3
   else
-    nope "I don't think you can use this host (no local data/object store) - I just know about islandorad, islandorat, islandorap"
+    nope "I don't think you can use this host (no local data/object store?) - This program only knows about islandorad, islandorat, islandorap and islandorac"
   end
 
 end
@@ -206,7 +222,7 @@ end
 # MAIN
 
 Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
-Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
+Kernel.trap('PIPE') { STDERR.puts ""  ; exit -4 }
 
 
 config = parse_command_line(ARGV)
@@ -218,7 +234,25 @@ Nokogiri::XML::SAX::Parser.new(sax_document).parse(get_foxml(config))
 
 
 
-# find max column widths for each field (except the last)
+# Find max column widths for each field (except for filename, don't
+# care since it's listed last).  We're looking for output like:
+#
+# datastream     version                 type  length  filepath
+# ----------     -------                -----  ------  --------
+#      AUDIT     AUDIT.0             text/xml       0  /data/objectStore/03/info%3Afedora%2Ffiu%3A18532
+#         DC        DC.1             text/xml     380  /data/objectStore/03/info%3Afedora%2Ffiu%3A18532
+#         DC       DC1.0             text/xml     338  /data/objectStore/03/info%3Afedora%2Ffiu%3A18532
+#       HOCR      HOCR.0            text/html   15641  /data/datastreamStore/f5/01/3d/info%3Afedora%2Ffiu%3A18532%2FHOCR%2FHOCR.0
+#        JP2       JP2.0            image/jp2  135306  /data/datastreamStore/1e/85/11/info%3Afedora%2Ffiu%3A18532%2FJP2%2FJP2.0
+#        JPG       JPG.0           image/jpeg   27531  /data/datastreamStore/3f/72/9b/info%3Afedora%2Ffiu%3A18532%2FJPG%2FJPG.0
+#        OBJ       OBJ.0           image/tiff  250575  /data/datastreamStore/bd/53/55/info%3Afedora%2Ffiu%3A18532%2FOBJ%2FOBJ.0
+#        OCR       OCR.0           text/plain     512  /data/datastreamStore/35/38/0a/info%3Afedora%2Ffiu%3A18532%2FOCR%2FOCR.0
+#        PDF       PDF.0      application/pdf  178888  /data/datastreamStore/4a/01/5d/info%3Afedora%2Ffiu%3A18532%2FPDF%2FPDF.0
+#   RELS-EXT  RELS-EXT.1  application/rdf+xml     888  /data/objectStore/03/info%3Afedora%2Ffiu%3A18532
+#   RELS-INT  RELS-INT.0  application/rdf+xml     364  /data/datastreamStore/2d/e3/cf/info%3Afedora%2Ffiu%3A18532%2FRELS-INT%2FRELS-INT.0
+#         TN        TN.0           image/jpeg    7739  /data/datastreamStore/dc/c5/5a/info%3Afedora%2Ffiu%3A18532%2FTN%2FTN.0
+#
+# Note: length information for the AUDIT datastream is not provided in the FoXML object file, so we default to zero.
 
 cols = [ 0, 0, 0, 0 ]
 sax_document.datastreams.each do |ds|

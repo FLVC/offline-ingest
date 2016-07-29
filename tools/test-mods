@@ -4,14 +4,18 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
-$LOAD_PATH.unshift "#{ENV['HOME']}/WorkProjects/offline-ingest/lib/"
-# $LOAD_PATH.unshift "/usr/local/islandora/offline-ingest/lib/"
+$LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), "../lib"))
 
 require 'offin'
 require 'optparse'
 
-@config  = Datyl::Config.new("#{ENV['HOME']}/WorkProjects/offline-ingest/config.yml", "default", "islandora7d")
-# @config  = Datyl::Config.new("/usr/local/islandora/offline-ingest/config.yml", "default", "islandora7d")
+config_file = ENV['CONFIG_FILE'] || "/usr/local/islandora/offline-ingest/config.yml"
+unless File.exists? config_file
+  STDERR.puts "#{$0.sub(/^.*\//,'')}: can't read a configuration file#{config_file ? " (tried #{config_file})" : ""}: try setting environment variable CONFIG_FILE to point to a valid YAML config file."  # damned emacs: "
+  exit 1
+end
+
+config  = Datyl::Config.new(config_file, "default")
 
 Struct.new('MockManifest', :owning_institution, :submitting_institution, :object_history, :other_logos)
 
