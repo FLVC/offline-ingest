@@ -17,6 +17,7 @@ end
 
 config  = Datyl::Config.new(config_file, "default")
 
+
 Struct.new('MockManifest', :owning_institution, :submitting_institution, :object_history, :other_logos)
 
 manifest = Struct::MockManifest.new
@@ -24,21 +25,21 @@ manifest.owning_institution = 'UF'
 manifest.object_history = [ { "data" => "admin_unit=\"NCF01\", ingest_id=\"ing12813\", creator=\"creator:SNORRIS\", creation_date=\"2012-05-16 13:57:11\", modified_by=\"creator:SNORRIS\", modification_date=\"2012-05-16 13:58:09\"", "source" => "digitool"} ]
 ARGV.each do |filename|
 
-  @mods = Mods.new(@config, filename)
+  @mods = Mods.new(config, filename)
 
-  STDERR.puts "Extensions? #{@mods.flvc_extensions?}"
+  # STDERR.puts "Extensions? #{@mods.flvc_extensions?}"
 
   # @mods.add_islandora_identifier('foo:bar')
   # @mods.add_flvc_extension_elements(manifest)
 
   # STDERR.puts "Extensions? #{@mods.flvc_extensions?}"
 
-  # STDERR.puts "MODS file #{filename} is #{@mods.valid? ? 'valid' : 'not valid'}."
-  # if @mods.errors?
-  #   STDERR.puts 'Errors:'
-  #   STDERR.puts @mods.errors.map { |foo| '   ' + foo }
-  #   next
-  # end
+  STDERR.puts "MODS file #{filename} is #{@mods.valid? ? 'valid' : 'not valid'}."
+  if @mods.errors?
+    STDERR.puts 'Errors:'
+    STDERR.puts @mods.errors.map { |foo| '   ' + foo }
+    next
+  end
   if @mods.warnings?
     STDERR.puts 'Warnings:'
     STDERR.puts @mods.warnings.map { |foo| '   ' + foo }
