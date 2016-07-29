@@ -20,9 +20,6 @@ class BaseWatchDirectory
 
   attr_reader :config, :config_section, :incoming_directory, :processing_directory, :warnings_directory, :errors_directory, :hostname
 
-  DIRECTORY_UNCHANGED_TIME = 60
-# DIRECTORY_UNCHANGED_TIME = 15 * 60  #### Use this variable on launch
-
   def initialize(config, config_section, delay)
     @config  = config
     @config_section   = config_section
@@ -35,17 +32,19 @@ class BaseWatchDirectory
   def enqueue_incoming_packages
     ready_directories.each do |source|
       container_name = DataBase::FtpContainer.next_container_name(hostname)
-
       new_container_directory = new_processing_directory(container_name)
+      package_name = File.basename(source)
       begin
         FileUtils.mv source, new_container_directory
       rescue => e
-        STDERR.puts "ERROR: Can't move #{package_name} from #{incoming_directory} to newly created #{new_container_directory} for processing. Skipping."
+        STDERR.puts "ERROR: Can't move the package #{package_name} from #{incoming_directory} to newly created #{new_container_directory} for processing. Skipping."
         STDERR.puts "ERROR: #{e.class}: #{e.message}"
         STDERR.puts "ERROR: removing unused #{new_container_directory}"
+        STDERR.puts "ERROR: sleeping 5 minutes"
         cleanup_unused_container new_container_directory
+        sleep 5 * 60
       else
-        resque_enqueue container_name,  File.basename(source)
+        resque_enqueue container_name,  package_name
       end
     end
   end

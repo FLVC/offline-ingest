@@ -97,6 +97,7 @@ class ProspectiveMetadataChecker < MetadataChecker
       if data = purl_server.get(puri.path)
         pre_existing_maintainers = data[:uids] + data[:gids]
         potential_surprises = pre_existing_maintainers.map{ |x| x.strip.downcase } - maintainers.map{ |y| y.strip.downcase }
+        potential_surprises.delete_if { |x| x == "admin" }  # commonly happens, don't worry about this one
         package.warning "When creating prospective PURL #{purl}, found an existing purl. Keeping existing maintainers #{potential_surprises.inspect})." unless potential_surprises.empty?
         maintainers += pre_existing_maintainers
       end
