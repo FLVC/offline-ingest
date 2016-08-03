@@ -266,7 +266,7 @@ module DataBase
     DataMapper.repository(:default).adapter.execute("ALTER TABLE ftp_packages ALTER time_processed TYPE timestamp with time zone")
   end
 
-  # just add the new ftp tables
+  # just add the new ftp tables (TODO: build in support for this for dashboard)
 
   def self.add_ftp_tables config
     self.setup config

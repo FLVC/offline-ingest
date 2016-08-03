@@ -74,11 +74,6 @@ class ProspectiveMetadataChecker < MetadataChecker
         next
       end
 
-      if purl_server.tombstoned?(puri.path)
-        package.error "The PURL #{purl} was tombstoned and cannot be recreated."
-        next
-      end
-
       if puri.path =~ /^\/fcla\//i
         package.error "PURL #{puri} is using 'fcla' as the domain (first component) of the PURL #{purl}, which is not supported."
         next
@@ -93,6 +88,11 @@ class ProspectiveMetadataChecker < MetadataChecker
 
       target      = sprintf("http://%s/islandora/object/%s", package.config.site,  package.pid)
       maintainers = [ 'flvc', institution_code ]
+
+      if purl_server.tombstoned?(puri.path)
+        package.error "The PURL #{purl} was previously tombstoned and cannot be recreated."
+        next
+      end
 
       if data = purl_server.get(puri.path)
         pre_existing_maintainers = data[:uids] + data[:gids]
