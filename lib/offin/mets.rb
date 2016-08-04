@@ -132,9 +132,7 @@ class TableOfContents
     end
   end
 
-
   private
-
 
   def is_page? elt
     return elt.class == Struct::Page
@@ -407,9 +405,7 @@ class Mets
     @valid and not errors?
   end
 
-
   private
-
 
   def xml_syntax_errors? list
     return false if list.empty?

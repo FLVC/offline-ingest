@@ -32,10 +32,10 @@ NEWSPAPER_PAGE_CONTENT_MODEL   =  'islandora:newspaperPageCModel'
 #  BasicImagePackage   LargeImagePackage   PDFPackage   StructuredPagePackage (base class)
 #                                                                |
 #                                                                |
-#                                                  .-----------------------------.
-#                                                  |                             |
-#                                                  |                             |
-#                                             BookPackage               NewspaperIssuePackage
+#                               .-------------------------.-----------------------------.
+#                               |                         |                             |
+#                               |                         |                             |
+#                         FdnlPackage                BookPackage               NewspaperIssuePackage
 #
 #
 # Generally, all the Package classes have objects they create to
