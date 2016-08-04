@@ -1,0 +1,81 @@
+#!/usr/bin/env ruby
+
+# experiment for extracting and augmenting MODS contained within FDNL METS, then save it as a MODS file.
+
+
+require 'rubygems'
+require 'nokogiri'
+require 'time'
+
+Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -1 }
+Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -2 }
+Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -3 }
+
+MODS_NAMESPACE = 'http://www.loc.gov/mods/v3'
+
+
+def parse_mets(filename)
+  return  Nokogiri::XML(File.read filename)
+end
+
+def extract_mods_text(mets_doc)
+  mods_child = mets_doc.xpath('//mods:mods', 'mods' => MODS_NAMESPACE)
+  mods = Nokogiri::XML(mods_child.to_s)
+
+  mods.root.add_namespace(nil,  'http://www.loc.gov/mods/v3')
+  mods.root.add_namespace('mods',  'http://www.loc.gov/mods/v3')
+  mods.root.add_namespace('xsi',  'http://www.w3.org/2001/XMLSchema-instance')
+  mods.root.add_namespace('flvc', 'info:flvc/manifest/v1')
+
+  mods.root['version']="3.5"
+  mods.root['xsi:schemaLocation'] = "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+
+  #### ARGGFFFFSSSZBLUPTFFF
+
+  mods = Nokogiri::XML(mods.to_s)
+
+  mods.xpath('//mods:originInfo/mods:dateIssued', 'mods' => MODS_NAMESPACE).each do |node|
+    next unless node.attributes.empty?
+    date = Time.parse(node.content).iso8601[0..9]   # catch exceptions
+    node['encoding'] = 'w3cdt'
+    node.content = date
+  end
+
+    # ident = Nokogiri::XML::Node.new("#{format_prefix}identifier", @xml_document)
+    # ident.content = str
+    # ident['type'] = 'IID'
+    # @xml_document.root.add_child(ident)
+    # ident.after "\n"
+
+
+
+
+  # fixup
+  #  <mods:originInfo>
+  #    <mods:dateIssued>July 1, 1927</mods:dateIssued>   =>   <dateIssued encoding="w3cdtf">1927-07-01</dateIssued>
+
+  #
+  # add:
+  #  <identifier type="IID"> directory-name </identifier>
+  #
+  # do we need to add this?
+  #
+  #  <extension>
+  #     <flvc:flvc>
+  #        <flvc:owningInstitution>FSU</flvc:owningInstitution>
+  #        <flvc:submittingInstitution>FSU</flvc:submittingInstitution>
+  #     </flvc:flvc>
+  #  </extension>
+
+
+  return mods.to_xml
+end
+
+
+def main(filename)
+  mets = parse_mets(filename)
+  puts extract_mods_text(mets)
+end
+
+
+main ARGV[0]
