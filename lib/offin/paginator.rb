@@ -271,7 +271,7 @@ class PackagePaginator
 
   def temper_params params, additional_params = {}
     result = params.merge additional_params
-    result.each { |k,v| result[k] = v.to_s;  result.delete(k) if result[k].empty? }
+    result.each { |k,v| result[k] = v.to_s.strip;  result.delete(k) if result[k].empty? }
   end
 
   def get_previous_id id, params
