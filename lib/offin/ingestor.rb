@@ -10,30 +10,11 @@ require 'offin/errors'
 
 # TODO:  have to yank ingestor warnings and errors into Package object,
 
-
-
-
-# Extend RI mixins to include itql queries:
-
-module Rubydora
-  module ResourceIndex
-    def itql query
-      if CSV.const_defined? :Reader
-        FasterCSV.parse(self.risearch(query, :lang => 'itql'), :headers => true)
-      else
-        CSV.parse(self.risearch(query, :lang => 'itql'), :headers => true)
-      end
-    end
-  end
-end
-
-
 class Ingestor
 
   include Errors
 
   # TODO: sanity check on config object, throw error that should stop all processing
-
 
   attr_reader :repository, :pid, :namespace, :fedora_object, :size
 
@@ -159,14 +140,14 @@ class Ingestor
   # dealing with collections for this object to be ingested into
 
   def existing_collections
-    query = "select $object $title from <#ri> " +
-            "where $object <fedora-model:label> $title " +
-            "and " +
-            "($object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel> " +
-            "or " +
-            "$object <fedora-model:hasModel> <info:fedora/islandora:newspaperCModel>)"
+    query = "SELECT DISTINCT ?object ?title FROM <#ri> " +
+            "WHERE { " +
+            "   ?object <fedora-model:label> ?title ; " +
+            "           <fedora-model:state> <fedora-model:Active> . " +
+            " { ?object <fedora-model:hasModel> <info:fedora/islandora:newspaperCModel> } UNION { ?object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel> } " +
+            "}"
 
-    @repository.itql(query).map{ |row| row[0] }
+    @repository.sparql(query).map{ |row| row[0] }
   end
 
 

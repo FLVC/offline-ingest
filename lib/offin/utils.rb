@@ -30,21 +30,6 @@ ensure
 end
 
 
-# Extend RI mixins to include itql queries:
-
-module Rubydora
-  module ResourceIndex
-    def itql query
-      if CSV.const_defined? :Reader
-        FasterCSV.parse(self.risearch(query, :lang => 'itql'), :headers => true)
-      else
-        CSV.parse(self.risearch(query, :lang => 'itql'), :headers => true)
-      end
-    end
-  end
-end
-
-
 
 
 class Utils
@@ -199,9 +184,10 @@ class Utils
   # Return a mapping from short islandora PIDs (e.g. fsu:foobar, not info:fedora/fsu:foobar) and their titles.
 
   def Utils.get_collection_names config
-    query = "select $object $title from <#ri> " +
-            "where $object <fedora-model:label> $title " +
-            "and $object <fedora-model:hasModel> <info:fedora/islandora:collectionCModel>"
+    query = "SELECT DISTINCT ?object ?title FROM <#ri> " +
+            " WHERE { ?object <fedora-model:label> ?title ;" +
+            "                 <fedora-model:hasModel> <info:fedora/islandora:collectionCModel> ;" +
+            "                 <fedora-model:state> <fedora-model:Active> . }"
 
     repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
 
@@ -210,7 +196,7 @@ class Utils
     end
 
     hash = {}
-    repository.itql(query).each do |x|
+    repository.sparql(query).each do |x|
       hash[x[0].sub('info:fedora/', '')] = x[1]
     end
     return hash
