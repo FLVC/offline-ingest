@@ -1638,13 +1638,6 @@ class NewspaperIssuePackage < StructuredPagePackage
       return
     end
 
-    existing_issues_object_ids = Utils.get_newspaper_issues_by_date_issued(@config, @newspaper_id, @date_issued)
-
-    if not existing_issues_object_ids.empty?
-      error "The #{pretty_class_name} has an issue date #{@date_issued}, but it is already in use by #{ (existing_issues_object_ids.count == 1 ? "object " : "objects ") + existing_issues_object_ids.join(', ')}."
-      return
-    end
-
     @issue_sequence = Utils.get_next_newspaper_issue_sequence config, @newspaper_id
     if not @issue_sequence
       error "There was an error retrieving information about the issues sequences."

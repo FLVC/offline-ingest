@@ -264,42 +264,6 @@ class Utils
     return
   end
 
-  def Utils.get_newspaper_issues_by_date_issued config, newspaper_pid, issue_date
-
-    query = <<-SPARQL.gsub(/^        /, '')
-        PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
-        PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
-
-        SELECT ?object ?label
-        FROM <#ri>
-        WHERE {
-          ?object fedora-rels-ext:isMemberOf <info:fedora/#{newspaper_pid.sub(/^info:fedora\//, '')}> ;
-               <fedora-model:hasModel> <info:fedora/#{NEWSPAPER_ISSUE_CONTENT_MODEL}> ;
-               <fedora-model:label> ?label;
-               <islandora-rels-ext:dateIssued> "#{issue_date}"
-        }
-    SPARQL
-
-    repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
-
-    quickly do
-      repository.ping
-    end
-
-    # The sparql query returns a (possibly empty list) of rows along the lines of
-    #
-    # #<CSV::Row "object":"info:fedora/fsu:157125"  "label":"secolo">
-    #
-    # We really should expect one or zero here, but there could be
-    # multiples; so we return a possibly empty array of object ids.
-
-    return repository.sparql(query).map { |row_rec| row_rec['object'].sub(/^info:fedora\//, '') }
-
-  rescue => e
-    return []
-  end
-
-
   def Utils.get_newspaper_pids config
 
     query = <<-SPARQL.gsub(/^        /, '')
