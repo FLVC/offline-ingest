@@ -20,10 +20,10 @@ def config(filename)
   raise "Doesn't look like '#{filename}' is a valid yaml file" unless config
 
   default_section = config['default']
-  raise "Can't read the 'default:' section from #{'filename'}" unless default_section.class == Hash
+  raise "Can't read the 'default:' section from '#{filename}'" unless default_section.class == Hash
 
   db = default_section['drupal_database']
-  raise "Can't read the value of 'drupal_database:' from the 'default:' section from #{'filename'}" unless db.class == String
+  raise "Can't read the value of 'drupal_database:' from the 'default:' section from '#{filename}'" unless db.class == String
 
   return db
 rescue => e
