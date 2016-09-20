@@ -2,6 +2,7 @@
 #
 # Make an SQL statement suitable for inclusion into fedora/server/config/filter-drupal.xml
 
+require 'rubygems'
 require 'data_mapper'
 require 'yaml'
 
@@ -15,7 +16,7 @@ def config(filename)
   end
   raise "Can't read '#{filename}'" unless File.exists?(filename) && File.readable?(filename)
 
-  config = YAML.load_file filename
+  config = YAML.load_file(filename) rescue nil
   raise "Doesn't look like '#{filename}' is a valid yaml file" unless config
 
   default_section = config['default']
@@ -94,6 +95,5 @@ def build_sql(schemas)
   return sprintf(template(), *sections)
 end
 
-
-setup(config(ARGV[0]))
+setup(config(ARGV[0] || '/usr/local/islandora/offline-ingest/config.yml'))
 puts build_sql(schemas())
