@@ -588,7 +588,7 @@ class Utils
                                     "When creating a JEPG from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
   ensure
-    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
+    FileUtils.rm_f working_image_filepath if working_image_filepath and working_image_filepath != image_filepath
   end
 
   def Utils.image_to_pdf config, image_filepath
@@ -601,7 +601,7 @@ class Utils
                                     "When creating a PDF from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
   ensure
-    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
+    FileUtils.rm_f working_image_filepath if working_image_filepath and working_image_filepath != image_filepath
   end
 
   def Utils.image_to_tiff config,  image_filepath
@@ -614,7 +614,7 @@ class Utils
                                     "When creating a TIFF from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
   ensure
-    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
+    FileUtils.rm_f working_image_filepath if working_image_filepath and working_image_filepath != image_filepath
   end
 
 
@@ -643,7 +643,6 @@ class Utils
   # specify the same output type as the supplied image, if in doubt.
 
   def Utils.image_resize config, image_filepath, geometry, new_format = nil
-
     working_image_filepath = nil
     Utils.convert_jp2k_maybe(config, image_filepath) do |working_image_filepath, errors|
       return open('/dev/null'), errors unless errors.nil? or errors.empty?
@@ -652,7 +651,7 @@ class Utils
                                     "When creating a resized image (#{geometry}) from the image '#{working_image_filepath}' with command '#{config.image_convert_command}' the following message was encountered:" )
     end
   ensure
-    FileUtils.rm_f working_image_filepath if working_image_filepath != image_filepath
+    FileUtils.rm_f working_image_filepath if working_image_filepath and working_image_filepath != image_filepath
   end
 
   private
