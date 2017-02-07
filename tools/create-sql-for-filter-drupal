@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+#
+# Make an SQL statement suitable for inclusion into fedora/server/config/filter-drupal.xml
+
+require 'rubygems'
+require 'data_mapper'
+require 'yaml'
+
+DEBUG=false
+
+
+def config(filename)
+  unless filename
+    STDERR.puts "usage: #{$0} [config.yml filename]"
+    exit -1
+  end
+  raise "Can't read '#{filename}'" unless File.exists?(filename) && File.readable?(filename)
+
+  config = YAML.load_file(filename) rescue nil
+  raise "Doesn't look like '#{filename}' is a valid yaml file" unless config
+
+  default_section = config['default']
+  raise "Can't read the 'default:' section from '#{filename}'" unless default_section.class == Hash
+
+  db = default_section['drupal_database']
+  raise "Can't read the value of 'drupal_database:' from the 'default:' section from '#{filename}'" unless db.class == String
+
+  return db
+rescue => e
+  STDERR.puts e
+  exit -1
+end
+
+def setup(db)
+  DataMapper::Logger.new($stderr, :debug) if DEBUG
+  @dm = DataMapper.setup(:default, db)
+  DataMapper.finalize
+  @dm.select('select 1 + 1')
+rescue => e
+  STDERR.puts e
+  exit -1
+end
+
+def template()
+  return <<EOF
+SELECT DISTINCT all_users.uid AS userid, all_users.name, all_users.pass, all_roles.name AS role FROM
+    (
+%s
+    )    AS all_users
+
+    LEFT JOIN
+    (
+%s
+    )    AS all_users_roles
+    ON all_users.uid = all_users_roles.uid
+
+    LEFT JOIN
+    (
+%s
+    )    AS all_roles
+    ON all_users_roles.rid = all_roles.rid
+
+    WHERE all_users.name = ? AND all_users.pass = ?
+EOF
+end
+
+
+def islandora_schema?(schema)
+  not @dm.select("select rid, uid from #{schema}.users_roles").empty?
+rescue => e
+  return false
+end
+
+def schemas()
+  list = []
+  @dm.select('select schema_name from information_schema.schemata').sort.each do |schema|
+    list.push schema if islandora_schema? schema
+  end
+  return list.sort
+end
+
+def build_sql(schemas)
+  union = "UNION ALL\n"
+  max = schemas.map{ |s| s.length }.max
+  sections = []
+  [ "    SELECT uid, name, pass FROM %#{max}s.users ",
+    "    SELECT rid, uid FROM %#{max}s.users_roles ",
+    "    SELECT rid, name FROM %#{max}s.role " ].each  do |section|
+    selects = []
+    schemas.each do |schema|
+      selects.push sprintf(section, schema)
+    end
+    sections.push selects.join(union)
+  end
+  return sprintf(template(), *sections)
+end
+
+setup(config(ARGV[0] || '/usr/local/islandora/offline-ingest/config.yml'))
+puts build_sql(schemas())

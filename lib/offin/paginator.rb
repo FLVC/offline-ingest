@@ -240,6 +240,8 @@ class PackageListPaginator
        @params.delete('before')
        @params.delete('after')
     end
+
+    @params.each { |k,v| @params[k] = v.strip }  # remove extra spaces
   end
 
 end # of class PackageListPaginator

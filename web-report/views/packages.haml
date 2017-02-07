@@ -138,10 +138,10 @@
     %table{ :class => 'packages' }
       %thead
         %tr
-          %th{ :style => "width:10%;" } Date
+          %th{ :style => "width:10%;" } Start
+          %th{ :style => "width:10%;" } End
           %th{ :style => "width:8%;" } Status
           %th{ :style => "width:10%;" } Package
-          %th{ :style => "width:10%;" } Digitool
           %th{ :style => "width:62%;" } Title
       %tbody
         - query_string = @paginator.query_string('before' => nil,  'after' => nil)
@@ -149,6 +149,9 @@
           %tr
             %td
               #{p.time_started.strftime('%F %T')}
+
+            %td
+              #{p.time_finished.strftime('%F %T')}
 
             %td
               - case
@@ -171,11 +174,6 @@
                   #{p.package_name.to_s + " &rArr;"}
               - else
                 #{p.package_name}
-
-            %td
-              - if p.digitool_id
-                %a{ :target => "digitool", :href => "http://digitool.fcla.edu/R/?func=dbin-jump-full&object_id=#{p.digitool_id}" }
-                  #{p.digitool_id.to_s + " &rArr;"}
 
             %td
               #{p.title or ''}
