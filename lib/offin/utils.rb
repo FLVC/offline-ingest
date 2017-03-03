@@ -469,6 +469,7 @@ class Utils
 
     errors = []
     text.split(/\n/).each do |line|
+      next if line =~ /Tag 42034: Rational with zero denominator/i
       next if line =~ /warning: component data type mismatch/i
       next if line =~ /warning: superfluous BPCC box/i
       next if line =~ /ICC Profile CS 52474220/i
