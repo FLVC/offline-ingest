@@ -2,6 +2,7 @@
 *.rbc
 .bundle
 .config
+.tramp_history
 coverage
 InstalledFiles
 lib/bundler/man
