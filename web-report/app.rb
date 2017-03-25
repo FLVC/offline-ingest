@@ -120,7 +120,9 @@ before do
   # the drupal server.  So we delete the leading 'admin.' to find
   # the appropriate server configuration (for db connection info).
 
-  @hostname = ENV['SERVER_NAME'].sub(/^admin\./, '')
+  # we now need to handle looking for foo.admin.digital.flvc.org as well as, temporariliy, the old admin.foo.digital.flvc.org
+
+  @hostname = ENV['SERVER_NAME'].sub(/admin\./, '')
   @config   = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
 
   halt 500, "Don't know how to configure for server '#{ENV['SERVER_NAME']}', using '#{CONFIG_FILENAME}'"  unless @config
