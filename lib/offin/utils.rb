@@ -1001,7 +1001,7 @@ class Utils
   # appropriate config object.  We return nil if not found or on error.
 
   def Utils.find_appropriate_admin_config config_file, server_name
-    site = server_name.sub(/^admin\./, '')
+    site = server_name.sub(/admin\./, '')
 
     Datyl::Config.new(config_file, 'default').all_sections.each do |section|
       site_config = Datyl::Config.new(config_file, 'default', section)

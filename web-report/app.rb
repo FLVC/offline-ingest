@@ -115,18 +115,16 @@ end # of helpers
 
 
 before do
-  # By convention, we are running the web service as
-  # 'admin.school.digital.flvc.org' where 'school.digital.flvc.org' is
-  # the drupal server.  So we delete the leading 'admin.' to find
-  # the appropriate server configuration (for db connection info).
-
-  # we now need to handle looking for foo.admin.digital.flvc.org as well as, temporariliy, the old admin.foo.digital.flvc.org
+  # By convention, we are running the web service as either
+  # 'school.admin.digital.flvc.org' (new method) or
+  # 'admin.school.digital.flvc.org' (deprectated method) where
+  # 'school.digital.flvc.org' is the drupal server.  So we delete the
+  # 'admin.' to find the appropriate server configuration (for
+  # db connection info).
 
   @hostname = ENV['SERVER_NAME'].sub(/admin\./, '')
   @config   = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
-
   halt 500, "Don't know how to configure for server '#{ENV['SERVER_NAME']}', using '#{CONFIG_FILENAME}'"  unless @config
-
   @site   = DataBase::IslandoraSite.first(:hostname => @hostname)
 
 end # of before
