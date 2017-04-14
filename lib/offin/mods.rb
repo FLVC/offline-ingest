@@ -181,6 +181,9 @@ class Mods
   end
 
 
+  # TODO: use rfc3066 in addition....
+
+
   # <language>
   #   <languageTerm type="text" authority="iso639-2b">English</languageTerm>
   #   <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
