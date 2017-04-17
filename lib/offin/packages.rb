@@ -1031,7 +1031,7 @@ class StructuredPagePackage < Package
 
     missing, expected = [], []
 
-    if not @has_mets
+    unless @has_mets
 
       # Without METS, there's no way to find out which files should be present, so we won't be able to figure out if something is missing.
       # We also lack knowing what order they should be in.  Ah well...
@@ -1413,8 +1413,10 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     # insert "if @has_mets ... end"  around the next two lines if we decide METS is optional.
 
-    handle_mets               or return  # create @mets and check its validity
-    create_table_of_contents  or return  # creates @table_of_contents
+    if @has_mets
+      handle_mets               or return  # create @mets and check its validity
+      create_table_of_contents  or return  # creates @table_of_contents
+    end
 
     create_page_filename_list   or return  # creates @page_filenames
     check_page_types            or return  # checks @page_filenames file types
