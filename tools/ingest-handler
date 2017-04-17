@@ -9,6 +9,8 @@
 
 $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 
+ENV['PATH'] = '/usr/local/bin:' + ENV['PATH']  # needed to ensure convert will run '/usr/local/bin/gs instead of system-installed one'
+
 require 'rubygems'
 require 'offin/config'
 require 'offin/exceptions'
