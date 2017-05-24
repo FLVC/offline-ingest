@@ -181,6 +181,9 @@ class Mods
   end
 
 
+  # TODO: use rfc3066 in addition....
+
+
   # <language>
   #   <languageTerm type="text" authority="iso639-2b">English</languageTerm>
   #   <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
@@ -425,7 +428,9 @@ class Mods
          'http://www.loc.gov/standards/mods/v3/mods-3-1.xsd',
          'http://www.loc.gov/standards/mods/v3/mods-3-2.xsd',
          'http://www.loc.gov/standards/mods/v3/mods-3-3.xsd',
-         'http://www.loc.gov/standards/mods/v3/mods-3-4.xsd'
+         'http://www.loc.gov/standards/mods/v3/mods-3-4.xsd',
+         'http://www.loc.gov/standards/mods/v3/mods-3-5.xsd',
+         'http://www.loc.gov/standards/mods/v3/mods-3-6.xsd'
      return File.open(File.join(@config.schema_directory, File.basename(location)))
     end
 

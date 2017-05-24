@@ -60,7 +60,9 @@ SELECT DISTINCT all_users.uid AS userid, all_users.name, all_users.pass, all_rol
     )    AS all_roles
     ON all_users_roles.rid = all_roles.rid
 
-    WHERE all_users.name = ? AND all_users.pass = ?
+    WHERE all_roles.school = all_users_roles.school
+    AND   all_users.school = all_users_roles.school
+    AND all_users.name = ? AND all_users.pass = ?
 EOF
 end
 
@@ -83,12 +85,12 @@ def build_sql(schemas)
   union = "UNION ALL\n"
   max = schemas.map{ |s| s.length }.max
   sections = []
-  [ "    SELECT uid, name, pass FROM %#{max}s.users ",
-    "    SELECT rid, uid FROM %#{max}s.users_roles ",
-    "    SELECT rid, name FROM %#{max}s.role " ].each  do |section|
+  [ "    SELECT uid, name, pass, %#{max + 2}s AS school FROM %#{max}s.users ",
+    "    SELECT rid, uid, %#{max + 2}s AS school FROM %#{max}s.users_roles ",
+    "    SELECT rid, name, %#{max + 2}s AS school FROM %#{max}s.role " ].each  do |section|
     selects = []
     schemas.each do |schema|
-      selects.push sprintf(section, schema)
+      selects.push sprintf(section, "'#{schema}'", schema)
     end
     sections.push selects.join(union)
   end
@@ -96,4 +98,5 @@ def build_sql(schemas)
 end
 
 setup(config(ARGV[0] || '/usr/local/islandora/offline-ingest/config.yml'))
+
 puts build_sql(schemas())

@@ -234,9 +234,8 @@ class SaxDocumentExamineMods < SaxDocument
 
     # We're handling the case for when <mods ...> is the first element
     # of the document.  We're also trying to locate the schema document
-    # used for this MODS document (we'll default to versoin 3.4) and
+    # used for this MODS document (we'll default to version 3.6) and
     # get the prefix used....
-
 
 
     if name == 'mods' and @depth == 1 and uri =~ MODS_NAMESPACE
@@ -258,8 +257,8 @@ class SaxDocumentExamineMods < SaxDocument
       end
 
       if not @schema_locations[uri]
-        warning "The MODS document does not specify a schemaLocation for '#{uri}', assuming 'http://www.loc.gov/standards/mods/v3/mods-3-4.xsd'"
-        @mods_schema_location = "http://www.loc.gov/standards/mods/v3/mods-3-4.xsd"
+        warning "The MODS document does not specify a schemaLocation for '#{uri}', assuming 'http://www.loc.gov/standards/mods/v3/mods-3-6.xsd'"
+        @mods_schema_location = "http://www.loc.gov/standards/mods/v3/mods-3-6.xsd"
       else
         @mods_schema_location = @schema_locations[uri]
       end
