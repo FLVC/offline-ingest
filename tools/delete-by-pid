@@ -4,6 +4,9 @@ Kernel.trap('INT')  { STDERR.puts "Interrupt"    ; exit -2 }
 Kernel.trap('HUP')  { STDERR.puts "Hangup"       ; exit -3 }
 Kernel.trap('PIPE') { STDERR.puts "Pipe Closed"  ; exit -4 }
 
+STDERR.sync = true
+STDOUT.sync = true
+
 require 'rubygems'
 require 'socket'
 require 'optparse'
@@ -74,5 +77,7 @@ ARGV.each do |pid|
     DigitalObject.find_or_initialize(pid, repository).delete
   rescue => e
     STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
+  else
+    puts pid
   end
 end
