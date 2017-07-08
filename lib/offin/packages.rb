@@ -1061,6 +1061,7 @@ class StructuredPagePackage < Package
     end
 
     unexpected = @datafiles - expected
+    unexpected.delete_if { |x| x =~ /^Thumbs.db$/i } # common cruft
 
     unless unexpected.empty?
       warning "The #{pretty_class_name} #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
