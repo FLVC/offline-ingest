@@ -54,6 +54,8 @@ NEWSPAPER_PAGE_CONTENT_MODEL   =  'islandora:newspaperPageCModel'
 # PackageFactory takes a directory path and checks the manifest.xml
 # file within it.  It determines what content model that is being
 # requested, and returns the appropriate type of package.
+#
+# TODO: this should probably just be a module instead of a separate class...
 
 class PackageFactory
 
@@ -1411,8 +1413,6 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     handle_marc or return  # create @marc if we have a marc.xml
 
-    # insert "if @has_mets ... end"  around the next two lines if we decide METS is optional.
-
     if @has_mets
       handle_mets               or return  # create @mets and check its validity
       create_table_of_contents  or return  # creates @table_of_contents
@@ -1662,17 +1662,17 @@ class NewspaperIssuePackage < StructuredPagePackage
     end
 
     if @mods.date_issued.empty?
-      error "The package MODS file does not include the required w3cdtf-encoded dateIssued element"
+      error "The MODS file for #{pretty_class_name} #{@directory_name} does not include the required w3cdtf-encoded dateIssued element"
       return
     end
 
     if @mods.date_issued.count > 1
-      error "The package MODS file includes more than one of the required w3cdtf-encoded dateIssued element"
+      error "The MODS file for #{pretty_class_name} #{@directory_name} includes more than one of the required w3cdtf-encoded dateIssued element"
       return
     end
 
     unless @mods.date_issued[0] =~ /^\d\d\d\d-\d\d-\d\d$/
-      error "The package MODS file has a badly formatted w3cdtf-encoded dateIssued element: it should be of the form 'YYYY-MM-DD' but is '#{@mods.date_issued[0]}'"
+      error "The MODS file for #{pretty_class_name} #{@directory_name} has an incorrect w3cdtf-encoded dateIssued element: 'YYYY-MM-DD' is required, but is '#{@mods.date_issued[0]}'"
       return
     end
 
