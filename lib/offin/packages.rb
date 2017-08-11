@@ -1065,12 +1065,14 @@ class StructuredPagePackage < Package
 
     unless unexpected.empty?
       warning "The #{pretty_class_name} #{@directory_name} has the following #{unexpected.count} unexpected #{ unexpected.length == 1 ? 'file' : 'files'} that will not be processed:"
-      warning unexpected.map { |name| ' - ' + name }.sort
+      warning unexpected.map { |name| " - #{name}" }.sort
     end
+
+    ## TODO: bug here reporting an error, 'name' somehow gets nil, see FSU's package FSU_Flambeau_04301979 started 2017-08-09 14:41:39
 
     unless missing.empty?
       error "The #{pretty_class_name} #{@directory_name} is missing the following #{missing.count} required #{ missing.length == 1 ? 'file' : 'files'} declared in the mets.xml file:"
-      error missing.map { |name| ' - ' + name }.sort
+      error missing.map { |name| " - #{name}" }.sort
       return false
     end
 

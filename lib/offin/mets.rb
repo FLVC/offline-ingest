@@ -276,7 +276,7 @@ class TableOfContents
 
     issues = []
     pages.each do |p|
-      issues.push  "The METS file does specify an associated image file for page #{p.title}." unless p.image_filename
+      issues.push  "The METS file specifies an image file for page '#{p.title}', but it doesn't appear to be in the package." unless p.image_filename
     end
 
     warning issues unless issues.empty?
