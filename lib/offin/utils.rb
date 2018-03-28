@@ -544,7 +544,7 @@ class Utils
   def Utils.pdf_to_text config, pdf_filepath
     return Utils.image_processing(config, pdf_filepath,
                                   "#{config.pdf_to_text_command} #{Utils.shellescape(pdf_filepath)} -",
-                                  "When extracting text from the PDF '#{pdf_filepath}' with command '#{config.pdf_convert_command}' the following message was encountered:")
+                                  "When extracting text from the PDF '#{pdf_filepath}' with command '#{config.pdf_to_text_command}' the following message was encountered:")
 
   end
 
