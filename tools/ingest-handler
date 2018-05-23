@@ -11,6 +11,8 @@ $LOAD_PATH.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 
 ENV['PATH'] = '/usr/local/bin:' + ENV['PATH']  # needed to ensure convert will run '/usr/local/bin/gs instead of system-installed one'
 
+Dir.chdir '/tmp/'  # our ghostscript doesn't respect TMPDIR, tries to write temporary files to the CWD, which is often '/'
+
 require 'rubygems'
 require 'offin/config'
 require 'offin/exceptions'
