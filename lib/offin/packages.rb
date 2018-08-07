@@ -441,7 +441,7 @@ class Package
     end
 
     if pid = Utils.get_pre_existing_islandora_pid_for_iid(@config, @iid)
-      error "The IID for this package, #{@iid}, is alreading being used for islandora object #{pid}. The IID must be unique."
+      error "The IID for this package, #{@iid}, is already being used for islandora object #{pid}. The IID must be unique."
     end
 
     return valid?
