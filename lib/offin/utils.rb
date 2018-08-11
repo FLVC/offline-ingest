@@ -48,8 +48,6 @@ class Utils
   NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
   NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
 
-
-
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
     STDERR.puts "Usage: #{program} <directory>"
@@ -825,7 +823,7 @@ class Utils
 
     case
     when file.is_a?(IO)
-      Open3.popen3("/usr/bin/file --mime-type -b -") do |stdin, stdout, stderr|
+      Open3.popen3("/usr/bin/file", "--mime-type", "-b", "-") do |stdin, stdout, stderr|
 
         file.rewind if file.methods.include? 'rewind'
 
@@ -842,7 +840,7 @@ class Utils
 
       raise "file '#{file}' not found"    unless File.exists? file
       raise "file '#{file}' not readable" unless File.readable? file
-      Open3.popen3("/usr/bin/file --mime-type -b " + shellescape(file)) do |stdin, stdout, stderr|
+      Open3.popen3("/usr/bin/file", "--mime-type", "-b", file) do |stdin, stdout, stderr|
 
         type   = stdout.read
         error  = stderr.read
@@ -993,12 +991,14 @@ class Utils
   # by the admin web service code.
   #
   # By convention, we are running a web service as
-  # 'admin.school.digital.flvc.org' where 'school.digital.flvc.org' is
-  # the drupal server.  So we delete the leading 'admin.' to find the
-  # appropriate server.  The we read the config file for all sections
-  # and probe each section in turn for "site:
+  # 'admin.school.digital.flvc.org' (or more recently
+  # 'school.admin.digital.flvc.org') where 'school.digital.flvc.org'
+  # is the drupal server.  So we delete the leading 'admin.' to find
+  # the appropriate server.  The we read the config file for all
+  # sections and probe each section in turn for "site:
   # school.digital.flvc.org".  Once we have a hit, we return the
-  # appropriate config object.  We return nil if not found or on error.
+  # appropriate config object.  We return nil if not found or on
+  # error.
 
   def Utils.find_appropriate_admin_config config_file, server_name
     site = server_name.sub(/admin\./, '')
@@ -1012,5 +1012,116 @@ class Utils
     STDERR.puts "Error reading config file for #{site} section: #{e.class}: #{e.message}"
     return nil
   end
+
+  # video_create_mp4(CONFIG, VIDEO_FILENAME) => IO-object, error-text
+  #
+  # Use the program ffmpeg (path determined by the CONFIG object) to create an islandora-ready MP4. On success return a pair:
+  # a file descriptor opened on the newly-created MP4 file and NIL. On error return the pair NIL and some error text to report.
+
+  def Utils.video_create_mp4(config, input_video_filename)
+    output_video_filename = Tempfile.new('ffmpeg-').path
+    ffmpeg = config.ffmpeg_command || "/usr/local/bin/ffmpeg"
+    if not File.exists? ffmpeg
+      return nil, "Can't find the ffmpeg executable, please set the 'ffmpeg_command' variable in the configuration file to the full path to the ffmpeg executable."
+    end
+
+    output = errors = nil
+
+    command = [ ffmpeg, "-i", input_video_filename,
+                "-f", "mp4", "-vcodec", "libx264", "-preset",  "medium",  "-crf", "20", "-acodec", "libfdk_aac",
+                "-ab", "128k", "-ac", "2", "-async", "1", "-movflags", "faststart",
+                "-loglevel", "error", "-nostdin", "-threads", "1", "-y",
+                output_video_filename ]
+
+    Open3.popen3(*command) do |stdin, stdout, stderr|
+      output = stdout.read.strip
+      errors = stderr.read.strip
+    end
+
+    return nil, errors unless errors.empty?
+    return nil, output unless output.empty?
+
+    unless File.exists?(output_video_filename) and File.stat(output_video_filename).size > 0
+      return nil, "unknown error processing '#{input_video_filename}', no data produced."
+    end
+
+    return File.open(output_video_filename, 'rb'), nil
+  ensure
+    FileUtils.rm_f output_video_filename
+  end
+
+  # video_duration(CONFIG, VIDEO_FILENAME) => integer
+  #
+  # Get the duration of VIDEO_FILENAME in seconds
+  #
+  # We use
+  #
+  #   ffmpeg -i video_filename
+  #
+  # which produces something like:
+  #
+  #     ffmpeg version 1.1.1 Copyright (c) 2000-2013 the FFmpeg developers
+  #       built on Mar  5 2014 15:22:32 with gcc 4.4.7 (GCC) 20120313 (Red Hat 4.4.7-4)
+  #       ...
+  #     Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'fsjc-video.obj.mp4':
+  #       Metadata:
+  #         major_brand     : mp42
+  #         ...
+  #       Duration: 00:30:43.25, start: 0.000000, bitrate: 1381 kb/s
+  #         Stream #0:0(und): Video: h264 (Main) (avc1 / 0x31637661), yuv420p, 720x480 [SAR 8:9 DAR 4:3], 1210 kb/s, 29.97 fps, 29.97 tbr, 90k tbn, 180k tbc
+  #         ...
+  # Grab the line that includes 'Duration:', split '00:30:43.25"" to hours:minutes:seconds
+  #
+  #     floor(hours * 360 + minutes * 60  + seconds)
+
+  def video_duration(config, video_filename)
+    command = [ config.ffmpeg_command, "-i", video_filename ]
+    errors = nil
+
+    Open3.popen3(*command) do |stdin, stdout, stderr|
+      ignored = stdout.read.strip
+      errors  = stderr.read.strip
+    end
+
+    seconds = minutes = hours = 0
+    errors.split(/\n/).each do |line|
+      if line =~ /duration:\s+(\d+):(\d+):(\d+)/i
+        hours, minutes, seconds = $1, $2, $3
+        break
+      end
+    end
+
+    return hours.to_i * 360 + minutes.to_i * 60  + seconds.to_i
+  rescue => e
+    return 0
+  end
+
+
+  def video_create_thumbnail(config, video_filename)
+
+    duration = video_duration(config, video_filename)
+    raise 'video duration error' if duration < 2
+
+    output_filename = Tempfile.new('ffmpeg-').path
+
+    command = [ config.ffmpeg_command,
+                '-itsoffset', '-2',  '-ss', (duration/2).to_s, '-i', video_filename,
+                '-vcodec', 'mjpeg', '-vframes', '1', '-an', '-f', 'rawvideo',
+                '-loglevel', 'quiet', '-y', '-nostdin', output_filename ]
+
+    Open3.popen3(*command) do |stdin, stdout, stderr|
+      stdout.read.strip
+      stderr.read.strip
+    end
+
+    raise "jpg creation error for file #{output_filename}" unless File.exists?(output_filename) and File.stat(output_filename).size > 0
+
+    return File.open(output_filename)
+  rescue => e
+    return open(config.video_default_thumbnail_filename, 'rb')
+  ensure
+    FileUtils.rm_f output_filename
+  end
+
 
 end # of class Utils

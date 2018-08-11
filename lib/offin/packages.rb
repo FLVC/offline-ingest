@@ -20,22 +20,23 @@ PAGE_CONTENT_MODEL             =  'islandora:pageCModel'
 NEWSPAPER_CONTENT_MODEL        =  'islandora:newspaperCModel'
 NEWSPAPER_ISSUE_CONTENT_MODEL  =  'islandora:newspaperIssueCModel'
 NEWSPAPER_PAGE_CONTENT_MODEL   =  'islandora:newspaperPageCModel'
+VIDEO_CONTENT_MODEL            =  'islandora:sp_videoCModel'
 
 #  Class Hierarchy:
 #
 #                            PackageClass (base class)
 #                                  |
 #                                  |
-#        .-------------------------------------------------------.
-#        |                   |                |                  |
-#        |                   |                |                  |
-#  BasicImagePackage   LargeImagePackage   PDFPackage   StructuredPagePackage (base class)
-#                                                                |
-#                                                                |
-#                                                  .-----------------------------.
-#                                                  |                             |
-#                                                  |                             |
-#                                             BookPackage               NewspaperIssuePackage
+#        .-------------------------------------------------------------------.
+#        |              |                |                |                  |
+#        |              |                |                |                  |
+#  VideoPackage  BasicImagePackage  LargeImagePackage  PDFPackage  StructuredPagePackage
+#                                                                            |
+#                                                                            |
+#                                                              .-----------------------------.
+#                                                              |                             |
+#                                                              |                             |
+#                                                         BookPackage               NewspaperIssuePackage
 #
 #
 # Generally, all the Package classes have objects they create to
@@ -80,6 +81,7 @@ class PackageFactory
            when PDF_CONTENT_MODEL;               PDFPackage.new(@config, directory, manifest, @updator_class)
            when BOOK_CONTENT_MODEL;              BookPackage.new(@config, directory, manifest, @updator_class)
            when NEWSPAPER_ISSUE_CONTENT_MODEL;   NewspaperIssuePackage.new(@config, directory, manifest, @updator_class)
+           when VIDEO_CONTENT_MODEL;             VideoPackage.new(@config, directory, manifest, @updator_class)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
            end
@@ -109,6 +111,9 @@ class Package
   TIFF = %r{image/tiff}
   PDF  = %r{application/pdf}
   TEXT = %r{text/}
+  MP4  = %r{video/mp4}
+  QUICKTIME = %r{video/quicktime}
+  MSVIDEO = %r{video/x-msvideo}
 
   attr_reader :bytes_ingested, :collections, :component_objects, :config, :content_model, :directory_name
   attr_reader :directory_path, :manifest, :marc, :mods, :namespace, :pid, :mods_type_of_resource, :owning_institution
@@ -517,7 +522,7 @@ class BasicImagePackage < Package
     when TIFF
       raise PackageError, "The #{pretty_class_name} #{@directory_name} contains the TIFF file #{@datafiles.first}, which is currently unsupported (coming soon)."
     else
-      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{type}."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected file #{@datafiles.first} with mime type #{@mime_type}."
     end
 
   rescue PackageError => e
@@ -609,7 +614,7 @@ class LargeImagePackage < Package
     when TIFF
       @image = File.open(@image_pathname, 'rb')
     else
-      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{type}."
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{@mime_type}."
     end
 
   rescue PackageError => e
@@ -731,6 +736,99 @@ class LargeImagePackage < Package
     safe_close(@image, tiff)
   end
 
+end
+
+
+# Subclass of Package for handling video content models
+
+class VideoPackage < Package
+
+  # At this point we know we have a manifest, mods and maybe a marc file.
+
+  attr_reader :image
+
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
+
+    @content_model = VIDEO_CONTENT_MODEL
+    @mods_type_of_resource = 'moving image'
+
+    if @datafiles.length > 1
+      error "The #{pretty_class_name} #{@directory_name} contains too many data files (only one expected): #{@datafiles.join(', ')}."
+    end
+
+    if @datafiles.length == 0
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."
+    end
+
+    return unless valid?
+
+    @video_filename = @datafiles.first
+    @video_pathname = File.join(@directory_path, @video_filename)
+    @mime_type = Utils.mime_type(@video_pathname)
+
+    if not [MP4, QUICKTIME, MSVIDEO].include? @mime_type
+      raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{@mime_type}."
+    end
+
+  rescue PackageError => e
+    error "Exception for #{pretty_class_name} #{@directory_name}: #{e.message}"
+  rescue => e
+    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
+  end
+
+  def ingest
+    return if @config.test_mode
+
+    # We have two cases: a source JP2 or the more generically-supported TIFF.
+
+    #  OBJ    original video
+    #  MP4    recreated video that will support streaming
+    #  TN     thumbnail derived from video
+
+    mp4, thumbnail, mp4_error_messages, thumbnail_error_messages = nil
+
+    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+
+      boilerplate(ingestor)
+
+      mp4, thumbnail, mp4_error_messages, thumbnail_error_messages = nil
+
+      mp4, mp4_error_messages = Utils.video_create_mp4(@config, @video_pathname)
+
+      ingestor.datastream('MP4') do |ds|
+        ds.dsLabel  = 'MP4 Video'
+        ds.content  = mp4
+        ds.mimeType = 'video/mp4'
+      end
+
+      thumbnail, thumbnail_error_messages = Utils.video_create_thumbnail(@config, @video_pathname)
+
+      ingestor.datastream('TN') do |ds|
+        ds.dsLabel  = 'TN'
+        ds.content  = thumbnail
+        ds.mimeType = 'image/jpeg'
+      end
+
+      ingestor.datastream('OBJ') do |ds|
+        ds.dsLabel  = 'Original Video ' + @video_filename
+        ds.content  = File.open(@video_filename, 'rb')
+        ds.mimeType = @mime_type
+      end
+
+      @bytes_ingested = ingestor.size
+    end
+
+  ensure
+    warning ingestor.warnings if ingestor and ingestor.warnings?
+    error   ingestor.errors   if ingestor and ingestor.errors?
+    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    warning [ 'Issues creating MP4 datastream' ]       + mp4_error_messages        if mp4_error_messages       and not mp4_error_messages.empty?
+
+    safe_close(@video, mp4, thumbnail)
+
+    @updator.post_ingest
+  end
 end
 
 
