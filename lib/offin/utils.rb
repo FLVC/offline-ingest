@@ -1013,6 +1013,32 @@ class Utils
     return nil
   end
 
+
+  def Utils.video_config_check(config)
+
+    var = config.ffmpeg_command
+
+    unless var
+      return false, "The configuration file does not set the 'ffmpeg_command' variable."
+    end
+
+    unless File.exists? var
+      return false, "The configuration 'ffmpeg_command' variable is set to '#{var}', but it can't be located."
+    end
+
+    var = config.video_default_thumbnail_filename
+
+    unless var
+      return false, "The configuration file does not set the 'video_default_thumbnail_filename' variable."
+    end
+
+    unless File.exists? var
+      return false, "The configuration 'video_default_thumbnail_filename' variable is set to '#{var}', but it can't be located."
+    end
+
+    return true
+  end
+
   # video_create_mp4(CONFIG, VIDEO_FILENAME) => IO-object, error-text
   #
   # Use the program ffmpeg (path determined by the CONFIG object) to create an islandora-ready MP4. On success return a pair:
@@ -1020,29 +1046,27 @@ class Utils
 
   def Utils.video_create_mp4(config, input_video_filename)
     output_video_filename = Tempfile.new('ffmpeg-').path
-    ffmpeg = config.ffmpeg_command || "/usr/local/bin/ffmpeg"
-    if not File.exists? ffmpeg
-      return nil, "Can't find the ffmpeg executable, please set the 'ffmpeg_command' variable in the configuration file to the full path to the ffmpeg executable."
-    end
 
-    output = errors = nil
+    command_output_text = ""
 
-    command = [ ffmpeg, "-i", input_video_filename,
+    command = [ config.ffmpeg_command, "-i", input_video_filename,
                 "-f", "mp4", "-vcodec", "libx264", "-preset",  "medium",  "-crf", "20", "-acodec", "libfdk_aac",
                 "-ab", "128k", "-ac", "2", "-async", "1", "-movflags", "faststart",
                 "-loglevel", "error", "-nostdin", "-threads", "1", "-y",
                 output_video_filename ]
 
     Open3.popen3(*command) do |stdin, stdout, stderr|
-      output = stdout.read.strip
-      errors = stderr.read.strip
+      command_output_text += stdout.read.strip
+      command_output_text += stderr.read.strip
     end
 
-    return nil, errors unless errors.empty?
-    return nil, output unless output.empty?
+    unless command_output_text.empty?
+      errors = [ "Error when running '#{command.join(' ')}', can't create an MP4 derivative." ] + command_output_text.split(/\n/)
+      return nil, errors
+    end
 
     unless File.exists?(output_video_filename) and File.stat(output_video_filename).size > 0
-      return nil, "unknown error processing '#{input_video_filename}', no data produced."
+      return nil, [ "Unknown error when running '#{command.join(' ')}', can't create an MP4 derivative." ]
     end
 
     return File.open(output_video_filename, 'rb'), nil
@@ -1058,7 +1082,7 @@ class Utils
   #
   #   ffmpeg -i video_filename
   #
-  # which produces something like:
+  # which produces (on stderr?!) something like:
   #
   #     ffmpeg version 1.1.1 Copyright (c) 2000-2013 the FFmpeg developers
   #       built on Mar  5 2014 15:22:32 with gcc 4.4.7 (GCC) 20120313 (Red Hat 4.4.7-4)
@@ -1071,20 +1095,19 @@ class Utils
   #         Stream #0:0(und): Video: h264 (Main) (avc1 / 0x31637661), yuv420p, 720x480 [SAR 8:9 DAR 4:3], 1210 kb/s, 29.97 fps, 29.97 tbr, 90k tbn, 180k tbc
   #         ...
   # Grab the line that includes 'Duration:', split '00:30:43.25"" to hours:minutes:seconds
-  #
-  #     floor(hours * 360 + minutes * 60  + seconds)
 
-  def video_duration(config, video_filename)
+  def Utils.video_duration(config, video_filename)
     command = [ config.ffmpeg_command, "-i", video_filename ]
-    errors = nil
+    command_output_text = ""
 
     Open3.popen3(*command) do |stdin, stdout, stderr|
-      ignored = stdout.read.strip
-      errors  = stderr.read.strip
+      command_output_text += stdout.read.strip
+      command_output_text += stderr.read.strip
     end
 
-    seconds = minutes = hours = 0
-    errors.split(/\n/).each do |line|
+    hours = minutes = seconds = 0
+
+    command_output_text.split(/\n/).each do |line|
       if line =~ /duration:\s+(\d+):(\d+):(\d+)/i
         hours, minutes, seconds = $1, $2, $3
         break
@@ -1096,11 +1119,18 @@ class Utils
     return 0
   end
 
+  # video_create_thumbnail(CONFIG, VIDEO_FILENAME) => IO-Object, [ text, .. ]
+  #
+  # Use ffmpeg to determine the duration of VIDEO_FILENAME, then
+  # extract a frame from the middle of the video, returning the
+  # thumbnail as an opened JPEG IO stream. On any sort of error, open
+  # and return the default video thumbnail.
 
-  def video_create_thumbnail(config, video_filename)
+  def Utils.video_create_thumbnail(config, video_filename)
 
     duration = video_duration(config, video_filename)
-    raise 'video duration error' if duration < 2
+
+    raise "Error determining the duration of video #{video_filename}, will use the default thumbnail." if duration < 2
 
     output_filename = Tempfile.new('ffmpeg-').path
 
@@ -1109,16 +1139,14 @@ class Utils
                 '-vcodec', 'mjpeg', '-vframes', '1', '-an', '-f', 'rawvideo',
                 '-loglevel', 'quiet', '-y', '-nostdin', output_filename ]
 
-    Open3.popen3(*command) do |stdin, stdout, stderr|
-      stdout.read.strip
-      stderr.read.strip
-    end
+    Open3.popen3(*command) { |stdin, stdout, stderr| stdout.read; stderr.read }
 
-    raise "jpg creation error for file #{output_filename}" unless File.exists?(output_filename) and File.stat(output_filename).size > 0
+    raise "Error creating thumbnail running '#{command.join(' ')}', will use the default thumbnail." unless File.exists?(output_filename) and File.stat(output_filename).size > 0
 
-    return File.open(output_filename)
+    return File.open(output_filename), nil
+
   rescue => e
-    return open(config.video_default_thumbnail_filename, 'rb')
+    return open(config.video_default_thumbnail_filename, 'rb'), [ e.message ]
   ensure
     FileUtils.rm_f output_filename
   end

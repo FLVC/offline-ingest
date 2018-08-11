@@ -24,19 +24,19 @@ VIDEO_CONTENT_MODEL            =  'islandora:sp_videoCModel'
 
 #  Class Hierarchy:
 #
-#                            PackageClass (base class)
-#                                  |
-#                                  |
-#        .-------------------------------------------------------------------.
-#        |              |                |                |                  |
-#        |              |                |                |                  |
+#                               PackageClass (base class)
+#                                      |
+#                                      |
+#        .---------------------------------------------------------------.
+#        |              |                |                |              |
+#        |              |                |                |              |
 #  VideoPackage  BasicImagePackage  LargeImagePackage  PDFPackage  StructuredPagePackage
-#                                                                            |
-#                                                                            |
-#                                                              .-----------------------------.
-#                                                              |                             |
-#                                                              |                             |
-#                                                         BookPackage               NewspaperIssuePackage
+#                                                                        |
+#                                                                        |
+#                                                           .------------------.
+#                                                           |                  |
+#                                                           |                  |
+#                                                      BookPackage  NewspaperIssuePackage
 #
 #
 # Generally, all the Package classes have objects they create to
@@ -750,6 +750,9 @@ class VideoPackage < Package
   def initialize config, directory, manifest, updator
     super(config, directory, manifest, updator)
 
+    ok, message = Utils.video_config_check(config)
+    raise PackageError, "System configuration error: #{message}" unless ok
+
     @content_model = VIDEO_CONTENT_MODEL
     @mods_type_of_resource = 'moving image'
 
@@ -780,19 +783,19 @@ class VideoPackage < Package
   def ingest
     return if @config.test_mode
 
-    # We have two cases: a source JP2 or the more generically-supported TIFF.
-
+    # create datastreams:
+    #
     #  OBJ    original video
-    #  MP4    recreated video that will support streaming
+    #  MP4    recreated MP4 video that will support streaming
     #  TN     thumbnail derived from video
 
     mp4, thumbnail, mp4_error_messages, thumbnail_error_messages = nil
 
+    video = File.open(@video_filename, 'rb')
+
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
       boilerplate(ingestor)
-
-      mp4, thumbnail, mp4_error_messages, thumbnail_error_messages = nil
 
       mp4, mp4_error_messages = Utils.video_create_mp4(@config, @video_pathname)
 
@@ -812,7 +815,7 @@ class VideoPackage < Package
 
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = 'Original Video ' + @video_filename
-        ds.content  = File.open(@video_filename, 'rb')
+        ds.content  = video
         ds.mimeType = @mime_type
       end
 
@@ -822,10 +825,10 @@ class VideoPackage < Package
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
-    warning [ 'Issues creating Thumbnail datastream' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
-    warning [ 'Issues creating MP4 datastream' ]       + mp4_error_messages        if mp4_error_messages       and not mp4_error_messages.empty?
+    warning [ 'Issues creating Thumbnail datastream:' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
+    warning [ 'Issues creating MP4 datastream:' ]       + mp4_error_messages        if mp4_error_messages       and not mp4_error_messages.empty?
 
-    safe_close(@video, mp4, thumbnail)
+    safe_close(video, mp4, thumbnail)
 
     @updator.post_ingest
   end
