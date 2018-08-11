@@ -1131,11 +1131,11 @@ class Utils
 
   def Utils.video_create_thumbnail(config, video_filename)
 
+    output_filename = Tempfile.new('ffmpeg-').path
     duration = video_duration(config, video_filename)
 
     raise "Error determining the duration of video #{video_filename}, will use the default thumbnail." if duration < 2
 
-    output_filename = Tempfile.new('ffmpeg-').path
 
     command = [ config.ffmpeg_command,
                 '-itsoffset', '-2',  '-ss', (duration/2).to_s, '-i', video_filename,
