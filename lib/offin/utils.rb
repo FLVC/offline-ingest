@@ -1037,6 +1037,9 @@ class Utils
     end
 
     return true
+
+  rescue => e
+    return false, "Error when checking video configuration variables: #{e}"
   end
 
   # video_create_mp4(CONFIG, VIDEO_FILENAME) => IO-object, error-text
@@ -1052,7 +1055,7 @@ class Utils
     command = [ config.ffmpeg_command, "-i", input_video_filename,
                 "-f", "mp4", "-vcodec", "libx264", "-preset",  "medium",  "-crf", "20", "-acodec", "libfdk_aac",
                 "-ab", "128k", "-ac", "2", "-async", "1", "-movflags", "faststart",
-                "-loglevel", "error", "-nostdin", "-threads", "1", "-y",
+                "-loglevel", "error", "-nostdin", "-threads", "2", "-y",
                 output_video_filename ]
 
     Open3.popen3(*command) do |stdin, stdout, stderr|
