@@ -1052,7 +1052,7 @@ class Utils
 
   # video_duration(CONFIG, VIDEO_FILENAME) => integer
   #
-  # Get the duration of VIDEO_FILENAME in seconds
+  # Get the duration of VIDEO_FILENAME in seconds. On any kind of error return 0.
   #
   # We use
   #
