@@ -75,6 +75,7 @@ class PackageFactory
 
     manifest = Utils.get_manifest @config, directory
 
+
     return case manifest.content_model
            when BASIC_IMAGE_CONTENT_MODEL;       BasicImagePackage.new(@config, directory, manifest, @updator_class)
            when LARGE_IMAGE_CONTENT_MODEL;       LargeImagePackage.new(@config, directory, manifest, @updator_class)
@@ -770,7 +771,10 @@ class VideoPackage < Package
     @video_pathname = File.join(@directory_path, @video_filename)
     @mime_type = Utils.mime_type(@video_pathname)
 
-    if not [MP4, QUICKTIME, MSVIDEO].include? @mime_type
+    case @mime_type
+    when MP4, QUICKTIME, MSVIDEO
+      @video = File.open(@video_pathname, 'rb')
+    else
       raise PackageError, "The #{pretty_class_name} #{@directory_name} contains an unexpected or unsupported file #{@datafiles.first} with mime type #{@mime_type}."
     end
 
@@ -790,8 +794,6 @@ class VideoPackage < Package
     #  TN     thumbnail derived from video
 
     mp4, thumbnail, mp4_error_messages, thumbnail_error_messages = nil
-
-    video = File.open(@video_filename, 'rb')
 
     ingestor = Ingestor.new(@config, @namespace) do |ingestor|
 
@@ -815,7 +817,7 @@ class VideoPackage < Package
 
       ingestor.datastream('OBJ') do |ds|
         ds.dsLabel  = 'Original Video ' + @video_filename
-        ds.content  = video
+        ds.content  = @video
         ds.mimeType = @mime_type
       end
 
@@ -828,7 +830,7 @@ class VideoPackage < Package
     warning [ 'Issues creating Thumbnail datastream:' ] + thumbnail_error_messages  if thumbnail_error_messages and not thumbnail_error_messages.empty?
     warning [ 'Issues creating MP4 datastream:' ]       + mp4_error_messages        if mp4_error_messages       and not mp4_error_messages.empty?
 
-    safe_close(video, mp4, thumbnail)
+    safe_close(@video, mp4, thumbnail)
 
     @updator.post_ingest
   end
