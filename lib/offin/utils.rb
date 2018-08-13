@@ -1136,10 +1136,11 @@ class Utils
 
     raise "Error determining the duration of video #{video_filename}, will use the default thumbnail." if duration < 2
 
+    cpus = config.ffmpeg_cpus ? config.ffmpeg_cpus.to_s : 1
 
     command = [ config.ffmpeg_command,
                 '-itsoffset', '-2',  '-ss', (duration/2).to_s, '-i', video_filename,
-                '-vcodec', 'mjpeg', '-vframes', '1', '-an', '-f', 'rawvideo',
+                '-vcodec', 'mjpeg', '-vframes', cpus.to_s, '-an', '-f', 'rawvideo',
                 '-loglevel', 'quiet', '-y', '-nostdin', output_filename ]
 
     Open3.popen3(*command) { |stdin, stdout, stderr| stdout.read; stderr.read }
