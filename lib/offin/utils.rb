@@ -1051,11 +1051,12 @@ class Utils
     output_video_filename = Tempfile.new('ffmpeg-').path
 
     command_output_text = ""
+    cpus = config.ffmpeg_cpus ? config.ffmpeg_cpus : 1
 
     command = [ config.ffmpeg_command, "-i", input_video_filename,
                 "-f", "mp4", "-vcodec", "libx264", "-preset",  "medium",  "-crf", "20", "-acodec", "libfdk_aac",
                 "-ab", "128k", "-ac", "2", "-async", "1", "-movflags", "faststart",
-                "-loglevel", "error", "-nostdin", "-threads", "2", "-y",
+                "-loglevel", "error", "-nostdin", "-threads", cpus.to_s, "-y",
                 output_video_filename ]
 
     Open3.popen3(*command) do |stdin, stdout, stderr|
@@ -1136,11 +1137,10 @@ class Utils
 
     raise "Error determining the duration of video #{video_filename}, will use the default thumbnail." if duration < 2
 
-    cpus = config.ffmpeg_cpus ? config.ffmpeg_cpus.to_s : 1
 
     command = [ config.ffmpeg_command,
                 '-itsoffset', '-2',  '-ss', (duration/2).to_s, '-i', video_filename,
-                '-vcodec', 'mjpeg', '-vframes', cpus.to_s, '-an', '-f', 'rawvideo',
+                '-vcodec', 'mjpeg', '-vframes', '1', '-an', '-f', 'rawvideo',
                 '-loglevel', 'quiet', '-y', '-nostdin', output_filename ]
 
     Open3.popen3(*command) { |stdin, stdout, stderr| stdout.read; stderr.read }
