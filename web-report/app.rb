@@ -93,7 +93,6 @@ helpers do
   def list_datastream_links config, package, css = ''
     links = []
     Utils.get_datastream_names(config, package.islandora_pid).sort { |a, b| a[1] <=> b[1] }.each do |name, label|  # get name,label pairs: e.g. { 'TN' => 'Thumbnail', ... } - sort by label
-      ### TODO: escape name? escape label?
       links.push "<a #{css} href=\"https://#{config.site}/islandora/object/#{package.islandora_pid}/datastream/#{name}/view\">#{label}</a>"
     end
     return links
@@ -103,7 +102,7 @@ helpers do
     return Utils.ping_islandora_for_object(config.site, package.islandora_pid)
   end
 
-  #  this is WAAAY too slow to use; rethink using an RI query
+  #  TODO: this is WAAAY too slow to use; rethink using an RI query
 
   def get_on_site_map config, packages
     pids = packages.map { |p| p.islandora_pid }
@@ -119,8 +118,9 @@ before do
   # 'school.admin.digital.flvc.org' (new method) or
   # 'admin.school.digital.flvc.org' (deprectated method) where
   # 'school.digital.flvc.org' is the drupal server.  So we delete the
-  # 'admin.' to find the appropriate server configuration (for
-  # db connection info).
+  # 'admin.' to find the appropriate server configuration in the
+  # offline ingest configuration file, config.yml. That file is used
+  # to provide db connection credentials.
 
   @hostname = ENV['SERVER_NAME'].sub(/admin\./, '')
   @config   = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
@@ -129,11 +129,16 @@ before do
 
 end # of before
 
-# Intro page; not anything there now, let's just go to packages
+# Intro page; not anything there now, let's just go to /packages
+# Eventually, there will be more information there.
 
 get '/' do
   redirect '/packages'
-  # haml :index # for later when we have more microservices....
+  # use:
+  #
+  #   haml :index
+  #
+  # later when we have more functions to provide at the top level.
 end
 
 get '/packages/' do
@@ -145,7 +150,7 @@ get '/packages' do
   @paginator   = PackageListPaginator.new(@site, params)
   @packages    = @paginator.packages
 
-  # @islandora_presence = get_on_site_map(@config, @packages)  # too slow - rethink this
+  # @islandora_presence = get_on_site_map(@config, @packages)  # TODO: way too slow - rethink this
   haml :packages
 end
 
