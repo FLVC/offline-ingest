@@ -94,7 +94,7 @@ def package_ingest_parse_command_line args
     opt.on("--server ID", String,          "ingest to server ID - one of: [ #{server_sections.join(', ')} ]")  { |sid| command_options.server_id = sid }
     opt.on("--test-mode",                  "run basic checks on package without ingesting")                    { command_options.test_mode = true }
     opt.on("--dump-directory DIR", String, "optionally, move failed packages to directory DIR")                { |dir| command_options.dump_directory = dir.sub(/\/+$/, '') }
-    opt.on("--prospective",                "don't apply DigiTool processing rules to package")                 { command_options.digitool_rules = false }
+    opt.on("--digitool",                   "apply DigiTool processing rules to package")                       { command_options.digitool_rules = true }
   end
 
   opts.parse!(args)
