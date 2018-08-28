@@ -66,8 +66,7 @@ end
 def package_ingest_usage
 
   return <<-EOF.gsub(/^    /, '')
-    Usage:  package [ --test-mode | --server ID ] [ --dump-directory dir ] [ --prospective ] package-directories*
-    the options can be abbreviated as -t, -s, -d and -p, respectively.
+    Usage:  package [ --test-mode | --server ID ] [ --dump-directory dir ] [ --digitool ] package-directories*
     EOF
 end
 
@@ -88,6 +87,7 @@ Struct.new('Options', :server_id, :test_mode, :dump_directory, :digitool_rules)
 def package_ingest_parse_command_line args
   command_options = Struct::Options.new(nil, false, nil, true)
   server_sections = get_config_server_sections
+  command_options.digitool_rules = false
 
   opts   = OptionParser.new do |opt|
     opt.banner = package_ingest_usage
