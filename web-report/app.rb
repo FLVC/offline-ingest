@@ -27,7 +27,6 @@ configure do
   set :raise_errors, false        # Let our app handle the exceptions.
   set :dump_errors,  false        # Don't add backtraces automatically (we'll decide)
 
-
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
 
@@ -125,6 +124,7 @@ before do
   @hostname = ENV['SERVER_NAME'].sub(/admin\./, '')
   @config   = Utils.find_appropriate_admin_config(CONFIG_FILENAME, ENV['SERVER_NAME'])
   halt 500, "Don't know how to configure for server '#{ENV['SERVER_NAME']}', using '#{CONFIG_FILENAME}'"  unless @config
+  DataBase.setup(@config)
   @site   = DataBase::IslandoraSite.first(:hostname => @hostname)
 
 end # of before
