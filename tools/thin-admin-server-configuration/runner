@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# Start up thin servers for islandora admin interfaces. Note, this
+# setup expects the /var/run/thin/ directory to exist.
+#
+# chkconfig: - 84 16
+
+
+CONFIG_DIR=/opt/rh/httpd24/root/etc/httpd/conf.d
+
+command() {
+
+    cd $CONFIG_DIR
+
+    # expecting thin configuration filenames like "fsu-test.admin.yml"
+    # in the CONFIG_DIR directory:
+
+    for config in *.admin.yml; do
+        host=`echo $config | sed 's|.yml|.digital.flvc.org|'`
+        export SERVER_NAME=$host
+        thin -s 2 -C $CONFIG_DIR/$config -R config.ru $1
+    done
+
+    unset SERVER_NAME
+
+}
+
+
+case "$1" in
+ start)
+       command start
+       ;;
+ stop)
+       command stop
+       ;;
+ restart)
+       stop
+       sleep 10
+       start
+       ;;
+ *)
+       echo "Usage: $0 {start|stop|restart}"
+esac
+
+exit 0
