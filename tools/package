@@ -42,8 +42,6 @@ else
 end
 
 
-
-
 list = ARGV.sort
 
 puts "Processing #{list.count} package#{list.count == 1 ? '' : 's'}:\n" + list.join("\n")

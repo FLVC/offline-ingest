@@ -4,8 +4,6 @@
 # overhaul. openjpeg in particular seems able to handle problematic
 # jp2k files better, as a last resort.
 
-
-
 require 'rubydora'
 require 'fileutils'
 require 'iconv'
@@ -20,7 +18,6 @@ require 'uri'
 require 'nokogiri'
 require 'time'
 
-
 begin
   warn_level = $VERBOSE
   $VERBOSE = nil
@@ -29,13 +26,14 @@ ensure
   $VERBOSE = warn_level
 end
 
-
-
-
 class Utils
 
+  # make this conditional
+
+  QDATATMP = '/qdata/tmp/'
+
   TESSERACT_TIMEOUT = 500   # tesseract can waste a lot of time on certain kinds of images
-  QUICKLY_TIMEOUT   = 10    # seconds before giving up on fedora
+  QUICKLY_TIMEOUT   = 30    # seconds before giving up on fedora
 
   # Yuck - these don't really belong here... (copied from packages.rb)
 
@@ -47,6 +45,12 @@ class Utils
   NEWSPAPER_CONTENT_MODEL        = 'islandora:newspaperCModel'
   NEWSPAPER_ISSUE_CONTENT_MODEL  = 'islandora:newspaperIssueCModel'
   NEWSPAPER_PAGE_CONTENT_MODEL   = 'islandora:newspaperPageCModel'
+
+
+  def Utils.tempdir()
+    return File.exists?(QDATATMP) ? QDATATMP : '/tmp/'
+  end
+
 
   def Utils.ingest_usage
     program = $0.sub(/.*\//, '')
@@ -446,7 +450,7 @@ class Utils
   # To help us create a smaller RAM footprint when processing huge files,  we use a lot of temporary files;  this lets us pass around a file object
 
   def Utils.temp_file         # creat an anonymous file handle
-    tempfile = Tempfile.new('image-process-')
+    tempfile = Tempfile.new('image-process-', Utils.tempdir)
 
     if RUBY_VERSION < '2.0.0'   # actually, I don't have 1.9.x version to test against, only a 1.8.7 system
       #### return tempfile.open
@@ -472,6 +476,7 @@ class Utils
       next if line =~ /warning: superfluous BPCC box/i
       next if line =~ /ICC Profile CS 52474220/i
       next if line =~ /warning: empty layer generated/i
+      next if line =~ /bad value 0 for "orientation" tag/i
       next if line.empty?
       errors.push line
     end
@@ -565,7 +570,7 @@ class Utils
     yield image_filepath, nil unless Utils.mime_type(image_filepath) == 'image/jp2'
     yield image_filepath, nil if Utils.jp2k_ok?(config, image_filepath)
 
-    temp_image_filepath = Tempfile.new('image-kakadu-').path + '.tiff'
+    temp_image_filepath = Tempfile.new('image-kakadu-', Utils.tempdir).path + '.tiff'
     unused, errors = Utils.image_processing(config, image_filepath,
                                             "#{config.kakadu_expand_command} -i #{Utils.shellescape(image_filepath)} -o #{Utils.shellescape(temp_image_filepath)}",
                                             "Failed attempt to convert #{image_filepath} using kakadu after JP2 image failure.")
@@ -708,7 +713,7 @@ class Utils
     tempfiles = []
     errors = []
 
-    tempfiles.push converted_filepath = Tempfile.new('tesseract-jp2k').path
+    tempfiles.push converted_filepath = Tempfile.new('tesseract-jp2k', Utils.tempdir).path
     tempfiles.push tiff_filepath = converted_filepath + '.tiff'
 
     if Utils.mime_type(image_filepath) == 'image/jp2'
@@ -735,7 +740,7 @@ class Utils
     end
 
 
-    tempfiles.push base_filename = Tempfile.new('tesseract-').path
+    tempfiles.push base_filename = Tempfile.new('tesseract-', Utils.tempdir).path
     tempfiles.push text_filename = base_filename + (do_hocr ? '.html' : '.txt')
 
     err = ""
@@ -1048,7 +1053,7 @@ class Utils
   # a file descriptor opened on the newly-created MP4 file and NIL. On error return the pair NIL and some error text to report.
 
   def Utils.video_create_mp4(config, input_video_filename)
-    output_video_filename = Tempfile.new('ffmpeg-').path
+    output_video_filename = Tempfile.new('ffmpeg-', Utils.tempdir).path
 
     command_output_text = ""
     cpus = config.ffmpeg_cpus ? config.ffmpeg_cpus : 1
@@ -1132,7 +1137,7 @@ class Utils
 
   def Utils.video_create_thumbnail(config, video_filename)
 
-    output_filename = Tempfile.new('ffmpeg-').path
+    output_filename = Tempfile.new('ffmpeg-', Utils.tempdir).path
     duration = video_duration(config, video_filename)
 
     raise "Error determining the duration of video #{video_filename}, will use the default thumbnail." if duration < 2
