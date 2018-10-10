@@ -34,9 +34,8 @@ case "$1" in
        command stop
        ;;
  restart)
-       stop
-       sleep 10
-       start
+       command stop
+       command start
        ;;
  *)
        echo "Usage: $0 {start|stop|restart}"
