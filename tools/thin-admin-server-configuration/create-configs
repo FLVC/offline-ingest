@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+
+APACHE_CONFIG="apache-template.config"
+THIN_CONFIG="thin-template.config"
+
+if not File.exists? APACHE_CONFIG
+  STDERR.puts "Can't find template file #{APACHE_CONFIG}"
+  exit -1
+end
+
+if not File.exists? THIN_CONFIG
+  STDERR.puts "Can't find template file #{THIN_CONFIG}"
+  exit -1
+end
+
+if ARGV.empty?
+  STDERR.puts "Usage: #{File.basename(__FILE__)} hostname [ more hostnames ... ]"
+  exit -1
+end
+
+if not File.writable?('.')
+  STDERR.puts "Can't write configurations file to current working directory. Got root?"
+  exit -1
+end
+
+port = 4000
+ARGV.each do |hostname|
+  shortname = hostname.sub(/\..*/, '') # don't need trailing admin.digital.flvc.org
+
+  text = File.read(APACHE_CONFIG)
+  text.gsub!('SHORTNAME_UNDERSCORED', shortname.gsub('-', '_'))
+  text.gsub!('SHORTNAME', shortname)
+  text.gsub!('PORTA', port.to_s)
+  text.gsub!('PORTB', (port + 1).to_s)
+  File.open("#{shortname}.admin.conf", "w").write(text)
+
+  text = File.read(THIN_CONFIG)
+  text.gsub!('SHORTNAME', shortname)
+  text.gsub!('PORTA', port.to_s)
+  File.open("#{shortname}.admin.yml", "w").write(text)
+
+  port += 100
+end

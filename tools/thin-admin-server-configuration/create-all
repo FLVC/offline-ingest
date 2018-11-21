@@ -1,0 +1,2 @@
+#!/bin/sh
+./create-configs broward-test collections-test famu-test fau-test fdnl-test fgc-test fgcu-test fiu-test fscj-test fsu-test gcsc-test hccfl-test irsc-test ir-test islandora-test lssc-test nwfsc-test spc-test ucf-test uf-test unf-test usf-test uwf-test
