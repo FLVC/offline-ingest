@@ -983,7 +983,7 @@ class StructuredPagePackage < Package
     @mods_type_of_resource = 'text'
     @has_mets = File.exists?(File.join(@directory_path, 'mets.xml'))
 
-    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
+    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if (@datafiles.nil? or @datafiles.empty?)
   end
 
   private
