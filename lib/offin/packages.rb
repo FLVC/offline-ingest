@@ -338,24 +338,12 @@ class Package
   # TODO: more docs, example fragments of of yaml
 
   def list_collections manifest
-    remapper = @config.remap_collections || {}
     list = []
 
     manifest.collections.each do |pid|
-      pid.downcase!
-
-      case remapper[pid]
-      when NilClass
-        list.push pid
-      when String
-        new_pid = remapper[pid].downcase
-        list.push new_pid
-      # warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collection #{new_pid}"
-      when Array
-        new_pids = remapper[pid].map { |p| p.downcase }
-        list += new_pids
-        # warning "Note: the manifest.xml file specifies collection #{pid}; the configuration file is remapping it to collections #{new_pids.join(', ')}"
-      end
+      pidparts = pid.split(':')
+      pid = pidparts[0].downcase + ':' + pidparts[1]
+      list.push pid
     end
 
     return list
