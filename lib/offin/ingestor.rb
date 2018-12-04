@@ -59,7 +59,7 @@ class Ingestor
 
   def connect config
     Utils.field_system_error("For repository '#{@config.fedora_url}'")   do
-      repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+      repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password, :timeout => (config.timeout || 240)
       repository.ping
       return repository
     end
