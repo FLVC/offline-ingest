@@ -178,11 +178,15 @@ class Package
 
   def delete_from_islandora
     return if pids.empty?
+    sleep 5    # let Solr catch up before starting deletes
     repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
     pids.each do |p|
       begin
         p = "info:fedora/#{p}" unless p =~ /^info:fedora/
         Rubydora::DigitalObject.find_or_initialize(p, repository).delete
+        if not Utils.request_index_delete_for_pid(@config, p)
+          error "Problem deleting from index for #{p}."
+        end
       rescue RestClient::ResourceNotFound => e
       # don't care
       rescue => e
@@ -555,6 +559,11 @@ class BasicImagePackage < Package
     end
 
     @bytes_ingested = ingestor.size
+
+    if not Utils.request_index_update_for_pid(@config, @pid)
+      error "Problem updating index for #{pid}."
+    end
+
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
 
@@ -665,6 +674,10 @@ class LargeImagePackage < Package
       end
 
       @bytes_ingested = ingestor.size
+    end
+
+    if not Utils.request_index_update_for_pid(@config, @pid)
+      error "Problem updating index for #{pid}."
     end
 
   ensure
@@ -812,6 +825,10 @@ class VideoPackage < Package
       @bytes_ingested = ingestor.size
     end
 
+    if not Utils.request_index_update_for_pid(@config, @pid)
+      error "Problem updating index for #{pid}."
+    end
+
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
@@ -948,6 +965,11 @@ class PDFPackage < Package
     end
 
     @bytes_ingested = ingestor.size
+
+    if not Utils.request_index_update_for_pid(@config, @pid)
+      error "Problem updating index for #{pid}."
+    end
+
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
@@ -1035,6 +1057,11 @@ class StructuredPagePackage < Package
     end
 
     @bytes_ingested += ingestor.size
+
+    if not Utils.request_index_update_for_pid(@config, ingestor.pid)
+      error "Problem updating index for #{ingestor.pid}."
+    end
+
     return ingestor.pid
 
   rescue PackageError => e
@@ -1420,6 +1447,10 @@ class BookPackage < StructuredPagePackage
 
     @bytes_ingested += ingestor.size
 
+    if not Utils.request_index_update_for_pid(@config, @pid)
+      error "Problem updating index for #{pid}."
+    end
+
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
     error   ingestor.errors   if ingestor and ingestor.errors?
@@ -1607,6 +1638,11 @@ class NewspaperIssuePackage < StructuredPagePackage
     end
 
     @bytes_ingested = ingestor.size
+
+    if not Utils.request_index_update_for_pid(@config, @pid)
+      error "Problem updating index for #{pid}."
+    end
+
   ensure
     warning ingestor.warnings if ingestor and ingestor.warnings?
 

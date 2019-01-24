@@ -1160,5 +1160,46 @@ class Utils
     FileUtils.rm_f output_filename
   end
 
+  # Send request to update Solr index for object PID via Fedora GSearch REST API
+  # This should be called for every ingested object so that offline ingest
+  # does not rely on the Fedora message queue for indexing.
+
+  def Utils.request_index_update_for_pid config, pid
+
+    return if config.test_mode and not config.gsearch_url
+    pid = pid.sub(/^info:fedora\//, '')
+
+    url = "#{config.gsearch_url}/?operation=updateIndex&action=fromPid&value=#{pid}"
+    uri = URI.encode(url)
+    results = quickly { RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password) }
+
+    return true if results.include? "<td>Inserted number of index documents: 1</td>"
+    return false
+
+  rescue RestClient::Exception => e
+    raise SystemError, "Failed to update Solr index via Fedora GSearch for #{pid}: #{e.class} #{e.message}"
+
+  end
+
+  # Send request to delete from Solr index for object PID via Fedora GSearch REST API
+  # This should be called for every deleted object so that offline ingest
+  # does not rely on the Fedora message queue.
+
+  def Utils.request_index_delete_for_pid config, pid
+
+    return if config.test_mode and not config.gsearch_url
+
+    pid = pid.sub(/^info:fedora\//, '')
+    url = "#{config.gsearch_url}/?operation=updateIndex&action=deletePid&value=#{pid}"
+    uri = URI.encode(url)
+    results = quickly { RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password) }
+
+    return true if results.include? "<td>Deleted number of index documents: 1</td>"
+    return false
+
+  rescue RestClient::Exception => e
+    raise SystemError, "Failed to delete from Solr index via Fedora GSearch for #{pid}: #{e.class} #{e.message}"
+
+  end
 
 end # of class Utils
