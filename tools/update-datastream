@@ -81,3 +81,12 @@ end
 ds = object.datastreams[command_line_options.datastream_name]
 ds.content = (command_line_options.filename == '-' ? STDIN : open(command_line_options.filename))
 ds.save
+
+# update Solr index via Gsearch
+solrpid = command_line_options.object_pid.sub(/^info:fedora\//, '')
+url = "#{config.gsearch_url}/?operation=updateIndex&action=fromPid&value=#{solrpid}"
+uri = URI.encode(url)
+results = RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password)
+if not results.include? "<td>Updated number of index documents: 1</td>"
+  puts solrpid + " not updated in Solr index!"
+end

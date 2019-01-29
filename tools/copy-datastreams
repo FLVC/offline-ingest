@@ -216,3 +216,15 @@ source_datastream_names.each do |name|
     puts "    Copy of #{name} complete" if config.verbose
   end
 end
+
+# update Solr index via Gsearch
+if not config.dry_run
+  solrpid = config.destination_id.sub(/^info:fedora\//, '')
+  gsearch_url = config.destination_server.sub(/fedora$/, 'fedoragsearch/rest')
+  url = "#{gsearch_url}/?operation=updateIndex&action=fromPid&value=#{solrpid}"
+  uri = URI.encode(url)
+  results = RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password)
+  if not results.include? "<td>Updated number of index documents: 1</td>"
+    puts solrpid + " not updated in Solr index!"
+  end
+end

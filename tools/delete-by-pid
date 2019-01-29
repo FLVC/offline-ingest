@@ -79,5 +79,13 @@ ARGV.each do |pid|
     STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
   else
     puts pid
+    # delete from Solr index via Gsearch
+    solrpid = pid.sub(/^info:fedora\//, '')
+    url = "#{config.gsearch_url}/?operation=updateIndex&action=deletePid&value=#{solrpid}"
+    uri = URI.encode(url)
+    results = RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password)
+    if not results.include? "<td>Deleted number of index documents: 1</td>"
+      puts pid + " not removed from Solr index!"
+    end
   end
 end
