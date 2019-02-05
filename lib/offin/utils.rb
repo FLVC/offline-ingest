@@ -1202,4 +1202,98 @@ class Utils
 
   end
 
+  def Utils.get_metadata_from_object config, pid
+
+    # requesting metadata for an existing object
+    # we'll get and parse a document as follows if we get a hit.
+    #
+    # <?xml version="1.0" encoding="UTF-8"?>
+    # <response>
+    # <lst name="responseHeader">
+    #   <int name="status">0</int>
+    #   <int name="QTime">0</int>
+    #   <lst name="params">
+    #     <str name="indent">on</str>
+    #     <str name="version">2.2</str>
+    #     <str name="fl">PID,mods_identifier_iid_ms</str>
+    #     <str name="q">mods_identifier_iid_ms:FSDT2854731</str>
+    #   </lst>
+    # </lst>
+    # <result name="response" numFound="1" start="0">
+    #   <doc>
+    #     <str name="PID">fsu:122</str>
+    #     <arr name="mods_identifier_iid_ms"><str>FSDT2854731</str></arr>
+    #   </doc>
+    # </result>
+    # </response>
+
+    return if config.test_mode and not config.solr_url   # user specified testing mode without specifying server - technicaly OK?
+
+    numFound = 0
+    hasModel = ''
+    iid = ''
+    langCode = ''
+    rootPID = ''
+
+    url = "#{config.solr_url}/select/?q=PID:#{Utils.solr_escape(pid)}&version=2.2&indent=on&fl=PID,RELS_EXT_hasModel_uri_ms,mods_identifier_iid_ms,mods_language_languageTerm_code_ms,site_collection_id_ms"
+    uri = URI.encode(url)
+    doc = quickly { RestClient.get(uri) }
+    xml = Nokogiri::XML(doc)
+
+    element = xml.xpath("//result")[0]
+    numFound = element.attr('numFound').to_i if element
+
+    element = xml.xpath("//result/doc/arr[@name='RELS_EXT_hasModel_uri_ms']/str")[0]
+    hasModel = element.child.text.sub(/^info:fedora\//, '') if element and element.child
+
+    element = xml.xpath("//result/doc/arr[@name='mods_identifier_iid_ms']/str")[0]
+    iid = element.child.text if element and element.child
+
+    element = xml.xpath("//result/doc/arr[@name='mods_language_languageTerm_code_ms']/str")[0]
+    langCode = element.child.text if element and element.child
+
+    element = xml.xpath("//result/doc/arr[@name='site_collection_id_ms']/str")[0]
+    rootPID = element.child.text.sub(/^info:fedora\//, '') if element and element.child
+
+    return numFound, hasModel, iid, langCode, rootPID
+
+  rescue RestClient::Exception => e
+    raise SystemError, "Can't obtain metadata from solr at '#{url}': #{e.class} #{e.message}"
+
+  rescue => e
+    raise SystemError, "Can't process metadata obtained from solr at '#{url}': : #{e.class} #{e.message}"
+  end
+
+  # Given a parent pid, return the next page sequence number
+
+  def Utils.get_next_page_sequence config, parent_pid, parent_model
+
+    query = <<-SPARQL.gsub(/^        /, '')
+        PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
+        PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+
+        SELECT ?object ?sequence
+        FROM <#ri>
+        WHERE {
+          ?object fedora-rels-ext:isMemberOf <info:fedora/#{parent_pid.sub(/^info:fedora\//, '')}> ;
+               <fedora-model:hasModel> <info:fedora/#{parent_model}> .
+          ?object islandora-rels-ext:isSequenceNumber ?sequence
+        }
+        ORDER BY ?sequence
+    SPARQL
+
+    repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+
+    quickly do
+      repository.ping
+    end
+
+    last =  repository.sparql(query).map { |row_rec| row_rec['sequence'].to_i }.max
+
+    return last ? last + 1 : 1
+
+  rescue => e
+    return
+  end
+
 end # of class Utils
