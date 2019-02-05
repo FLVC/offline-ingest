@@ -81,7 +81,9 @@ class PackageFactory
            when LARGE_IMAGE_CONTENT_MODEL;       LargeImagePackage.new(@config, directory, manifest, @updator_class)
            when PDF_CONTENT_MODEL;               PDFPackage.new(@config, directory, manifest, @updator_class)
            when BOOK_CONTENT_MODEL;              BookPackage.new(@config, directory, manifest, @updator_class)
+           when PAGE_CONTENT_MODEL;              PagesPackage.new(@config, directory, manifest, @updator_class)
            when NEWSPAPER_ISSUE_CONTENT_MODEL;   NewspaperIssuePackage.new(@config, directory, manifest, @updator_class)
+           when NEWSPAPER_PAGE_CONTENT_MODEL;    PagesPackage.new(@config, directory, manifest, @updator_class)
            when VIDEO_CONTENT_MODEL;             VideoPackage.new(@config, directory, manifest, @updator_class)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
@@ -147,8 +149,10 @@ class Package
     # TODO: create a table of classes vs. instance variables and public methods.
 
     handle_manifest(manifest) or return     # sets up @manifest
-    handle_mods or return                   # sets up @mods
-    handle_marc or return                   # sets up @marc
+    if @manifest.content_model != PAGE_CONTENT_MODEL && @manifest.content_model != NEWSPAPER_PAGE_CONTENT_MODEL
+      handle_mods or return                   # sets up @mods
+      handle_marc or return                   # sets up @marc
+    end
     handle_updator or return                # does system-specific checks, e.g. digtitool, prospective, etc
     handle_drupal_check or return           # check that manifest-specified drupal account exists in drupal database.
 
@@ -171,6 +175,7 @@ class Package
 
   def pids
     return [] unless @pid
+    return @component_objects.clone if manifest.content_model == PAGE_CONTENT_MODEL || manifest.content_model == NEWSPAPER_PAGE_CONTENT_MODEL
     return ([ @pid ] + @component_objects.clone)
   end
 
@@ -993,6 +998,11 @@ class StructuredPagePackage < Package
     @mods_type_of_resource = 'text'
     @has_mets = File.exists?(File.join(@directory_path, 'mets.xml'))
 
+    @mods_languages = []
+    if @mods
+      @mods_languages = @mods.languages
+    end
+
     raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if (@datafiles.nil? or @datafiles.empty?)
   end
 
@@ -1052,6 +1062,15 @@ class StructuredPagePackage < Package
         ds.dsLabel  = 'RELS-INT'
         ds.content  = page_rels_int(ingestor.pid, path)
         ds.mimeType = 'application/rdf+xml'
+      end
+
+      if @inherited_policy_collection_id
+        ingestor.datastream('POLICY') do |ds|
+          ds.dsLabel  = "XACML Policy Stream"
+          ds.content  = Utils.get_datastream_contents(@config, @inherited_policy_collection_id, 'POLICY')
+          ds.mimeType = 'text/xml'
+          ds.controlGroup = 'X'
+        end
       end
 
     end
@@ -1156,9 +1175,8 @@ class StructuredPagePackage < Package
       # Without METS, there's no way to find out which files should be present, so we won't be able to figure out if something is missing.
       # We also lack knowing what order they should be in.  Ah well...
 
-      # TODO:  we can have a smarter sort here, so we don't have "1.img", "10.img", "2.img" ....
-
       @datafiles.sort!
+      @datafiles = @datafiles.sort_by { |x| x[/\d+/].to_i }  # sort by number
       expected += @datafiles.select { |name| name =~ /\.tiff$|\.tif$|\.jp2$|\.jp2k$|\.jpg$|\.jpeg$/i }
 
     else
@@ -1200,7 +1218,7 @@ class StructuredPagePackage < Package
   def handle_ocr ingestor, path
     ocr_produced_text = true
 
-    if (text = Utils.ocr(@config, path, @mods.languages))
+    if (text = Utils.ocr(@config, path, @mods_languages))
       ingestor.datastream('OCR') do |ds|
         ds.dsLabel  = 'OCR'
         ds.content  = text
@@ -1212,7 +1230,7 @@ class StructuredPagePackage < Package
       # warning "The OCR and HOCR datastreams for image #{image_name} were skipped because no data were produced."
     end
 
-    if ocr_produced_text  and (text = Utils.hocr(@config, path, @mods.languages))
+    if ocr_produced_text  and (text = Utils.hocr(@config, path, @mods_languages))
       ingestor.datastream('HOCR') do |ds|
         ds.dsLabel  = 'HOCR'
         ds.content  = text
@@ -1815,3 +1833,194 @@ class NewspaperIssuePackage < StructuredPagePackage
   end
 
 end # of class NewspaperIssuePackage
+
+# Subclass of Package for handling the Book content model
+
+class PagesPackage < StructuredPagePackage
+
+  def initialize config, directory, manifest, updator
+    super(config, directory, manifest, updator)
+
+    if @manifest.content_model == PAGE_CONTENT_MODEL
+      @content_model = BOOK_CONTENT_MODEL
+    end
+    if @manifest.content_model == NEWSPAPER_PAGE_CONTENT_MODEL
+      @content_model = NEWSPAPER_ISSUE_CONTENT_MODEL
+    end
+    @page_content_model = @manifest.content_model
+
+    @page_sequence = nil
+
+    if @manifest.language_code
+      warning_message = Utils.langs_unsupported_comment(@config, *@manifest.language_code)
+      if not warning_message.empty?
+        warning "Found unsupported OCR language in manifest file: #{warning_message}."
+        warning "Will use #{Utils.langs_to_names(@config, @manifest.language_code)} for OCR."
+      end
+
+      @mods_languages << @manifest.language_code
+    end
+
+    raise PackageError, "The #{pretty_class_name} #{@directory_name} contains no data files."  if @datafiles.empty?
+
+    create_page_filename_list  or return       # creates @page_filenames
+    check_page_types           or return       # checks @page_filenames file types
+
+    check_parent               or return       # sets @page_sequence and @pid
+
+  rescue PackageError => e
+    error "Error processing #{pretty_class_name} #{@directory_name}: #{e.message}"
+  rescue => e
+    error "Exception #{e.class} - #{e.message} for #{pretty_class_name} #{@directory_name}, backtrace follows:", e.backtrace
+  end
+
+  def ingest
+    return if @config.test_mode
+    ingest_pages
+  end
+
+  private
+
+  def ingest_pages
+    # assume no METS file, so we do the best we can do.
+    # copying behavior of zipped page ingest - label is sequence number
+    @page_filenames.each do |image_filename|
+      @component_objects.push ingest_page(image_filename, "#{@page_sequence}", @page_sequence)
+      @page_sequence += 1
+    end
+
+    if @manifest.embargo
+      @component_objects.each do |pid|
+        @drupal_db.add_embargo pid, @manifest.embargo['rangeName'], @manifest.embargo['endDate']
+      end
+    end
+  end
+
+  # Method ingest_page(), called above, is inherited from the
+  # StructuredPagePackage class, which requires us to define
+  # page_rels_ext().
+
+  def page_rels_ext page_pid, page_label, sequence
+
+    str = <<-XML
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
+             xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+             xmlns:islandora="http://islandora.ca/ontology/relsext#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="info:fedora/#{page_pid}">
+        <fedora:isMemberOf rdf:resource="info:fedora/#{@pid}"></fedora:isMemberOf>
+        <fedora-model:hasModel rdf:resource="info:fedora/#{@page_content_model}"></fedora-model:hasModel>
+        <islandora:isPageOf rdf:resource="info:fedora/#{@pid}"></islandora:isPageOf>
+        <islandora:isSequenceNumber>#{sequence}</islandora:isSequenceNumber>
+        <islandora:isPageNumber>#{page_label}</islandora:isPageNumber>
+        <islandora:isSection>1</islandora:isSection>
+   XML
+
+    Utils.langs_supported(@config, @mods_languages).each do |lang|
+      str += "        <islandora:hasLanguage>#{lang}</islandora:hasLanguage>"
+    end
+
+    if @inherited_policy_collection_id
+      str += Utils.rels_ext_get_policy_fields(@config, @pid)
+    end
+
+    str += <<-XML
+      </rdf:Description>
+    </rdf:RDF>
+  XML
+    return str.gsub(/^    /, '')
+  end
+
+  # Internal utilities
+
+  def oops exception
+    error "Unexpected error while checking for issue's parent newspaper object #{exception}"
+    error exception.backtrace
+    return nil
+  end
+
+  # Check manifest for a collection, and return the object id.
+
+  def get_parent_id
+
+    manifest_parent_ids = []
+    @manifest.collections.each do |collection_id|
+      manifest_parent_ids.push collection_id if collection_id =~ /^#{@namespace}\:/
+      #manifest_parent_ids.push collection_id
+    end
+
+    case
+    when manifest_parent_ids.empty?
+      error "The collection element in the manifest.xml for this package doesn't include a parent object for #{@owning_institution}."
+      error "There must be exactly one collection that is the parent object for the set of pages."
+    when manifest_parent_ids.length > 1
+      error "The manifest.xml for this package includes too many parent objects for #{@owning_institution}: #{manifest_parent_ids.sort.join(', ')}."
+      error "There must be exactly one collection that is the parent object for the set of pages."
+    else
+      return manifest_parent_ids.pop
+    end
+
+  rescue => exception
+    oops exception
+  end
+
+  # check parent exists, has correct content model, has IID matching package directory name
+  # sets page sequence number
+
+  def check_parent
+
+    @pid = get_parent_id
+    if not @pid
+      error "Can't determine parent object for pages."
+      return
+    end
+
+    if @collections.size > 1
+      error "The #{pretty_class_name} #{@directory_name} belongs to more than one collection - there must be exactly one, a parent object."
+      return
+    end
+
+    numFound, parent_model, parent_iid, parent_lang_code, rootPID = Utils.get_metadata_from_object config, @pid
+
+    if numFound == 0
+      error "The object #{@pid} specified in collection does not exist."
+      return
+    end
+
+    if not rootPID =~ /^#{@namespace}\:/
+      error "The object #{@pid} specified in collection belongs to site with root #{rootPID} which does not have namespace #{@owning_institution}."
+      return
+    end
+
+    if parent_model != @content_model
+      error "The parent object #{@pid} specified in collection has unexpected content model #{parent_model}. Please specify an object of content type #{@content_model}."
+      return
+    end
+
+    if parent_iid != @directory_name
+      error "The parent object #{@pid} specified in collection has IID identifier #{parent_iid} which does not match the package directory name #{@directory_name}."
+      return
+    end
+
+    if @mods_languages.size == 0 && parent_lang_code.length > 0
+      warning_message = Utils.langs_unsupported_comment(@config, parent_lang_code)
+      if not warning_message.empty?
+        warning "Found unsupported OCR language in parent object metadata: #{warning_message}."
+        warning "Will use #{Utils.langs_to_names(@config, parent_lang_code)} for OCR."
+      end
+
+      @mods_languages << parent_lang_code
+    end
+
+    @page_sequence = Utils.get_next_page_sequence config, @pid, @manifest.content_model
+    if not @page_sequence
+      error "There was an error retrieving information about the page sequence."
+      return
+    end
+
+    return true
+  rescue => exception
+    oops exception
+  end
+
+end # of class BookPagesPackage
