@@ -1997,8 +1997,8 @@ class PagesPackage < StructuredPagePackage
       return
     end
 
-    if parent_iid != @directory_name
-      error "The parent object #{@pid} specified in collection has IID identifier #{parent_iid} which does not match the package directory name #{@directory_name}."
+    if not @directory_name  =~ /^#{parent_iid}$|^#{parent_iid}_[0-9]{8}_[0-9]{6}$/
+      error "The parent object #{@pid} specified in collection has IID identifier #{parent_iid} which does not match the identifier portion of package directory name #{@directory_name}."
       return
     end
 
