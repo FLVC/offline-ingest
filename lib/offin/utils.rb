@@ -1252,10 +1252,7 @@ class Utils
     element = xml.xpath("//result/doc/arr[@name='mods_language_languageTerm_code_ms']/str")[0]
     langCode = element.child.text if element and element.child
 
-    element = xml.xpath("//result/doc/arr[@name='site_collection_id_ms']/str")[0]
-    rootPID = element.child.text.sub(/^info:fedora\//, '') if element and element.child
-
-    return numFound, hasModel, iid, langCode, rootPID
+    return numFound, hasModel, iid, langCode
 
   rescue RestClient::Exception => e
     raise SystemError, "Can't obtain metadata from solr at '#{url}': #{e.class} #{e.message}"
