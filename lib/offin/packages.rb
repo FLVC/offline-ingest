@@ -1946,7 +1946,6 @@ class PagesPackage < StructuredPagePackage
     manifest_parent_ids = []
     @manifest.collections.each do |collection_id|
       manifest_parent_ids.push collection_id if collection_id =~ /^#{@namespace}\:/
-      #manifest_parent_ids.push collection_id
     end
 
     case
@@ -1980,15 +1979,10 @@ class PagesPackage < StructuredPagePackage
       return
     end
 
-    numFound, parent_model, parent_iid, parent_lang_code, rootPID = Utils.get_metadata_from_object config, @pid
+    numFound, parent_model, parent_iid, parent_lang_code = Utils.get_metadata_from_object config, @pid
 
     if numFound == 0
       error "The object #{@pid} specified in collection does not exist."
-      return
-    end
-
-    if not rootPID =~ /^#{@namespace}\:/
-      error "The object #{@pid} specified in collection belongs to site with root #{rootPID} which does not have namespace #{@owning_institution}."
       return
     end
 
