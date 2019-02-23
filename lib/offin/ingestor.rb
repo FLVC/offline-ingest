@@ -1,5 +1,6 @@
 require 'rubydora'
 require 'offin/document-parsers'
+require 'offin/manifest'
 require 'offin/mods'
 require 'offin/errors'
 
@@ -27,12 +28,13 @@ class Ingestor
   #  puts ingestor.warnings
 
 
-  def initialize  config, namespace
+  def initialize  config, namespace, manifest
 
     @owner         = nil
     @size          = 0
     @config        = config
     @namespace     = namespace
+    @manifest      = manifest
     @repository    = connect @config
     @pid           = getpid
     @fedora_object = @repository.create(@pid)
@@ -67,6 +69,17 @@ class Ingestor
 
 
   def getpid
+    if @manifest.ingest_pid
+      if not @manifest.ingest_pid =~ /^#{@namespace}\:[0-9]+/
+        raise PackageError, "The manifest document contains ingestPID with a namespace different than #{@namespace}"
+        return
+      end
+      if Utils.object_exists(@config, @manifest.ingest_pid)
+        raise PackageError, "The manifest document contains ingestPID #{@manifest.ingest_pid} which matches an already existing object in the repository"
+        return
+      end
+      return @manifest.ingest_pid
+    end
     Utils.field_system_error("Unable to request a new PID from the fedora repository '#{@config.fedora_url}'")   do
       pid_doc = @repository.next_pid(:namespace => @namespace)
       sax_document = SaxDocumentGetNextPID.new

@@ -1167,6 +1167,8 @@ class Utils
   def Utils.request_index_update_for_pid config, pid
 
     return if config.test_mode and not config.gsearch_url
+    return if pid.nil? or pid.empty?
+
     pid = pid.sub(/^info:fedora\//, '')
 
     url = "#{config.gsearch_url}/?operation=updateIndex&action=fromPid&value=#{pid}"
@@ -1188,6 +1190,7 @@ class Utils
   def Utils.request_index_delete_for_pid config, pid
 
     return if config.test_mode and not config.gsearch_url
+    return if pid.nil? or pid.empty?
 
     pid = pid.sub(/^info:fedora\//, '')
     url = "#{config.gsearch_url}/?operation=updateIndex&action=deletePid&value=#{pid}"
@@ -1291,6 +1294,29 @@ class Utils
 
   rescue => e
     return
+  end
+
+  # Given a pid, check to see if it exists in Islandora
+
+  def Utils.object_exists config, pid
+
+    numFound = 0
+
+    url = "#{config.solr_url}/select/?q=PID:#{Utils.solr_escape(pid)}&version=2.2&indent=on&fl=PID"
+    uri = URI.encode(url)
+    doc = quickly { RestClient.get(uri) }
+    xml = Nokogiri::XML(doc)
+
+    element = xml.xpath("//result")[0]
+    numFound = element.attr('numFound').to_i if element
+
+    return numFound > 0 ? true : false
+
+  rescue RestClient::Exception => e
+    raise SystemError, "Can't check if object exists from solr at '#{url}': #{e.class} #{e.message}"
+
+  rescue => e
+    raise SystemError, "Can't check if object exists from solr at '#{url}': : #{e.class} #{e.message}"
   end
 
 end # of class Utils
