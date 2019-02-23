@@ -536,7 +536,7 @@ class BasicImagePackage < Package
 
     @image.rewind
 
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace, @manifest) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -648,7 +648,7 @@ class LargeImagePackage < Package
 
     medium, thumbnail, medium_error_messages, thumbnail_error_messages = nil
 
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace, @manifest) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -801,7 +801,7 @@ class VideoPackage < Package
 
     mp4, thumbnail, mp4_error_messages, thumbnail_error_messages = nil
 
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace, @manifest) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -936,7 +936,7 @@ class PDFPackage < Package
 
     preview, preview_error_messages, thumbnail, thumbnail_error_messages = nil
 
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace, @manifest) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -1019,7 +1019,7 @@ class StructuredPagePackage < Package
 
     pdf, pdf_error_messages, thumbnail, thumbnail_error_messages = nil
 
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace, @manifest) do |ingestor|
 
       ingestor.label         = pagename
       ingestor.owner         = @owner
@@ -1438,7 +1438,7 @@ class BookPackage < StructuredPagePackage
 
     thumbnail, thumbnail_error_messages = nil
 
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace, @manifest) do |ingestor|
 
       boilerplate(ingestor)
 
@@ -1628,7 +1628,7 @@ class NewspaperIssuePackage < StructuredPagePackage
 
     thumbnail, thumbnail_error_messages = Utils.image_resize(@config, File.join(@directory_path,  @page_filenames[0]), @config.thumbnail_geometry, 'jpeg')
 
-    ingestor = Ingestor.new(@config, @namespace) do |ingestor|
+    ingestor = Ingestor.new(@config, @namespace, @manifest) do |ingestor|
 
       boilerplate(ingestor)
 

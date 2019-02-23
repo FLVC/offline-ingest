@@ -18,6 +18,7 @@ require 'offin/document-parsers'
 #    embargo               | no       | not currently | n/a                                                     | required attribute rangeName, optional expirationDate
 #    pageProgression       | no       | no            | rl, lr                                                  | left-to-right or right-to-left pagination
 #    languageCode          | no       | no            | three character language code                           | eng, fre, ger, ita
+#    ingestPID             | no       | no            | new Islandora object id                                 | must not exist yet
 #
 # For example.... TODO: manifest.xml here......
 
@@ -111,6 +112,10 @@ class Manifest
 
   def language_code
     @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.language_code
+  end
+
+  def ingest_pid
+    @manifest_sax_doc.nil? ?  nil : @manifest_sax_doc.ingest_pid
   end
 
 end
