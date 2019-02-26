@@ -1276,7 +1276,8 @@ class Utils
         FROM <#ri>
         WHERE {
           ?object fedora-rels-ext:isMemberOf <info:fedora/#{parent_pid.sub(/^info:fedora\//, '')}> ;
-               <fedora-model:hasModel> <info:fedora/#{parent_model}> .
+               <fedora-model:hasModel> <info:fedora/#{parent_model}> ;
+               <fedora-model:state> <fedora-model:Active> .
           ?object islandora-rels-ext:isSequenceNumber ?sequence
         }
         ORDER BY ?sequence
