@@ -3,6 +3,7 @@ $LOAD_PATH.unshift  File.join(File.dirname(__FILE__), '../../lib')
 require 'resque'
 require 'fileutils'
 require 'offin/exceptions'
+require 'offin/ingest-support'
 require 'watch-queue/ingest-job'
 require 'mono_logger'
 require 'socket'
@@ -36,6 +37,7 @@ class BaseWatchDirectory
       package_name = File.basename(source)
       begin
         FileUtils.mv source, new_container_directory
+        record_to_database_queued(@config.site, package_name, Time.now)
       rescue => e
         STDERR.puts "ERROR: Can't move the package #{package_name} from #{incoming_directory} to newly created #{new_container_directory} for processing. Skipping."
         STDERR.puts "ERROR: #{e.class}: #{e.message}"

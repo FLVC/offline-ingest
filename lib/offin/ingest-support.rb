@@ -24,23 +24,51 @@ def get_config_filename
          end
 end
 
+def record_to_database_queued site, package_name, start_time
+
+  site = DataBase::IslandoraSite.first_or_create(:hostname => site)
+
+  rec  = DataBase::IslandoraPackage.new(:package_name   => package_name,
+                                        :time_started   => start_time,
+                                        :time_finished  => start_time - 3600,
+                                        :islandora_site => site)
+
+  if not rec.save
+    STDERR.puts "Unable to save queued package to database:", rec.errors.map { |err| err.to_s }
+    exit 1
+  end
+end
 
 def record_to_database site, package, status, start_time, finish_time
 
   site = DataBase::IslandoraSite.first_or_create(:hostname => site)
 
   # in case of errors, some of the following may be nil
+  # look for existing entry for queued package, otherwise create one
 
-  rec  = DataBase::IslandoraPackage.new(:title          => (package.label || '')[0, 255],
-                                        :package_name   => package.name,
-                                        :islandora_pid  => package.pid,
+  rec  = DataBase::IslandoraPackage.first_or_new({:package_name   => package.name, :islandora_site => site, :bytes_ingested => 0, :order  => [:id.desc]},
+                                       {:package_name   => package.name,
                                         :time_started   => start_time,
-                                        :time_finished  => finish_time,
-                                        :bytes_ingested => package.bytes_ingested,
-                                        :digitool_id    => (package.digitool_id ? package.digitool_id.to_i : nil),
-                                        :success        => status,
-                                        :content_model  => package.content_model,
-                                        :islandora_site => site)
+                                        :islandora_site => site})
+
+  rec.attributes = { :title => (package.label || '')[0, 255],
+                     :islandora_pid  => package.pid,
+                     :time_finished  => finish_time,
+                     :bytes_ingested => package.bytes_ingested,
+                     :digitool_id    => (package.digitool_id ? package.digitool_id.to_i : nil),
+                     :success        => status,
+                     :content_model  => package.content_model }
+
+  #rec  = DataBase::IslandoraPackage.new(:title          => (package.label || '')[0, 255],
+  #                                      :package_name   => package.name,
+  #                                      :islandora_pid  => package.pid,
+  #                                      :time_started   => start_time,
+  #                                      :time_finished  => finish_time,
+  #                                      :bytes_ingested => package.bytes_ingested,
+  #                                      :digitool_id    => (package.digitool_id ? package.digitool_id.to_i : nil),
+  #                                      :success        => status,
+  #                                      :content_model  => package.content_model,
+  #                                      :islandora_site => site)
 
   rec.add_warnings     package.warnings
   rec.add_errors       package.errors
