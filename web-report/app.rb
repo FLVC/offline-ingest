@@ -54,6 +54,7 @@ helpers do
   end
 
   def get_elapsed_time package
+    return 0 if package.time_finished.nil?
     return Utils.pretty_elapsed(package.time_finished.strftime('%s').to_i - package.time_started.strftime('%s').to_i)
   end
 

@@ -151,7 +151,7 @@
               #{p.time_started.strftime('%F %T')}
 
             %td
-              #{p.time_finished.strftime('%F %T')}
+              #{p.time_finished.nil? ? '' : p.time_finished.strftime('%F %T')}
 
             %td
               - case
@@ -163,6 +163,9 @@
                 %img{ :src => "/images/warning.png" }
                 %a{ :href => "/packages/#{p[:id]}" + query_string }
                   warning
+              - when p.time_finished.nil?
+                %img{ :src => "/images/queued.png" }
+                  queued
               - else
                 %img{ :src => "/images/success.png" }
                 %a{ :href => "/packages/#{p[:id]}" + query_string }
