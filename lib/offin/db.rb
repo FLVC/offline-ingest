@@ -77,7 +77,7 @@ module DataBase
 
     property  :package_name,      String,      :required => true, :index => true
     property  :time_started,      DateTime,    :required => true, :index => true
-    property  :time_finished,     DateTime,    :required => true, :index => true
+    property  :time_finished,     DateTime,    :index => true
     property  :success,           Boolean,     :required => true, :index => true, :default => false
     property  :bytes_ingested,    Integer,     :default => 0, :index => true, :min => 0, :max => 2**48
 
