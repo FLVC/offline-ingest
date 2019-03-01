@@ -16,7 +16,7 @@ class CsvProvider
   def each
     yield csv_title
     csv_data.each do |rec|
-      yield CSV.generate_line([ rec.package_name, rec.success ? 'success' : 'failure', rec.title, rec.digitool_id, rec.islandora_pid, rec.content_model, rec.time_started.to_s, rec.time_finished.to_s, rec.bytes_ingested ])
+      yield CSV.generate_line([ rec.package_name, rec.success ? 'success' : 'failure', rec.title, rec.digitool_id, rec.islandora_pid, rec.content_model, rec.time_started.to_s, rec.time_finished.nil? ? '' : rec.time_finished.to_s, rec.bytes_ingested ])
     end
   end
 
