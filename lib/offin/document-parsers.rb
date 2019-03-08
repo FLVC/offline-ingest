@@ -781,7 +781,7 @@ class ManifestSaxDocument < SaxDocument
 
     ingest_pid = @elements['ingestPID'].shift
 
-    if not ingest_pid =~ /^[a-z]+\:[0-9]+/
+    if not ingest_pid =~ /^[a-zA-Z\-]+\:[0-9]+/
       error "The manifest document contains an ingestPID with an incorrect format."
       return
     end
