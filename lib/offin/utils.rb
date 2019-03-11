@@ -1176,6 +1176,7 @@ class Utils
     results = quickly { RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password) }
 
     return true if results.include? "<td>Inserted number of index documents: 1</td>"
+    return true if results.include? "<td>Updated number of index documents: 1</td>"
     return false
 
   rescue RestClient::Exception => e
