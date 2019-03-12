@@ -1321,4 +1321,33 @@ class Utils
     raise SystemError, "Can't check if object exists from solr at '#{url}': : #{e.class} #{e.message}"
   end
 
+
+  def Utils.load_average()
+    return File.read('/proc/loadavg').split(/\s+/)[0].to_f
+  rescue => e
+    return 2.718282
+  end
+
+  def Utils.list_ftp_queues(config_path)
+    config = Datyl::Config.new config_path, :default
+    queues = []
+    config.all_sections.each do |section|
+      next if section == 'default'
+      cfg = Datyl::Config.new config.path, section
+      queues.push cfg.site_namespace if cfg.ftp_queue
+      # queues.push section if cfg.ftp_queue
+    end
+    return queues.sort
+  end
+
+  def Utils.institutional_queue_groups(config_file, repeats = 0)
+    list = list_ftp_queues(config_file)
+    list.length.times do
+      yield list[0..repeats-1]
+      head = list.shift
+      list = list + [head]
+    end
+  end
+
+
 end # of class Utils
