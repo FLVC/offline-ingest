@@ -272,7 +272,7 @@ sax_document.datastreams.each do |ds|
   else
     filename = nil
   end
-  lines.push sprintf("%#{cols[0]}s  %#{cols[1]}s  %#{cols[2]}s  %#{cols[3]}d  %s", ds.datastream_id, ds.version_id, ds.mime_type, ds.size, filename)
+  lines.push sprintf("%#{cols[0]}s  %#{cols[1]}s  %#{cols[2]}s  %#{cols[3]}d  %s", ds.datastream_id, ds.version_id, ds.mime_type, ds.size || 0, filename)
 end
 
 puts lines.sort{ |a,b|  a.gsub(/\s+/, '') <=> b.gsub(/\s+/, '') }
