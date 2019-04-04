@@ -70,10 +70,6 @@ class Ingestor
 
   def getpid
     if @manifest.ingest_pid
-      if not @manifest.ingest_pid =~ /^#{@namespace}\:[0-9]+/
-        raise PackageError, "The manifest document contains ingestPID with a namespace different than #{@namespace}"
-        return
-      end
       if Utils.object_exists(@config, @manifest.ingest_pid)
         raise PackageError, "The manifest document contains ingestPID #{@manifest.ingest_pid} which matches an already existing object in the repository"
         return
