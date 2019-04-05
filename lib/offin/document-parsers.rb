@@ -425,7 +425,7 @@ class ManifestSaxDocument < SaxDocument
 
 
   attr_reader :collections, :content_model, :embargo, :identifiers, :object_history, :other_logos, :label, :content_model,
-              :owning_institution, :submitting_institution, :owning_user, :page_progression, :valid
+              :owning_institution, :submitting_institution, :owning_user, :page_progression, :language_code, :ingest_pid, :valid
 
   def self.institutions= value
     @@institutions = value
@@ -445,7 +445,7 @@ class ManifestSaxDocument < SaxDocument
 
     @elements = {}   # dictionary with keys by element names (collection, contentModel), values are lists, generally of strings from XML character data
 
-    [ 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution', 'pageProgression' ].each do |name|
+    [ 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'objectHistory', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution', 'pageProgression', 'languageCode', 'ingestPID' ].each do |name|
       @elements[name] = []
     end
 
@@ -463,6 +463,8 @@ class ManifestSaxDocument < SaxDocument
     @submitting_institution = nil
     @owning_user = nil
     @page_progression = nil
+    @language_code = nil
+    @ingest_pid = nil
     @embargo = nil
 
     super()
@@ -484,6 +486,8 @@ class ManifestSaxDocument < SaxDocument
   #    submittingInstitution | no       | no            | FLVC, UF, FIU, FSU, FAMU, UNF, UWF, FIU, FAU, NCF, UCF  | defaults to owningInstitution
   #    embargo               | no       | not currently | n/a                                                     | required attribute rangeName, optional expirationDate
   #    pageProgression       | no       | no            | rl, lr                                                  | left-to-right or right-to-left pagination
+  #    languageCode          | no       | no            | three character language code                           | eng, fre, ger, ita
+  #    ingestPID             | no       | no            | new Islandora object id                                 | must not exist yet
 
   # Textualize the attribute data off a stack element (ignore the :name key)
 
@@ -526,7 +530,7 @@ class ManifestSaxDocument < SaxDocument
   def end_element_namespace name, prefix = nil, uri = nil
     case name
 
-    when 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution', 'pageProgression'
+    when 'collection', 'contentModel', 'embargo', 'identifier', 'label', 'otherLogo', 'owningInstitution', 'owningUser', 'submittingInstitution', 'pageProgression', 'languageCode', 'ingestPID'
       @elements[name].push @current_string unless @current_string.empty?
 
     when 'objectHistory'
@@ -749,6 +753,43 @@ class ManifestSaxDocument < SaxDocument
     return true
   end
 
+  # Check for optional language code, if present there may be only one.
+  def language_code_ok?
+
+    return true if @elements['languageCode'].empty?
+
+    if @elements['languageCode'].length > 1
+      error "The manifest document lists more than one languageCode - at most one can be specfied."
+      return
+    end
+
+    lang_code = @elements['languageCode'].shift
+
+    @language_code = lang_code
+    return true
+  end
+
+  # Check for optional ingest PID, if present there may be only one.
+  def ingest_pid_ok?
+
+    return true if @elements['ingestPID'].empty?
+
+    if @elements['ingestPID'].length > 1
+      error "The manifest document lists more than one ingestPID - at most one can be specfied."
+      return
+    end
+
+    ingest_pid = @elements['ingestPID'].shift
+
+    if not ingest_pid =~ /^[a-zA-Z\-]+\:[0-9]+/
+      error "The manifest document contains an ingestPID with an incorrect format."
+      return
+    end
+
+    @ingest_pid = ingest_pid
+    return true
+  end
+
   def end_document
     # optional, multivalued
 
@@ -766,6 +807,8 @@ class ManifestSaxDocument < SaxDocument
     @valid =  object_history_ok?           && @valid
     @valid =  embargo_ok?                  && @valid
     @valid =  page_progression_ok?         && @valid
+    @valid =  language_code_ok?            && @valid
+    @valid =  ingest_pid_ok?               && @valid
 
     @valid &&=  true   # if not false, force to 'true' value, instead of potentially confusing non-boolean that ...ok? methods might return
 

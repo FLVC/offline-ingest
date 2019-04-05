@@ -3,6 +3,7 @@ $LOAD_PATH.unshift  File.join(File.dirname(__FILE__), '../../lib')
 require 'resque'
 require 'fileutils'
 require 'offin/exceptions'
+require 'offin/ingest-support'
 require 'watch-queue/ingest-job'
 require 'mono_logger'
 require 'socket'
@@ -45,6 +46,7 @@ class BaseWatchDirectory
         sleep 5 * 60
       else
         resque_enqueue container_name,  package_name
+        record_to_database_queued(@config.site, package_name, Time.now)
       end
     end
   end
@@ -110,6 +112,9 @@ class FtpWatchDirectory < BaseWatchDirectory
     @incoming_directory   = File.join(config.ftp_queue, INCOMING_SUBDIRECTORY)
     @processing_directory = File.join(config.ftp_queue, PROCESSING_SUBDIRECTORY)
     @warnings_directory   = File.join(config.ftp_queue, WARNINGS_SUBDIRECTORY)
+
+    # TODO: for fair-queueing project
+    # @queue_name = config.site_namespace
   end
 
   def resque_enqueue container_name, package_name
@@ -121,6 +126,17 @@ class FtpWatchDirectory < BaseWatchDirectory
     # 'package'        => 'UCF2350135C'
     # 'qroot'          => '/data/ftpdl/UF'
 
+    # TODO: for fair-queueing project
+    # Resque::Job.create(@queue_name,
+    #                    IngestJob,
+    #                    { :config_section      => config_section,
+    #                      :config_file         => config.path,
+    #                      :container           => container_name,
+    #                      :qroot               => config.digitool_queue,
+    #                      :package             => package_name
+    #                    })
+
+
     Resque.enqueue(ProspectiveIngestJob,
                    { :config_section      => config_section,
                      :config_file         => config.path,
@@ -130,6 +146,9 @@ class FtpWatchDirectory < BaseWatchDirectory
                    })
   end
 end
+
+
+# TODO:  for fair-queueing project - remove, no longer in use
 
 class DigitoolWatchDirectory < BaseWatchDirectory
   def initialize(config, config_section)

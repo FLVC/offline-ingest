@@ -1167,6 +1167,8 @@ class Utils
   def Utils.request_index_update_for_pid config, pid
 
     return if config.test_mode and not config.gsearch_url
+    return if pid.nil? or pid.empty?
+
     pid = pid.sub(/^info:fedora\//, '')
 
     url = "#{config.gsearch_url}/?operation=updateIndex&action=fromPid&value=#{pid}"
@@ -1174,6 +1176,7 @@ class Utils
     results = quickly { RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password) }
 
     return true if results.include? "<td>Inserted number of index documents: 1</td>"
+    return true if results.include? "<td>Updated number of index documents: 1</td>"
     return false
 
   rescue RestClient::Exception => e
@@ -1188,6 +1191,7 @@ class Utils
   def Utils.request_index_delete_for_pid config, pid
 
     return if config.test_mode and not config.gsearch_url
+    return if pid.nil? or pid.empty?
 
     pid = pid.sub(/^info:fedora\//, '')
     url = "#{config.gsearch_url}/?operation=updateIndex&action=deletePid&value=#{pid}"
@@ -1201,5 +1205,149 @@ class Utils
     raise SystemError, "Failed to delete from Solr index via Fedora GSearch for #{pid}: #{e.class} #{e.message}"
 
   end
+
+  def Utils.get_metadata_from_object config, pid
+
+    # requesting metadata for an existing object
+    # we'll get and parse a document as follows if we get a hit.
+    #
+    # <?xml version="1.0" encoding="UTF-8"?>
+    # <response>
+    # <lst name="responseHeader">
+    #   <int name="status">0</int>
+    #   <int name="QTime">0</int>
+    #   <lst name="params">
+    #     <str name="indent">on</str>
+    #     <str name="version">2.2</str>
+    #     <str name="fl">PID,mods_identifier_iid_ms</str>
+    #     <str name="q">mods_identifier_iid_ms:FSDT2854731</str>
+    #   </lst>
+    # </lst>
+    # <result name="response" numFound="1" start="0">
+    #   <doc>
+    #     <str name="PID">fsu:122</str>
+    #     <arr name="mods_identifier_iid_ms"><str>FSDT2854731</str></arr>
+    #   </doc>
+    # </result>
+    # </response>
+
+    return if config.test_mode and not config.solr_url   # user specified testing mode without specifying server - technicaly OK?
+
+    numFound = 0
+    hasModel = ''
+    iid = ''
+    langCode = ''
+    rootPID = ''
+
+    url = "#{config.solr_url}/select/?q=PID:#{Utils.solr_escape(pid)}&version=2.2&indent=on&fl=PID,RELS_EXT_hasModel_uri_ms,mods_identifier_iid_ms,mods_language_languageTerm_code_ms,site_collection_id_ms"
+    uri = URI.encode(url)
+    doc = quickly { RestClient.get(uri) }
+    xml = Nokogiri::XML(doc)
+
+    element = xml.xpath("//result")[0]
+    numFound = element.attr('numFound').to_i if element
+
+    element = xml.xpath("//result/doc/arr[@name='RELS_EXT_hasModel_uri_ms']/str")[0]
+    hasModel = element.child.text.sub(/^info:fedora\//, '') if element and element.child
+
+    element = xml.xpath("//result/doc/arr[@name='mods_identifier_iid_ms']/str")[0]
+    iid = element.child.text if element and element.child
+
+    element = xml.xpath("//result/doc/arr[@name='mods_language_languageTerm_code_ms']/str")[0]
+    langCode = element.child.text if element and element.child
+
+    return numFound, hasModel, iid, langCode
+
+  rescue RestClient::Exception => e
+    raise SystemError, "Can't obtain metadata from solr at '#{url}': #{e.class} #{e.message}"
+
+  rescue => e
+    raise SystemError, "Can't process metadata obtained from solr at '#{url}': : #{e.class} #{e.message}"
+  end
+
+  # Given a parent pid, return the next page sequence number
+
+  def Utils.get_next_page_sequence config, parent_pid, parent_model
+
+    query = <<-SPARQL.gsub(/^        /, '')
+        PREFIX islandora-rels-ext: <http://islandora.ca/ontology/relsext#>
+        PREFIX fedora-rels-ext: <info:fedora/fedora-system:def/relations-external#>
+
+        SELECT ?object ?sequence
+        FROM <#ri>
+        WHERE {
+          ?object fedora-rels-ext:isMemberOf <info:fedora/#{parent_pid.sub(/^info:fedora\//, '')}> ;
+               <fedora-model:hasModel> <info:fedora/#{parent_model}> ;
+               <fedora-model:state> <fedora-model:Active> .
+          ?object islandora-rels-ext:isSequenceNumber ?sequence
+        }
+        ORDER BY ?sequence
+    SPARQL
+
+    repository = ::Rubydora.connect :url => config.fedora_url, :user => config.user, :password => config.password
+
+    quickly do
+      repository.ping
+    end
+
+    last =  repository.sparql(query).map { |row_rec| row_rec['sequence'].to_i }.max
+
+    return last ? last + 1 : 1
+
+  rescue => e
+    return
+  end
+
+  # Given a pid, check to see if it exists in Islandora
+
+  def Utils.object_exists config, pid
+
+    numFound = 0
+
+    url = "#{config.solr_url}/select/?q=PID:#{Utils.solr_escape(pid)}&version=2.2&indent=on&fl=PID"
+    uri = URI.encode(url)
+    doc = quickly { RestClient.get(uri) }
+    xml = Nokogiri::XML(doc)
+
+    element = xml.xpath("//result")[0]
+    numFound = element.attr('numFound').to_i if element
+
+    return numFound > 0 ? true : false
+
+  rescue RestClient::Exception => e
+    raise SystemError, "Can't check if object exists from solr at '#{url}': #{e.class} #{e.message}"
+
+  rescue => e
+    raise SystemError, "Can't check if object exists from solr at '#{url}': : #{e.class} #{e.message}"
+  end
+
+
+  def Utils.load_average()
+    return File.read('/proc/loadavg').split(/\s+/)[0].to_f
+  rescue => e
+    return 2.718282
+  end
+
+  def Utils.list_ftp_queues(config_path)
+    config = Datyl::Config.new config_path, :default
+    queues = []
+    config.all_sections.each do |section|
+      next if section == 'default'
+      cfg = Datyl::Config.new config.path, section
+      queues.push cfg.site_namespace if cfg.ftp_queue
+      # queues.push section if cfg.ftp_queue
+    end
+    return queues.sort
+  end
+
+  def Utils.institutional_queue_groups(config_file, repeats = 0)
+    list = list_ftp_queues(config_file)
+    list.length.times do
+      yield list[0..repeats-1]
+      head = list.shift
+      list = list + [head]
+    end
+  end
+
 
 end # of class Utils
