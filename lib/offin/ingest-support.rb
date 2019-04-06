@@ -45,7 +45,7 @@ def record_to_database site, package, status, start_time, finish_time
   # in case of errors, some of the following may be nil
   # look for existing entry for queued package, otherwise create one
 
-  rec  = DataBase::IslandoraPackage.first_or_new({:package_name   => package.name, :islandora_site => site, :time_finished => nil, :bytes_ingested => 0, :order  => [:id.desc]},
+  rec  = DataBase::IslandoraPackage.first_or_new({:package_name   => package.name, :islandora_site => site, :time_finished => nil, :bytes_ingested => 0},
                                        {:package_name   => package.name,
                                         :time_started   => start_time,
                                         :islandora_site => site})
