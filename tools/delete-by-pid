@@ -73,19 +73,20 @@ repository = Rubydora.connect :url => config.fedora_url, :user => config.user, :
 
 ARGV.each do |pid|
   pid = "info:fedora/#{pid}" unless pid =~ /^info:fedora/
+
   begin
     DigitalObject.find_or_initialize(pid, repository).delete
   rescue => e
-    STDERR.puts "Couldn't delete #{pid}, #{e.class}: #{e.message}"
-  else
-    puts pid
-    # delete from Solr index via Gsearch
-    solrpid = pid.sub(/^info:fedora\//, '')
-    url = "#{config.gsearch_url}/?operation=updateIndex&action=deletePid&value=#{solrpid}"
-    uri = URI.encode(url)
-    results = RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password)
-    if not results.include? "<td>Deleted number of index documents: 1</td>"
-      puts pid + " not removed from Solr index!"
-    end
+    STDERR.puts "Couldn't delete digital object #{pid}, #{e.class}: #{e.message}"
   end
+
+  begin
+    solr_pid = pid.sub(/^info:fedora\//, '')
+    uri = URI.encode "#{config.gsearch_url}/?operation=updateIndex&action=deletePid&value=#{solr_pid}"
+    results = RestClient::Request.execute(:method => :get, :url => uri, :user => config.user, :password => config.password)
+    raise "no index document for #{solr_pid}" unless results.include? "<td>Deleted number of index documents: 1</td>"
+  rescue => e
+    STDERR.puts "Update error for solr index for digital object #{pid}, #{e.class}: #{e.message}"
+  end
+
 end
