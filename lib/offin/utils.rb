@@ -477,6 +477,7 @@ class Utils
       next if line =~ /ICC Profile CS 52474220/i
       next if line =~ /warning: empty layer generated/i
       next if line =~ /bad value 0 for "orientation" tag/i
+      next if line =~ /wrong data type 6 for "Photoshop"; tag ignored/i
       next if line.empty?
       errors.push line
     end
