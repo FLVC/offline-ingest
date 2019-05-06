@@ -478,6 +478,8 @@ class Utils
       next if line =~ /warning: empty layer generated/i
       next if line =~ /bad value 0 for "orientation" tag/i
       next if line =~ /wrong data type 6 for "Photoshop"; tag ignored/i
+      next if line =~ /incorrect count for field "MinSampleValue"/i
+      next if line =~ /incorrect count for field "MaxSampleValue"/i
       next if line.empty?
       errors.push line
     end
