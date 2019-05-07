@@ -78,12 +78,12 @@ class PackageFactory
 
     return case manifest.content_model
            when BASIC_IMAGE_CONTENT_MODEL;       BasicImagePackage.new(@config, directory, manifest, @updator_class)
-           when LARGE_IMAGE_CONTENT_MODEL;       LargeImagePackage.new(@config, directory, manifest, @updator_class)
-           when PDF_CONTENT_MODEL;               PDFPackage.new(@config, directory, manifest, @updator_class)
            when BOOK_CONTENT_MODEL;              BookPackage.new(@config, directory, manifest, @updator_class)
-           when PAGE_CONTENT_MODEL;              PagesPackage.new(@config, directory, manifest, @updator_class)
+           when LARGE_IMAGE_CONTENT_MODEL;       LargeImagePackage.new(@config, directory, manifest, @updator_class)
            when NEWSPAPER_ISSUE_CONTENT_MODEL;   NewspaperIssuePackage.new(@config, directory, manifest, @updator_class)
            when NEWSPAPER_PAGE_CONTENT_MODEL;    PagesPackage.new(@config, directory, manifest, @updator_class)
+           when PAGE_CONTENT_MODEL;              PagesPackage.new(@config, directory, manifest, @updator_class)
+           when PDF_CONTENT_MODEL;               PDFPackage.new(@config, directory, manifest, @updator_class)
            when VIDEO_CONTENT_MODEL;             VideoPackage.new(@config, directory, manifest, @updator_class)
            else
              raise PackageError, "Package directory '#{directory}' specifies an unsupported content model '#{manifest.content_model}'"
@@ -1834,7 +1834,7 @@ class NewspaperIssuePackage < StructuredPagePackage
 
 end # of class NewspaperIssuePackage
 
-# Subclass of Package for handling the Book content model
+# Subclass of Package for handling simple collection of pages without MODS, MARC, METS
 
 class PagesPackage < StructuredPagePackage
 
@@ -2017,4 +2017,4 @@ class PagesPackage < StructuredPagePackage
     oops exception
   end
 
-end # of class BookPagesPackage
+end # of class PagesPackage

@@ -116,8 +116,6 @@ class Ingestor
     @fedora_object.models << fixup_pid(value)
   end
 
- # TODO: XMLescape values here for next two?  It may be escaped by rubydora library, check.
-
   def label= value
     @fedora_object.label = value
   end
@@ -130,15 +128,21 @@ class Ingestor
   def datastream name
     trials ||= 0
     yield @fedora_object.datastreams[name]
-    @size += @fedora_object.datastreams[name].content.size
-    @fedora_object.datastreams[name].save
-  rescue
-    trials += 1
-    if trials < 3
-      sleep trials
-      retry
-    else
-      raise
+
+    if @fedora_object.datastreams[name] and @fedora_object.datastreams[name].content and @fedora_object.datastreams[name].content.size
+      @size = @fedora_object.datastreams[name].content.size
+    end
+
+    begin
+      @fedora_object.datastreams[name].save
+    rescue
+      trials += 1
+      if trials < 3
+        sleep trials
+        retry
+      else
+        raise
+      end
     end
   end
 

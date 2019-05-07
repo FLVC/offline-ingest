@@ -1057,7 +1057,7 @@ class Utils
 
   def Utils.video_create_mp4(config, input_video_filename)
     output_video_filename = Tempfile.new('ffmpeg-', Utils.tempdir).path
-
+    warnings = nil
     command_output_text = ""
     cpus = config.ffmpeg_cpus ? config.ffmpeg_cpus : 1
 
@@ -1073,15 +1073,15 @@ class Utils
     end
 
     unless command_output_text.empty?
-      errors = [ "Error when running '#{command.join(' ')}', can't create an MP4 derivative." ] + command_output_text.split(/\n/)
-      return nil, errors
+      warnings = [ "When creating an MP4 video derivative with the command '#{command.join(' ')}', the following issues were encountered:" ] + command_output_text.split(/\n/)
     end
 
-    unless File.exists?(output_video_filename) and File.stat(output_video_filename).size > 0
-      return nil, [ "Unknown error when running '#{command.join(' ')}', can't create an MP4 derivative." ]
+    if File.exists?(output_video_filename) and File.stat(output_video_filename).size > 0.10 * File.stat(input_video_filename).size
+      return File.open(output_video_filename, 'rb'), warnings
     end
 
-    return File.open(output_video_filename, 'rb'), nil
+    return
+
   ensure
     FileUtils.rm_f output_video_filename
   end
