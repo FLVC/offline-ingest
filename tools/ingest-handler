@@ -20,6 +20,7 @@ require 'rubygems'
 require 'offin/config'
 require 'offin/exceptions'
 require 'resque'
+require 'resque-round-robin'
 require 'watch-queue/watch-utils'
 require 'watch-queue/constants'
 

@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift  File.join(File.dirname(__FILE__), '../../lib')
 
 require 'resque'
+require 'resque-round-robin'
 require 'fileutils'
 require 'offin/exceptions'
 require 'offin/ingest-support'
@@ -132,7 +133,7 @@ class FtpWatchDirectory < BaseWatchDirectory
                        { :config_section      => config_section,
                          :config_file         => config.path,
                          :container           => container_name,
-                         :qroot               => config.digitool_queue,
+                         :qroot               => config.ftp_queue,
                          :package             => package_name
                        })
   end

@@ -1,4 +1,5 @@
 require 'resque'
+require 'resque-round-robin'
 require 'offin/config'
 require 'offin/packages'
 require 'offin/exceptions'
