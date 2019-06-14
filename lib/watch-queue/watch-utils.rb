@@ -4,6 +4,7 @@ require 'rubygems'
 require 'offin/config'
 require 'mono_logger'
 require 'resque'
+require 'resque-round-robin'
 require 'watch-queue/ingest-job'          # the actual handler corresponding to the 'ingest' queue specified below; the work happens in ingest-job
 require 'watch-queue/constants'
 

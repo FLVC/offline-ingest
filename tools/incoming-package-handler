@@ -88,16 +88,6 @@ def watch_configured_directories  config_file
       end
     end
 
-    if site_config.digitool_queue
-      errors = WatchUtils.directory_problems(site_config.digitool_queue)
-      if errors.empty?
-        STDERR.puts "INFO: Watching DIGITOOL incoming directory in #{site_config.digitool_queue} for #{section}"
-        watched_directories.push DigitoolWatchDirectory.new(site_config, section)
-      else
-        STDERR.puts "ERROR: Skipping watching DIGITOOL directory #{site_config.digitool_queue} for #{section}, these configuration errors were encountered:"
-        errors.each { |line| STDERR.puts "ERROR: " + line }
-      end
-    end
   end
 
   return watched_directories.compact

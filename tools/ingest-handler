@@ -19,16 +19,18 @@ Dir.chdir File.exists?(QTEMP) ? QTEMP : '/tmp/'
 require 'rubygems'
 require 'offin/config'
 require 'offin/exceptions'
+require 'offin/utils'
 require 'resque'
+require 'resque-round-robin'
 require 'watch-queue/watch-utils'
 require 'watch-queue/constants'
 
 # A process monitor (currently 'god') will restart an instance of this script if we exit on error.
 
-queues = ARGV
-
 begin
   config = WatchUtils.setup_config()
+
+  queues = Utils.list_ftp_queues(config.path)
 
   WatchUtils.setup_environment(config)
   WatchUtils.setup_resque_logger()

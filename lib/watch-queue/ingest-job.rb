@@ -1,4 +1,5 @@
 require 'resque'
+require 'resque-round-robin'
 require 'offin/config'
 require 'offin/packages'
 require 'offin/exceptions'
@@ -63,33 +64,6 @@ class BaseIngestJob
     Resque.logger.error "Failsafe error handler: moved #{container_directory} to #{errors_directory}"
   end
 end
-
-# TODO: for fair-queueing project
-# remove ProspectiveIngestJob, we only need IngestJob for now
-
-class ProspectiveIngestJob < BaseIngestJob
-  @queue = :ftp
-
-  def self.perform(data)
-    PackageIngestor.process(data, ProspectiveMetadataChecker)
-  rescue => e
-    Resque.logger.error "#{self} received #{e.class}: #{e.message}"
-  end
-end
-
-# TODO: for fair-queueing project
-# remove DigitoolIngestJob, we only need IngestJob for now
-
-class DigitoolIngestJob < BaseIngestJob
-  @queue = :digitool
-
-  def self.perform(data)
-    PackageIngestor.process(data, DigitoolMetadataChecker)
-  rescue => e
-    Resque.logger.error "#{self} received #{e.class}: #{e.message}"
-  end
-end
-
 
 class IngestJob < BaseIngestJob
   def self.perform(data)
