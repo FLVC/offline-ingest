@@ -435,7 +435,11 @@ class Package
     elsif iids.length == 1
       @iid = iids.first
       if @iid =~ /[^A-Za-z0-9_\.()-]/
-        error "The MODS file in package #{@directory_name} declares the IID as '#{@iid}',  which has illegal characters (only 'A'-'Z', 'a'-'z', '0'-'9', ')', '(', '-', '_' and '.'  are allowed)."
+        error "The MODS file in package #{@directory_name} declares the IID as '#{@iid}', which has illegal characters (only 'A'-'Z', 'a'-'z', '0'-'9', ')', '(', '-', '_' and '.'  are allowed)."
+        return
+      end
+      if @iid.include? "bsh"
+        error "The MODS file in package #{@directory_name} declares the IID as '#{@iid}', which has illegal string 'bsh' (please uppercase or replace with other characters)."
         return
       end
     elsif iids.nil? or iids.length == 0
