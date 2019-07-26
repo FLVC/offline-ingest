@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'offin/document-parsers'
 require 'offin/errors'
+require 'offin/utils'
 
 # If @config is reasonable and the server properly provisioned
 # (e.g. enough disk space) no error will be raised by this class;
@@ -281,8 +282,8 @@ class Mods
 
 
   # From the manifest, add owningInstitution, submittingInstitution
-  # (defaults to owningInstitution) and optionally one or more
-  # objectHistory elements.
+  # (defaults to owningInstitution) and one or more of the optional
+  # objectHistory and otherLogo elements.
 
   def add_flvc_extension_elements manifest
 
@@ -301,7 +302,7 @@ class Mods
     XML
 
     manifest.other_logos.each do |other_logo|
-       str += "     <#{flvc_prefix}:otherLogo>#{other_logo}</#{flvc_prefix}:otherLogo>\n"
+       str += "     <#{flvc_prefix}:otherLogo>#{Utils.xml_escape(other_logo.gsub('&', ' & '))}</#{flvc_prefix}:otherLogo>\n"
     end
 
     manifest.object_history.each do |record|
