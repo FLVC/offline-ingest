@@ -12,7 +12,7 @@ command() {
 
     cd $CONFIG_DIR
 
-    # expecting thin configuration filenames like "fsu-test.admin.yml"
+    # expecting thin configuration filenames like "fsu.admin.yml"
     # in the CONFIG_DIR directory:
 
     for config in *.admin.yml; do

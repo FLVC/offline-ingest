@@ -1,0 +1,39 @@
+The admin webservers are written in ruby, the software is called
+thin. These servers listen only on localhost ports. Each institution
+has its own thin server, so we must run the servers on different
+ports.  We use apache to proxy to those servers. These instructions
+describe the first-time setup, and the scripts provided help automate
+the process of setting up the local thin servers and ports, externally
+addressed virtual hosts via apache, and the mappings between them.
+
+
+Step 1: Install and configure thin. This is a lightweight web server
+written in ruby.
+
+   ✓ # gem install thin
+   ✓ # cp admin-thin-servers /etc/init.d/
+   ✓ # chkconfig --add admin-thin-servers
+   ✓ # mkdir /var/run/thin
+
+Step 2: Create and install the configuration files.
+
+   # cd /usr/local/islandora/offline-ingest/tools/thin-admin-server-configuration
+
+   if necessary, edit the file create-configs and specify the
+   directory we want to write the files to:
+
+             DESTINATION_DIRECTORY="/opt/rh/httpd24/root/etc/httpd/conf.d"
+
+   run the script
+
+   # ./create-all
+
+Step 3: Start her up.
+
+   # service admin-thin-servers start
+
+   visit an admin web site, this is a good one to try:
+
+       http://fsu.admin.digital.flvc.org/
+
+   # chkconfig admin-thin-servers on

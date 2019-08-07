@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+DESTINATION_DIRECTORY="/opt/rh/httpd24/root/etc/httpd/conf.d"
 APACHE_CONFIG="apache-template.config"
 THIN_CONFIG="thin-template.config"
 
@@ -18,8 +19,8 @@ if ARGV.empty?
   exit -1
 end
 
-if not File.writable?('.')
-  STDERR.puts "Can't write configurations file to current working directory. Got root?"
+if not File.writable?(DESTINATION_DIRECTORY)
+  STDERR.puts "Can't write configurations file to #{DESTINATION_DIRECTORY}. Got root?"
   exit -1
 end
 
@@ -32,12 +33,12 @@ ARGV.each do |hostname|
   text.gsub!('SHORTNAME', shortname)
   text.gsub!('PORTA', port.to_s)
   text.gsub!('PORTB', (port + 1).to_s)
-  File.open("#{shortname}.admin.conf", "w").write(text)
+  File.open(File.join(DESTINATION_DIRECTORY, "#{shortname}.admin.conf"), "w").write(text)
 
   text = File.read(THIN_CONFIG)
   text.gsub!('SHORTNAME', shortname)
   text.gsub!('PORTA', port.to_s)
-  File.open("#{shortname}.admin.yml", "w").write(text)
+  File.open(File.join(DESTINATION_DIRECTORY, "#{shortname}.admin.yml"), "w").write(text)
 
   port += 100
 end
