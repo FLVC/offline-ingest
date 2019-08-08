@@ -8,9 +8,11 @@ addressed virtual hosts via apache, and the mappings between them.
 
 
 Step 1: Install and configure thin. This is a lightweight web server
-written in ruby.
+written in ruby. (note: items marked with a ✓ have been done to the
+islandora production server).
 
    ✓ # gem install thin
+   ✓ # cd /usr/local/islandora/offline-ingest/tools/thin-admin-server-configuration
    ✓ # cp admin-thin-servers /etc/init.d/
    ✓ # chkconfig --add admin-thin-servers
    ✓ # mkdir /var/run/thin
@@ -36,5 +38,7 @@ Step 3: Start her up.
    visit an admin web site, this is a good one to try:
 
        http://fsu.admin.digital.flvc.org/
+
+   success? then:
 
    # chkconfig admin-thin-servers on
