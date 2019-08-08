@@ -14,6 +14,7 @@ written in ruby.
    ✓ # cp admin-thin-servers /etc/init.d/
    ✓ # chkconfig --add admin-thin-servers
    ✓ # mkdir /var/run/thin
+   ✓ # chown apache:apache /var/run/thin
 
 Step 2: Create and install the configuration files.
 
