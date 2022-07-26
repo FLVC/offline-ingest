@@ -3,6 +3,7 @@ require 'offin/errors'
 require 'offin/manifest'
 require 'offin/mods'
 require 'purlz'
+require 'kiwi'
 
 # The metadata updater class wraps behavior; we have packages arriving
 # from many sources, and metadata may arrive embedded in a
@@ -43,7 +44,7 @@ class MetadataChecker
 end
 
 class ProspectiveMetadataChecker < MetadataChecker
-  ALLOWED_PURL_SERVERS = [ 'purl.flvc.org', 'purl.fcla.edu' ]   # presumably, @config.purl_server maps to one of these, but it doesn't have to
+  ALLOWED_PURL_SERVERS = [ 'purl.flvc.org', 'purl.fcla.edu', 'purl.test.flvc.org', 'purl.dev.flvc.org' ]   # presumably, @config.purl_server maps to one of these, but it doesn't have to
 
   def initialize package
     super(package)
@@ -63,7 +64,7 @@ class ProspectiveMetadataChecker < MetadataChecker
     super
     return unless package.valid?   # should not have to do this...
 
-    purl_server = Purlz.new(package.config.purl_server, package.config.purl_administrator, package.config.purl_password)
+    purl_server = PurlKiwi.new(package.config.purl_kiwi_server, package.config.purl_kiwi_apikey)
 
     package.purls.each do |purl|
 
@@ -86,25 +87,16 @@ class ProspectiveMetadataChecker < MetadataChecker
         next
       end
 
-      target      = sprintf("http://%s/islandora/object/%s", package.config.site,  package.pid)
-      maintainers = [ 'flvc', institution_code ]
+      target      = sprintf("https://%s/islandora/object/%s", package.config.site,  package.pid)
 
       if purl_server.tombstoned?(puri.path)
         package.error "The PURL #{purl} was previously tombstoned and cannot be recreated."
         next
       end
 
-      if data = purl_server.get(puri.path)
-        pre_existing_maintainers = data[:uids] + data[:gids]
-        potential_surprises = pre_existing_maintainers.map{ |x| x.strip.downcase } - maintainers.map{ |y| y.strip.downcase }
-        potential_surprises.delete_if { |x| x == "admin" }  # commonly happens, don't worry about this one
-        package.warning "When creating prospective PURL #{purl}, found an existing purl. Keeping existing maintainers #{potential_surprises.inspect})." unless potential_surprises.empty?
-        maintainers += pre_existing_maintainers
-      end
-
       # The purl server we use is from config.purl_server above, which may not actually match the purl from the package metadata.
 
-      unless purl_server.set(puri.path, target, *maintainers)
+      unless purl_server.set(puri.path, target, package.owning_institution.upcase)
         package.error "PURL #{purl} with owning institution #{package.owning_institution} and target #{target} could not be created (perhaps owning institution is not a purl group for this server?)."
         next
       end
